@@ -1,4 +1,5 @@
 import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
@@ -64,7 +65,12 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
                       isLoading: false,
                       label:
                           viewModel.currentPage == 0 ? "Next" : "Get Started",
-                      submit: () {},
+                      submit: () {
+                        if (viewModel.currentPage == 0) {
+                        } else {
+                          locator<NavigationService>().navigateToAuthView();
+                        }
+                      },
                       color: kcPrimaryColor,
                       boldText: true,
                     ),

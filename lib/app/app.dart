@@ -5,6 +5,7 @@ import 'package:afriprize/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:afriprize/ui/views/onboarding/onboarding_view.dart';
+import 'package:afriprize/ui/views/auth/auth_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -12,6 +13,7 @@ import 'package:afriprize/ui/views/onboarding/onboarding_view.dart';
     MaterialRoute(page: HomeView),
     MaterialRoute(page: StartupView),
     MaterialRoute(page: OnboardingView),
+    MaterialRoute(page: AuthView),
 // @stacked-route
   ],
   dependencies: [
