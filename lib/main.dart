@@ -4,6 +4,7 @@ import 'package:afriprize/app/app.dialogs.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
+import 'package:flutter/services.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 void main() {
@@ -22,6 +23,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: Theme.of(context).copyWith(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: kcWhiteColor,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
         primaryColor: kcBackgroundColor,
         focusColor: kcPrimaryColor,
         textTheme: Theme.of(context).textTheme.apply(

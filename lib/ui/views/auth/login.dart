@@ -1,8 +1,12 @@
+import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/components/text_field_widget.dart';
+import 'package:afriprize/ui/views/home/home_view.dart';
 import 'package:flutter/material.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -47,7 +51,10 @@ class _LoginState extends State<Login> {
             isLoading: false,
             boldText: true,
             label: "Login",
-            submit: () {},
+            submit: () {
+              locator<NavigationService>()
+                  .clearStackAndShowView(const HomeView());
+            },
             color: kcPrimaryColor,
           ),
           verticalSpaceLarge,

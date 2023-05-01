@@ -16,63 +16,78 @@ class HomeView extends StackedView<HomeViewModel> {
   ) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                verticalSpaceLarge,
-                Column(
-                  children: [
-                    const Text(
-                      'Hello, STACKED!',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    verticalSpaceMedium,
-                    MaterialButton(
-                      color: Colors.black,
-                      onPressed: viewModel.incrementCounter,
-                      child: Text(
-                        viewModel.counterLabel,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                width: MediaQuery.of(context).size.width,
+                color: kcWhiteColor,
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MaterialButton(
-                      color: kcDarkGreyColor,
-                      child: const Text(
-                        'Show Dialog',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onPressed: viewModel.showDialog,
-                    ),
-                    MaterialButton(
-                      color: kcDarkGreyColor,
-                      child: const Text(
-                        'Show Bottom Sheet',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onPressed: viewModel.showBottomSheet,
-                    ),
+                    Image.asset("assets/images/logo_light.png"),
+                    const Icon(Icons.search)
                   ],
-                )
-              ],
+                ),
+              ),
             ),
-          ),
+            Expanded(
+              flex: 10,
+              child: viewModel.pages[viewModel.selectedTab],
+            )
+          ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        selectedLabelStyle: const TextStyle(color: kcSecondaryColor),
+        selectedItemColor: kcSecondaryColor,
+        onTap: viewModel.changeSelected,
+        currentIndex: viewModel.selectedTab,
+        items: [
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              "assets/images/app_home.png",
+              color:
+                  viewModel.selectedTab == 0 ? kcSecondaryColor : kcBlackColor,
+            ),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              "assets/images/draws.png",
+              color:
+                  viewModel.selectedTab == 1 ? kcSecondaryColor : kcBlackColor,
+            ),
+            label: "Draws",
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              "assets/images/cart.png",
+              color:
+                  viewModel.selectedTab == 2 ? kcSecondaryColor : kcBlackColor,
+            ),
+            label: "Cart",
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              "assets/images/notification.png",
+              color:
+                  viewModel.selectedTab == 3 ? kcSecondaryColor : kcBlackColor,
+            ),
+            label: "Notifications",
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              "assets/images/profile.png",
+              color:
+                  viewModel.selectedTab == 4 ? kcSecondaryColor : kcBlackColor,
+            ),
+            label: "Profile",
+          )
+        ],
       ),
     );
   }
