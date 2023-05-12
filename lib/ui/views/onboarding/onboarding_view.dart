@@ -67,6 +67,9 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
                           viewModel.currentPage == 0 ? "Next" : "Get Started",
                       submit: () {
                         if (viewModel.currentPage == 0) {
+                          viewModel.pageController.nextPage(
+                              duration: const Duration(milliseconds: 100),
+                              curve: Curves.linear);
                         } else {
                           locator<NavigationService>().navigateToAuthView();
                         }

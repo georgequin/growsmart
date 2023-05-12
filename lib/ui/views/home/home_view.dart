@@ -15,31 +15,7 @@ class HomeView extends StackedView<HomeViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                width: MediaQuery.of(context).size.width,
-                color: kcWhiteColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset("assets/images/logo_light.png"),
-                    const Icon(Icons.search)
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 10,
-              child: viewModel.pages[viewModel.selectedTab],
-            )
-          ],
-        ),
-      ),
+      body: viewModel.pages[viewModel.selectedTab],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedLabelStyle: const TextStyle(color: kcSecondaryColor),

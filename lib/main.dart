@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: Theme.of(context).copyWith(
         appBarTheme: const AppBarTheme(
+          toolbarTextStyle: TextStyle(color: kcBlackColor),
           backgroundColor: kcWhiteColor,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.light,
