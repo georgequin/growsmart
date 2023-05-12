@@ -1,8 +1,11 @@
+import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
+import 'package:afriprize/ui/views/cart/checkout.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import 'cart_viewmodel.dart';
 
@@ -36,7 +39,7 @@ class CartView extends StackedView<CartViewModel> {
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 padding: const EdgeInsets.all(10),
-                height: 90,
+                height: 100,
                 decoration: BoxDecoration(
                   color: kcWhiteColor,
                   borderRadius: BorderRadius.circular(12),
@@ -190,7 +193,9 @@ class CartView extends StackedView<CartViewModel> {
           SubmitButton(
             isLoading: false,
             label: "Checkout",
-            submit: () {},
+            submit: () {
+              locator<NavigationService>().navigateToView(const Checkout());
+            },
             color: kcPrimaryColor,
             boldText: true,
           )

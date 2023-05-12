@@ -1,5 +1,6 @@
 import 'package:afriprize/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:afriprize/ui/dialogs/info_alert/info_alert_dialog.dart';
+import 'package:afriprize/ui/views/cart/checkout.dart';
 import 'package:afriprize/ui/views/home/home_view.dart';
 import 'package:afriprize/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -10,6 +11,7 @@ import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
 import 'package:afriprize/ui/views/draws/draws_view.dart';
 import 'package:afriprize/ui/views/cart/cart_view.dart';
 import 'package:afriprize/ui/views/notification/notification_view.dart';
+import 'package:afriprize/ui/views/profile/profile_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -22,6 +24,8 @@ import 'package:afriprize/ui/views/notification/notification_view.dart';
     MaterialRoute(page: DrawsView),
     MaterialRoute(page: CartView),
     MaterialRoute(page: NotificationView),
+    MaterialRoute(page: ProfileView),
+    MaterialRoute(page: Checkout),
 // @stacked-route
   ],
   dependencies: [

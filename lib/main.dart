@@ -5,6 +5,7 @@ import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 void main() {
@@ -24,6 +25,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: Theme.of(context).copyWith(
         appBarTheme: const AppBarTheme(
+          iconTheme: IconThemeData(
+            color: kcBlackColor
+          ),
           toolbarTextStyle: TextStyle(color: kcBlackColor),
           backgroundColor: kcWhiteColor,
           elevation: 0,
@@ -31,9 +35,8 @@ class MyApp extends StatelessWidget {
         ),
         primaryColor: kcBackgroundColor,
         focusColor: kcPrimaryColor,
-        textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Colors.black,
-            ),
+        textTheme:
+            GoogleFonts.poppinsTextTheme().apply(bodyColor: kcBlackColor),
       ),
       initialRoute: Routes.startupView,
       onGenerateRoute: StackedRouter().onGenerateRoute,

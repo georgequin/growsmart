@@ -29,7 +29,7 @@ class DrawsView extends StackedView<DrawsViewModel> {
             "assets/images/raffle.png",
           ),
           Container(
-            height: 200,
+            height: 210,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15), color: kcPrimaryColor),
             child: Padding(

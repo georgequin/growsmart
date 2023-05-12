@@ -4,6 +4,8 @@ import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/ui/common/app_strings.dart';
 import 'package:afriprize/ui/views/cart/cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
+import 'package:afriprize/ui/views/notification/notification_view.dart';
+import 'package:afriprize/ui/views/profile/profile_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -17,8 +19,8 @@ class HomeViewModel extends BaseViewModel {
     const DashboardView(),
     const DrawsView(),
     const CartView(),
-    Container(),
-    Container()
+    const NotificationView(),
+    const ProfileView()
   ];
 
   String get counterLabel => 'Counter is: $_counter';
