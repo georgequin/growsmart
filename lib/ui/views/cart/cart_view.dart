@@ -20,13 +20,24 @@ class CartView extends StackedView<CartViewModel> {
   ) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        centerTitle: false,
         title: const Text(
-          "Cart",
+          "My Carts",
           style: TextStyle(
             color: kcBlackColor,
           ),
         ),
+        actions: [
+          viewModel.itemsToDelete.isNotEmpty
+              ? const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Text(
+                    "Delete",
+                    style: TextStyle(color: Colors.red),
+                  ),
+              )
+              : const SizedBox()
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -36,100 +47,121 @@ class CartView extends StackedView<CartViewModel> {
             shrinkWrap: true,
             itemCount: 3,
             itemBuilder: (context, index) {
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                padding: const EdgeInsets.all(10),
-                height: 100,
-                decoration: BoxDecoration(
-                  color: kcWhiteColor,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                        color: const Color(0xFFE5E5E5).withOpacity(0.4),
-                        offset: const Offset(8.8, 8.8),
-                        blurRadius: 8.8)
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          height: 65,
-                          width: 65,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: const DecorationImage(
-                              image: AssetImage("assets/images/shoe.png"),
-                            ),
-                          ),
-                        ),
-                        horizontalSpaceMedium,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text("Cotton Shirt Regular Fit"),
-                            Text("Cotton Shirt Regular Fit"),
-                            verticalSpaceTiny,
-                            Text(
-                              "\$20",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          height: 20,
-                          width: 20,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: kcLightGrey),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: kcLightGrey),
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.remove,
-                                  size: 18,
-                                ),
+              return GestureDetector(
+                onTap: () {
+                  viewModel.addRemoveDelete(index);
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.all(10),
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: kcWhiteColor,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                          color: const Color(0xFFE5E5E5).withOpacity(0.4),
+                          offset: const Offset(8.8, 8.8),
+                          blurRadius: 8.8)
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            height: 65,
+                            width: 65,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              image: const DecorationImage(
+                                image: AssetImage("assets/images/shoe.png"),
                               ),
                             ),
-                            horizontalSpaceSmall,
-                            const Text("2"),
-                            horizontalSpaceSmall,
-                            Container(
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: kcLightGrey),
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: const Align(
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.add,
-                                  size: 18,
+                          ),
+                          horizontalSpaceMedium,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text("Cotton Shirt Regular Fit"),
+                              Text("Cotton Shirt Regular Fit"),
+                              verticalSpaceTiny,
+                              Text(
+                                "\$20",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          viewModel.itemsToDelete.contains(index)
+                              ? Container(
+                                  height: 20,
+                                  width: 20,
+                                  decoration: const BoxDecoration(
+                                    color: kcSecondaryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      color: kcWhiteColor,
+                                      size: 16,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  height: 20,
+                                  width: 20,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: kcLightGrey),
+                                  ),
+                                ),
+                          Row(
+                            children: [
+                              Container(
+                                height: 20,
+                                width: 20,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: kcLightGrey),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.remove,
+                                    size: 18,
+                                  ),
                                 ),
                               ),
-                            )
-                          ],
-                        )
-                      ],
-                    )
-                  ],
+                              horizontalSpaceSmall,
+                              const Text("2"),
+                              horizontalSpaceSmall,
+                              Container(
+                                height: 20,
+                                width: 20,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: kcLightGrey),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: const Align(
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 18,
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               );
             },
@@ -141,13 +173,13 @@ class CartView extends StackedView<CartViewModel> {
               Text(
                 "Sub-total",
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   color: kcMediumGrey,
                 ),
               ),
               Text(
                 "\$60",
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -158,13 +190,13 @@ class CartView extends StackedView<CartViewModel> {
               Text(
                 "Delivery-Fee",
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   color: kcMediumGrey,
                 ),
               ),
               Text(
                 "\$10",
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -179,13 +211,13 @@ class CartView extends StackedView<CartViewModel> {
               Text(
                 "Total",
                 style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     color: kcBlackColor,
                     fontWeight: FontWeight.bold),
               ),
               Text(
                 "\$70",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),

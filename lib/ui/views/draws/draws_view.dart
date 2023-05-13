@@ -89,14 +89,14 @@ class DrawsView extends StackedView<DrawsViewModel> {
             "Start time:",
             style: TextStyle(
               color: kcMediumGrey,
-              fontSize: 20,
+              fontSize: 18,
             ),
           ),
           const Text(
             "20th April 2023",
             style: TextStyle(
               color: kcMediumGrey,
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -105,14 +105,14 @@ class DrawsView extends StackedView<DrawsViewModel> {
             "End time:",
             style: TextStyle(
               color: kcMediumGrey,
-              fontSize: 20,
+              fontSize: 18,
             ),
           ),
           const Text(
             "29th April 2023",
             style: TextStyle(
               color: kcMediumGrey,
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
