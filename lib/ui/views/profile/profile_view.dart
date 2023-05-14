@@ -1,8 +1,11 @@
+import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/profile_picture.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import 'profile_viewmodel.dart';
 
@@ -52,19 +55,25 @@ class ProfileView extends StackedView<ProfileViewModel> {
           verticalSpaceLarge,
           const Text("User admin"),
           verticalSpaceMedium,
-          const ListTile(
-            leading: Icon(
+          ListTile(
+            onTap: () {
+              locator<NavigationService>().navigateToWallet();
+            },
+            leading: const Icon(
               Icons.wallet,
               color: kcSecondaryColor,
             ),
-            title: Text("Wallet"),
+            title: const Text("Wallet"),
           ),
-          const ListTile(
-            leading: Icon(
+          ListTile(
+            onTap: () {
+              locator<NavigationService>().navigateToTrack();
+            },
+            leading: const Icon(
               Icons.wallet,
               color: kcSecondaryColor,
             ),
-            title: Text("My orders"),
+            title: const Text("My orders"),
           ),
           const ListTile(
             leading: Icon(

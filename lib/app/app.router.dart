@@ -16,11 +16,13 @@ import 'package:afriprize/ui/views/home/home_view.dart' as _i2;
 import 'package:afriprize/ui/views/notification/notification_view.dart' as _i9;
 import 'package:afriprize/ui/views/onboarding/onboarding_view.dart' as _i4;
 import 'package:afriprize/ui/views/profile/profile_view.dart' as _i10;
+import 'package:afriprize/ui/views/profile/track.dart' as _i15;
+import 'package:afriprize/ui/views/profile/wallet.dart' as _i14;
 import 'package:afriprize/ui/views/startup/startup_view.dart' as _i3;
-import 'package:flutter/material.dart' as _i14;
+import 'package:flutter/material.dart' as _i16;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i15;
+import 'package:stacked_services/stacked_services.dart' as _i17;
 
 class Routes {
   static const homeView = '/home-view';
@@ -47,6 +49,10 @@ class Routes {
 
   static const receipt = '/Receipt';
 
+  static const wallet = '/Wallet';
+
+  static const track = '/Track';
+
   static const all = <String>{
     homeView,
     startupView,
@@ -60,6 +66,8 @@ class Routes {
     checkout,
     productDetail,
     receipt,
+    wallet,
+    track,
   };
 }
 
@@ -113,78 +121,98 @@ class StackedRouter extends _i1.RouterBase {
       Routes.receipt,
       page: _i13.Receipt,
     ),
+    _i1.RouteDef(
+      Routes.wallet,
+      page: _i14.Wallet,
+    ),
+    _i1.RouteDef(
+      Routes.track,
+      page: _i15.Track,
+    ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.HomeView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i2.HomeView(),
         settings: data,
       );
     },
     _i3.StartupView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i3.StartupView(),
         settings: data,
       );
     },
     _i4.OnboardingView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i4.OnboardingView(),
         settings: data,
       );
     },
     _i5.AuthView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i5.AuthView(),
         settings: data,
       );
     },
     _i6.DashboardView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i6.DashboardView(),
         settings: data,
       );
     },
     _i7.DrawsView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i7.DrawsView(),
         settings: data,
       );
     },
     _i8.CartView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i8.CartView(),
         settings: data,
       );
     },
     _i9.NotificationView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i9.NotificationView(),
         settings: data,
       );
     },
     _i10.ProfileView: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i10.ProfileView(),
         settings: data,
       );
     },
     _i11.Checkout: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i11.Checkout(),
         settings: data,
       );
     },
     _i12.ProductDetail: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i12.ProductDetail(),
         settings: data,
       );
     },
     _i13.Receipt: (data) {
-      return _i14.MaterialPageRoute<dynamic>(
+      return _i16.MaterialPageRoute<dynamic>(
         builder: (context) => const _i13.Receipt(),
+        settings: data,
+      );
+    },
+    _i14.Wallet: (data) {
+      return _i16.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i14.Wallet(),
+        settings: data,
+      );
+    },
+    _i15.Track: (data) {
+      return _i16.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i15.Track(),
         settings: data,
       );
     },
@@ -196,7 +224,7 @@ class StackedRouter extends _i1.RouterBase {
   Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
 }
 
-extension NavigatorStateExtension on _i15.NavigationService {
+extension NavigatorStateExtension on _i17.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -365,6 +393,34 @@ extension NavigatorStateExtension on _i15.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToWallet([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.wallet,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToTrack([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.track,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> replaceWithHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -527,6 +583,34 @@ extension NavigatorStateExtension on _i15.NavigationService {
         transition,
   ]) async {
     return replaceWith<dynamic>(Routes.receipt,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithWallet([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.wallet,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithTrack([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.track,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
