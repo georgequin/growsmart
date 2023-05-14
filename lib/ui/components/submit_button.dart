@@ -8,6 +8,8 @@ class SubmitButton extends StatelessWidget {
   final Color textColor;
   final bool boldText;
   final IconData? icon;
+  final Color? iconColor;
+  final bool iconIsPrefix;
   final bool buttonDisabled;
 
   const SubmitButton(
@@ -17,8 +19,10 @@ class SubmitButton extends StatelessWidget {
       required this.submit,
       required this.color,
       this.icon,
+      this.iconColor,
       this.textColor = Colors.white,
       this.boldText = false,
+      this.iconIsPrefix = false,
       this.buttonDisabled = false})
       : super(key: key);
 
@@ -56,6 +60,17 @@ class SubmitButton extends StatelessWidget {
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        iconIsPrefix
+                            ? Row(
+                                children: [
+                                  Icon(
+                                    icon,
+                                    color: iconColor ?? Colors.white,
+                                  ),
+                                  const SizedBox(width: 10),
+                                ],
+                              )
+                            : const SizedBox(),
                         Text(
                           label,
                           style: TextStyle(
@@ -65,11 +80,17 @@ class SubmitButton extends StatelessWidget {
                                 boldText ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        Icon(
-                          icon,
-                          color: Colors.white,
-                        )
+                        iconIsPrefix
+                            ? const SizedBox()
+                            : Row(
+                                children: [
+                                  const SizedBox(width: 10),
+                                  Icon(
+                                    icon,
+                                    color: iconColor ?? Colors.white,
+                                  ),
+                                ],
+                              )
                       ],
                     )
                   : Text(
