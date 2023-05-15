@@ -146,7 +146,8 @@ class _ProductDetailState extends State<ProductDetail> {
                 ),
                 verticalSpaceLarge,
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 25.0, vertical: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -193,7 +194,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       ),
                       Container(
                         height: 50,
-                        width: 180,
+                        width: 160,
                         decoration: BoxDecoration(
                             color: kcPrimaryColor,
                             borderRadius: BorderRadius.circular(9)),

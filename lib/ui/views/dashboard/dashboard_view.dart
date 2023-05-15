@@ -333,12 +333,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   TextSpan(
                                       text: "Buy Flipflop for: ",
                                       style: GoogleFonts.inter(
-                                          color: kcBlackColor)),
+                                          color: kcBlackColor, fontSize: 12)),
                                   TextSpan(
                                       text: " \$7.50",
                                       style: GoogleFonts.inter(
-                                        color: kcSecondaryColor,
-                                      ))
+                                          color: kcSecondaryColor,
+                                          fontSize: 12))
                                 ],
                               ),
                             )
