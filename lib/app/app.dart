@@ -46,6 +46,7 @@ import '../ui/views/profile/wallet.dart';
     LazySingleton(classType: BottomSheetService),
     LazySingleton(classType: DialogService),
     LazySingleton(classType: NavigationService),
+    LazySingleton(classType: SnackbarService),
     LazySingleton(classType: ApiService),
     LazySingleton(classType: LocalStorage),
     LazySingleton(classType: Repository),

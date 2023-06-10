@@ -38,7 +38,7 @@ class _LoginState extends State<Login> {
           ),
           verticalSpaceMedium,
           TextFieldWidget(
-            hint: "Username",
+            hint: "Email",
             controller: TextEditingController(),
           ),
           verticalSpaceMedium,

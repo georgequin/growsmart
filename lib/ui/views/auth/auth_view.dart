@@ -18,14 +18,17 @@ class AuthView extends StatefulWidget {
 
 class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   late TabController tabController;
-  final List<Widget> _tabs = [
-    const Login(),
-    const Register(),
-  ];
+  late List<Widget> _tabs;
 
   @override
   void initState() {
-    tabController = TabController(length: _tabs.length, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
+    _tabs = [
+      const Login(),
+      Register(
+        controller: tabController,
+      ),
+    ];
     super.initState();
   }
 

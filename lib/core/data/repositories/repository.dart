@@ -9,9 +9,15 @@ class Repository extends IRepository {
   @override
   Future<ApiResponse> login(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
-      method: HttpMethod.post,
-      endpoint: "auth/login",
-    );
+        method: HttpMethod.post, endpoint: "auth/login", reqBody: req);
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> register(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+        method: HttpMethod.post, endpoint: "auth/signup", reqBody: req);
 
     return response;
   }

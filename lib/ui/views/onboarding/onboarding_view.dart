@@ -29,7 +29,9 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
             children: [
               viewModel.currentPage == 0
                   ? InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        locator<NavigationService>().navigateToAuthView();
+                      },
                       child: const Align(
                         alignment: Alignment.centerRight,
                         child: Text(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class DropdownWidget extends StatelessWidget {
   final value;
   final List<String> itemsList;
+  final List<String>? assets;
   final String hint;
   final Function onChanged;
 
@@ -13,6 +14,7 @@ class DropdownWidget extends StatelessWidget {
     required this.itemsList,
     required this.hint,
     required this.onChanged,
+    this.assets,
   }) : super(key: key);
 
   @override
@@ -53,11 +55,25 @@ class DropdownWidget extends StatelessWidget {
       ),
       value: value,
       items: itemsList.map((String value) {
+        int index = itemsList.indexOf(value);
+
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(
-            value,
-            style: const TextStyle(color: Colors.black),
+          child: Row(
+            children: [
+              assets != null
+                  ? Image.asset(
+                      assets![index],
+                      height: 20,
+                      width: 20,
+                    )
+                  : const SizedBox(),
+              const SizedBox(width: 5),
+              Text(
+                value,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ],
           ),
         );
       }).toList(),
