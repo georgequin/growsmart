@@ -1,3 +1,6 @@
+import 'package:afriprize/core/data/repositories/repository.dart';
+import 'package:afriprize/core/network/api_service.dart';
+import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:afriprize/ui/dialogs/info_alert/info_alert_dialog.dart';
 import 'package:afriprize/ui/views/cart/checkout.dart';
@@ -20,6 +23,7 @@ import '../ui/views/profile/wallet.dart';
 // @stacked-import
 
 @StackedApp(
+  logger: StackedLogger(),
   routes: [
     MaterialRoute(page: HomeView),
     MaterialRoute(page: StartupView),
@@ -42,6 +46,9 @@ import '../ui/views/profile/wallet.dart';
     LazySingleton(classType: BottomSheetService),
     LazySingleton(classType: DialogService),
     LazySingleton(classType: NavigationService),
+    LazySingleton(classType: ApiService),
+    LazySingleton(classType: LocalStorage),
+    LazySingleton(classType: Repository),
     // @stacked-service
   ],
   bottomsheets: [
