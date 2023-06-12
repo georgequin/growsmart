@@ -101,6 +101,14 @@ class _RegisterState extends State<Register> {
           TextFieldWidget(
             hint: "Password",
             controller: model.password,
+            obscureText: model.obscure,
+            suffix: InkWell(
+              onTap: () {
+                model.toggleObscure();
+              },
+              child:
+                  Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
+            ),
           ),
           verticalSpaceSmall,
           const Padding(
@@ -111,6 +119,14 @@ class _RegisterState extends State<Register> {
           TextFieldWidget(
             hint: "Confirm password",
             controller: model.cPassword,
+            obscureText: model.obscure,
+            suffix: InkWell(
+              onTap: () {
+                model.toggleObscure();
+              },
+              child:
+                  Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
+            ),
           ),
           verticalSpaceSmall,
           const Padding(
