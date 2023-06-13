@@ -86,16 +86,15 @@ class AuthViewModel extends BaseViewModel {
         "password": password.text
       });
       if (res.statusCode == 200) {
+        snackBar.showSnackbar(message: res.data["message"]);
+        controller.animateTo(0);
+        locator<NavigationService>().replaceWithOtpView(email: email.text);
         firstname.text = "";
         lastname.text = "";
         email.text = "";
         phone.text = "";
         password.text = "";
-        cPassword.text = "";
         terms = false;
-        rebuildUi();
-        snackBar.showSnackbar(message: res.data["message"]);
-        controller.animateTo(0);
       } else {
         if (res.data["message"].runtimeType
             .toString()

@@ -1,3 +1,5 @@
+import 'package:afriprize/core/utils/local_store_dir.dart';
+import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:stacked/stacked.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
@@ -13,6 +15,12 @@ class StartupViewModel extends BaseViewModel {
     // This is where you can make decisions on where your app should navigate when
     // you have custom startup logic
 
-    _navigationService.replaceWithOnboardingView();
+    bool? onboarded =
+        await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
+    if (onboarded == null || onboarded == false) {
+      _navigationService.replaceWithOnboardingView();
+    } else {
+      _navigationService.replaceWithAuthView();
+    }
   }
 }

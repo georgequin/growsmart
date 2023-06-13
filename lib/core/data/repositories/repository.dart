@@ -9,7 +9,10 @@ class Repository extends IRepository {
   @override
   Future<ApiResponse> login(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
-        method: HttpMethod.post, endpoint: "auth/login", reqBody: req);
+      method: HttpMethod.post,
+      endpoint: "auth/login",
+      reqBody: req,
+    );
 
     return response;
   }
@@ -17,7 +20,21 @@ class Repository extends IRepository {
   @override
   Future<ApiResponse> register(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
-        method: HttpMethod.post, endpoint: "auth/signup", reqBody: req);
+      method: HttpMethod.post,
+      endpoint: "auth/signup",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> verify(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/verification",
+      reqBody: req,
+    );
 
     return response;
   }

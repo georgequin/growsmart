@@ -20,6 +20,7 @@ import 'package:afriprize/ui/views/notification/notification_view.dart';
 import 'package:afriprize/ui/views/profile/profile_view.dart';
 
 import '../ui/views/profile/wallet.dart';
+import 'package:afriprize/ui/views/otp/otp_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -40,6 +41,7 @@ import '../ui/views/profile/wallet.dart';
     MaterialRoute(page: Wallet),
     MaterialRoute(page: Track),
 
+MaterialRoute(page: OtpView),
 // @stacked-route
   ],
   dependencies: [

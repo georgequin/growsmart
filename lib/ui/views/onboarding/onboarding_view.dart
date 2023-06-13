@@ -99,6 +99,12 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
   }
 
   @override
+  void onViewModelReady(OnboardingViewModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
+  }
+
+  @override
   OnboardingViewModel viewModelBuilder(
     BuildContext context,
   ) =>

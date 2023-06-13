@@ -5,4 +5,7 @@ abstract class IRepository{
 
   Future<ApiResponse> register(Map<String,dynamic> req);
 
+  Future<ApiResponse> verify(Map<String,dynamic> req);
+
+
 }
