@@ -1,4 +1,7 @@
 import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/core/data/models/cart_item.dart';
+import 'package:afriprize/core/data/models/order_info.dart';
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/drop_down_widget.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
@@ -10,13 +13,20 @@ import '../../common/ui_helpers.dart';
 import '../../components/text_field_widget.dart';
 
 class Checkout extends StatefulWidget {
-  const Checkout({Key? key}) : super(key: key);
+  final List<OrderInfo> infoList;
+
+  const Checkout({
+    required this.infoList,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<Checkout> createState() => _CheckoutState();
 }
 
 class _CheckoutState extends State<Checkout> {
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,136 +48,137 @@ class _CheckoutState extends State<Checkout> {
                 "Order review",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: const Text("2 items in cart"),
-              children: List.generate(
-                  2,
-                  (index) => GestureDetector(
-                        onTap: () {
-                          // viewModel.addRemoveDelete(index);
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          padding: const EdgeInsets.all(10),
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: kcWhiteColor,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                  color:
-                                      const Color(0xFFE5E5E5).withOpacity(0.4),
-                                  offset: const Offset(8.8, 8.8),
-                                  blurRadius: 8.8)
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    height: 65,
-                                    width: 65,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: const DecorationImage(
-                                        image: AssetImage(
-                                            "assets/images/shoe.png"),
+              subtitle: Text("${cart.value.length} items in cart"),
+              children: List.generate(cart.value.length, (index) {
+                CartItem item = cart.value[index];
+
+                return GestureDetector(
+                  onTap: () {
+                    // viewModel.addRemoveDelete(index);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.all(10),
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: kcWhiteColor,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                            color: const Color(0xFFE5E5E5).withOpacity(0.4),
+                            offset: const Offset(8.8, 8.8),
+                            blurRadius: 8.8)
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              height: 65,
+                              width: 65,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                image: item.product!.pictures!.isEmpty
+                                    ? null
+                                    : DecorationImage(
+                                        image: NetworkImage(item
+                                            .product!.pictures![0].location!),
                                       ),
-                                    ),
-                                  ),
-                                  horizontalSpaceMedium,
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text("Cotton Shirt Regular Fit"),
-                                      Text("Cotton Shirt Regular Fit"),
-                                      verticalSpaceTiny,
-                                      Text(
-                                        "\$20",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      )
-                                    ],
-                                  )
-                                ],
                               ),
-                              Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  // viewModel.itemsToDelete.contains(index)
-                                  //     ? Container(
-                                  //         height: 20,
-                                  //         width: 20,
-                                  //         decoration: const BoxDecoration(
-                                  //           color: kcSecondaryColor,
-                                  //           shape: BoxShape.circle,
-                                  //         ),
-                                  //         child: const Center(
-                                  //           child: Icon(
-                                  //             Icons.check,
-                                  //             color: kcWhiteColor,
-                                  //             size: 16,
-                                  //           ),
-                                  //         ),
-                                  //       )
-                                  //     :
-                                  Container(
-                                    height: 20,
-                                    width: 20,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: kcLightGrey),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: kcLightGrey),
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.remove,
-                                            size: 18,
-                                          ),
-                                        ),
-                                      ),
-                                      horizontalSpaceSmall,
-                                      const Text("2"),
-                                      horizontalSpaceSmall,
-                                      Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: kcLightGrey),
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: const Align(
-                                          alignment: Alignment.center,
-                                          child: Icon(
-                                            Icons.add,
-                                            size: 18,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
+                            ),
+                            horizontalSpaceMedium,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(item.product!.productName ?? ""),
+                                Text(item.product!.productName ?? ""),
+                                verticalSpaceTiny,
+                                Text(
+                                  "N${item.product!.productPrice}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                )
+                              ],
+                            )
+                          ],
                         ),
-                      )),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // viewModel.itemsToDelete.contains(index)
+                            //     ? Container(
+                            //         height: 20,
+                            //         width: 20,
+                            //         decoration: const BoxDecoration(
+                            //           color: kcSecondaryColor,
+                            //           shape: BoxShape.circle,
+                            //         ),
+                            //         child: const Center(
+                            //           child: Icon(
+                            //             Icons.check,
+                            //             color: kcWhiteColor,
+                            //             size: 16,
+                            //           ),
+                            //         ),
+                            //       )
+                            //     :
+                            Container(
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: kcLightGrey),
+                              ),
+                            ),
+                            // Row(
+                            //   children: [
+                            //     Container(
+                            //       height: 20,
+                            //       width: 20,
+                            //       decoration: BoxDecoration(
+                            //           border:
+                            //               Border.all(color: kcLightGrey),
+                            //           borderRadius:
+                            //               BorderRadius.circular(5)),
+                            //       child: const Center(
+                            //         child: Icon(
+                            //           Icons.remove,
+                            //           size: 18,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     horizontalSpaceSmall,
+                            //     const Text("2"),
+                            //     horizontalSpaceSmall,
+                            //     Container(
+                            //       height: 20,
+                            //       width: 20,
+                            //       decoration: BoxDecoration(
+                            //           border:
+                            //               Border.all(color: kcLightGrey),
+                            //           borderRadius:
+                            //               BorderRadius.circular(5)),
+                            //       child: const Align(
+                            //         alignment: Alignment.center,
+                            //         child: Icon(
+                            //           Icons.add,
+                            //           size: 18,
+                            //         ),
+                            //       ),
+                            //     )
+                            //   ],
+                            // )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              }),
             ),
           ),
           verticalSpaceMedium,
@@ -182,8 +193,8 @@ class _CheckoutState extends State<Checkout> {
                 verticalSpaceMedium,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
+                  children: [
+                    const Text(
                       "Sub-total",
                       style: TextStyle(
                         fontSize: 16,
@@ -191,16 +202,16 @@ class _CheckoutState extends State<Checkout> {
                       ),
                     ),
                     Text(
-                      "\$60",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      "N${getSubTotal()}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 verticalSpaceSmall,
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Text(
                       "Delivery-Fee",
                       style: TextStyle(
@@ -209,7 +220,7 @@ class _CheckoutState extends State<Checkout> {
                       ),
                     ),
                     Text(
-                      "\$10",
+                      "N0",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -222,8 +233,8 @@ class _CheckoutState extends State<Checkout> {
                 verticalSpaceSmall,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
+                  children: [
+                    const Text(
                       "Total",
                       style: TextStyle(
                           fontSize: 16,
@@ -231,9 +242,9 @@ class _CheckoutState extends State<Checkout> {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "\$70",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      "N${getSubTotal()}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -432,6 +443,12 @@ class _CheckoutState extends State<Checkout> {
                               color: kcBlackColor,
                               width: 1,
                             )),
+                        child: const Center(
+                          child: Icon(
+                            Icons.check,
+                            size: 12,
+                          ),
+                        ),
                       ),
                       horizontalSpaceSmall,
                       const Text(
@@ -451,8 +468,8 @@ class _CheckoutState extends State<Checkout> {
                   ),
                 ),
                 verticalSpaceSmall,
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Icon(
                       Icons.lock,
                       color: kcSecondaryColor,
@@ -471,10 +488,10 @@ class _CheckoutState extends State<Checkout> {
           ),
           verticalSpaceMassive,
           SubmitButton(
-            isLoading: false,
-            label: "Pay \$70",
+            isLoading: loading,
+            label: "Pay N${getSubTotal()}",
             submit: () {
-              locator<NavigationService>().navigateTo(Routes.receipt);
+              // locator<NavigationService>().navigateTo(Routes.receipt);
             },
             color: kcPrimaryColor,
             boldText: true,
@@ -485,5 +502,15 @@ class _CheckoutState extends State<Checkout> {
         ],
       ),
     );
+  }
+
+  int getSubTotal() {
+    int total = 0;
+
+    for (var element in cart.value) {
+      total = total + (element.product!.productPrice! * element.quantity!);
+    }
+
+    return total;
   }
 }

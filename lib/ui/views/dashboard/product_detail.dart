@@ -1,17 +1,29 @@
+import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/core/data/models/cart_item.dart';
+import 'package:afriprize/core/data/models/product.dart';
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class ProductDetail extends StatefulWidget {
-  const ProductDetail({Key? key}) : super(key: key);
+  final Product product;
+
+  const ProductDetail({
+    required this.product,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  int quantity = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,12 +36,15 @@ class _ProductDetailState extends State<ProductDetail> {
             flexibleSpace: Stack(
               children: [
                 Container(
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage("assets/images/mac.png"),
-                      ),
-                      borderRadius: BorderRadius.only(
+                  decoration: BoxDecoration(
+                      image: widget.product.pictures!.isEmpty
+                          ? null
+                          : DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                  widget.product.pictures![0].location!),
+                            ),
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(25),
                         bottomRight: Radius.circular(25),
                       )),
@@ -39,6 +54,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   child: Container(
                     height: 40,
                     width: 250,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: const BoxDecoration(
                       color: kcWhiteColor,
                       borderRadius: BorderRadius.only(
@@ -48,7 +64,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     child: Center(
                       child: Text(
-                        "Stand a chance to win macbook pro 2020",
+                        "${widget.product.raffleAd?[0].adName}",
                         style: GoogleFonts.inter(fontSize: 11),
                       ),
                     ),
@@ -68,23 +84,27 @@ class _ProductDetailState extends State<ProductDetail> {
                 verticalSpaceMedium,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(
-                      4,
-                      (index) => Container(
+                  children:
+                      List.generate(widget.product.pictures!.length, (index) {
+                    String? image = widget.product.pictures![index].location;
+                    return image == null
+                        ? const SizedBox()
+                        : Container(
                             height: 70,
                             width: 70,
                             decoration: BoxDecoration(
-                              image: const DecorationImage(
+                              image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: AssetImage("assets/images/flip.png")),
+                                  image: NetworkImage(image)),
                               color: kcWhiteColor,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                          )),
+                          );
+                  }),
                 ),
                 verticalSpaceMedium,
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     horizontalSpaceMedium,
                     Icon(
                       Icons.star,
@@ -111,18 +131,19 @@ class _ProductDetailState extends State<ProductDetail> {
                   ],
                 ),
                 verticalSpaceSmall,
-                const Padding(
-                  padding: EdgeInsets.only(left: 25.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
                   child: Text(
-                    "Flipflop",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    widget.product.productName ?? "",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 25.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
                   child: Text(
-                    "\$7.50",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    "N${widget.product.productPrice}",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 22),
                   ),
                 ),
                 verticalSpaceMedium,
@@ -137,11 +158,11 @@ class _ProductDetailState extends State<ProductDetail> {
                   ),
                 ),
                 verticalSpaceSmall,
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elementum nec morbi pellentesque lacus, aenean enim diam dolor. Dignissim porttitor magna quis facilisis elit lorem elit arcu. Sit mattis cursus feugiat a a arcu facilisis ipsum tortor. Arcu quisque tincidunt cras vehicula id et vulputate. Ut facilisis viverra nunc tempus. Id ",
-                    style: TextStyle(fontSize: 12),
+                    widget.product.productDescription ?? "",
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ),
                 verticalSpaceLarge,
@@ -159,49 +180,75 @@ class _ProductDetailState extends State<ProductDetail> {
                             borderRadius: BorderRadius.circular(9)),
                         child: Row(
                           children: [
-                            Container(
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                  color: kcWhiteColor,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.remove,
-                                  size: 18,
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (quantity > 0) {
+                                    quantity--;
+                                  }
+                                });
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                decoration: BoxDecoration(
+                                    color: kcWhiteColor,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.remove,
+                                    size: 18,
+                                  ),
                                 ),
                               ),
                             ),
                             horizontalSpaceSmall,
-                            const Text("2"),
+                            Text("$quantity"),
                             horizontalSpaceSmall,
-                            Container(
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                  color: kcWhiteColor,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: const Align(
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.add,
-                                  size: 18,
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  quantity++;
+                                });
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                decoration: BoxDecoration(
+                                    color: kcWhiteColor,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: const Align(
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 18,
+                                  ),
                                 ),
                               ),
                             )
                           ],
                         ),
                       ),
-                      Container(
-                        height: 50,
-                        width: 160,
-                        decoration: BoxDecoration(
-                            color: kcPrimaryColor,
-                            borderRadius: BorderRadius.circular(9)),
-                        child: const Center(
-                          child: Text(
-                            "Add to cart",
-                            style: TextStyle(color: kcWhiteColor),
+                      InkWell(
+                        onTap: () {
+                          CartItem cartItem = CartItem(
+                              product: widget.product, quantity: quantity);
+                          cart.value.add(cartItem);
+                          locator<SnackbarService>()
+                              .showSnackbar(message: "Product added to cart");
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 160,
+                          decoration: BoxDecoration(
+                              color: kcPrimaryColor,
+                              borderRadius: BorderRadius.circular(9)),
+                          child: const Center(
+                            child: Text(
+                              "Add to cart",
+                              style: TextStyle(color: kcWhiteColor),
+                            ),
                           ),
                         ),
                       )

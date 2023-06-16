@@ -7,6 +7,7 @@ import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -48,10 +49,12 @@ class AuthViewModel extends BaseViewModel {
         "password": password.text,
       });
       if (res.statusCode == 200) {
+        Map<String, dynamic> userDecoded = JwtDecoder.decode(res.data["token"]);
+        print(userDecoded);
         // loggedInUser.value =
         //     User.fromJson(Map<String, dynamic>.from(res.data["data"]));
-        // locator<LocalStorage>()
-        //     .save(LocalStorageDir.authToken, res.data["data"]["token"]);
+        locator<LocalStorage>()
+            .save(LocalStorageDir.authToken, res.data["token"]);
         locator<LocalStorage>().save(LocalStorageDir.remember, terms);
         if (terms) {
           locator<LocalStorage>().save(LocalStorageDir.lastEmail, email.text);

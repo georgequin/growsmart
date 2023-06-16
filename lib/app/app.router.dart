@@ -5,6 +5,9 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:afriprize/core/data/models/order_info.dart' as _i18;
+import 'package:afriprize/core/data/models/product.dart' as _i20;
+import 'package:afriprize/core/data/models/profile.dart' as _i21;
 import 'package:afriprize/ui/views/auth/auth_view.dart' as _i5;
 import 'package:afriprize/ui/views/cart/cart_view.dart' as _i8;
 import 'package:afriprize/ui/views/cart/checkout.dart' as _i11;
@@ -20,11 +23,11 @@ import 'package:afriprize/ui/views/profile/profile_view.dart' as _i10;
 import 'package:afriprize/ui/views/profile/track.dart' as _i15;
 import 'package:afriprize/ui/views/profile/wallet.dart' as _i14;
 import 'package:afriprize/ui/views/startup/startup_view.dart' as _i3;
-import 'package:flutter/foundation.dart' as _i18;
+import 'package:flutter/foundation.dart' as _i19;
 import 'package:flutter/material.dart' as _i17;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i19;
+import 'package:stacked_services/stacked_services.dart' as _i22;
 
 class Routes {
   static const homeView = '/home-view';
@@ -196,14 +199,18 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i11.Checkout: (data) {
+      final args = data.getArgs<CheckoutArguments>(nullOk: false);
       return _i17.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i11.Checkout(),
+        builder: (context) =>
+            _i11.Checkout(infoList: args.infoList, key: args.key),
         settings: data,
       );
     },
     _i12.ProductDetail: (data) {
+      final args = data.getArgs<ProductDetailArguments>(nullOk: false);
       return _i17.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i12.ProductDetail(),
+        builder: (context) =>
+            _i12.ProductDetail(product: args.product, key: args.key),
         settings: data,
       );
     },
@@ -214,8 +221,9 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i14.Wallet: (data) {
+      final args = data.getArgs<WalletArguments>(nullOk: false);
       return _i17.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i14.Wallet(),
+        builder: (context) => _i14.Wallet(wallet: args.wallet, key: args.key),
         settings: data,
       );
     },
@@ -240,6 +248,87 @@ class StackedRouter extends _i1.RouterBase {
   Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
 }
 
+class CheckoutArguments {
+  const CheckoutArguments({
+    required this.infoList,
+    this.key,
+  });
+
+  final List<_i18.OrderInfo> infoList;
+
+  final _i19.Key? key;
+
+  @override
+  String toString() {
+    return '{"infoList": "$infoList", "key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant CheckoutArguments other) {
+    if (identical(this, other)) return true;
+    return other.infoList == infoList && other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return infoList.hashCode ^ key.hashCode;
+  }
+}
+
+class ProductDetailArguments {
+  const ProductDetailArguments({
+    required this.product,
+    this.key,
+  });
+
+  final _i20.Product product;
+
+  final _i19.Key? key;
+
+  @override
+  String toString() {
+    return '{"product": "$product", "key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant ProductDetailArguments other) {
+    if (identical(this, other)) return true;
+    return other.product == product && other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return product.hashCode ^ key.hashCode;
+  }
+}
+
+class WalletArguments {
+  const WalletArguments({
+    required this.wallet,
+    this.key,
+  });
+
+  final _i21.Wallet wallet;
+
+  final _i19.Key? key;
+
+  @override
+  String toString() {
+    return '{"wallet": "$wallet", "key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant WalletArguments other) {
+    if (identical(this, other)) return true;
+    return other.wallet == wallet && other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return wallet.hashCode ^ key.hashCode;
+  }
+}
+
 class OtpViewArguments {
   const OtpViewArguments({
     required this.email,
@@ -248,7 +337,7 @@ class OtpViewArguments {
 
   final String email;
 
-  final _i18.Key? key;
+  final _i19.Key? key;
 
   @override
   String toString() {
@@ -267,7 +356,7 @@ class OtpViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i19.NavigationService {
+extension NavigatorStateExtension on _i22.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -394,28 +483,34 @@ extension NavigatorStateExtension on _i19.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToCheckout([
+  Future<dynamic> navigateToCheckout({
+    required List<_i18.OrderInfo> infoList,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.checkout,
+        arguments: CheckoutArguments(infoList: infoList, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
         transition: transition);
   }
 
-  Future<dynamic> navigateToProductDetail([
+  Future<dynamic> navigateToProductDetail({
+    required _i20.Product product,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.productDetail,
+        arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -436,14 +531,17 @@ extension NavigatorStateExtension on _i19.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToWallet([
+  Future<dynamic> navigateToWallet({
+    required _i21.Wallet wallet,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.wallet,
+        arguments: WalletArguments(wallet: wallet, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -466,7 +564,7 @@ extension NavigatorStateExtension on _i19.NavigationService {
 
   Future<dynamic> navigateToOtpView({
     required String email,
-    _i18.Key? key,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -607,28 +705,34 @@ extension NavigatorStateExtension on _i19.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithCheckout([
+  Future<dynamic> replaceWithCheckout({
+    required List<_i18.OrderInfo> infoList,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.checkout,
+        arguments: CheckoutArguments(infoList: infoList, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
         transition: transition);
   }
 
-  Future<dynamic> replaceWithProductDetail([
+  Future<dynamic> replaceWithProductDetail({
+    required _i20.Product product,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.productDetail,
+        arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -649,14 +753,17 @@ extension NavigatorStateExtension on _i19.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithWallet([
+  Future<dynamic> replaceWithWallet({
+    required _i21.Wallet wallet,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.wallet,
+        arguments: WalletArguments(wallet: wallet, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -679,7 +786,7 @@ extension NavigatorStateExtension on _i19.NavigationService {
 
   Future<dynamic> replaceWithOtpView({
     required String email,
-    _i18.Key? key,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,

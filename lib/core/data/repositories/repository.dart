@@ -38,4 +38,64 @@ class Repository extends IRepository {
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> getProducts() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "products/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getSellingFast() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "products/sellingfast",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getProfile() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "user/profile",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> initTransaction(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+        method: HttpMethod.post, endpoint: "user/wallet/fund", reqBody: req);
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> saveOrder(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "orders/save",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> verifyTransaction(String ref) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "transaction/verify/$ref",
+      reqBody: {},
+    );
+
+    return response;
+  }
 }

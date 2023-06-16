@@ -1,6 +1,8 @@
 import 'package:afriprize/app/app.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
+import 'package:afriprize/core/data/models/cart_item.dart';
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
@@ -9,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../core/data/models/product.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
@@ -236,165 +239,58 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ),
           ),
           verticalSpaceSmall,
-          InkWell(
-            onTap: () {
-              locator<NavigationService>().navigateTo(Routes.productDetail);
-            },
-            child: Container(
-              height: 250,
-              decoration: BoxDecoration(
-                  color: kcWhiteColor,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: kcBlackColor.withOpacity(0.1),
-                      offset: const Offset(0, 4),
-                      blurRadius: 4,
-                    )
-                  ]),
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        child: Image.asset(
-                          "assets/images/laptop.png",
-                          fit: BoxFit.cover,
-                          width: MediaQuery.of(context).size.width,
-                          height: 170,
-                        ),
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12)),
-                      ),
-                      Positioned(
-                        top: 20,
-                        left: 20,
-                        child: Container(
-                          height: 20,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: kcWhiteColor,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.star,
-                                color: kcStarColor,
-                                size: 20,
-                              ),
-                              Text(
-                                "4.9",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 20,
-                        right: 20,
-                        child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                fit: BoxFit.cover,
-                                image: AssetImage("assets/images/flip.png")),
-                            color: kcWhiteColor,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Win Macbook pro 2020",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                      text: "Buy Flipflop for: ",
-                                      style: GoogleFonts.inter(
-                                          color: kcBlackColor, fontSize: 12)),
-                                  TextSpan(
-                                      text: " \$7.50",
-                                      style: GoogleFonts.inter(
-                                          color: kcSecondaryColor,
-                                          fontSize: 12))
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            const Text(
-                              "800  sold out of 2000",
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 3,
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                            verticalSpaceTiny,
-                            SizedBox(
-                              width: 100,
-                              child: LinearProgressIndicator(
-                                value: 0.4,
-                                backgroundColor:
-                                    kcSecondaryColor.withOpacity(0.3),
-                                valueColor: const AlwaysStoppedAnimation(
-                                    kcSecondaryColor),
-                              ),
-                            ),
-                            verticalSpaceSmall,
-                            const Text(
-                              "Draw date: 26th April",
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 3,
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+          SizedBox(
+            height: 400,
+            child: viewModel.busy(viewModel.productList)
+                ? const Center(
+                    child: CircularProgressIndicator(),
                   )
-                ],
-              ),
-            ),
+                : PageView.builder(
+                    itemCount: viewModel.productList.length,
+                    itemBuilder: (context, index) {
+                      Product product = viewModel.productList[index];
+                      return Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              locator<NavigationService>().navigateTo(
+                                  Routes.productDetail,
+                                  arguments:
+                                      ProductDetailArguments(product: product));
+                            },
+                            child: ProductRow(
+                              product: product,
+                            ),
+                          ),
+                          verticalSpaceMedium,
+                          SubmitButton(
+                            isLoading: false,
+                            label: "Add to cart",
+                            submit: () {
+                              CartItem cartItem =
+                                  CartItem(product: product, quantity: 1);
+                              cart.value.add(cartItem);
+                              locator<SnackbarService>().showSnackbar(
+                                  message: "Product added to cart");
+                            },
+                            color: kcPrimaryColor,
+                            boldText: true,
+                            icon: Icons.shopping_cart_outlined,
+                          )
+                        ],
+                      );
+                    }),
           ),
-          verticalSpaceMedium,
-          SubmitButton(
-            isLoading: false,
-            label: "Add to cart",
-            submit: () {},
-            color: kcPrimaryColor,
-            boldText: true,
-            icon: Icons.shopping_cart_outlined,
-          )
         ],
       ),
     );
+  }
+
+  @override
+  void onViewModelReady(DashboardViewModel viewModel) {
+    viewModel.getProducts();
+    viewModel.getSellingFast();
+    super.onViewModelReady(viewModel);
   }
 
   Widget _indicator(bool selected) {
@@ -414,4 +310,168 @@ class DashboardView extends StackedView<DashboardViewModel> {
     BuildContext context,
   ) =>
       DashboardViewModel();
+}
+
+class ProductRow extends StatelessWidget {
+  final Product product;
+
+  const ProductRow({
+    required this.product,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      height: 250,
+      decoration: BoxDecoration(
+          color: kcWhiteColor,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: kcBlackColor.withOpacity(0.1),
+              offset: const Offset(0, 4),
+              blurRadius: 4,
+            )
+          ]),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12)),
+                child: product.pictures!.isEmpty
+                    ? SizedBox(
+                        height: 170,
+                        width: MediaQuery.of(context).size.width,
+                      )
+                    : Image.network(
+                        product.pictures![0].location!,
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                        height: 170,
+                      ),
+              ),
+              Positioned(
+                top: 20,
+                left: 20,
+                child: Container(
+                  height: 20,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: kcWhiteColor,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: kcStarColor,
+                        size: 20,
+                      ),
+                      Text(
+                        "4.9",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    image: product.pictures!.isEmpty
+                        ? null
+                        : DecorationImage(
+                            fit: BoxFit.cover,
+                            image:
+                                NetworkImage(product.pictures![0].location!)),
+                    color: kcWhiteColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              )
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.raffleAd?[0].adName ?? "",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                                text: "Buy ${product.productName} for: ",
+                                style: GoogleFonts.inter(
+                                    color: kcBlackColor, fontSize: 12)),
+                            TextSpan(
+                                text: " N${product.productPrice}",
+                                style: GoogleFonts.inter(
+                                    color: kcSecondaryColor, fontSize: 12))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  children: [
+                    const Text(
+                      "800  sold out of 2000",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    verticalSpaceTiny,
+                    SizedBox(
+                      width: 100,
+                      child: LinearProgressIndicator(
+                        value: 0.4,
+                        backgroundColor: kcSecondaryColor.withOpacity(0.3),
+                        valueColor:
+                            const AlwaysStoppedAnimation(kcSecondaryColor),
+                      ),
+                    ),
+                    verticalSpaceSmall,
+                    const Text(
+                      "Draw date: 26th April",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }
