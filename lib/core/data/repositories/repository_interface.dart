@@ -20,4 +20,12 @@ abstract class IRepository {
   Future<ApiResponse> verifyTransaction(String ref);
 
   Future<ApiResponse> payForOrder(Map<String, dynamic> req);
+
+  Future<ApiResponse> resetPasswordRequest(String email);
+
+  Future<ApiResponse> updatePassword(Map<String, dynamic> req, String email);
+
+  Future<ApiResponse> requestDelete(Map<String, dynamic> req);
+
+  Future<ApiResponse> deleteAccount(Map<String, dynamic> req);
 }

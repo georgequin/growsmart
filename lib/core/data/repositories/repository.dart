@@ -108,4 +108,48 @@ class Repository extends IRepository {
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> resetPasswordRequest(String email) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "auth/resetpassword/$email",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> updatePassword(
+      Map<String, dynamic> req, String email) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.put,
+      endpoint: "auth/resetpassword/$email",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> requestDelete(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "user/requestdelete",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> deleteAccount(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "user/delete",
+      reqBody: req,
+    );
+
+    return response;
+  }
 }

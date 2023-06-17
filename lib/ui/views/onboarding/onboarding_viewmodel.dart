@@ -12,6 +12,7 @@ class OnboardingViewModel extends BaseViewModel {
   void init() async {
     await locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
   }
+
   List<Widget> pages = const [
     PageOne(),
     PageTwo(),

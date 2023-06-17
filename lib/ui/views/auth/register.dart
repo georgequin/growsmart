@@ -83,13 +83,13 @@ class _RegisterState extends State<Register> {
             child: Text(
                 "A valid number is required for pin resetting and withdrawal requests"),
           ),
-          verticalSpaceMedium,
-          DropdownWidget(
-            value: null,
-            itemsList: const ["Nigeria", "Uk", "Canada"],
-            onChanged: (v) {},
-            hint: "Select country",
-          ),
+          // verticalSpaceMedium,
+          // DropdownWidget(
+          //   value: null,
+          //   itemsList: const ["Nigeria", "Uk", "Canada"],
+          //   onChanged: (v) {},
+          //   hint: "Select country",
+          // ),
           verticalSpaceSmall,
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0),

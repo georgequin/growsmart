@@ -61,7 +61,7 @@ class AuthViewModel extends BaseViewModel {
         } else {
           locator<LocalStorage>().delete(LocalStorageDir.lastEmail);
         }
-        locator<NavigationService>().replaceWithHomeView();
+        locator<NavigationService>().clearStackAndShow(Routes.homeView);
       } else {
         snackBar.showSnackbar(message: res.data["message"]);
       }

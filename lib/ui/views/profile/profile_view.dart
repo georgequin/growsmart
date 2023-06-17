@@ -112,19 +112,25 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   ),
                   title: const Text("Signout"),
                 ),
-                const ListTile(
-                  leading: Icon(
+                ListTile(
+                  onTap: () {
+                    locator<NavigationService>().navigateToChangePasswordView();
+                  },
+                  leading: const Icon(
                     Icons.lock_outlined,
                     color: kcSecondaryColor,
                   ),
-                  title: Text("Change password"),
+                  title: const Text("Change password"),
                 ),
-                const ListTile(
-                  leading: Icon(
+                ListTile(
+                  onTap: () {
+                    locator<NavigationService>().navigateToDeleteAccountView();
+                  },
+                  leading: const Icon(
                     Icons.logout,
                     color: Colors.red,
                   ),
-                  title: Text("Delete my account"),
+                  title: const Text("Delete my account"),
                 ),
               ],
             ),
