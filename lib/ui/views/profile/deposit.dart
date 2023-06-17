@@ -57,10 +57,12 @@ class _DepositState extends State<Deposit> {
                   if (res.statusCode == 200) {
                     String url =
                         res.data["paystack"]["data"]["authorization_url"];
+                    String ref = res.data["paystack"]["data"]["reference"];
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (ctx) {
                       return PaymentView(url: url);
-                    }));
+                    })).whenComplete(() async =>
+                            await locator<Repository>().verifyTransaction(ref));
                   } else {
                     locator<SnackbarService>()
                         .showSnackbar(message: res.data['message']);

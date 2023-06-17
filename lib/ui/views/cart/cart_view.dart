@@ -246,15 +246,7 @@ class CartView extends StackedView<CartViewModel> {
           SubmitButton(
             isLoading: viewModel.isBusy,
             label: "Checkout",
-            submit: () async {
-              List<OrderInfo>? list = await viewModel.checkout();
-
-              if (list != null || list!.isNotEmpty) {
-                locator<NavigationService>().navigateToView(Checkout(
-                  infoList: list,
-                ));
-              }
-            },
+            submit: viewModel.checkout,
             color: kcPrimaryColor,
             boldText: true,
           )

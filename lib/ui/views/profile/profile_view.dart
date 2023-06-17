@@ -2,6 +2,7 @@ import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/profile_picture.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../core/data/models/profile.dart';
 import 'profile_viewmodel.dart';
 
 class ProfileView extends StackedView<ProfileViewModel> {
@@ -30,7 +32,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
           ),
         ),
       ),
-      body: viewModel.profile == null
+      body: profile.value.id == null
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -47,13 +49,13 @@ class ProfileView extends StackedView<ProfileViewModel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${viewModel.profile?.firstname} ${viewModel.profile?.lastname}",
+                          "${profile.value.firstname} ${profile.value.lastname}",
                           style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: kcMediumGrey),
                         ),
-                        Text(viewModel.profile?.country ?? "")
+                        Text(profile.value.country ?? "")
                       ],
                     ),
                   ],
@@ -64,7 +66,8 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 ListTile(
                   onTap: () {
                     locator<NavigationService>()
-                        .navigateToWallet(wallet: viewModel.profile!.wallet!)
+                        .navigateToWallet(
+                            wallet: profile.value.wallet ?? Wallet())
                         .whenComplete(() => viewModel.getProfile());
                   },
                   leading: const Icon(

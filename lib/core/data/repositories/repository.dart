@@ -91,9 +91,19 @@ class Repository extends IRepository {
   @override
   Future<ApiResponse> verifyTransaction(String ref) async {
     ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "transaction/verify?trxref=$ref&reference=$ref",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> payForOrder(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "transaction/verify/$ref",
-      reqBody: {},
+      endpoint: "orders/pay",
+      reqBody: req,
     );
 
     return response;

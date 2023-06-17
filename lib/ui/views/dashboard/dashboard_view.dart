@@ -30,258 +30,266 @@ class DashboardView extends StackedView<DashboardViewModel> {
           Image.asset("assets/images/search.png"),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-        children: [
-          SizedBox(
-            height: 200,
-            child: Stack(
-              children: [
-                PageView.builder(
-                    itemCount: 5,
-                    onPageChanged: viewModel.changeSelected,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: const DecorationImage(
-                              image: AssetImage("assets/images/car.png"),
-                              fit: BoxFit.cover,
-                            )),
-                      );
-                    }),
-                Positioned(
-                  top: 20,
-                  right: 20,
-                  child: Row(
-                    children: List.generate(
-                        5,
-                        (index) =>
-                            _indicator(viewModel.selectedIndex == index)),
-                  ),
-                ),
-                Positioned(
-                  bottom: 20,
-                  left: 20,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          image: const DecorationImage(
-                              image: AssetImage("assets/images/sh.png")),
-                          color: kcWhiteColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      verticalSpaceTiny,
-                      const SizedBox(
-                        width: 140,
-                        child: Text(
-                          "Buy snickers and stand a chance to win",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: kcWhiteColor,
-                          ),
-                        ),
-                      ),
-                      verticalSpaceTiny,
-                      const Text(
-                        "2023 McLaren",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: kcWhiteColor,
-                            fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                ),
-                Positioned(
-                  right: 20,
-                  bottom: 20,
-                  child: Container(
-                    height: 30,
-                    width: 100,
-                    decoration: BoxDecoration(
-                        color: kcWhiteColor,
-                        borderRadius: BorderRadius.circular(4)),
-                    child: Center(
-                      child: Text(
-                        "Win Now",
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          viewModel.getProducts();
+          viewModel.getSellingFast();
+        },
+        child: ListView(
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+          children: [
+            SizedBox(
+              height: 200,
+              child: Stack(
+                children: [
+                  PageView.builder(
+                      itemCount: 5,
+                      onPageChanged: viewModel.changeSelected,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              image: const DecorationImage(
+                                image: AssetImage("assets/images/car.png"),
+                                fit: BoxFit.cover,
+                              )),
+                        );
+                      }),
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: Row(
+                      children: List.generate(
+                          5,
+                          (index) =>
+                              _indicator(viewModel.selectedIndex == index)),
                     ),
                   ),
-                )
-              ],
-            ),
-          ),
-          verticalSpaceMedium,
-          const Text(
-            "Selling fast",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: kcMediumGrey,
-            ),
-          ),
-          verticalSpaceSmall,
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding: const EdgeInsets.all(15),
-                    margin:
-                        const EdgeInsets.only(right: 15, top: 10, bottom: 10),
-                    width: 350,
-                    decoration: BoxDecoration(
-                        color: kcWhiteColor,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: kcBlackColor.withOpacity(0.1),
-                            offset: const Offset(0, 4),
-                            blurRadius: 4,
-                          )
-                        ]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Positioned(
+                    bottom: 20,
+                    left: 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Win Ferrari",
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              verticalSpaceTiny,
-                              Text(
-                                "Stand a chance to win 2023 ferrari",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                ),
-                              ),
-                              verticalSpaceTiny,
-                              TextButton(
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        kcPrimaryColor),
-                                    shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ))),
-                                onPressed: () {},
-                                child: Text(
-                                  "Learn More",
-                                  style: GoogleFonts.inter(color: kcWhiteColor),
-                                ),
-                              ),
-                              verticalSpaceTiny,
-                              Text(
-                                "800  sold out of 2000",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                ),
-                              ),
-                              verticalSpaceTiny,
-                              SizedBox(
-                                width: 100,
-                                child: LinearProgressIndicator(
-                                  value: 0.4,
-                                  backgroundColor:
-                                      kcSecondaryColor.withOpacity(0.3),
-                                  valueColor: const AlwaysStoppedAnimation(
-                                      kcSecondaryColor),
-                                ),
-                              )
-                            ],
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            image: const DecorationImage(
+                                image: AssetImage("assets/images/sh.png")),
+                            color: kcWhiteColor,
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        Container(
-                          height: MediaQuery.of(context).size.height,
-                          width: 120,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: const DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image:
-                                      AssetImage("assets/images/car_alt.png"))),
+                        verticalSpaceTiny,
+                        const SizedBox(
+                          width: 140,
+                          child: Text(
+                            "Buy snickers and stand a chance to win",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: kcWhiteColor,
+                            ),
+                          ),
+                        ),
+                        verticalSpaceTiny,
+                        const Text(
+                          "2023 McLaren",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: kcWhiteColor,
+                              fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
-                  );
-                }),
-          ),
-          verticalSpaceSmall,
-          const Text(
-            "Recommended",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: kcMediumGrey,
-            ),
-          ),
-          verticalSpaceSmall,
-          SizedBox(
-            height: 400,
-            child: viewModel.busy(viewModel.productList)
-                ? const Center(
-                    child: CircularProgressIndicator(),
+                  ),
+                  Positioned(
+                    right: 20,
+                    bottom: 20,
+                    child: Container(
+                      height: 30,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          color: kcWhiteColor,
+                          borderRadius: BorderRadius.circular(4)),
+                      child: Center(
+                        child: Text(
+                          "Win Now",
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
                   )
-                : PageView.builder(
-                    itemCount: viewModel.productList.length,
-                    itemBuilder: (context, index) {
-                      Product product = viewModel.productList[index];
-                      return Column(
+                ],
+              ),
+            ),
+            verticalSpaceMedium,
+            const Text(
+              "Selling fast",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: kcMediumGrey,
+              ),
+            ),
+            verticalSpaceSmall,
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.all(15),
+                      margin:
+                          const EdgeInsets.only(right: 15, top: 10, bottom: 10),
+                      width: 350,
+                      decoration: BoxDecoration(
+                          color: kcWhiteColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: kcBlackColor.withOpacity(0.1),
+                              offset: const Offset(0, 4),
+                              blurRadius: 4,
+                            )
+                          ]),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          InkWell(
-                            onTap: () {
-                              locator<NavigationService>().navigateTo(
-                                  Routes.productDetail,
-                                  arguments:
-                                      ProductDetailArguments(product: product));
-                            },
-                            child: ProductRow(
-                              product: product,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Win Ferrari",
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                verticalSpaceTiny,
+                                Text(
+                                  "Stand a chance to win 2023 ferrari",
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                verticalSpaceTiny,
+                                TextButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              kcPrimaryColor),
+                                      shape: MaterialStateProperty.all(
+                                          RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ))),
+                                  onPressed: () {},
+                                  child: Text(
+                                    "Learn More",
+                                    style:
+                                        GoogleFonts.inter(color: kcWhiteColor),
+                                  ),
+                                ),
+                                verticalSpaceTiny,
+                                Text(
+                                  "800  sold out of 2000",
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                verticalSpaceTiny,
+                                SizedBox(
+                                  width: 100,
+                                  child: LinearProgressIndicator(
+                                    value: 0.4,
+                                    backgroundColor:
+                                        kcSecondaryColor.withOpacity(0.3),
+                                    valueColor: const AlwaysStoppedAnimation(
+                                        kcSecondaryColor),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
-                          verticalSpaceMedium,
-                          SubmitButton(
-                            isLoading: false,
-                            label: "Add to cart",
-                            submit: () {
-                              CartItem cartItem =
-                                  CartItem(product: product, quantity: 1);
-                              cart.value.add(cartItem);
-                              locator<SnackbarService>().showSnackbar(
-                                  message: "Product added to cart");
-                            },
-                            color: kcPrimaryColor,
-                            boldText: true,
-                            icon: Icons.shopping_cart_outlined,
+                          Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: 120,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: const DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: AssetImage(
+                                        "assets/images/car_alt.png"))),
                           )
                         ],
-                      );
-                    }),
-          ),
-        ],
+                      ),
+                    );
+                  }),
+            ),
+            verticalSpaceSmall,
+            const Text(
+              "Recommended",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: kcMediumGrey,
+              ),
+            ),
+            verticalSpaceSmall,
+            SizedBox(
+              height: 400,
+              child: viewModel.busy(viewModel.productList)
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : PageView.builder(
+                      itemCount: viewModel.productList.length,
+                      itemBuilder: (context, index) {
+                        Product product = viewModel.productList[index];
+                        return Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                locator<NavigationService>().navigateTo(
+                                    Routes.productDetail,
+                                    arguments: ProductDetailArguments(
+                                        product: product));
+                              },
+                              child: ProductRow(
+                                product: product,
+                              ),
+                            ),
+                            verticalSpaceMedium,
+                            SubmitButton(
+                              isLoading: false,
+                              label: "Add to cart",
+                              submit: () {
+                                CartItem cartItem =
+                                    CartItem(product: product, quantity: 1);
+                                cart.value.add(cartItem);
+                                locator<SnackbarService>().showSnackbar(
+                                    message: "Product added to cart");
+                              },
+                              color: kcPrimaryColor,
+                              boldText: true,
+                              icon: Icons.shopping_cart_outlined,
+                            )
+                          ],
+                        );
+                      }),
+            ),
+          ],
+        ),
       ),
     );
   }

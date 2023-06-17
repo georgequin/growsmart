@@ -215,8 +215,9 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i13.Receipt: (data) {
+      final args = data.getArgs<ReceiptArguments>(nullOk: false);
       return _i17.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i13.Receipt(),
+        builder: (context) => _i13.Receipt(info: args.info, key: args.key),
         settings: data,
       );
     },
@@ -299,6 +300,33 @@ class ProductDetailArguments {
   @override
   int get hashCode {
     return product.hashCode ^ key.hashCode;
+  }
+}
+
+class ReceiptArguments {
+  const ReceiptArguments({
+    required this.info,
+    this.key,
+  });
+
+  final Map<String, dynamic> info;
+
+  final _i19.Key? key;
+
+  @override
+  String toString() {
+    return '{"info": "$info", "key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant ReceiptArguments other) {
+    if (identical(this, other)) return true;
+    return other.info == info && other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return info.hashCode ^ key.hashCode;
   }
 }
 
@@ -517,14 +545,17 @@ extension NavigatorStateExtension on _i22.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToReceipt([
+  Future<dynamic> navigateToReceipt({
+    required Map<String, dynamic> info,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.receipt,
+        arguments: ReceiptArguments(info: info, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -739,14 +770,17 @@ extension NavigatorStateExtension on _i22.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithReceipt([
+  Future<dynamic> replaceWithReceipt({
+    required Map<String, dynamic> info,
+    _i19.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.receipt,
+        arguments: ReceiptArguments(info: info, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

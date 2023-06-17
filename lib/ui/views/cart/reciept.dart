@@ -3,7 +3,9 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
 
 class Receipt extends StatefulWidget {
-  const Receipt({Key? key}) : super(key: key);
+  final Map<String, dynamic> info;
+
+  const Receipt({required this.info, Key? key}) : super(key: key);
 
   @override
   State<Receipt> createState() => _ReceiptState();
@@ -64,9 +66,9 @@ class _ReceiptState extends State<Receipt> {
                         style: TextStyle(color: kcWhiteColor.withOpacity(0.72)),
                       ),
                       verticalSpaceSmall,
-                      const Text(
-                        "\$70.00",
-                        style: TextStyle(
+                      Text(
+                        "${widget.info["product"]["product_price"]}",
+                        style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: kcWhiteColor),
@@ -91,9 +93,9 @@ class _ReceiptState extends State<Receipt> {
                                         color: kcWhiteColor.withOpacity(0.72),
                                         fontSize: 12),
                                   ),
-                                  const Text(
-                                    "000085752257",
-                                    style: TextStyle(
+                                  Text(
+                                    "${widget.info["product"]["id"]}",
+                                    style: const TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
                                   )
                                 ],
@@ -150,7 +152,7 @@ class _ReceiptState extends State<Receipt> {
                                         fontSize: 12),
                                   ),
                                   const Text(
-                                    "Paypal",
+                                    "Wallet",
                                     style: TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
                                   )
@@ -176,9 +178,9 @@ class _ReceiptState extends State<Receipt> {
                                         color: kcWhiteColor.withOpacity(0.72),
                                         fontSize: 12),
                                   ),
-                                  const Text(
-                                    "Antonio Luiz",
-                                    style: TextStyle(
+                                  Text(
+                                    "${widget.info["user"]["firstname"]} ${widget.info["user"]["lastname"]}",
+                                    style: const TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
                                   )
                                 ],
@@ -229,13 +231,21 @@ class _ReceiptState extends State<Receipt> {
               )
             ],
           ),
-          Row(
+          verticalSpaceSmall,
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.download),
               horizontalSpaceSmall,
               Text("Get PDF Receipt"),
             ],
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text("Close"),
           )
         ],
       ),

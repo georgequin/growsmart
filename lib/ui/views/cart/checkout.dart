@@ -1,6 +1,8 @@
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/order_info.dart';
+import 'package:afriprize/core/data/repositories/repository.dart';
+import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/drop_down_widget.dart';
@@ -490,8 +492,29 @@ class _CheckoutState extends State<Checkout> {
           SubmitButton(
             isLoading: loading,
             label: "Pay N${getSubTotal()}",
-            submit: () {
-              // locator<NavigationService>().navigateTo(Routes.receipt);
+            submit: () async {
+              setState(() {
+                loading = true;
+              });
+              try {
+                ApiResponse res = await locator<Repository>().payForOrder({
+                  "orderId": widget.infoList.map((e) => e.id).toList(),
+                  "payment_method": 0
+                });
+                if (res.statusCode == 200) {
+                  cart.value.clear();
+                  locator<NavigationService>().navigateTo(Routes.receipt,
+                      arguments: ReceiptArguments(
+                          info: Map<String, dynamic>.from(
+                              res.data["receipt"][0])));
+                }
+              } catch (e) {
+                print(e);
+              }
+
+              setState(() {
+                loading = false;
+              });
             },
             color: kcPrimaryColor,
             boldText: true,
