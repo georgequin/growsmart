@@ -2,6 +2,7 @@ import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/core/data/repositories/repository_interface.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/core/network/api_service.dart';
+import 'package:dio/dio.dart';
 
 class Repository extends IRepository {
   final api = locator<ApiService>();
@@ -148,6 +149,18 @@ class Repository extends IRepository {
       method: HttpMethod.post,
       endpoint: "user/delete",
       reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> updateProfilePicture(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "user/profile/picture",
+      useFormData: true,
+      formData: FormData.fromMap(req),
     );
 
     return response;

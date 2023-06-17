@@ -32,7 +32,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
           ),
         ),
       ),
-      body: profile.value.id == null
+      body: profile.value.id == null || viewModel.isBusy
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -42,8 +42,13 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const ProfilePicture(
-                      size: 100,
+                    GestureDetector(
+                      onTap: () {
+                        viewModel.toggleShowChangePP();
+                      },
+                      child: const ProfilePicture(
+                        size: 100,
+                      ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,6 +65,26 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     ),
                   ],
                 ),
+                viewModel.showChangePP
+                    ? Column(
+                        children: [
+                          verticalSpaceMedium,
+                          InkWell(
+                            onTap: () {
+                              viewModel.updateProfilePicture();
+                            },
+                            child: const Text(
+                              "Change Profile Picture",
+                              style: TextStyle(
+                                color: kcSecondaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    : const SizedBox(),
                 verticalSpaceLarge,
                 const Text("User admin"),
                 verticalSpaceMedium,

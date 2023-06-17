@@ -28,4 +28,7 @@ abstract class IRepository {
   Future<ApiResponse> requestDelete(Map<String, dynamic> req);
 
   Future<ApiResponse> deleteAccount(Map<String, dynamic> req);
+
+  Future<ApiResponse> updateProfilePicture(Map<String, dynamic> req);
+
 }
