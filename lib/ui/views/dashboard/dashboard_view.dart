@@ -1,6 +1,7 @@
 import 'package:afriprize/app/app.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
+import 'package:afriprize/core/data/models/ad.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
@@ -32,99 +33,121 @@ class DashboardView extends StackedView<DashboardViewModel> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          viewModel.getProducts();
-          viewModel.getSellingFast();
+          viewModel.init();
         },
         child: ListView(
           padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
           children: [
             SizedBox(
               height: 200,
-              child: Stack(
-                children: [
-                  PageView.builder(
-                      itemCount: 5,
-                      onPageChanged: viewModel.changeSelected,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              image: const DecorationImage(
-                                image: AssetImage("assets/images/car.png"),
-                                fit: BoxFit.cover,
-                              )),
-                        );
-                      }),
-                  Positioned(
-                    top: 20,
-                    right: 20,
-                    child: Row(
-                      children: List.generate(
-                          5,
-                          (index) =>
-                              _indicator(viewModel.selectedIndex == index)),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    left: 20,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              child: viewModel.busy(viewModel.ads)
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Stack(
                       children: [
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                image: AssetImage("assets/images/sh.png")),
-                            color: kcWhiteColor,
-                            borderRadius: BorderRadius.circular(12),
+                        PageView.builder(
+                            itemCount: viewModel.ads.length,
+                            onPageChanged: viewModel.changeSelected,
+                            itemBuilder: (context, index) {
+                              Ad ad = viewModel.ads[index];
+                              return Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        image: ad.pictures!.isEmpty
+                                            ? null
+                                            : DecorationImage(
+                                                image: NetworkImage(
+                                                    ad.pictures![0].location!),
+                                                fit: BoxFit.cover,
+                                              )),
+                                  ),
+                                  Positioned(
+                                    bottom: 20,
+                                    left: 20,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 50,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                            image:
+                                                ad.product!.pictures == null ||
+                                                        ad.product!.pictures!
+                                                            .isEmpty
+                                                    ? null
+                                                    : DecorationImage(
+                                                        image: NetworkImage(ad
+                                                            .product!
+                                                            .pictures![0]
+                                                            .location!)),
+                                            color: kcWhiteColor,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                        ),
+                                        verticalSpaceTiny,
+                                        SizedBox(
+                                          width: 140,
+                                          child: Text(
+                                            "Buy ${ad.product!.productName} and stand a chance to win",
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: kcWhiteColor,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        verticalSpaceTiny,
+                                        Text(
+                                          "${ad.adName}",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              color: kcWhiteColor,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 20,
+                                    bottom: 20,
+                                    child: Container(
+                                      height: 30,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                          color: kcWhiteColor,
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
+                                      child: Center(
+                                        child: Text(
+                                          "Win Now",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            }),
+                        Positioned(
+                          top: 20,
+                          right: 20,
+                          child: Row(
+                            children: List.generate(
+                                viewModel.ads.length,
+                                (index) => _indicator(
+                                    viewModel.selectedIndex == index)),
                           ),
                         ),
-                        verticalSpaceTiny,
-                        const SizedBox(
-                          width: 140,
-                          child: Text(
-                            "Buy snickers and stand a chance to win",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: kcWhiteColor,
-                            ),
-                          ),
-                        ),
-                        verticalSpaceTiny,
-                        const Text(
-                          "2023 McLaren",
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: kcWhiteColor,
-                              fontWeight: FontWeight.bold),
-                        )
                       ],
                     ),
-                  ),
-                  Positioned(
-                    right: 20,
-                    bottom: 20,
-                    child: Container(
-                      height: 30,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          color: kcWhiteColor,
-                          borderRadius: BorderRadius.circular(4)),
-                      child: Center(
-                        child: Text(
-                          "Win Now",
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
             ),
             verticalSpaceMedium,
             const Text(
@@ -296,8 +319,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   @override
   void onViewModelReady(DashboardViewModel viewModel) {
-    viewModel.getProducts();
-    viewModel.getSellingFast();
+    viewModel.init();
     super.onViewModelReady(viewModel);
   }
 
@@ -351,13 +373,13 @@ class ProductRow extends StatelessWidget {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
-                child: product.pictures!.isEmpty
+                child: product.raffleAd!.pictures!.isEmpty
                     ? SizedBox(
                         height: 170,
                         width: MediaQuery.of(context).size.width,
                       )
                     : Image.network(
-                        product.pictures![0].location!,
+                        product.raffleAd!.pictures![0].location!,
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
                         height: 170,
@@ -423,7 +445,7 @@ class ProductRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.raffleAd?[0].adName ?? "",
+                        product.raffleAd?.adName ?? "",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),

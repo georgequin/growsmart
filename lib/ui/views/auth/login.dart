@@ -24,6 +24,9 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ViewModelBuilder<AuthViewModel>.reactive(
+        onViewModelReady: (model) {
+          model.init();
+        },
         viewModelBuilder: () => AuthViewModel(),
         builder: (context, model, child) => ListView(
           physics: const NeverScrollableScrollPhysics(),

@@ -9,6 +9,8 @@ abstract class IRepository {
 
   Future<ApiResponse> getProducts();
 
+  Future<ApiResponse> getAds();
+
   Future<ApiResponse> getSellingFast();
 
   Future<ApiResponse> getProfile();

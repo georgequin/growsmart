@@ -25,6 +25,19 @@ class AuthViewModel extends BaseViewModel {
   bool terms = false;
   bool remember = false;
 
+  init() async {
+    bool rem = await locator<LocalStorage>().fetch(LocalStorageDir.remember);
+    String? lastEmail =
+    await locator<LocalStorage>().fetch(LocalStorageDir.lastEmail);
+
+    remember = rem;
+
+    if (lastEmail != null) {
+      email.text = lastEmail;
+    }
+    rebuildUi();
+  }
+
   void toggleRemember() {
     remember = !remember;
     rebuildUi();
@@ -49,14 +62,12 @@ class AuthViewModel extends BaseViewModel {
         "password": password.text,
       });
       if (res.statusCode == 200) {
-        Map<String, dynamic> userDecoded = JwtDecoder.decode(res.data["token"]);
-        print(userDecoded);
         // loggedInUser.value =
         //     User.fromJson(Map<String, dynamic>.from(res.data["data"]));
         locator<LocalStorage>()
             .save(LocalStorageDir.authToken, res.data["token"]);
-        locator<LocalStorage>().save(LocalStorageDir.remember, terms);
-        if (terms) {
+        locator<LocalStorage>().save(LocalStorageDir.remember, remember);
+        if (remember) {
           locator<LocalStorage>().save(LocalStorageDir.lastEmail, email.text);
         } else {
           locator<LocalStorage>().delete(LocalStorageDir.lastEmail);

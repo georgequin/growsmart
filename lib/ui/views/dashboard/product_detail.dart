@@ -41,8 +41,8 @@ class _ProductDetailState extends State<ProductDetail> {
                           ? null
                           : DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(
-                                  widget.product.pictures![0].location!),
+                              image: NetworkImage(widget
+                                  .product.raffleAd!.pictures![0].location!),
                             ),
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(25),
@@ -64,7 +64,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     child: Center(
                       child: Text(
-                        "${widget.product.raffleAd?[0].adName}",
+                        "${widget.product.raffleAd?.adName}",
                         style: GoogleFonts.inter(fontSize: 11),
                       ),
                     ),

@@ -1,5 +1,6 @@
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
+import 'package:afriprize/core/data/models/ad.dart';
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
@@ -11,10 +12,35 @@ class DashboardViewModel extends BaseViewModel {
   final log = getLogger("DashboardViewModel");
   List<Product> productList = [];
   List<Product> sellingFast = [];
+  List<Ad> ads = [];
 
   void changeSelected(int i) {
     selectedIndex = i;
     rebuildUi();
+  }
+
+  void init() {
+    getAds();
+    getProducts();
+    getSellingFast();
+  }
+
+  void getAds() async {
+    setBusyForObject(ads, true);
+
+    try {
+      ApiResponse res = await repo.getAds();
+      if (res.statusCode == 200) {
+        ads = (res.data["raffleads"] as List)
+            .map((e) => Ad.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        rebuildUi();
+      }
+    } catch (e) {
+      log.e(e);
+    }
+
+    setBusyForObject(ads, false);
   }
 
   void getProducts() async {

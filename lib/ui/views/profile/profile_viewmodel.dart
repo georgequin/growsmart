@@ -29,22 +29,22 @@ class ProfileViewModel extends BaseViewModel {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    String oldPath = image!.path;
-    String newPath = '${path.withoutExtension(oldPath)}.png';
-    File inputFile = File(oldPath);
-    File outputFile = File(newPath);
+    // String oldPath = image!.path;
+    // String newPath = '${path.withoutExtension(oldPath)}.png';
+    // File inputFile = File(oldPath);
+    // File outputFile = File(newPath);
+    //
+    // XFile? result = await FlutterImageCompress.compressAndGetFile(
+    //   inputFile.path,
+    //   outputFile.path,
+    //   format: CompressFormat.png,
+    // );
 
-    XFile? result = await FlutterImageCompress.compressAndGetFile(
-      inputFile.path,
-      outputFile.path,
-      format: CompressFormat.png,
-    );
-
-    log.i(result!.path);
+    // log.i(result!.path);
 
     try {
       ApiResponse res = await locator<Repository>().updateProfilePicture({
-        "picture": await MultipartFile.fromFile(File(result!.path).path),
+        "picture": await MultipartFile.fromFile(File(image!.path).path),
       });
       if (res.statusCode == 200) {}
     } catch (e) {

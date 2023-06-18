@@ -165,4 +165,14 @@ class Repository extends IRepository {
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> getAds() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "raffle/ad/list",
+    );
+
+    return response;
+  }
 }
