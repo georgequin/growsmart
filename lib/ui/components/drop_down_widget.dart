@@ -20,6 +20,7 @@ class DropdownWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
+      isExpanded: true,
       itemHeight: 52.0,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(12),
@@ -69,9 +70,12 @@ class DropdownWidget extends StatelessWidget {
                     )
                   : const SizedBox(),
               const SizedBox(width: 5),
-              Text(
-                value,
-                style: const TextStyle(color: Colors.black),
+              Expanded(
+                child: Text(
+                  value,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.black),
+                ),
               ),
             ],
           ),

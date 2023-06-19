@@ -161,103 +161,115 @@ class DashboardView extends StackedView<DashboardViewModel> {
             verticalSpaceSmall,
             SizedBox(
               height: 200,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: const EdgeInsets.all(15),
-                      margin:
-                          const EdgeInsets.only(right: 15, top: 10, bottom: 10),
-                      width: 350,
-                      decoration: BoxDecoration(
-                          color: kcWhiteColor,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: kcBlackColor.withOpacity(0.1),
-                              offset: const Offset(0, 4),
-                              blurRadius: 4,
-                            )
-                          ]),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Win Ferrari",
-                                  style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                verticalSpaceTiny,
-                                Text(
-                                  "Stand a chance to win 2023 ferrari",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 3,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                verticalSpaceTiny,
-                                TextButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              kcPrimaryColor),
-                                      shape: MaterialStateProperty.all(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ))),
-                                  onPressed: () {},
-                                  child: Text(
-                                    "Learn More",
-                                    style:
-                                        GoogleFonts.inter(color: kcWhiteColor),
-                                  ),
-                                ),
-                                verticalSpaceTiny,
-                                Text(
-                                  "800  sold out of 2000",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 3,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                verticalSpaceTiny,
-                                SizedBox(
-                                  width: 100,
-                                  child: LinearProgressIndicator(
-                                    value: 0.4,
-                                    backgroundColor:
-                                        kcSecondaryColor.withOpacity(0.3),
-                                    valueColor: const AlwaysStoppedAnimation(
-                                        kcSecondaryColor),
-                                  ),
+              child: viewModel.busy(viewModel.sellingFast)
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: viewModel.sellingFast.length,
+                      itemBuilder: (context, index) {
+                        Product product = viewModel.sellingFast[index];
+                        return Container(
+                          padding: const EdgeInsets.all(15),
+                          margin: const EdgeInsets.only(
+                              right: 15, top: 10, bottom: 10),
+                          width: 350,
+                          decoration: BoxDecoration(
+                              color: kcWhiteColor,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kcBlackColor.withOpacity(0.1),
+                                  offset: const Offset(0, 4),
+                                  blurRadius: 4,
                                 )
-                              ],
-                            ),
+                              ]),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "${product.raffleAd?.adName}",
+                                      style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    verticalSpaceTiny,
+                                    Text(
+                                      "${product.raffleAd?.adDescription}",
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 3,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    verticalSpaceTiny,
+                                    TextButton(
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  kcPrimaryColor),
+                                          shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ))),
+                                      onPressed: () {},
+                                      child: Text(
+                                        "Learn More",
+                                        style: GoogleFonts.inter(
+                                            color: kcWhiteColor),
+                                      ),
+                                    ),
+                                    verticalSpaceTiny,
+                                    Text(
+                                      "800  sold out of 2000",
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 3,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    verticalSpaceTiny,
+                                    SizedBox(
+                                      width: 100,
+                                      child: LinearProgressIndicator(
+                                        value: 0.4,
+                                        backgroundColor:
+                                            kcSecondaryColor.withOpacity(0.3),
+                                        valueColor:
+                                            const AlwaysStoppedAnimation(
+                                                kcSecondaryColor),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: MediaQuery.of(context).size.height,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: product.raffleAd!.pictures == null ||
+                                            product.raffleAd!.pictures!.isEmpty
+                                        ? null
+                                        : DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(product
+                                                .raffleAd!
+                                                .pictures![0]
+                                                .location!))),
+                              )
+                            ],
                           ),
-                          Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: 120,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: const DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: AssetImage(
-                                        "assets/images/car_alt.png"))),
-                          )
-                        ],
-                      ),
-                    );
-                  }),
+                        );
+                      }),
             ),
             verticalSpaceSmall,
             const Text(

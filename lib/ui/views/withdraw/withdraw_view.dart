@@ -43,9 +43,15 @@ class WithdrawView extends StackedView<WithdrawViewModel> {
                 TextFieldWidget(
                   hint: "Account Number",
                   controller: viewModel.accountNumber,
+                  onChanged: (String v) {
+                    if (v.length == 10) {
+                      viewModel.verifyName();
+                    }
+                  },
                 ),
                 verticalSpaceMedium,
                 TextFieldWidget(
+                  readOnly: true,
                   hint: "Account Name",
                   controller: viewModel.accountName,
                 ),
@@ -53,7 +59,7 @@ class WithdrawView extends StackedView<WithdrawViewModel> {
                 SubmitButton(
                   isLoading: viewModel.isBusy,
                   label: "Withdraw",
-                  submit: viewModel.withdraw,
+                  submit: () => viewModel.withdraw(context),
                   boldText: true,
                   color: kcPrimaryColor,
                 )

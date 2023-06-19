@@ -22,19 +22,21 @@ class WithdrawViewModel extends BaseViewModel {
     rebuildUi();
   }
 
-  void withdraw() async {
+  void withdraw(context) async {
     setBusy(true);
     Bank bank =
         banks.where((element) => element.name == selectedBank).toList().first;
     try {
       ApiResponse res = await repo.withdraw({
-        "account_name": "OBIOHA MCDAVID CHIBUEZE",
-        "account_number": "4081122674",
-        "bank_code": "050",
-        "amount": 5000,
-        "reason": "flexing"
+        "account_name": accountName.text,
+        "account_number": accountNumber.text,
+        "bank_code": bank.code,
+        "amount": amount.text,
+        "reason": ""
       });
       if (res.statusCode == 200) {
+        snackBar.showSnackbar(message: res.data["message"]);
+        Navigator.pop(context);
       } else {
         snackBar.showSnackbar(message: res.data["message"]);
       }
@@ -42,6 +44,24 @@ class WithdrawViewModel extends BaseViewModel {
       log.e(e);
     }
     setBusy(false);
+  }
+
+  void verifyName() async {
+    try {
+      Bank bank =
+          banks.where((element) => element.name == selectedBank).toList().first;
+      ApiResponse res = await repo.verifyName({
+        "bank_code": bank.code,
+        "account_number": accountNumber.text,
+      });
+      if (res.statusCode == 200) {
+        accountName.text = res.data[""];
+      } else {
+        snackBar.showSnackbar(message: res.data["message"]);
+      }
+    } catch (e) {
+      log.e(e);
+    }
   }
 
   void getBanks() async {

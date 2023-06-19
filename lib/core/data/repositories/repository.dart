@@ -216,4 +216,15 @@ class Repository extends IRepository {
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> verifyName(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "transaction/verifyaccount",
+      reqBody: req,
+    );
+
+    return response;
+  }
 }
