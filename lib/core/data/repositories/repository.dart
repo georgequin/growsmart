@@ -175,4 +175,25 @@ class Repository extends IRepository {
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> getBanks() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "transaction/banks",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> withdraw(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "transaction/createtransfer",
+      reqBody: req,
+    );
+
+    return response;
+  }
 }

@@ -33,4 +33,9 @@ abstract class IRepository {
 
   Future<ApiResponse> updateProfilePicture(Map<String, dynamic> req);
 
+  Future<ApiResponse> getBanks();
+
+  Future<ApiResponse> withdraw(Map<String, dynamic> req);
+
+
 }

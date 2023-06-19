@@ -1,4 +1,5 @@
 import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/profile.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
@@ -8,6 +9,7 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/profile/deposit.dart';
 import 'package:flutter/material.dart';
 import 'package:afriprize/core/data/models/profile.dart' as pro;
+import 'package:stacked_services/stacked_services.dart';
 
 import '../../../state.dart';
 
@@ -134,8 +136,8 @@ class _WalletState extends State<Wallet> {
                       isLoading: false,
                       label: "Withdraw",
                       submit: () {
-                        // locator<NavigationService>()
-                        //     .navigateTo(Routes.withdrawView);
+                        locator<NavigationService>()
+                            .navigateTo(Routes.withdrawView);
                       },
                       color: kcPrimaryColor,
                       boldText: true,

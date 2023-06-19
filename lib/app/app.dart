@@ -24,6 +24,7 @@ import 'package:afriprize/ui/views/otp/otp_view.dart';
 import 'package:afriprize/ui/views/change_password/change_password_view.dart';
 import 'package:afriprize/ui/views/enter_email/enter_email_view.dart';
 import 'package:afriprize/ui/views/delete_account/delete_account_view.dart';
+import 'package:afriprize/ui/views/withdraw/withdraw_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -48,6 +49,7 @@ MaterialRoute(page: OtpView),
 MaterialRoute(page: ChangePasswordView),
 MaterialRoute(page: EnterEmailView),
 MaterialRoute(page: DeleteAccountView),
+MaterialRoute(page: WithdrawView),
 // @stacked-route
   ],
   dependencies: [
