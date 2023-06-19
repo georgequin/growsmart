@@ -6,6 +6,7 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/profile_picture.dart';
+import 'package:afriprize/ui/views/profile/order_list.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -103,7 +104,10 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 ),
                 ListTile(
                   onTap: () {
-                    locator<NavigationService>().navigateToTrack();
+                    // locator<NavigationService>().navigateToTrack();
+                    Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+                      return const OrderList();
+                    }));
                   },
                   leading: const Icon(
                     Icons.wallet,

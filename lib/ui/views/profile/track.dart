@@ -1,3 +1,4 @@
+import 'package:afriprize/core/data/models/order_item.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:casa_vertical_stepper/casa_vertical_stepper.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,9 @@ import 'package:flutter/material.dart';
 import '../../common/app_colors.dart';
 
 class Track extends StatefulWidget {
-  const Track({Key? key}) : super(key: key);
+  final OrderItem item;
+
+  const Track({required this.item, Key? key}) : super(key: key);
 
   @override
   State<Track> createState() => _TrackState();
@@ -46,11 +49,11 @@ class _TrackState extends State<Track> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text("Cotton shirt Regular Fit"),
+                  children: [
+                    Text("${widget.item.product?.productName}"),
                     Text(
-                      "\$20",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      "N${widget.item.product?.productPrice}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 )
@@ -77,9 +80,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: Column(
+              title: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Order Placed",
                     style: TextStyle(
@@ -108,9 +111,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: Column(
+              title: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Order Processed",
                     style: TextStyle(
@@ -139,9 +142,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: Column(
+              title: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Ready to ship",
                     style: TextStyle(
@@ -170,9 +173,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: Column(
+              title: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Out for delivery",
                     style: TextStyle(
@@ -201,9 +204,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: Column(
+              title: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Out for delivery",
                     style: TextStyle(

@@ -6,6 +6,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:afriprize/core/data/models/order_info.dart' as _i22;
+import 'package:afriprize/core/data/models/order_item.dart' as _i26;
 import 'package:afriprize/core/data/models/product.dart' as _i24;
 import 'package:afriprize/core/data/models/profile.dart' as _i25;
 import 'package:afriprize/ui/views/auth/auth_view.dart' as _i5;
@@ -33,7 +34,7 @@ import 'package:flutter/foundation.dart' as _i23;
 import 'package:flutter/material.dart' as _i21;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i26;
+import 'package:stacked_services/stacked_services.dart' as _i27;
 
 class Routes {
   static const homeView = '/home-view';
@@ -263,8 +264,9 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i15.Track: (data) {
+      final args = data.getArgs<TrackArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i15.Track(),
+        builder: (context) => _i15.Track(item: args.item, key: args.key),
         settings: data,
       );
     },
@@ -415,6 +417,33 @@ class WalletArguments {
   }
 }
 
+class TrackArguments {
+  const TrackArguments({
+    required this.item,
+    this.key,
+  });
+
+  final _i26.OrderItem item;
+
+  final _i23.Key? key;
+
+  @override
+  String toString() {
+    return '{"item": "$item", "key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant TrackArguments other) {
+    if (identical(this, other)) return true;
+    return other.item == item && other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return item.hashCode ^ key.hashCode;
+  }
+}
+
 class OtpViewArguments {
   const OtpViewArguments({
     required this.email,
@@ -442,7 +471,7 @@ class OtpViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i26.NavigationService {
+extension NavigatorStateExtension on _i27.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -637,14 +666,17 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToTrack([
+  Future<dynamic> navigateToTrack({
+    required _i26.OrderItem item,
+    _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.track,
+        arguments: TrackArguments(item: item, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -918,14 +950,17 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithTrack([
+  Future<dynamic> replaceWithTrack({
+    required _i26.OrderItem item,
+    _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.track,
+        arguments: TrackArguments(item: item, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

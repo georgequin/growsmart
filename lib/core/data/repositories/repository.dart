@@ -54,7 +54,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getSellingFast() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "products/sellingfast",
+      endpoint: "raffle/sellingfast",
     );
 
     return response;
@@ -192,6 +192,26 @@ class Repository extends IRepository {
       method: HttpMethod.post,
       endpoint: "transaction/createtransfer",
       reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getOrderList() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "orders/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> raffleList() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "raffle/list",
     );
 
     return response;

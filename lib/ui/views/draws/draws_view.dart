@@ -122,6 +122,12 @@ class DrawsView extends StackedView<DrawsViewModel> {
   }
 
   @override
+  void onViewModelReady(DrawsViewModel viewModel) {
+    viewModel.listRaffle();
+    super.onViewModelReady(viewModel);
+  }
+
+  @override
   DrawsViewModel viewModelBuilder(
     BuildContext context,
   ) =>

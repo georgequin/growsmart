@@ -37,5 +37,11 @@ abstract class IRepository {
 
   Future<ApiResponse> withdraw(Map<String, dynamic> req);
 
+  Future<ApiResponse> getOrderList();
+
+  Future<ApiResponse> raffleList();
+
+
+
 
 }

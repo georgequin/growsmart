@@ -1,3 +1,5 @@
+import 'package:afriprize/core/data/models/cart_item.dart';
+import 'package:afriprize/state.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
@@ -40,10 +42,18 @@ class HomeView extends StackedView<HomeViewModel> {
             label: "Draws",
           ),
           BottomNavigationBarItem(
-            icon: Image.asset(
-              "assets/images/cart.png",
-              color:
-                  viewModel.selectedTab == 2 ? kcSecondaryColor : kcBlackColor,
+            icon: ValueListenableBuilder<List<CartItem>>(
+              valueListenable: cart,
+              builder: (context, value, child) => Badge(
+                isLabelVisible: value.isEmpty ? false : true,
+                label: Text("${value.length}"),
+                child: Image.asset(
+                  "assets/images/cart.png",
+                  color: viewModel.selectedTab == 2
+                      ? kcSecondaryColor
+                      : kcBlackColor,
+                ),
+              ),
             ),
             label: "Cart",
           ),
