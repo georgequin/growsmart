@@ -5,6 +5,13 @@ import 'package:flutter/material.dart';
 
 import '../../common/app_colors.dart';
 
+// PENDING=1,
+// PROCESSING=2,
+// APPROVED=3,
+// SHIPPED=4,
+// DELIVERED=5,
+// RECEIVED=6
+
 class Track extends StatefulWidget {
   final OrderItem item;
 
@@ -41,9 +48,11 @@ class _TrackState extends State<Track> {
                   width: 70,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      image: const DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage("assets/images/track.png"))),
+                      image: widget.item.product!.pictures!.isEmpty
+                          ? null
+                          : DecorationImage(
+                              image: NetworkImage(widget
+                                  .item.product!.pictures![0].location!))),
                 ),
                 horizontalSpaceSmall,
                 Column(
@@ -71,8 +80,10 @@ class _TrackState extends State<Track> {
               leading: Container(
                 height: 40,
                 width: 40,
-                decoration: const BoxDecoration(
-                    color: Color(0xFFFFB000), shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: widget.item.status == 1 ? kcOrangeColor : kcMediumGrey,
+                  shape: BoxShape.circle,
+                ),
                 child: const Center(
                   child: Icon(
                     Icons.edit_note,
@@ -84,7 +95,7 @@ class _TrackState extends State<Track> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Order Placed",
+                    "Order Pending",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -102,8 +113,10 @@ class _TrackState extends State<Track> {
               leading: Container(
                 height: 40,
                 width: 40,
-                decoration: const BoxDecoration(
-                    color: Color(0xFFFFB000), shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    color:
+                        widget.item.status == 2 ? kcOrangeColor : kcMediumGrey,
+                    shape: BoxShape.circle),
                 child: const Center(
                   child: Icon(
                     Icons.edit_note,
@@ -115,7 +128,7 @@ class _TrackState extends State<Track> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Order Processed",
+                    "Order Processing",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -133,8 +146,10 @@ class _TrackState extends State<Track> {
               leading: Container(
                 height: 40,
                 width: 40,
-                decoration: const BoxDecoration(
-                    color: kcMediumGrey, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    color:
+                        widget.item.status == 3 ? kcOrangeColor : kcMediumGrey,
+                    shape: BoxShape.circle),
                 child: const Center(
                   child: Icon(
                     Icons.card_giftcard,
@@ -146,14 +161,14 @@ class _TrackState extends State<Track> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Ready to ship",
+                    "Approved",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: kcMediumGrey,
                     ),
                   ),
-                  Text("Your order is ready for shipping"),
+                  Text("Your order is approved"),
                 ],
               ),
               view: Container(
@@ -164,8 +179,43 @@ class _TrackState extends State<Track> {
               leading: Container(
                 height: 40,
                 width: 40,
-                decoration: const BoxDecoration(
-                    color: kcMediumGrey, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    color:
+                        widget.item.status == 4 ? kcOrangeColor : kcMediumGrey,
+                    shape: BoxShape.circle),
+                child: const Center(
+                  child: Icon(
+                    Icons.card_giftcard,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              title: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Order Shipped",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: kcMediumGrey,
+                    ),
+                  ),
+                  Text("Your order has been shipped"),
+                ],
+              ),
+              view: Container(
+                height: 40,
+              ),
+            ),
+            StepperStep(
+              leading: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    color:
+                        widget.item.status == 5 ? kcOrangeColor : kcMediumGrey,
+                    shape: BoxShape.circle),
                 child: const Center(
                   child: Icon(
                     Icons.fire_truck,
@@ -177,7 +227,7 @@ class _TrackState extends State<Track> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Out for delivery",
+                    "Order delivered",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -195,8 +245,10 @@ class _TrackState extends State<Track> {
               leading: Container(
                 height: 40,
                 width: 40,
-                decoration: const BoxDecoration(
-                    color: kcMediumGrey, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    color:
+                        widget.item.status == 6 ? kcOrangeColor : kcMediumGrey,
+                    shape: BoxShape.circle),
                 child: const Center(
                   child: Icon(
                     Icons.check,
@@ -208,14 +260,14 @@ class _TrackState extends State<Track> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Out for delivery",
+                    "Order Received",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: kcMediumGrey,
                     ),
                   ),
-                  Text("Your order has been delivered"),
+                  Text("Your order has received"),
                 ],
               ),
               view: Container(

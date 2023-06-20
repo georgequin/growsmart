@@ -1,3 +1,5 @@
+import 'package:afriprize/core/data/models/product.dart';
+
 class OrderItem {
   String? id;
   int? quantity;
@@ -9,16 +11,17 @@ class OrderItem {
   Tracking? tracking;
   List<Transaction>? transaction;
 
-  OrderItem(
-      {this.id,
-        this.quantity,
-        this.status,
-        this.created,
-        this.updated,
-        this.user,
-        this.product,
-        this.tracking,
-        this.transaction});
+  OrderItem({
+    this.id,
+    this.quantity,
+    this.status,
+    this.created,
+    this.updated,
+    this.user,
+    this.product,
+    this.tracking,
+    this.transaction,
+  });
 
   OrderItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -26,16 +29,15 @@ class OrderItem {
     status = json['status'];
     created = json['created'];
     updated = json['updated'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
     product =
-    json['product'] != null ? new Product.fromJson(json['product']) : null;
-    tracking = json['tracking'] != null
-        ? new Tracking.fromJson(json['tracking'])
-        : null;
+        json['product'] != null ? Product.fromJson(json['product']) : null;
+    tracking =
+        json['tracking'] != null ? Tracking.fromJson(json['tracking']) : null;
     if (json['transaction'] != null) {
       transaction = <Transaction>[];
       json['transaction'].forEach((v) {
-        transaction!.add(new Transaction.fromJson(v));
+        transaction!.add(Transaction.fromJson(v));
       });
     }
   }
@@ -78,16 +80,16 @@ class User {
 
   User(
       {this.id,
-        this.firstname,
-        this.lastname,
-        this.email,
-        this.phone,
-        this.country,
-        this.verified,
-        this.status,
-        this.role,
-        this.created,
-        this.updated});
+      this.firstname,
+      this.lastname,
+      this.email,
+      this.phone,
+      this.country,
+      this.verified,
+      this.status,
+      this.role,
+      this.created,
+      this.updated});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -120,47 +122,6 @@ class User {
   }
 }
 
-class Product {
-  String? id;
-  String? productName;
-  String? productDescription;
-  int? productPrice;
-  bool? featured;
-  String? created;
-  String? updated;
-
-  Product(
-      {this.id,
-        this.productName,
-        this.productDescription,
-        this.productPrice,
-        this.featured,
-        this.created,
-        this.updated});
-
-  Product.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    productName = json['product_name'];
-    productDescription = json['product_description'];
-    productPrice = json['product_price'];
-    featured = json['featured'];
-    created = json['created'];
-    updated = json['updated'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['product_name'] = productName;
-    data['product_description'] = productDescription;
-    data['product_price'] = productPrice;
-    data['featured'] = featured;
-    data['created'] = created;
-    data['updated'] = updated;
-    return data;
-  }
-}
-
 class Tracking {
   String? id;
   int? status;
@@ -172,12 +133,12 @@ class Tracking {
 
   Tracking(
       {this.id,
-        this.status,
-        this.location,
-        this.trackingNumber,
-        this.comment,
-        this.created,
-        this.updated});
+      this.status,
+      this.location,
+      this.trackingNumber,
+      this.comment,
+      this.created,
+      this.updated});
 
   Tracking.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -214,13 +175,13 @@ class Transaction {
 
   Transaction(
       {this.id,
-        this.status,
-        this.amount,
-        this.reference,
-        this.meta,
-        this.type,
-        this.created,
-        this.updated});
+      this.status,
+      this.amount,
+      this.reference,
+      this.meta,
+      this.type,
+      this.created,
+      this.updated});
 
   Transaction.fromJson(Map<String, dynamic> json) {
     id = json['id'];
