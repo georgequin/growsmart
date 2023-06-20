@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:afriprize/app/app.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
@@ -57,6 +59,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   Container(
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
+                                        color: kcBlackColor.withOpacity(0.2),
                                         image: ad.pictures!.isEmpty
                                             ? null
                                             : DecorationImage(
@@ -86,7 +89,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                                             .product!
                                                             .pictures![0]
                                                             .location!)),
-                                            color: kcWhiteColor,
+                                            color: kcLightGrey,
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),
@@ -94,12 +97,17 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         verticalSpaceTiny,
                                         SizedBox(
                                           width: 140,
-                                          child: Text(
-                                            "Buy ${ad.product!.productName} and stand a chance to win",
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                color: kcWhiteColor,
-                                                fontWeight: FontWeight.bold),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                                sigmaX: 2.0, sigmaY: 2.0),
+                                            // Adjust the sigma values for different blur intensities
+                                            child: Text(
+                                              "Buy ${ad.product!.productName} and stand a chance to win",
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: kcWhiteColor,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
                                         verticalSpaceTiny,
