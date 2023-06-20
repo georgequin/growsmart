@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.afriprize">
+    package="com.afriprize.test">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application

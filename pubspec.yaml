@@ -61,6 +61,7 @@ dev_dependencies:
 
   stacked_generator: ^1.0.0
   mockito: ^5.3.2
+  change_app_package_name: ^1.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
