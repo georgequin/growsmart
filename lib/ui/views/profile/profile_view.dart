@@ -47,10 +47,14 @@ class ProfileView extends StackedView<ProfileViewModel> {
                       onTap: () {
                         viewModel.toggleShowChangePP();
                       },
-                      child: const ProfilePicture(
+                      child: ProfilePicture(
                         size: 100,
+                        url: profile.value.pictures!.isEmpty
+                            ? null
+                            : profile.value.pictures?[0].location,
                       ),
                     ),
+                    horizontalSpaceSmall,
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

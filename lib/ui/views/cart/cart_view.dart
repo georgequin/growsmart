@@ -65,7 +65,6 @@ class CartView extends StackedView<CartViewModel> {
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     padding: const EdgeInsets.all(10),
-                    height: 100,
                     decoration: BoxDecoration(
                       color: kcWhiteColor,
                       borderRadius: BorderRadius.circular(12),
@@ -79,38 +78,42 @@ class CartView extends StackedView<CartViewModel> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              height: 65,
-                              width: 65,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                image: item.product!.pictures!.isEmpty
-                                    ? null
-                                    : DecorationImage(
-                                        image: NetworkImage(item
-                                            .product!.pictures![0].location!),
-                                      ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 65,
+                                width: 65,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  image: item.product!.pictures!.isEmpty
+                                      ? null
+                                      : DecorationImage(
+                                          image: NetworkImage(item
+                                              .product!.pictures![0].location!),
+                                        ),
+                                ),
                               ),
-                            ),
-                            horizontalSpaceMedium,
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(item.product!.productName ?? ""),
-                                Text(item.product!.productName ?? ""),
-                                verticalSpaceTiny,
-                                Text(
-                                  "N${item.product!.productPrice! * item.quantity!}",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                )
-                              ],
-                            )
-                          ],
+                              horizontalSpaceMedium,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(item.product!.productName ?? ""),
+                                    Text(item.product!.productName ?? ""),
+                                    verticalSpaceTiny,
+                                    Text(
+                                      "N${item.product!.productPrice! * item.quantity!}",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,13 +142,20 @@ class CartView extends StackedView<CartViewModel> {
                                       border: Border.all(color: kcLightGrey),
                                     ),
                                   ),
+                            verticalSpaceSmall,
                             Row(
                               children: [
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    if (item.quantity! > 1) {
+                                      item.quantity = item.quantity! - 1;
+                                      cart.notifyListeners();
+                                      viewModel.getSubTotal();
+                                    }
+                                  },
                                   child: Container(
-                                    height: 20,
-                                    width: 20,
+                                    height: 30,
+                                    width: 30,
                                     decoration: BoxDecoration(
                                         border: Border.all(color: kcLightGrey),
                                         borderRadius: BorderRadius.circular(5)),
@@ -160,17 +170,24 @@ class CartView extends StackedView<CartViewModel> {
                                 horizontalSpaceSmall,
                                 Text("${item.quantity!}"),
                                 horizontalSpaceSmall,
-                                Container(
-                                  height: 20,
-                                  width: 20,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: kcLightGrey),
-                                      borderRadius: BorderRadius.circular(5)),
-                                  child: const Align(
-                                    alignment: Alignment.center,
-                                    child: Icon(
-                                      Icons.add,
-                                      size: 18,
+                                InkWell(
+                                  onTap: () {
+                                    item.quantity = item.quantity! + 1;
+                                    cart.notifyListeners();
+                                    viewModel.getSubTotal();
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: kcLightGrey),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: const Align(
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 18,
+                                      ),
                                     ),
                                   ),
                                 )
@@ -197,7 +214,7 @@ class CartView extends StackedView<CartViewModel> {
                 ),
               ),
               Text(
-                "N${viewModel.getSubTotal()}",
+                "N${viewModel.subTotal}",
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
@@ -236,7 +253,7 @@ class CartView extends StackedView<CartViewModel> {
                     fontWeight: FontWeight.bold),
               ),
               Text(
-                "N${viewModel.getSubTotal()}",
+                "N${viewModel.subTotal}",
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
@@ -253,6 +270,12 @@ class CartView extends StackedView<CartViewModel> {
         ],
       ),
     );
+  }
+
+  @override
+  void onViewModelReady(CartViewModel viewModel) {
+    viewModel.getSubTotal();
+    super.onViewModelReady(viewModel);
   }
 
   @override

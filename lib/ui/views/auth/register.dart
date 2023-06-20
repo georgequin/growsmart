@@ -90,13 +90,13 @@ class _RegisterState extends State<Register> {
           //   onChanged: (v) {},
           //   hint: "Select country",
           // ),
-          verticalSpaceSmall,
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              "Select your country",
-            ),
-          ),
+          // verticalSpaceSmall,
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 8.0),
+          //   child: Text(
+          //     "Select your country",
+          //   ),
+          // ),
           verticalSpaceMedium,
           TextFieldWidget(
             hint: "Password",

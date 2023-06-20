@@ -15,6 +15,7 @@ class CartViewModel extends BaseViewModel {
   final snackBar = locator<SnackbarService>();
   final log = getLogger("CartViewModel");
   List<CartItem> itemsToDelete = [];
+  int subTotal = 0;
 
   void addRemoveDelete(CartItem item) {
     itemsToDelete.contains(item)
@@ -27,17 +28,21 @@ class CartViewModel extends BaseViewModel {
     for (var element in itemsToDelete) {
       cart.value.remove(element);
     }
+    itemsToDelete.clear();
+    cart.notifyListeners();
     rebuildUi();
+    getSubTotal();
   }
 
-  int getSubTotal() {
+  void getSubTotal() {
     int total = 0;
 
     for (var element in cart.value) {
       total = total + (element.product!.productPrice! * element.quantity!);
     }
 
-    return total;
+    subTotal = total;
+    rebuildUi();
   }
 
   void checkout() async {

@@ -1,3 +1,5 @@
+import 'package:afriprize/core/data/models/product.dart';
+
 class Profile {
   String? id;
   String? firstname;
@@ -11,21 +13,22 @@ class Profile {
   String? created;
   String? updated;
   Wallet? wallet;
+  List<Pictures>? pictures;
 
-  Profile({
-    this.id,
-    this.firstname,
-    this.lastname,
-    this.email,
-    this.phone,
-    this.country,
-    this.verified,
-    this.status,
-    this.role,
-    this.created,
-    this.updated,
-    this.wallet,
-  });
+  Profile(
+      {this.id,
+      this.firstname,
+      this.lastname,
+      this.email,
+      this.phone,
+      this.country,
+      this.verified,
+      this.status,
+      this.role,
+      this.created,
+      this.updated,
+      this.wallet,
+      this.pictures});
 
   Profile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -37,6 +40,12 @@ class Profile {
     verified = json['verified'];
     status = json['status'];
     role = json['role'];
+    if (json['picture'] != null) {
+      pictures = <Pictures>[];
+      json['picture'].forEach((v) {
+        pictures!.add(Pictures.fromJson(v));
+      });
+    }
     created = json['created'];
     updated = json['updated'];
     wallet = json['wallet'] != null ? Wallet.fromJson(json['wallet']) : null;
@@ -57,6 +66,9 @@ class Profile {
     data['updated'] = updated;
     if (wallet != null) {
       data['wallet'] = wallet!.toJson();
+    }
+    if (pictures != null) {
+      data['picture'] = pictures!.map((v) => v.toJson()).toList();
     }
     return data;
   }

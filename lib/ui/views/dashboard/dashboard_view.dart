@@ -13,6 +13,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/data/models/product.dart';
+import '../../../core/data/models/raffle_ticket.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
@@ -170,7 +171,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       scrollDirection: Axis.horizontal,
                       itemCount: viewModel.sellingFast.length,
                       itemBuilder: (context, index) {
-                        Product product = viewModel.sellingFast[index];
+                        RaffleTicket product = viewModel.sellingFast[index];
                         return Container(
                           padding: const EdgeInsets.all(15),
                           margin: const EdgeInsets.only(
@@ -195,14 +196,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "${product.raffleAd?.adName}",
+                                      "${product.ticketName}",
                                       style: GoogleFonts.inter(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     verticalSpaceTiny,
                                     Text(
-                                      "${product.raffleAd?.adDescription}",
+                                      "${product.ticketDescription}",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3,
                                       style: GoogleFonts.inter(
@@ -251,21 +252,23 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   ],
                                 ),
                               ),
-                              Container(
-                                height: MediaQuery.of(context).size.height,
-                                width: 120,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: product.raffleAd!.pictures == null ||
-                                            product.raffleAd!.pictures!.isEmpty
-                                        ? null
-                                        : DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: NetworkImage(product
-                                                .raffleAd!
-                                                .pictures![0]
-                                                .location!))),
-                              )
+                              // Container(
+                              //   height: MediaQuery.of(context).size.height,
+                              //   width: 120,
+                              //   decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(10),
+                              //     image: product.raffleAd!.pictures == null ||
+                              //             product.raffleAd!.pictures!.isEmpty
+                              //         ? null
+                              //         : DecorationImage(
+                              //             fit: BoxFit.cover,
+                              //             image: NetworkImage(
+                              //               product.raffleAd!.pictures![0]
+                              //                   .location!,
+                              //             ),
+                              //           ),
+                              //   ),
+                              // )
                             ],
                           ),
                         );
@@ -308,13 +311,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             SubmitButton(
                               isLoading: false,
                               label: "Add to cart",
-                              submit: () {
-                                CartItem cartItem =
-                                    CartItem(product: product, quantity: 1);
-                                cart.value.add(cartItem);
-                                locator<SnackbarService>().showSnackbar(
-                                    message: "Product added to cart");
-                              },
+                              submit: () => viewModel.addToCart(product),
                               color: kcPrimaryColor,
                               boldText: true,
                               icon: Icons.shopping_cart_outlined,
@@ -385,7 +382,8 @@ class ProductRow extends StatelessWidget {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
-                child: product.raffleAd!.pictures!.isEmpty
+                child: product.raffleAd == null ||
+                        product.raffleAd!.pictures!.isEmpty
                     ? SizedBox(
                         height: 170,
                         width: MediaQuery.of(context).size.width,

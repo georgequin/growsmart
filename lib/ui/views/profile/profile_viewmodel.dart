@@ -12,11 +12,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
 import 'package:path/path.dart' as path;
+import 'package:stacked_services/stacked_services.dart';
 
 class ProfileViewModel extends BaseViewModel {
   final repo = locator<Repository>();
   final log = getLogger("ProfileViewModel");
   bool showChangePP = false;
+  final snackBar = locator<SnackbarService>();
 
   void toggleShowChangePP() {
     showChangePP = !showChangePP;
@@ -46,7 +48,10 @@ class ProfileViewModel extends BaseViewModel {
       ApiResponse res = await locator<Repository>().updateProfilePicture({
         "picture": await MultipartFile.fromFile(File(image!.path).path),
       });
-      if (res.statusCode == 200) {}
+      if (res.statusCode == 200) {
+        snackBar.showSnackbar(message: res.data["message"]);
+        getProfile();
+      }
     } catch (e) {
       print(e);
     }

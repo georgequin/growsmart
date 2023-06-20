@@ -201,7 +201,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getOrderList() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "orders/list",
+      endpoint: "orders/user/list",
     );
 
     return response;
