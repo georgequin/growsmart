@@ -5,6 +5,7 @@ import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
+import 'package:afriprize/state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -28,7 +29,7 @@ class AuthViewModel extends BaseViewModel {
   init() async {
     bool rem = await locator<LocalStorage>().fetch(LocalStorageDir.remember);
     String? lastEmail =
-    await locator<LocalStorage>().fetch(LocalStorageDir.lastEmail);
+        await locator<LocalStorage>().fetch(LocalStorageDir.lastEmail);
 
     remember = rem;
 
@@ -62,6 +63,7 @@ class AuthViewModel extends BaseViewModel {
         "password": password.text,
       });
       if (res.statusCode == 200) {
+        userLoggedIn.value = true;
         // loggedInUser.value =
         //     User.fromJson(Map<String, dynamic>.from(res.data["data"]));
         locator<LocalStorage>()

@@ -20,7 +20,8 @@ class StartupViewModel extends BaseViewModel {
     if (onboarded == null || onboarded == false) {
       _navigationService.replaceWithOnboardingView();
     } else {
-      _navigationService.replaceWithAuthView();
+      _navigationService.replaceWithHomeView();
+      // _navigationService.replaceWithAuthView();
     }
   }
 }

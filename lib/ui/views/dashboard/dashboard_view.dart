@@ -30,9 +30,25 @@ class DashboardView extends StackedView<DashboardViewModel> {
     return Scaffold(
       appBar: AppBar(
         title: Image.asset("assets/images/logo_light.png"),
-        // actions: [
-        //   Image.asset("assets/images/search.png"),
-        // ],
+        actions: [
+          userLoggedIn.value == false
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(kcPrimaryColor)),
+                    onPressed: () {
+                      locator<NavigationService>().replaceWithAuthView();
+                    },
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(color: kcWhiteColor),
+                    ),
+                  ),
+                )
+              : const SizedBox()
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -320,14 +336,16 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             ),
                           ),
                           verticalSpaceMedium,
-                          SubmitButton(
-                            isLoading: false,
-                            label: "Add to cart",
-                            submit: () => viewModel.addToCart(product),
-                            color: kcPrimaryColor,
-                            boldText: true,
-                            icon: Icons.shopping_cart_outlined,
-                          ),
+                          userLoggedIn.value == false
+                              ? const SizedBox()
+                              : SubmitButton(
+                                  isLoading: false,
+                                  label: "Add to cart",
+                                  submit: () => viewModel.addToCart(product),
+                                  color: kcPrimaryColor,
+                                  boldText: true,
+                                  icon: Icons.shopping_cart_outlined,
+                                ),
                           verticalSpaceMedium
                         ],
                       );

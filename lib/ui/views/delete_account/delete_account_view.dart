@@ -59,7 +59,7 @@ class DeleteAccountView extends StackedView<DeleteAccountViewModel> {
                     verticalSpaceMedium,
                     TextFieldWidget(
                         hint: "Enter Email", controller: viewModel.email),
-                    verticalSpaceSmall,
+                    verticalSpaceMedium,
                     viewModel.emailVerified
                         ? Column(
                             children: [
@@ -67,7 +67,7 @@ class DeleteAccountView extends StackedView<DeleteAccountViewModel> {
                                 hint: "Enter Code",
                                 controller: viewModel.code,
                               ),
-                              verticalSpaceSmall,
+                              verticalSpaceMedium,
                             ],
                           )
                         : const SizedBox(),

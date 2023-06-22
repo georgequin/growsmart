@@ -207,96 +207,101 @@ class _ProductDetailState extends State<ProductDetail> {
                   ),
                 ),
                 verticalSpaceLarge,
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 25.0, vertical: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
+                userLoggedIn.value == false
+                    ? const SizedBox()
+                    : Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                            color: kcVeryLightGrey,
-                            borderRadius: BorderRadius.circular(9)),
+                            horizontal: 25.0, vertical: 20),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (quantity > 1) {
-                                    quantity--;
-                                  }
-                                });
-                              },
-                              child: Container(
-                                height: 30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                    color: kcWhiteColor,
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 18,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                  color: kcVeryLightGrey,
+                                  borderRadius: BorderRadius.circular(9)),
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (quantity > 1) {
+                                          quantity--;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      width: 30,
+                                      decoration: BoxDecoration(
+                                          color: kcWhiteColor,
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.remove,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  horizontalSpaceSmall,
+                                  Text("$quantity"),
+                                  horizontalSpaceSmall,
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        quantity++;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      width: 30,
+                                      decoration: BoxDecoration(
+                                          color: kcWhiteColor,
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: const Align(
+                                        alignment: Alignment.center,
+                                        child: Icon(
+                                          Icons.add,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                            horizontalSpaceSmall,
-                            Text("$quantity"),
-                            horizontalSpaceSmall,
                             InkWell(
                               onTap: () {
-                                setState(() {
-                                  quantity++;
-                                });
+                                CartItem cartItem = CartItem(
+                                    product: widget.product,
+                                    quantity: quantity);
+                                cart.value.add(cartItem);
+                                cart.notifyListeners();
+                                locator<SnackbarService>().showSnackbar(
+                                    message: "Product added to cart");
+                                Navigator.pop(context);
                               },
                               child: Container(
-                                height: 30,
-                                width: 30,
+                                height: 50,
+                                width: 160,
                                 decoration: BoxDecoration(
-                                    color: kcWhiteColor,
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: const Align(
-                                  alignment: Alignment.center,
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 18,
+                                    color: kcPrimaryColor,
+                                    borderRadius: BorderRadius.circular(9)),
+                                child: const Center(
+                                  child: Text(
+                                    "Add to cart",
+                                    style: TextStyle(color: kcWhiteColor),
                                   ),
                                 ),
                               ),
                             )
                           ],
                         ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          CartItem cartItem = CartItem(
-                              product: widget.product, quantity: quantity);
-                          cart.value.add(cartItem);
-                          cart.notifyListeners();
-                          locator<SnackbarService>()
-                              .showSnackbar(message: "Product added to cart");
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 160,
-                          decoration: BoxDecoration(
-                              color: kcPrimaryColor,
-                              borderRadius: BorderRadius.circular(9)),
-                          child: const Center(
-                            child: Text(
-                              "Add to cart",
-                              style: TextStyle(color: kcWhiteColor),
-                            ),
-                          ),
-                        ),
                       )
-                    ],
-                  ),
-                )
               ],
             ),
           )

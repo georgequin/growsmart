@@ -59,7 +59,7 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                     verticalSpaceMedium,
                     TextFieldWidget(
                         hint: "Enter Email", controller: viewModel.email),
-                    verticalSpaceSmall,
+                    verticalSpaceMedium,
                     viewModel.emailVerified
                         ? Column(
                             children: [
@@ -67,7 +67,7 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                                 hint: "Enter Code",
                                 controller: viewModel.code,
                               ),
-                              verticalSpaceSmall,
+                              verticalSpaceMedium,
                               TextFieldWidget(
                                 obscureText: viewModel.obscure,
                                 hint: "Enter Old Password",
@@ -81,7 +81,7 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                                       : Icons.visibility),
                                 ),
                               ),
-                              verticalSpaceSmall,
+                              verticalSpaceMedium,
                               TextFieldWidget(
                                 obscureText: viewModel.obscure,
                                 hint: "Enter New Password",
@@ -95,7 +95,7 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                                       : Icons.visibility),
                                 ),
                               ),
-                              verticalSpaceSmall,
+                              verticalSpaceMedium,
                             ],
                           )
                         : const SizedBox(),

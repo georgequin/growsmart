@@ -7,6 +7,7 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/profile_picture.dart';
 import 'package:afriprize/ui/views/profile/order_list.dart';
+import 'package:afriprize/ui/views/profile/support.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -117,8 +118,13 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   ),
                   title: const Text("My orders"),
                 ),
-                const ListTile(
-                  leading: Icon(
+                ListTile(
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+                      return const Support();
+                    }));
+                  },
+                  leading: const Icon(
                     Icons.support_agent,
                     color: kcSecondaryColor,
                   ),
