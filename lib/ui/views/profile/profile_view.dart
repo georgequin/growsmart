@@ -27,7 +27,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          "profile",
+          "Profile",
           style: TextStyle(
             color: kcBlackColor,
           ),
@@ -91,8 +91,6 @@ class ProfileView extends StackedView<ProfileViewModel> {
                       )
                     : const SizedBox(),
                 verticalSpaceLarge,
-                const Text("User admin"),
-                verticalSpaceMedium,
                 ListTile(
                   onTap: () {
                     locator<NavigationService>()

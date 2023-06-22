@@ -28,6 +28,12 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   bool loading = false;
+  final address = TextEditingController();
+  String? state;
+  final city = TextEditingController();
+  final phone = TextEditingController();
+  final zipCode = TextEditingController();
+  String paymentMethod = "";
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +114,7 @@ class _CheckoutState extends State<Checkout> {
                             )
                           ],
                         ),
-                        Column(
+                        const Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // viewModel.itemsToDelete.contains(index)
@@ -128,14 +134,14 @@ class _CheckoutState extends State<Checkout> {
                             //         ),
                             //       )
                             //     :
-                            Container(
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: kcLightGrey),
-                              ),
-                            ),
+                            // Container(
+                            //   height: 20,
+                            //   width: 20,
+                            //   decoration: BoxDecoration(
+                            //     shape: BoxShape.circle,
+                            //     border: Border.all(color: kcLightGrey),
+                            //   ),
+                            // ),
                             // Row(
                             //   children: [
                             //     Container(
@@ -266,29 +272,33 @@ class _CheckoutState extends State<Checkout> {
               children: [
                 TextFieldWidget(
                   hint: "Street Address",
-                  controller: TextEditingController(),
+                  controller: address,
                 ),
                 verticalSpaceMedium,
                 DropdownWidget(
-                  value: null,
-                  itemsList: const [],
-                  hint: "State/Province",
-                  onChanged: () {},
+                  value: state,
+                  itemsList: states,
+                  hint: "State",
+                  onChanged: (value) {
+                    setState(() {
+                      state = value;
+                    });
+                  },
                 ),
                 verticalSpaceMedium,
                 TextFieldWidget(
                   hint: "City",
-                  controller: TextEditingController(),
+                  controller: city,
                 ),
                 verticalSpaceMedium,
                 TextFieldWidget(
                   hint: "Phone",
-                  controller: TextEditingController(),
+                  controller: phone,
                 ),
                 verticalSpaceMedium,
                 TextFieldWidget(
-                  hint: "Zip/Postal Code",
-                  controller: TextEditingController(),
+                  hint: "Zip Code",
+                  controller: zipCode,
                 ),
               ],
             ),
@@ -303,170 +313,194 @@ class _CheckoutState extends State<Checkout> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 50,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: kcBlackColor, width: 0.5)),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 15,
-                        width: 15,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: kcBlackColor,
-                              width: 1,
-                            )),
-                      ),
-                      horizontalSpaceSmall,
-                      const Text(
-                        "PayPal",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      paymentMethod = "paystack";
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    height: 50,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: kcBlackColor, width: 0.5)),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 15,
+                          width: 15,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: kcBlackColor,
+                                width: 1,
+                              )),
+                          child: paymentMethod == "paystack"
+                              ? const Center(
+                                  child: Icon(
+                                    Icons.check,
+                                    size: 12,
+                                  ),
+                                )
+                              : const SizedBox(),
                         ),
-                      ),
-                      horizontalSpaceSmall,
-                      const Expanded(
-                        child: Text(
-                          "You will be redirected to the PayPal website after submitting your order",
-                          style: TextStyle(fontSize: 11),
+                        horizontalSpaceSmall,
+                        const Text(
+                          "Paystack",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      horizontalSpaceSmall,
-                      Image.asset("assets/images/paypal.png")
-                    ],
+                        horizontalSpaceSmall,
+                        const Expanded(
+                          child: Text(
+                            "You will be redirected to the Paystack website after submitting your order",
+                            style: TextStyle(fontSize: 11),
+                          ),
+                        ),
+                        horizontalSpaceSmall,
+                        // Image.asset("assets/images/paypal.png")
+                      ],
+                    ),
                   ),
                 ),
+                // verticalSpaceSmall,
+                // Container(
+                //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                //   height: 250,
+                //   decoration: BoxDecoration(
+                //       border: Border.all(color: kcBlackColor, width: 0.5)),
+                //   child: Column(
+                //     children: [
+                //       verticalSpaceSmall,
+                //       Row(
+                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //         children: [
+                //           Row(
+                //             children: [
+                //               Container(
+                //                 height: 15,
+                //                 width: 15,
+                //                 decoration: BoxDecoration(
+                //                     shape: BoxShape.circle,
+                //                     border: Border.all(
+                //                       color: kcBlackColor,
+                //                       width: 1,
+                //                     )),
+                //               ),
+                //               horizontalSpaceSmall,
+                //               const Text(
+                //                 "Pay with Credit Card",
+                //                 style: TextStyle(
+                //                   fontWeight: FontWeight.bold,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //           Row(
+                //             children: [
+                //               Image.asset("assets/images/visa.png"),
+                //               verticalSpaceTiny,
+                //               Image.asset("assets/images/discover.png"),
+                //               verticalSpaceTiny,
+                //               Image.asset("assets/images/maestro.png"),
+                //               verticalSpaceTiny,
+                //               Image.asset("assets/images/master_card.png"),
+                //             ],
+                //           )
+                //         ],
+                //       ),
+                //       verticalSpaceMedium,
+                //       Row(
+                //         children: [
+                //           Expanded(
+                //             flex: 3,
+                //             child: TextFieldWidget(
+                //               hint: "Card number",
+                //               controller: TextEditingController(),
+                //             ),
+                //           ),
+                //           horizontalSpaceSmall,
+                //           Expanded(
+                //             flex: 2,
+                //             child: TextFieldWidget(
+                //               hint: "Expiry",
+                //               controller: TextEditingController(),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //       verticalSpaceMedium,
+                //       Row(
+                //         children: [
+                //           Expanded(
+                //             flex: 3,
+                //             child: TextFieldWidget(
+                //               hint: "Card Security Code",
+                //               controller: TextEditingController(),
+                //             ),
+                //           ),
+                //           horizontalSpaceSmall,
+                //           const Expanded(
+                //             flex: 2,
+                //             child: Text(
+                //               "What is this?",
+                //               style: TextStyle(color: Colors.blue),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 verticalSpaceSmall,
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 250,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: kcBlackColor, width: 0.5)),
-                  child: Column(
-                    children: [
-                      verticalSpaceSmall,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                height: 15,
-                                width: 15,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: kcBlackColor,
-                                      width: 1,
-                                    )),
-                              ),
-                              horizontalSpaceSmall,
-                              const Text(
-                                "Pay with Credit Card",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Image.asset("assets/images/visa.png"),
-                              verticalSpaceTiny,
-                              Image.asset("assets/images/discover.png"),
-                              verticalSpaceTiny,
-                              Image.asset("assets/images/maestro.png"),
-                              verticalSpaceTiny,
-                              Image.asset("assets/images/master_card.png"),
-                            ],
-                          )
-                        ],
-                      ),
-                      verticalSpaceMedium,
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: TextFieldWidget(
-                              hint: "Card number",
-                              controller: TextEditingController(),
-                            ),
-                          ),
-                          horizontalSpaceSmall,
-                          Expanded(
-                            flex: 2,
-                            child: TextFieldWidget(
-                              hint: "Expiry",
-                              controller: TextEditingController(),
-                            ),
-                          ),
-                        ],
-                      ),
-                      verticalSpaceMedium,
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: TextFieldWidget(
-                              hint: "Card Security Code",
-                              controller: TextEditingController(),
-                            ),
-                          ),
-                          horizontalSpaceSmall,
-                          const Expanded(
-                            flex: 2,
-                            child: Text(
-                              "What is this?",
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                verticalSpaceSmall,
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 50,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: kcBlackColor, width: 0.5)),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 15,
-                        width: 15,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: kcBlackColor,
-                              width: 1,
-                            )),
-                        child: const Center(
-                          child: Icon(
-                            Icons.check,
-                            size: 12,
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      paymentMethod = "wallet";
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    height: 50,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: kcBlackColor, width: 0.5)),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 15,
+                          width: 15,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: kcBlackColor,
+                                width: 1,
+                              )),
+                          child: paymentMethod == "wallet"
+                              ? const Center(
+                                  child: Icon(
+                                    Icons.check,
+                                    size: 12,
+                                  ),
+                                )
+                              : const SizedBox(),
+                        ),
+                        horizontalSpaceSmall,
+                        const Text(
+                          "Wallet",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      horizontalSpaceSmall,
-                      const Text(
-                        "Wallet",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                        horizontalSpaceSmall,
+                        const Expanded(
+                          child: Text(
+                            "Make payment from your in-app wallet",
+                            style: TextStyle(fontSize: 11),
+                          ),
                         ),
-                      ),
-                      horizontalSpaceSmall,
-                      const Expanded(
-                        child: Text(
-                          "Make payment from your in-app wallet",
-                          style: TextStyle(fontSize: 11),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 verticalSpaceSmall,
@@ -499,14 +533,23 @@ class _CheckoutState extends State<Checkout> {
               try {
                 ApiResponse res = await locator<Repository>().payForOrder({
                   "orderId": widget.infoList.map((e) => e.id).toList(),
-                  "payment_method": 0
+                  "payment_method": paymentMethod == "wallet" ? 0 : 0
                 });
                 if (res.statusCode == 200) {
                   cart.value.clear();
+                  cart.notifyListeners();
+                  if ((res.data["receipt"] as List).isEmpty) {
+                    locator<NavigationService>().back();
+                    locator<SnackbarService>()
+                        .showSnackbar(message: "Order Placed Successfully");
+                  }
                   locator<NavigationService>().navigateTo(Routes.receipt,
                       arguments: ReceiptArguments(
                           info: Map<String, dynamic>.from(
                               res.data["receipt"][0])));
+                } else {
+                  locator<SnackbarService>()
+                      .showSnackbar(message: res.data["message"]);
                 }
               } catch (e) {
                 print(e);
@@ -537,3 +580,43 @@ class _CheckoutState extends State<Checkout> {
     return total;
   }
 }
+
+List<String> states = [
+  "Abia",
+  "Adamawa",
+  "Akwa Ibom",
+  "Anambra",
+  "Bauchi",
+  "Bayelsa",
+  "Benue",
+  "Borno",
+  "Cross River",
+  "Delta",
+  "Ebonyi",
+  "Edo",
+  "Ekiti",
+  "Enugu",
+  "FCT - Abuja",
+  "Gombe",
+  "Imo",
+  "Jigawa",
+  "Kaduna",
+  "Kano",
+  "Katsina",
+  "Kebbi",
+  "Kogi",
+  "Kwara",
+  "Lagos",
+  "Nasarawa",
+  "Niger",
+  "Ogun",
+  "Ondo",
+  "Osun",
+  "Oyo",
+  "Plateau",
+  "Rivers",
+  "Sokoto",
+  "Taraba",
+  "Yobe",
+  "Zamfara"
+];

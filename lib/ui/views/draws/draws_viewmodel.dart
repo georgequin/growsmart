@@ -21,7 +21,7 @@ class DrawsViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.raffleList();
       if (res.statusCode == 200) {
-        raffle = (res.data["tickets"] as List)
+        raffle = (res.data["raffle"] as List)
             .map((e) => RaffleTicket.fromJson(Map<String, dynamic>.from(e)))
             .toList();
         rebuildUi();

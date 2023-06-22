@@ -15,8 +15,8 @@ class DashboardViewModel extends BaseViewModel {
   int selectedIndex = 0;
   final log = getLogger("DashboardViewModel");
   List<Product> productList = [];
-  List<RaffleTicket> sellingFast = [];
-  List<Ad> ads = [];
+  List<Product> sellingFast = [];
+  List<Product> ads = [];
 
   void addToCart(Product product) {
     CartItem cartItem = CartItem(product: product, quantity: 1);
@@ -42,8 +42,8 @@ class DashboardViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.getAds();
       if (res.statusCode == 200) {
-        ads = (res.data["raffleads"] as List)
-            .map((e) => Ad.fromJson(Map<String, dynamic>.from(e)))
+        ads = (res.data["products"] as List)
+            .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
         rebuildUi();
       }
@@ -79,7 +79,7 @@ class DashboardViewModel extends BaseViewModel {
       ApiResponse res = await repo.getSellingFast();
       if (res.statusCode == 200) {
         sellingFast = (res.data["products"] as List)
-            .map((e) => RaffleTicket.fromJson(Map<String, dynamic>.from(e)))
+            .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
         rebuildUi();
       }

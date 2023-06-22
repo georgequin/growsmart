@@ -142,18 +142,19 @@ class RaffleAd {
   Product? product;
   Raffledraw? raffledraw;
 
-  RaffleAd(
-      {this.id,
-      this.adName,
-      this.adDescription,
-      this.featured,
-      this.status,
-      this.created,
-      this.updated,
-      this.category,
-      this.pictures,
-      this.product,
-      this.raffledraw});
+  RaffleAd({
+    this.id,
+    this.adName,
+    this.adDescription,
+    this.featured,
+    this.status,
+    this.created,
+    this.updated,
+    this.category,
+    this.pictures,
+    this.product,
+    this.raffledraw,
+  });
 
   RaffleAd.fromJson(Map<String, dynamic> json) {
     id = json['id'];

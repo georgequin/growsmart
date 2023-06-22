@@ -30,9 +30,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
     return Scaffold(
       appBar: AppBar(
         title: Image.asset("assets/images/logo_light.png"),
-        actions: [
-          Image.asset("assets/images/search.png"),
-        ],
+        // actions: [
+        //   Image.asset("assets/images/search.png"),
+        // ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -42,7 +42,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
           padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
           children: [
             SizedBox(
-              height: 200,
+              height: 250,
               child: viewModel.busy(viewModel.ads)
                   ? const Center(
                       child: CircularProgressIndicator(),
@@ -53,19 +53,23 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             itemCount: viewModel.ads.length,
                             onPageChanged: viewModel.changeSelected,
                             itemBuilder: (context, index) {
-                              Ad ad = viewModel.ads[index];
+                              Product ad = viewModel.ads[index];
                               return Stack(
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                         color: kcBlackColor.withOpacity(0.2),
-                                        image: ad.pictures!.isEmpty
+                                        image: ad.raffleAd!.pictures!.isEmpty
                                             ? null
                                             : DecorationImage(
-                                                image: NetworkImage(
-                                                    ad.pictures![0].location!),
+                                                image: NetworkImage(ad.raffleAd!
+                                                    .pictures![0].location!),
                                                 fit: BoxFit.cover,
+                                                colorFilter: ColorFilter.mode(
+                                                    Colors.black
+                                                        .withOpacity(0.9),
+                                                    BlendMode.dstATop),
                                               )),
                                   ),
                                   Positioned(
@@ -76,19 +80,17 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                          height: 50,
-                                          width: 50,
+                                          height: 70,
+                                          width: 70,
                                           decoration: BoxDecoration(
-                                            image:
-                                                ad.product!.pictures == null ||
-                                                        ad.product!.pictures!
-                                                            .isEmpty
-                                                    ? null
-                                                    : DecorationImage(
-                                                        image: NetworkImage(ad
-                                                            .product!
-                                                            .pictures![0]
-                                                            .location!)),
+                                            image: ad.pictures == null ||
+                                                    ad.pictures!.isEmpty
+                                                ? null
+                                                : DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: NetworkImage(ad
+                                                        .pictures![0]
+                                                        .location!)),
                                             color: kcLightGrey,
                                             borderRadius:
                                                 BorderRadius.circular(12),
@@ -97,22 +99,17 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         verticalSpaceTiny,
                                         SizedBox(
                                           width: 140,
-                                          child: BackdropFilter(
-                                            filter: ImageFilter.blur(
-                                                sigmaX: 2.0, sigmaY: 2.0),
-                                            // Adjust the sigma values for different blur intensities
-                                            child: Text(
-                                              "Buy ${ad.product!.productName} and stand a chance to win",
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: kcWhiteColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
+                                          child: Text(
+                                            "Buy ${ad.productName} and stand a chance to",
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                color: kcWhiteColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         verticalSpaceTiny,
                                         Text(
-                                          "${ad.adName}",
+                                          "${ad.raffleAd!.adName}",
                                           style: const TextStyle(
                                               fontSize: 16,
                                               color: kcWhiteColor,
@@ -124,19 +121,26 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   Positioned(
                                     right: 20,
                                     bottom: 20,
-                                    child: Container(
-                                      height: 30,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                          color: kcWhiteColor,
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      child: Center(
-                                        child: Text(
-                                          "Win Now",
-                                          style: GoogleFonts.inter(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      onTap: () {
+                                        locator<NavigationService>()
+                                            .navigateToProductDetail(
+                                                product: ad);
+                                      },
+                                      child: Container(
+                                        height: 40,
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                            color: kcWhiteColor,
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        child: Center(
+                                          child: Text(
+                                            "Win Now",
+                                            style: GoogleFonts.inter(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -179,7 +183,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       scrollDirection: Axis.horizontal,
                       itemCount: viewModel.sellingFast.length,
                       itemBuilder: (context, index) {
-                        RaffleTicket product = viewModel.sellingFast[index];
+                        Product product = viewModel.sellingFast[index];
                         return Container(
                           padding: const EdgeInsets.all(15),
                           margin: const EdgeInsets.only(
@@ -204,14 +208,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "${product.ticketName}",
+                                      "${product.raffleAd!.adName}",
                                       style: GoogleFonts.inter(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     verticalSpaceTiny,
                                     Text(
-                                      "${product.ticketDescription}",
+                                      "${product.raffleAd!.adDescription}",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3,
                                       style: GoogleFonts.inter(
@@ -284,7 +288,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ),
             verticalSpaceSmall,
             const Text(
-              "Recommended",
+              "Products",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -292,42 +296,42 @@ class DashboardView extends StackedView<DashboardViewModel> {
               ),
             ),
             verticalSpaceSmall,
-            SizedBox(
-              height: 400,
-              child: viewModel.busy(viewModel.productList)
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : PageView.builder(
-                      itemCount: viewModel.productList.length,
-                      itemBuilder: (context, index) {
-                        Product product = viewModel.productList[index];
-                        return Column(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                locator<NavigationService>().navigateTo(
-                                    Routes.productDetail,
-                                    arguments: ProductDetailArguments(
-                                        product: product));
-                              },
-                              child: ProductRow(
-                                product: product,
-                              ),
+            viewModel.busy(viewModel.productList)
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: viewModel.productList.length,
+                    itemBuilder: (context, index) {
+                      Product product = viewModel.productList[index];
+                      return Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              locator<NavigationService>().navigateTo(
+                                  Routes.productDetail,
+                                  arguments:
+                                      ProductDetailArguments(product: product));
+                            },
+                            child: ProductRow(
+                              product: product,
                             ),
-                            verticalSpaceMedium,
-                            SubmitButton(
-                              isLoading: false,
-                              label: "Add to cart",
-                              submit: () => viewModel.addToCart(product),
-                              color: kcPrimaryColor,
-                              boldText: true,
-                              icon: Icons.shopping_cart_outlined,
-                            )
-                          ],
-                        );
-                      }),
-            ),
+                          ),
+                          verticalSpaceMedium,
+                          SubmitButton(
+                            isLoading: false,
+                            label: "Add to cart",
+                            submit: () => viewModel.addToCart(product),
+                            color: kcPrimaryColor,
+                            boldText: true,
+                            icon: Icons.shopping_cart_outlined,
+                          ),
+                          verticalSpaceMedium
+                        ],
+                      );
+                    }),
           ],
         ),
       ),

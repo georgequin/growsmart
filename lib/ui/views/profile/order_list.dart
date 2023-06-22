@@ -4,6 +4,7 @@ import 'package:afriprize/core/data/models/order_item.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
+import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -60,30 +61,34 @@ class _OrderListState extends State<OrderList> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : ListView.builder(
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                OrderItem order = orders[index];
-                return ListTile(
-                  onTap: () {
-                    locator<NavigationService>().navigateToTrack(item: order);
-                  },
-                  leading: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: kcVeryLightGrey,
-                        image: order.product!.pictures!.isEmpty
-                            ? null
-                            : DecorationImage(
-                                image: NetworkImage(
-                                    order.product!.pictures![0].location!))),
-                  ),
-                  title: Text(order.product?.productName ?? ""),
-                  subtitle: Text("N${order.product?.productPrice}"),
-                );
-              }),
+          : orders.isEmpty
+              ? const EmptyState(
+                  animation: "empty_order.json", label: "No Orders Yet")
+              : ListView.builder(
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    OrderItem order = orders[index];
+                    return ListTile(
+                      onTap: () {
+                        locator<NavigationService>()
+                            .navigateToTrack(item: order);
+                      },
+                      leading: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: kcVeryLightGrey,
+                            image: order.product!.pictures!.isEmpty
+                                ? null
+                                : DecorationImage(
+                                    image: NetworkImage(order
+                                        .product!.pictures![0].location!))),
+                      ),
+                      title: Text(order.product?.productName ?? ""),
+                      subtitle: Text("N${order.product?.productPrice}"),
+                    );
+                  }),
     );
   }
 }

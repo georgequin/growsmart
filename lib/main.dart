@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: Theme.of(context).copyWith(
         appBarTheme: AppBarTheme(
           titleTextStyle:
-              GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold),
+              GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
           iconTheme: const IconThemeData(color: kcBlackColor),
           toolbarTextStyle: const TextStyle(color: kcBlackColor),
           backgroundColor: kcWhiteColor,

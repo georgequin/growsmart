@@ -1,6 +1,8 @@
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/product.dart';
+import 'package:afriprize/core/data/repositories/repository.dart';
+import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
@@ -22,7 +24,31 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
-  int quantity = 0;
+  int quantity = 1;
+  String activePic = "";
+  List<Product> recommended = [];
+
+  @override
+  void initState() {
+    getRecommendedProducts();
+    setState(() {
+      activePic = widget.product.raffleAd!.pictures?[0].location ?? "";
+    });
+
+    super.initState();
+  }
+
+  void getRecommendedProducts() async {
+    try {
+      ApiResponse res = await locator<Repository>()
+          .recommendedProducts({"productId": widget.product.id});
+      if (res.statusCode == 200) {
+        recommended = [];
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +63,12 @@ class _ProductDetailState extends State<ProductDetail> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      image: widget.product.pictures!.isEmpty
+                      image: (widget.product.raffleAd!.pictures == null ||
+                              widget.product.raffleAd!.pictures!.isEmpty)
                           ? null
                           : DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(widget
-                                  .product.raffleAd!.pictures![0].location!),
+                              image: NetworkImage(activePic),
                             ),
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(25),
@@ -65,7 +91,10 @@ class _ProductDetailState extends State<ProductDetail> {
                     child: Center(
                       child: Text(
                         "${widget.product.raffleAd?.adName}",
-                        style: GoogleFonts.inter(fontSize: 11),
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -89,15 +118,27 @@ class _ProductDetailState extends State<ProductDetail> {
                     String? image = widget.product.pictures![index].location;
                     return image == null
                         ? const SizedBox()
-                        : Container(
-                            height: 70,
-                            width: 70,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(image)),
-                              color: kcWhiteColor,
-                              borderRadius: BorderRadius.circular(12),
+                        : GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                activePic = image;
+                              });
+                            },
+                            child: Container(
+                              height: 70,
+                              width: 70,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(image)),
+                                color: kcWhiteColor,
+                                border: Border.all(
+                                    color: activePic == image
+                                        ? kcSecondaryColor
+                                        : Colors.transparent,
+                                    width: 2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           );
                   }),
@@ -152,7 +193,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   child: Text(
                     "Product description",
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -162,7 +203,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Text(
                     widget.product.productDescription ?? "",
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ),
                 verticalSpaceLarge,
@@ -183,7 +224,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             InkWell(
                               onTap: () {
                                 setState(() {
-                                  if (quantity > 0) {
+                                  if (quantity > 1) {
                                     quantity--;
                                   }
                                 });
@@ -234,6 +275,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           CartItem cartItem = CartItem(
                               product: widget.product, quantity: quantity);
                           cart.value.add(cartItem);
+                          cart.notifyListeners();
                           locator<SnackbarService>()
                               .showSnackbar(message: "Product added to cart");
                           Navigator.pop(context);

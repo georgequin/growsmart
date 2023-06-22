@@ -113,7 +113,8 @@ class _RegisterState extends State<Register> {
           verticalSpaceSmall,
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text("Password must be between 6 - 8 characters"),
+            child: Text(
+                "Password must contain one lowercase one uppercase one digit and be between 6 - 8 characters"),
           ),
           verticalSpaceMedium,
           TextFieldWidget(
@@ -131,7 +132,8 @@ class _RegisterState extends State<Register> {
           verticalSpaceSmall,
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text("Password must be between 6 - 8 characters"),
+            child: Text(
+                "Password must contain one lowercase one uppercase one digit and be between 6 - 8 characters"),
           ),
           verticalSpace(60),
           InkWell(

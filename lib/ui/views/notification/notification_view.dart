@@ -1,4 +1,5 @@
 import 'package:afriprize/ui/common/ui_helpers.dart';
+import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -24,8 +25,9 @@ class NotificationView extends StackedView<NotificationViewModel> {
           ),
         ),
       ),
-      body: const Center(
-        child: Text("No notifications yet"),
+      body: const EmptyState(
+        animation: "empty_notifications.json",
+        label: "No Notifications Yet",
       ),
       // body: ListView(
       //   padding: const EdgeInsets.all(20),
