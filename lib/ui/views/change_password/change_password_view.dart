@@ -9,7 +9,12 @@ import '../../components/text_field_widget.dart';
 import 'change_password_viewmodel.dart';
 
 class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
-  const ChangePasswordView({Key? key}) : super(key: key);
+  final bool isResetPassword;
+
+  const ChangePasswordView({
+    this.isResetPassword = false,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget builder(
@@ -67,20 +72,26 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                                 hint: "Enter Code",
                                 controller: viewModel.code,
                               ),
-                              verticalSpaceMedium,
-                              TextFieldWidget(
-                                obscureText: viewModel.obscure,
-                                hint: "Enter Old Password",
-                                controller: viewModel.oldPassword,
-                                suffix: InkWell(
-                                  onTap: () {
-                                    viewModel.toggleObscure();
-                                  },
-                                  child: Icon(viewModel.obscure
-                                      ? Icons.visibility_off
-                                      : Icons.visibility),
-                                ),
-                              ),
+                              isResetPassword
+                                  ? const SizedBox()
+                                  : Column(
+                                      children: [
+                                        verticalSpaceMedium,
+                                        TextFieldWidget(
+                                          obscureText: viewModel.obscure,
+                                          hint: "Enter Old Password",
+                                          controller: viewModel.oldPassword,
+                                          suffix: InkWell(
+                                            onTap: () {
+                                              viewModel.toggleObscure();
+                                            },
+                                            child: Icon(viewModel.obscure
+                                                ? Icons.visibility_off
+                                                : Icons.visibility),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                               verticalSpaceMedium,
                               TextFieldWidget(
                                 obscureText: viewModel.obscure,
@@ -106,7 +117,7 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                         if (viewModel.emailVerified == false) {
                           viewModel.sendCode();
                         } else {
-                          viewModel.changePassword(context);
+                          viewModel.changePassword(context,isResetPassword);
                         }
                       },
                       boldText: true,

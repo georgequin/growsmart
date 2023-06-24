@@ -7,4 +7,5 @@ import 'core/data/models/profile.dart';
 ValueNotifier<List<CartItem>> cart = ValueNotifier([]);
 ValueNotifier<Profile> profile = ValueNotifier(Profile());
 ValueNotifier<bool> userLoggedIn = ValueNotifier(false);
+ValueNotifier<bool> isFirstLaunch = ValueNotifier(true);
 

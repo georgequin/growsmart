@@ -278,8 +278,12 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i17.ChangePasswordView: (data) {
+      final args = data.getArgs<ChangePasswordViewArguments>(
+        orElse: () => const ChangePasswordViewArguments(),
+      );
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i17.ChangePasswordView(),
+        builder: (context) => _i17.ChangePasswordView(
+            isResetPassword: args.isResetPassword, key: args.key),
         settings: data,
       );
     },
@@ -468,6 +472,33 @@ class OtpViewArguments {
   @override
   int get hashCode {
     return email.hashCode ^ key.hashCode;
+  }
+}
+
+class ChangePasswordViewArguments {
+  const ChangePasswordViewArguments({
+    this.isResetPassword = false,
+    this.key,
+  });
+
+  final bool isResetPassword;
+
+  final _i23.Key? key;
+
+  @override
+  String toString() {
+    return '{"isResetPassword": "$isResetPassword", "key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant ChangePasswordViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.isResetPassword == isResetPassword && other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return isResetPassword.hashCode ^ key.hashCode;
   }
 }
 
@@ -700,14 +731,18 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToChangePasswordView([
+  Future<dynamic> navigateToChangePasswordView({
+    bool isResetPassword = false,
+    _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.changePasswordView,
+        arguments: ChangePasswordViewArguments(
+            isResetPassword: isResetPassword, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -984,14 +1019,18 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithChangePasswordView([
+  Future<dynamic> replaceWithChangePasswordView({
+    bool isResetPassword = false,
+    _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.changePasswordView,
+        arguments: ChangePasswordViewArguments(
+            isResetPassword: isResetPassword, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

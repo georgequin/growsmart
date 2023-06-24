@@ -7,6 +7,7 @@ import 'package:afriprize/core/data/models/raffle_ticket.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
+import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -35,6 +36,32 @@ class DashboardViewModel extends BaseViewModel {
     getProducts();
     getSellingFast();
     getResourceList();
+
+    if (isFirstLaunch.value) {
+      // showDialog(
+      //   context: StackedService.navigatorKey!.currentState!.context,
+      //   builder: (BuildContext context) {
+      //     return AlertDialog(
+      //       title: Text('Popup Ad'),
+      //       content: Container(
+      //         width: double.maxFinite,
+      //         height: 300,
+      //         child: Image.network(popupImageUrl),
+      //       ),
+      //       actions: [
+      //         TextButton(
+      //           child: const Text('Close'),
+      //           onPressed: () {
+      //             Navigator.of(context).pop();
+      //           },
+      //         ),
+      //       ],
+      //     );
+      //   });
+    }
+
+    isFirstLaunch.value = false;
+    isFirstLaunch.notifyListeners();
   }
 
   void getResourceList() async {

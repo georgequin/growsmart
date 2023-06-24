@@ -115,8 +115,8 @@ class _LoginState extends State<Login> {
                 ),
                 InkWell(
                   onTap: () {
-                    // locator<NavigationService>()
-                    //     .navigateToForgotPasswordView();
+                    locator<NavigationService>()
+                        .navigateToChangePasswordView(isResetPassword: true);
                   },
                   child: const Text(
                     "Forgot password?",

@@ -30,7 +30,7 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
               viewModel.currentPage == 0
                   ? InkWell(
                       onTap: () {
-                        locator<NavigationService>().navigateToAuthView();
+                        locator<NavigationService>().navigateToHomeView();
                       },
                       child: const Align(
                         alignment: Alignment.centerRight,
@@ -73,7 +73,7 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
                               duration: const Duration(milliseconds: 100),
                               curve: Curves.linear);
                         } else {
-                          locator<NavigationService>().navigateToAuthView();
+                          locator<NavigationService>().navigateToHomeView();
                         }
                       },
                       color: kcPrimaryColor,

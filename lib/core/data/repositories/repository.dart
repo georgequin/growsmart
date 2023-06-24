@@ -125,7 +125,7 @@ class Repository extends IRepository {
       Map<String, dynamic> req, String email) async {
     ApiResponse response = await api.call(
       method: HttpMethod.put,
-      endpoint: "auth/resetpassword/$email",
+      endpoint: "user/resetpassword",
       reqBody: req,
     );
 
@@ -254,6 +254,17 @@ class Repository extends IRepository {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
       endpoint: "resources/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> resetPassword(Map<String, dynamic> req, String email) async{
+    ApiResponse response = await api.call(
+      method: HttpMethod.put,
+      endpoint: "auth/resetpassword/$email",
+      reqBody: req,
     );
 
     return response;
