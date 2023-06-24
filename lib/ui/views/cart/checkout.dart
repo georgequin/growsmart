@@ -539,12 +539,13 @@ class _CheckoutState extends State<Checkout> {
                 if (res.statusCode == 200) {
                   cart.value.clear();
                   cart.notifyListeners();
-                  if (res.data["paystack"]["data"]["authorization_url"] !=
-                      null) {
+                  if ((res.data["paystack"] as Map).isNotEmpty) {
+                    String? url =
+                        res.data["paystack"]?["data"]["authorization_url"];
                     final result = await Navigator.of(context)
                         .push(MaterialPageRoute(builder: (c) {
                       return PaymentView(
-                        url: res.data["paystack"]["data"]["authorization_url"],
+                        url: url ?? "",
                         isPayForOrder: true,
                       );
                     }));

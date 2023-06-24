@@ -29,7 +29,7 @@ class _LoginState extends State<Login> {
         },
         viewModelBuilder: () => AuthViewModel(),
         builder: (context, model, child) => ListView(
-          physics: const NeverScrollableScrollPhysics(),
+          // physics: const NeverScrollableScrollPhysics(),
           children: [
             const Text(
               "Login",
@@ -128,6 +128,7 @@ class _LoginState extends State<Login> {
                 )
               ],
             ),
+            verticalSpaceLarge,
           ],
         ),
       ),
