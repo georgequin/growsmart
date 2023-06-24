@@ -6,8 +6,13 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentView extends StatefulWidget {
   final String url;
+  final bool isPayForOrder;
 
-  const PaymentView({Key? key, required this.url}) : super(key: key);
+  const PaymentView({
+    Key? key,
+    required this.url,
+    this.isPayForOrder = false,
+  }) : super(key: key);
 
   @override
   State<PaymentView> createState() => _PaymentViewState();
@@ -55,8 +60,13 @@ class _PaymentViewState extends State<PaymentView> {
             if (url.contains("trxref")) {
               Uri uri = Uri.parse(url);
               String? trxref = uri.queryParameters['trxref'];
-              await locator<Repository>().verifyTransaction(trxref!);
-              locator<NavigationService>().popRepeated(3);
+
+              if (widget.isPayForOrder) {
+                locator<NavigationService>().back(result: true);
+              } else {
+                await locator<Repository>().verifyTransaction(trxref!);
+                locator<NavigationService>().popRepeated(3);
+              }
             }
           },
           onWebResourceError: (WebResourceError error) {},

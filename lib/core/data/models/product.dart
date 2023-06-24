@@ -3,6 +3,7 @@ class Product {
   String? productName;
   String? productDescription;
   int? productPrice;
+  int? stock;
   bool? featured;
   String? created;
   String? updated;
@@ -16,6 +17,7 @@ class Product {
       this.productDescription,
       this.productPrice,
       this.featured,
+      this.stock,
       this.created,
       this.updated,
       this.category,
@@ -30,6 +32,7 @@ class Product {
     featured = json['featured'];
     created = json['created'];
     updated = json['updated'];
+    stock = json['stock'];
     category =
         json['category'] != null ? Category.fromJson(json['category']) : null;
     if (json['pictures'] != null) {
@@ -50,6 +53,7 @@ class Product {
     data['product_price'] = productPrice;
     data['featured'] = featured;
     data['created'] = created;
+    data['stock'] = stock;
     data['updated'] = updated;
     if (category != null) {
       data['category'] = category!.toJson();

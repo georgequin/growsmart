@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           toolbarTextStyle: const TextStyle(color: kcBlackColor),
           backgroundColor: kcWhiteColor,
           elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
+          // systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         primaryColor: kcBackgroundColor,
         focusColor: kcPrimaryColor,

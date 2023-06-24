@@ -46,4 +46,6 @@ abstract class IRepository {
   Future<ApiResponse> getTransactions();
 
   Future<ApiResponse> recommendedProducts(Map<String, dynamic> req);
+
+  Future<ApiResponse> getResourceList();
 }

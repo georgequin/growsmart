@@ -34,6 +34,15 @@ class DashboardViewModel extends BaseViewModel {
     getAds();
     getProducts();
     getSellingFast();
+    getResourceList();
+  }
+
+  void getResourceList() async {
+    try {
+      ApiResponse res = await repo.getResourceList();
+    } catch (e) {
+      log.e(e);
+    }
   }
 
   void getAds() async {
@@ -76,7 +85,9 @@ class DashboardViewModel extends BaseViewModel {
     setBusyForObject(sellingFast, true);
 
     try {
-      ApiResponse res = await repo.getSellingFast();
+      // ApiResponse res = await repo.getSellingFast();
+      ApiResponse res = await repo.getProducts();
+
       if (res.statusCode == 200) {
         sellingFast = (res.data["products"] as List)
             .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))

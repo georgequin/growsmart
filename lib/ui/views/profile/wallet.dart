@@ -143,9 +143,13 @@ class _WalletState extends State<Wallet> {
                                       bottom: BorderSide(color: kcLightGrey))),
                               child: ListTile(
                                 minLeadingWidth: 16,
-                                leading: const Icon(
-                                  Icons.arrow_downward,
-                                  color: Colors.green,
+                                leading: Icon(
+                                  transaction.type == 2
+                                      ? Icons.arrow_downward
+                                      : Icons.arrow_upward,
+                                  color: transaction.type == 2
+                                      ? Colors.green
+                                      : Colors.red,
                                 ),
                                 title: Text(
                                   "Transaction (ID: ${transaction.id})",

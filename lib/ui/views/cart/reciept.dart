@@ -67,7 +67,7 @@ class _ReceiptState extends State<Receipt> {
                       ),
                       verticalSpaceSmall,
                       Text(
-                        "${widget.info["product"]["product_price"]}",
+                        "${widget.info['order']["product"]["product_price"]}",
                         style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -94,7 +94,7 @@ class _ReceiptState extends State<Receipt> {
                                         fontSize: 12),
                                   ),
                                   Text(
-                                    "${widget.info["product"]["id"]}",
+                                    "${widget.info['order']["product"]["id"]}",
                                     style: const TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
                                   )

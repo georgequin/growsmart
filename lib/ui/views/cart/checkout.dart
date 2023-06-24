@@ -7,6 +7,7 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/drop_down_widget.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
+import 'package:afriprize/ui/views/profile/payment_view.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -33,7 +34,7 @@ class _CheckoutState extends State<Checkout> {
   final city = TextEditingController();
   final phone = TextEditingController();
   final zipCode = TextEditingController();
-  String paymentMethod = "";
+  String paymentMethod = "wallet";
 
   @override
   Widget build(BuildContext context) {
@@ -533,20 +534,38 @@ class _CheckoutState extends State<Checkout> {
               try {
                 ApiResponse res = await locator<Repository>().payForOrder({
                   "orderId": widget.infoList.map((e) => e.id).toList(),
-                  "payment_method": paymentMethod == "wallet" ? 0 : 0
+                  "payment_method": paymentMethod == "wallet" ? 1 : 2
                 });
                 if (res.statusCode == 200) {
                   cart.value.clear();
                   cart.notifyListeners();
-                  if ((res.data["receipt"] as List).isEmpty) {
-                    locator<NavigationService>().back();
-                    locator<SnackbarService>()
-                        .showSnackbar(message: "Order Placed Successfully");
+                  if (res.data["paystack"]["data"]["authorization_url"] !=
+                      null) {
+                    final result = await Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (c) {
+                      return PaymentView(
+                        url: res.data["paystack"]["data"]["authorization_url"],
+                        isPayForOrder: true,
+                      );
+                    }));
+                    if (result) {
+                      locator<NavigationService>().navigateTo(Routes.receipt,
+                          arguments: ReceiptArguments(
+                              info: Map<String, dynamic>.from(
+                                  res.data["receipt"][0])));
+                    }
+                  } else {
+                    if ((res.data["receipt"] as List).isEmpty) {
+                      locator<NavigationService>().back();
+                      locator<SnackbarService>()
+                          .showSnackbar(message: "Order Placed Successfully");
+                      return;
+                    }
+                    locator<NavigationService>().navigateTo(Routes.receipt,
+                        arguments: ReceiptArguments(
+                            info: Map<String, dynamic>.from(
+                                res.data["receipt"][0])));
                   }
-                  locator<NavigationService>().navigateTo(Routes.receipt,
-                      arguments: ReceiptArguments(
-                          info: Map<String, dynamic>.from(
-                              res.data["receipt"][0])));
                 } else {
                   locator<SnackbarService>()
                       .showSnackbar(message: res.data["message"]);

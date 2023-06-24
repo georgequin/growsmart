@@ -1,4 +1,5 @@
 import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
@@ -9,7 +10,10 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:stacked_services/stacked_services.dart';
+
+import 'dashboard_view.dart';
 
 class ProductDetail extends StatefulWidget {
   final Product product;
@@ -32,7 +36,7 @@ class _ProductDetailState extends State<ProductDetail> {
   void initState() {
     getRecommendedProducts();
     setState(() {
-      activePic = widget.product.raffleAd!.pictures?[0].location ?? "";
+      activePic = widget.product.raffleAd?.pictures?[0].location ?? "";
     });
 
     super.initState();
@@ -43,7 +47,11 @@ class _ProductDetailState extends State<ProductDetail> {
       ApiResponse res = await locator<Repository>()
           .recommendedProducts({"productId": widget.product.id});
       if (res.statusCode == 200) {
-        recommended = [];
+        setState(() {
+          recommended = (res.data["recommended"] as List)
+              .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+        });
       }
     } catch (e) {
       print(e);
@@ -63,7 +71,7 @@ class _ProductDetailState extends State<ProductDetail> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      image: (widget.product.raffleAd!.pictures == null ||
+                      image: (widget.product.raffleAd?.pictures == null ||
                               widget.product.raffleAd!.pictures!.isEmpty)
                           ? null
                           : DecorationImage(
@@ -301,7 +309,214 @@ class _ProductDetailState extends State<ProductDetail> {
                             )
                           ],
                         ),
+                      ),
+                verticalSpaceSmall,
+                recommended.isEmpty
+                    ? const SizedBox()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Center(
+                              child: Text(
+                            "Related",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
+                          verticalSpaceMedium,
+                          SizedBox(
+                            height: 250,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: recommended.length,
+                                itemBuilder: (context, index) {
+                                  Product product = recommended[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(builder: (c) {
+                                        return ProductDetail(product: product);
+                                      }));
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: RecommendedRow(product: product),
+                                    ),
+                                  );
+                                }),
+                          ),
+                          verticalSpaceMedium,
+                        ],
+                      ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class RecommendedRow extends StatelessWidget {
+  final Product product;
+
+  const RecommendedRow({
+    required this.product,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 200,
+      width: 300,
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+          color: kcWhiteColor,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: kcBlackColor.withOpacity(0.1),
+              offset: const Offset(0, 4),
+              blurRadius: 4,
+            )
+          ]),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12)),
+                child: (product.raffleAd == null ||
+                            product.raffleAd?.pictures == null) ||
+                        product.raffleAd!.pictures!.isEmpty
+                    ? SizedBox(
+                        height: 150,
+                        width: MediaQuery.of(context).size.width,
                       )
+                    : Image.network(
+                        product.raffleAd!.pictures![0].location!,
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                        height: 150,
+                      ),
+              ),
+              Positioned(
+                top: 20,
+                left: 20,
+                child: Container(
+                  height: 20,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: kcWhiteColor,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: kcStarColor,
+                        size: 20,
+                      ),
+                      Text(
+                        "4.9",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    image: product.pictures!.isEmpty
+                        ? null
+                        : DecorationImage(
+                            fit: BoxFit.cover,
+                            image:
+                                NetworkImage(product.pictures![0].location!)),
+                    color: kcWhiteColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              )
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.raffleAd?.adName ?? "",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                                text: "Buy ${product.productName} for: ",
+                                style: GoogleFonts.inter(
+                                    color: kcBlackColor, fontSize: 12)),
+                            TextSpan(
+                                text: " N${product.productPrice}",
+                                style: GoogleFonts.inter(
+                                    color: kcSecondaryColor, fontSize: 12))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      "0 sold out of ${product.stock}",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    verticalSpaceTiny,
+                    SizedBox(
+                      width: 100,
+                      child: LinearProgressIndicator(
+                        value: 0.4,
+                        backgroundColor: kcSecondaryColor.withOpacity(0.3),
+                        valueColor:
+                            const AlwaysStoppedAnimation(kcSecondaryColor),
+                      ),
+                    ),
+                    verticalSpaceSmall,
+                    Text(
+                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffleAd?.created ?? DateTime.now().toIso8601String()))}",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           )

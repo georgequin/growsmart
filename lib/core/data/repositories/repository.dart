@@ -248,4 +248,14 @@ class Repository extends IRepository {
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> getResourceList() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "resources/list",
+    );
+
+    return response;
+  }
 }

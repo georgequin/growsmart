@@ -33,9 +33,11 @@ class _OrderListState extends State<OrderList> {
     try {
       ApiResponse res = await locator<Repository>().getOrderList();
       if (res.statusCode == 200) {
-        orders = (res.data["userOrders"] as List)
-            .map((e) => OrderItem.fromJson(Map<String, dynamic>.from(e)))
-            .toList();
+        for (var element in (res.data["userOrders"] as List)) {
+          if (element != null) {
+            orders.add(OrderItem.fromJson(Map<String, dynamic>.from(element)));
+          }
+        }
         setState(() {});
       }
     } catch (e) {
@@ -79,7 +81,8 @@ class _OrderListState extends State<OrderList> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             color: kcVeryLightGrey,
-                            image: order.product!.pictures!.isEmpty
+                            image: order.product?.pictures == null ||
+                                    order.product!.pictures!.isEmpty
                                 ? null
                                 : DecorationImage(
                                     image: NetworkImage(order

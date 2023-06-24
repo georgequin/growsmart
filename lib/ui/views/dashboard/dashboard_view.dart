@@ -11,6 +11,7 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -224,14 +225,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "${product.raffleAd!.adName}",
+                                      "${product.raffleAd?.adName}",
                                       style: GoogleFonts.inter(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     verticalSpaceTiny,
                                     Text(
-                                      "${product.raffleAd!.adDescription}",
+                                      "${product.raffleAd?.adDescription}",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3,
                                       style: GoogleFonts.inter(
@@ -249,7 +250,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                             borderRadius:
                                                 BorderRadius.circular(5),
                                           ))),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        locator<NavigationService>()
+                                            .navigateToProductDetail(
+                                                product: product);
+                                      },
                                       child: Text(
                                         "Learn More",
                                         style: GoogleFonts.inter(
@@ -258,7 +263,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     ),
                                     verticalSpaceTiny,
                                     Text(
-                                      "800  sold out of 2000",
+                                      "0 sold out of ${product.stock}",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3,
                                       style: GoogleFonts.inter(
@@ -280,23 +285,23 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   ],
                                 ),
                               ),
-                              // Container(
-                              //   height: MediaQuery.of(context).size.height,
-                              //   width: 120,
-                              //   decoration: BoxDecoration(
-                              //     borderRadius: BorderRadius.circular(10),
-                              //     image: product.raffleAd!.pictures == null ||
-                              //             product.raffleAd!.pictures!.isEmpty
-                              //         ? null
-                              //         : DecorationImage(
-                              //             fit: BoxFit.cover,
-                              //             image: NetworkImage(
-                              //               product.raffleAd!.pictures![0]
-                              //                   .location!,
-                              //             ),
-                              //           ),
-                              //   ),
-                              // )
+                              Container(
+                                height: MediaQuery.of(context).size.height,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: product.raffleAd?.pictures == null ||
+                                          product.raffleAd!.pictures!.isEmpty
+                                      ? null
+                                      : DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(
+                                            product.raffleAd!.pictures![0]
+                                                .location!,
+                                          ),
+                                        ),
+                                ),
+                              )
                             ],
                           ),
                         );
@@ -412,7 +417,8 @@ class ProductRow extends StatelessWidget {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
-                child: product.raffleAd == null ||
+                child: (product.raffleAd == null ||
+                            product.raffleAd?.pictures == null) ||
                         product.raffleAd!.pictures!.isEmpty
                     ? SizedBox(
                         height: 170,
@@ -508,11 +514,11 @@ class ProductRow extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    const Text(
-                      "800  sold out of 2000",
+                    Text(
+                      "0 sold out of ${product.stock}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                       ),
                     ),
@@ -527,11 +533,11 @@ class ProductRow extends StatelessWidget {
                       ),
                     ),
                     verticalSpaceSmall,
-                    const Text(
-                      "Draw date: 26th April",
+                    Text(
+                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffleAd?.created ?? DateTime.now().toIso8601String()))}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                       ),
                     ),

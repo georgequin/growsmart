@@ -48,7 +48,8 @@ class _TrackState extends State<Track> {
                   width: 70,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      image: widget.item.product!.pictures!.isEmpty
+                      image: widget.item.product?.pictures == null ||
+                              widget.item.product!.pictures!.isEmpty
                           ? null
                           : DecorationImage(
                               image: NetworkImage(widget

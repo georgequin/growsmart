@@ -60,9 +60,11 @@ class CartViewModel extends BaseViewModel {
         List<OrderInfo> list = (res.data["info"] as List)
             .map((e) => OrderInfo.fromJson(Map<String, dynamic>.from(e)))
             .toList();
-        locator<NavigationService>().navigateToView(Checkout(
-          infoList: list,
-        ));
+        await locator<NavigationService>()
+            .navigateToView(Checkout(
+              infoList: list,
+            ))!
+            .whenComplete(() => rebuildUi());
       }
     } catch (e) {
       log.e(e);
