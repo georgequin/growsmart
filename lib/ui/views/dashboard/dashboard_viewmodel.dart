@@ -35,7 +35,7 @@ class DashboardViewModel extends BaseViewModel {
     getAds();
     getProducts();
     getSellingFast();
-    getResourceList();
+    // getResourceList();
 
     if (isFirstLaunch.value) {
       // showDialog(
@@ -124,7 +124,6 @@ class DashboardViewModel extends BaseViewModel {
     } catch (e) {
       log.e(e);
     }
-
     setBusyForObject(sellingFast, false);
   }
 }

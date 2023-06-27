@@ -1,11 +1,17 @@
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Receipt extends StatefulWidget {
   final Map<String, dynamic> info;
+  final int totalAmount;
 
-  const Receipt({required this.info, Key? key}) : super(key: key);
+  const Receipt({
+    required this.info,
+    required this.totalAmount,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<Receipt> createState() => _ReceiptState();
@@ -67,7 +73,7 @@ class _ReceiptState extends State<Receipt> {
                       ),
                       verticalSpaceSmall,
                       Text(
-                        "${widget.info['order']["product"]["product_price"]}",
+                        "N${widget.totalAmount}",
                         style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -120,9 +126,12 @@ class _ReceiptState extends State<Receipt> {
                                         color: kcWhiteColor.withOpacity(0.72),
                                         fontSize: 12),
                                   ),
-                                  const Text(
-                                    "25 Feb 2023, 13:22",
-                                    style: TextStyle(
+                                  Text(
+                                    DateFormat("d MMM y, h:m").format(
+                                        DateTime.parse(
+                                            widget.info["order"]["created"])),
+                                    //"25 Feb 2023, 13:22",
+                                    style: const TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
                                   )
                                 ],

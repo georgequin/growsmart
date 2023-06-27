@@ -11,7 +11,7 @@ class DrawsViewModel extends BaseViewModel {
   List<RaffleTicket> raffle = [];
   int selectedIndex = 0;
 
-  onPageChanged(int index){
+  onPageChanged(int index) {
     selectedIndex = index;
     rebuildUi();
   }
@@ -21,8 +21,8 @@ class DrawsViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.raffleList();
       if (res.statusCode == 200) {
-        raffle = (res.data["raffle"] as List)
-            .map((e) => RaffleTicket.fromJson(Map<String, dynamic>.from(e)))
+        raffle = (res.data["participant"] as List)
+            .map((e) => RaffleTicket.fromJson(Map<String, dynamic>.from(e['raffledraw'])))
             .toList();
         rebuildUi();
       }

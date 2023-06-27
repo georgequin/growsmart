@@ -36,7 +36,10 @@ class _ProductDetailState extends State<ProductDetail> {
   void initState() {
     getRecommendedProducts();
     setState(() {
-      activePic = widget.product.raffleAd?.pictures?[0].location ?? "";
+      activePic = (widget.product.raffleAd?.pictures == null ||
+              widget.product.raffleAd!.pictures!.isEmpty)
+          ? ""
+          : widget.product.raffleAd?.pictures?[0].location ?? "";
     });
 
     super.initState();
@@ -45,7 +48,7 @@ class _ProductDetailState extends State<ProductDetail> {
   void getRecommendedProducts() async {
     try {
       ApiResponse res = await locator<Repository>()
-          .recommendedProducts({"productId": widget.product.id});
+          .recommendedProducts(widget.product.id.toString());
       if (res.statusCode == 200) {
         setState(() {
           recommended = (res.data["recommended"] as List)

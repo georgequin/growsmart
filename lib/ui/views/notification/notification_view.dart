@@ -59,6 +59,12 @@ class NotificationView extends StackedView<NotificationViewModel> {
   }
 
   @override
+  void onViewModelReady(NotificationViewModel viewModel) {
+    viewModel.getNotifications();
+    super.onViewModelReady(viewModel);
+  }
+
+  @override
   NotificationViewModel viewModelBuilder(
     BuildContext context,
   ) =>

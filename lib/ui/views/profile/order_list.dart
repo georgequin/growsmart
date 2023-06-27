@@ -33,7 +33,7 @@ class _OrderListState extends State<OrderList> {
     try {
       ApiResponse res = await locator<Repository>().getOrderList();
       if (res.statusCode == 200) {
-        for (var element in (res.data["userOrders"] as List)) {
+        for (var element in (res.data["orders"] as List)) {
           if (element != null) {
             orders.add(OrderItem.fromJson(Map<String, dynamic>.from(element)));
           }

@@ -57,7 +57,7 @@ class _CheckoutState extends State<Checkout> {
                 "Order review",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text("${cart.value.length} items in cart"),
+              subtitle: Text("${getTotalItems()} items in cart"),
               children: List.generate(cart.value.length, (index) {
                 CartItem item = cart.value[index];
 
@@ -539,7 +539,8 @@ class _CheckoutState extends State<Checkout> {
                 if (res.statusCode == 200) {
                   cart.value.clear();
                   cart.notifyListeners();
-                  if ((res.data["paystack"] as Map).isNotEmpty) {
+                  if ((res.data["paystack"] != null) &&
+                      (res.data["paystack"] as Map).isNotEmpty) {
                     String? url =
                         res.data["paystack"]?["data"]["authorization_url"];
                     final result = await Navigator.of(context)
@@ -550,10 +551,21 @@ class _CheckoutState extends State<Checkout> {
                       );
                     }));
                     if (result) {
+                      List<Map<String, dynamic>> receipts = [];
+                      int totalAmount = 0;
+                      for (var element in (res.data["receipt"] as List)) {
+                        if (element != null) {
+                          receipts.add(Map<String, dynamic>.from(element));
+                          totalAmount = totalAmount +
+                              int.parse(element['order']["product"]
+                                      ["product_price"]
+                                  .toString());
+                        }
+                      }
                       locator<NavigationService>().navigateTo(Routes.receipt,
                           arguments: ReceiptArguments(
-                              info: Map<String, dynamic>.from(
-                                  res.data["receipt"][0])));
+                              totalAmount: totalAmount,
+                              info: Map<String, dynamic>.from(receipts[0])));
                     }
                   } else {
                     if ((res.data["receipt"] as List).isEmpty) {
@@ -562,10 +574,21 @@ class _CheckoutState extends State<Checkout> {
                           .showSnackbar(message: "Order Placed Successfully");
                       return;
                     }
+                    List<Map<String, dynamic>> receipts = [];
+                    int totalAmount = 0;
+                    for (var element in (res.data["receipt"] as List)) {
+                      if (element != null) {
+                        receipts.add(Map<String, dynamic>.from(element));
+                        totalAmount = totalAmount +
+                            int.parse(element['order']["product"]
+                                    ["product_price"]
+                                .toString());
+                      }
+                    }
                     locator<NavigationService>().navigateTo(Routes.receipt,
                         arguments: ReceiptArguments(
-                            info: Map<String, dynamic>.from(
-                                res.data["receipt"][0])));
+                            totalAmount: totalAmount,
+                            info: Map<String, dynamic>.from(receipts[0])));
                   }
                 } else {
                   locator<SnackbarService>()
@@ -588,6 +611,15 @@ class _CheckoutState extends State<Checkout> {
         ],
       ),
     );
+  }
+
+  int getTotalItems() {
+    int quantity = 0;
+    for (var element in cart.value) {
+      quantity = quantity + element.quantity!;
+    }
+
+    return quantity;
   }
 
   int getSubTotal() {

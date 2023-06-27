@@ -211,7 +211,7 @@ class Repository extends IRepository {
   Future<ApiResponse> raffleList() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "raffle/list",
+      endpoint: "raffle/user/list",
     );
 
     return response;
@@ -239,11 +239,10 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> recommendedProducts(Map<String, dynamic> req) async {
+  Future<ApiResponse> recommendedProducts(String productId) async {
     ApiResponse response = await api.call(
-      method: HttpMethod.post,
-      endpoint: "products/recommended",
-      reqBody: req,
+      method: HttpMethod.get,
+      endpoint: "products/recommended/$productId",
     );
 
     return response;
@@ -260,11 +259,22 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> resetPassword(Map<String, dynamic> req, String email) async{
+  Future<ApiResponse> resetPassword(
+      Map<String, dynamic> req, String email) async {
     ApiResponse response = await api.call(
       method: HttpMethod.put,
       endpoint: "auth/resetpassword/$email",
       reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getNotifications(String userId) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "event/$userId",
     );
 
     return response;

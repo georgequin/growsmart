@@ -111,14 +111,23 @@ class Pictures {
   String? location;
   String? create;
   String? updated;
+  bool? front;
 
-  Pictures({this.id, this.token, this.location, this.create, this.updated});
+  Pictures({
+    this.id,
+    this.token,
+    this.location,
+    this.create,
+    this.updated,
+    this.front,
+  });
 
   Pictures.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     token = json['token'];
     location = json['location'];
     create = json['create'];
+    front = json['front'];
     updated = json['updated'];
   }
 
@@ -128,6 +137,7 @@ class Pictures {
     data['token'] = token;
     data['location'] = location;
     data['create'] = create;
+    data['front'] = front;
     data['updated'] = updated;
     return data;
   }

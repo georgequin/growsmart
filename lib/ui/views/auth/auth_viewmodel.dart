@@ -12,6 +12,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../core/data/models/profile.dart';
+
 class AuthViewModel extends BaseViewModel {
   final log = getLogger("AuthViewModel");
   final repo = locator<Repository>();
@@ -64,8 +66,8 @@ class AuthViewModel extends BaseViewModel {
       });
       if (res.statusCode == 200) {
         userLoggedIn.value = true;
-        // loggedInUser.value =
-        //     User.fromJson(Map<String, dynamic>.from(res.data["data"]));
+        profile.value =
+            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
         locator<LocalStorage>()
             .save(LocalStorageDir.authToken, res.data["token"]);
         locator<LocalStorage>().save(LocalStorageDir.remember, remember);

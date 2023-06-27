@@ -21,7 +21,7 @@ class OtpViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.verify({
         "email": email,
-        "code": otp.text,
+        "code": int.parse(otp.text),
       });
       if (res.statusCode == 200) {
         Navigator.of(context)

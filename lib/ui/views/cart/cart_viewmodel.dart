@@ -57,7 +57,7 @@ class CartViewModel extends BaseViewModel {
             .toList(),
       });
       if (res.statusCode == 200) {
-        List<OrderInfo> list = (res.data["info"] as List)
+        List<OrderInfo> list = (res.data["orderDetails"] as List)
             .map((e) => OrderInfo.fromJson(Map<String, dynamic>.from(e)))
             .toList();
         await locator<NavigationService>()

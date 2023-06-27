@@ -252,7 +252,8 @@ class StackedRouter extends _i1.RouterBase {
     _i13.Receipt: (data) {
       final args = data.getArgs<ReceiptArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => _i13.Receipt(info: args.info, key: args.key),
+        builder: (context) => _i13.Receipt(
+            info: args.info, totalAmount: args.totalAmount, key: args.key),
         settings: data,
       );
     },
@@ -370,27 +371,32 @@ class ProductDetailArguments {
 class ReceiptArguments {
   const ReceiptArguments({
     required this.info,
+    required this.totalAmount,
     this.key,
   });
 
   final Map<String, dynamic> info;
 
+  final int totalAmount;
+
   final _i23.Key? key;
 
   @override
   String toString() {
-    return '{"info": "$info", "key": "$key"}';
+    return '{"info": "$info", "totalAmount": "$totalAmount", "key": "$key"}';
   }
 
   @override
   bool operator ==(covariant ReceiptArguments other) {
     if (identical(this, other)) return true;
-    return other.info == info && other.key == key;
+    return other.info == info &&
+        other.totalAmount == totalAmount &&
+        other.key == key;
   }
 
   @override
   int get hashCode {
-    return info.hashCode ^ key.hashCode;
+    return info.hashCode ^ totalAmount.hashCode ^ key.hashCode;
   }
 }
 
@@ -665,6 +671,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
 
   Future<dynamic> navigateToReceipt({
     required Map<String, dynamic> info,
+    required int totalAmount,
     _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -673,7 +680,8 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.receipt,
-        arguments: ReceiptArguments(info: info, key: key),
+        arguments:
+            ReceiptArguments(info: info, totalAmount: totalAmount, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -953,6 +961,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
 
   Future<dynamic> replaceWithReceipt({
     required Map<String, dynamic> info,
+    required int totalAmount,
     _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -961,7 +970,8 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.receipt,
-        arguments: ReceiptArguments(info: info, key: key),
+        arguments:
+            ReceiptArguments(info: info, totalAmount: totalAmount, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

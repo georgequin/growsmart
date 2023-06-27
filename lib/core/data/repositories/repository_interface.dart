@@ -47,7 +47,9 @@ abstract class IRepository {
 
   Future<ApiResponse> getTransactions();
 
-  Future<ApiResponse> recommendedProducts(Map<String, dynamic> req);
+  Future<ApiResponse> recommendedProducts(String productId);
 
   Future<ApiResponse> getResourceList();
+
+  Future<ApiResponse> getNotifications(String userId);
 }

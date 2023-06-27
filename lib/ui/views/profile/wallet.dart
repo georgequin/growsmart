@@ -132,45 +132,48 @@ class _WalletState extends State<Wallet> {
                           animation: "no_transactions.json",
                           label: "No Transaction Yet",
                         )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            Transaction transaction = transactions[index];
-                            return Container(
-                              decoration: const BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(color: kcLightGrey))),
-                              child: ListTile(
-                                minLeadingWidth: 16,
-                                leading: Icon(
-                                  transaction.type == 2
-                                      ? Icons.arrow_downward
-                                      : Icons.arrow_upward,
-                                  color: transaction.type == 2
-                                      ? Colors.green
-                                      : Colors.red,
+                      : SizedBox(
+                          height: 350,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              Transaction transaction = transactions[index];
+                              return Container(
+                                decoration: const BoxDecoration(
+                                    border: Border(
+                                        bottom:
+                                            BorderSide(color: kcLightGrey))),
+                                child: ListTile(
+                                  minLeadingWidth: 16,
+                                  leading: Icon(
+                                    transaction.type == 2
+                                        ? Icons.arrow_downward
+                                        : Icons.arrow_upward,
+                                    color: transaction.type == 2
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                  title: Text(
+                                    "Transaction (ID: ${transaction.id})",
+                                    style: const TextStyle(fontSize: 15),
+                                  ),
+                                  subtitle: Text(
+                                    DateFormat('E d MMM y').format(
+                                        DateTime.parse(transaction.created!)),
+                                    style: const TextStyle(
+                                        color: kcWhiteColor, fontSize: 12),
+                                  ),
+                                  trailing: Text(
+                                    "N${NumberFormat.simpleCurrency(name: "").format(transaction.amount)}",
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                                title: Text(
-                                  "Transaction (ID: ${transaction.id})",
-                                  style: const TextStyle(fontSize: 15),
-                                ),
-                                subtitle: Text(
-                                  DateFormat('E d MMM y').format(
-                                      DateTime.parse(transaction.created!)),
-                                  style: const TextStyle(
-                                      color: kcWhiteColor, fontSize: 12),
-                                ),
-                                trailing: Text(
-                                  "N${NumberFormat.simpleCurrency(name: "").format(transaction.amount)}",
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            );
-                          },
-                          itemCount: transactions.length,
+                              );
+                            },
+                            itemCount: transactions.length,
+                          ),
                         ),
               const SizedBox(
                 height: 50,

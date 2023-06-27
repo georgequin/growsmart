@@ -119,7 +119,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   title: const Text("My orders"),
                 ),
                 ListTile(
-                  onTap: (){
+                  onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (c) {
                       return const Support();
                     }));
@@ -176,7 +176,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
 
   @override
   void onViewModelReady(ProfileViewModel viewModel) {
-    viewModel.getProfile();
+    // viewModel.getProfile();
     super.onViewModelReady(viewModel);
   }
 
