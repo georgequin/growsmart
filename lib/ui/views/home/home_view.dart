@@ -25,20 +25,22 @@ class HomeView extends StackedView<HomeViewModel> {
         onTap: viewModel.changeSelected,
         currentIndex: viewModel.selectedTab,
         items: [
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              "assets/images/app_home.png",
-              color:
-                  viewModel.selectedTab == 0 ? kcSecondaryColor : kcBlackColor,
-            ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            // icon: Image.asset(
+            //   "assets/images/app_home.png",
+            //   color:
+            //       viewModel.selectedTab == 0 ? kcSecondaryColor : kcBlackColor,
+            // ),
             label: "Home",
           ),
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              "assets/images/draws.png",
-              color:
-                  viewModel.selectedTab == 1 ? kcSecondaryColor : kcBlackColor,
-            ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart_outlined),
+            // icon: Image.asset(
+            //   "assets/images/draws.png",
+            //   color:
+            //       viewModel.selectedTab == 1 ? kcSecondaryColor : kcBlackColor,
+            // ),
             label: "Draws",
           ),
           BottomNavigationBarItem(
@@ -47,8 +49,8 @@ class HomeView extends StackedView<HomeViewModel> {
               builder: (context, value, child) => Badge(
                 isLabelVisible: value.isEmpty ? false : true,
                 label: Text("${value.length}"),
-                child: Image.asset(
-                  "assets/images/cart.png",
+                child: Icon(
+                  Icons.shopping_cart_outlined,
                   color: viewModel.selectedTab == 2
                       ? kcSecondaryColor
                       : kcBlackColor,
@@ -57,20 +59,22 @@ class HomeView extends StackedView<HomeViewModel> {
             ),
             label: "Cart",
           ),
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              "assets/images/notification.png",
-              color:
-                  viewModel.selectedTab == 3 ? kcSecondaryColor : kcBlackColor,
-            ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_none),
+            // icon: Image.asset(
+            //   "assets/images/notification.png",
+            //   color:
+            //       viewModel.selectedTab == 3 ? kcSecondaryColor : kcBlackColor,
+            // ),
             label: "Notifications",
           ),
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              "assets/images/profile.png",
-              color:
-                  viewModel.selectedTab == 4 ? kcSecondaryColor : kcBlackColor,
-            ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.person_2_outlined),
+            // icon: Image.asset(
+            //   "assets/images/profile.png",
+            //   color:
+            //       viewModel.selectedTab == 4 ? kcSecondaryColor : kcBlackColor,
+            // ),
             label: "Profile",
           )
         ],

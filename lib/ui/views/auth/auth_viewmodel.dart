@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
 import 'package:afriprize/app/app.router.dart';
@@ -70,6 +72,8 @@ class AuthViewModel extends BaseViewModel {
             Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
         locator<LocalStorage>()
             .save(LocalStorageDir.authToken, res.data["token"]);
+        locator<LocalStorage>()
+            .save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
         locator<LocalStorage>().save(LocalStorageDir.remember, remember);
         if (remember) {
           locator<LocalStorage>().save(LocalStorageDir.lastEmail, email.text);

@@ -557,9 +557,7 @@ class _CheckoutState extends State<Checkout> {
                         if (element != null) {
                           receipts.add(Map<String, dynamic>.from(element));
                           totalAmount = totalAmount +
-                              int.parse(element['order']["product"]
-                                      ["product_price"]
-                                  .toString());
+                              int.parse(element["amount"].toString());
                         }
                       }
                       locator<NavigationService>().navigateTo(Routes.receipt,
@@ -580,9 +578,7 @@ class _CheckoutState extends State<Checkout> {
                       if (element != null) {
                         receipts.add(Map<String, dynamic>.from(element));
                         totalAmount = totalAmount +
-                            int.parse(element['order']["product"]
-                                    ["product_price"]
-                                .toString());
+                            int.parse(element['amount'].toString());
                       }
                     }
                     locator<NavigationService>().navigateTo(Routes.receipt,

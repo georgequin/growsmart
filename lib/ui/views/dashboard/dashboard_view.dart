@@ -30,7 +30,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
   ) {
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset("assets/images/logo_light.png"),
+        title: Image.asset(
+          "assets/images/afriprize.png",
+          width: 150,
+          height: 50,
+        ),
         actions: [
           userLoggedIn.value == false
               ? Padding(

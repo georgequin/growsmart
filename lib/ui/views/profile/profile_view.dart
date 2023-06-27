@@ -140,6 +140,8 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     if (res!.confirmed) {
                       await locator<LocalStorage>()
                           .delete(LocalStorageDir.authToken);
+                      await locator<LocalStorage>()
+                          .delete(LocalStorageDir.authUser);
                       locator<NavigationService>().replaceWithAuthView();
                     }
                   },
