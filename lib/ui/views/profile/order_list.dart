@@ -6,6 +6,7 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class OrderList extends StatefulWidget {
@@ -88,8 +89,12 @@ class _OrderListState extends State<OrderList> {
                                     image: NetworkImage(order
                                         .product!.pictures![0].location!))),
                       ),
-                      title: Text(order.product?.productName ?? ""),
-                      subtitle: Text("N${order.product?.productPrice}"),
+                      title: Text(
+                          "${order.product?.productName} (${order.quantity})"),
+                      subtitle: Text(
+                          "N${order.quantity! * order.product!.productPrice!}"),
+                      trailing: Text(DateFormat("d MMM y, h:m")
+                          .format(DateTime.parse(order.created!))),
                     );
                   }),
     );

@@ -60,9 +60,10 @@ class _TrackState extends State<Track> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${widget.item.product?.productName}"),
                     Text(
-                      "N${widget.item.product?.productPrice}",
+                        "${widget.item.product?.productName} (${widget.item.quantity})"),
+                    Text(
+                      "N${widget.item.quantity! * widget.item.product!.productPrice!}",
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

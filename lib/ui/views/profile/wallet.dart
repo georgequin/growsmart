@@ -33,8 +33,24 @@ class _WalletState extends State<Wallet> {
   @override
   void initState() {
     wallet = widget.wallet;
+    getProfile();
     getHistory();
     super.initState();
+  }
+
+  void getProfile() async {
+    try {
+      ApiResponse res = await locator<Repository>().getProfile();
+      if (res.statusCode == 200) {
+        profile.value =
+            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+        setState(() {
+          wallet = profile.value.wallet!;
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   void getHistory() async {
@@ -137,7 +153,8 @@ class _WalletState extends State<Wallet> {
                           child: ListView.builder(
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              Transaction transaction = transactions[index];
+                              Transaction transaction =
+                                  transactions.reversed.toList()[index];
                               return Container(
                                 decoration: const BoxDecoration(
                                     border: Border(
