@@ -65,6 +65,8 @@ class CartViewModel extends BaseViewModel {
               infoList: list,
             ))!
             .whenComplete(() => rebuildUi());
+      } else {
+        snackBar.showSnackbar(message: res.data["message"]);
       }
     } catch (e) {
       log.e(e);

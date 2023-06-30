@@ -128,7 +128,28 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     Icons.support_agent,
                     color: kcSecondaryColor,
                   ),
-                  title: Text("Support"),
+                  title: const Text("Support"),
+                ),
+                ListTile(
+                  onTap: () {},
+                  leading: const Icon(
+                    Icons.color_lens,
+                    color: kcSecondaryColor,
+                  ),
+                  title: const Text("Dark Theme"),
+                  trailing: ValueListenableBuilder<AppUiModes>(
+                    valueListenable: uiMode,
+                    builder: (context, value, child) => Switch(
+                      value: value == AppUiModes.dark ? true : false,
+                      onChanged: (val) {
+                        if (value == AppUiModes.light) {
+                          uiMode.value = AppUiModes.dark;
+                        } else {
+                          uiMode.value = AppUiModes.light;
+                        }
+                      },
+                    ),
+                  ),
                 ),
                 ListTile(
                   onTap: () async {

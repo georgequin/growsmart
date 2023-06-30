@@ -49,11 +49,11 @@ class HomeView extends StackedView<HomeViewModel> {
               builder: (context, value, child) => Badge(
                 isLabelVisible: value.isEmpty ? false : true,
                 label: Text("${value.length}"),
-                child: Icon(
+                child: const Icon(
                   Icons.shopping_cart_outlined,
-                  color: viewModel.selectedTab == 2
-                      ? kcSecondaryColor
-                      : kcBlackColor,
+                  // color: viewModel.selectedTab == 2
+                  //     ? kcSecondaryColor
+                  //     : kcBlackColor,
                 ),
               ),
             ),
