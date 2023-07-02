@@ -152,7 +152,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         height: 40,
                                         width: 100,
                                         decoration: BoxDecoration(
-                                            color: kcWhiteColor,
+                                            color: kcPrimaryColor,
                                             borderRadius:
                                                 BorderRadius.circular(4)),
                                         child: Center(

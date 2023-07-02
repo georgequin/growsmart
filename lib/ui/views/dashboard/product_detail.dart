@@ -253,8 +253,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                         child: Icon(
                                           Icons.remove,
                                           size: 18,
-                                          color:
-                                              kcBlackColor,
+                                          color: kcBlackColor,
                                         ),
                                       ),
                                     ),
@@ -263,7 +262,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   Text(
                                     "$quantity",
                                     style: const TextStyle(
-                                      color:kcBlackColor,
+                                      color: kcBlackColor,
                                     ),
                                   ),
                                   horizontalSpaceSmall,
@@ -285,8 +284,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                         child: Icon(
                                           Icons.add,
                                           size: 18,
-                                          color:
-                                              kcBlackColor,
+                                          color: kcBlackColor,
                                         ),
                                       ),
                                     ),
@@ -386,7 +384,7 @@ class RecommendedRow extends StatelessWidget {
       width: 300,
       margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
-          color: kcWhiteColor,
+          color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -425,7 +423,9 @@ class RecommendedRow extends StatelessWidget {
                   width: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: kcWhiteColor,
+                    color: uiMode.value == AppUiModes.light
+                        ? kcWhiteColor
+                        : kcBlackColor,
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,

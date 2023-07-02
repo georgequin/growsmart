@@ -78,7 +78,7 @@ class DashboardViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.getAds();
       if (res.statusCode == 200) {
-        ads = (res.data["products"] as List)
+        ads = (res.data["raffle"] as List)
             .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
         rebuildUi();
@@ -112,11 +112,11 @@ class DashboardViewModel extends BaseViewModel {
     setBusyForObject(sellingFast, true);
 
     try {
-      // ApiResponse res = await repo.getSellingFast();
-      ApiResponse res = await repo.getProducts();
+      ApiResponse res = await repo.getSellingFast();
+      // ApiResponse res = await repo.getProducts();
 
       if (res.statusCode == 200) {
-        sellingFast = (res.data["products"] as List)
+        sellingFast = (res.data["sellingfast"] as List)
             .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
         rebuildUi();
