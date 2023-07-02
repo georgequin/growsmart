@@ -164,9 +164,7 @@ class _RegisterState extends State<Register> {
                 const Text(
                   "I ACCEPT TERMS & CONDITIONS",
                   style: TextStyle(
-                      color: kcMediumGrey,
-                      fontSize: 14,
-                      decoration: TextDecoration.underline),
+                      fontSize: 14, decoration: TextDecoration.underline),
                 )
               ],
             ),

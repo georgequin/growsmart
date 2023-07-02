@@ -36,10 +36,10 @@ class _ProductDetailState extends State<ProductDetail> {
   void initState() {
     getRecommendedProducts();
     setState(() {
-      activePic = (widget.product.raffleAd?.pictures == null ||
-              widget.product.raffleAd!.pictures!.isEmpty)
+      activePic = (widget.product.raffle?.pictures == null ||
+              widget.product.raffle!.pictures!.isEmpty)
           ? ""
-          : widget.product.raffleAd?.pictures?[0].location ?? "";
+          : widget.product.raffle?.pictures?[0].location ?? "";
     });
 
     super.initState();
@@ -74,8 +74,8 @@ class _ProductDetailState extends State<ProductDetail> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      image: (widget.product.raffleAd?.pictures == null ||
-                              widget.product.raffleAd!.pictures!.isEmpty)
+                      image: (widget.product.raffle?.pictures == null ||
+                              widget.product.raffle!.pictures!.isEmpty)
                           ? null
                           : DecorationImage(
                               fit: BoxFit.cover,
@@ -92,16 +92,18 @@ class _ProductDetailState extends State<ProductDetail> {
                     height: 40,
                     width: 250,
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: const BoxDecoration(
-                      color: kcWhiteColor,
-                      borderRadius: BorderRadius.only(
+                    decoration: BoxDecoration(
+                      color: uiMode.value == AppUiModes.light
+                          ? kcWhiteColor
+                          : kcBlackColor,
+                      borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(5),
                         bottomRight: Radius.circular(5),
                       ),
                     ),
                     child: Center(
                       child: Text(
-                        "${widget.product.raffleAd?.adName}",
+                        "${widget.product.raffle?.ticketName}",
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -166,7 +168,6 @@ class _ProductDetailState extends State<ProductDetail> {
                     Text(
                       "4.9",
                       style: TextStyle(
-                        color: kcBlackColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -178,7 +179,6 @@ class _ProductDetailState extends State<ProductDetail> {
                     horizontalSpaceSmall,
                     Text(
                       "Reviews",
-                      style: TextStyle(color: kcBlackColor),
                     )
                   ],
                 ),
@@ -253,12 +253,19 @@ class _ProductDetailState extends State<ProductDetail> {
                                         child: Icon(
                                           Icons.remove,
                                           size: 18,
+                                          color:
+                                              kcBlackColor,
                                         ),
                                       ),
                                     ),
                                   ),
                                   horizontalSpaceSmall,
-                                  Text("$quantity"),
+                                  Text(
+                                    "$quantity",
+                                    style: const TextStyle(
+                                      color:kcBlackColor,
+                                    ),
+                                  ),
                                   horizontalSpaceSmall,
                                   InkWell(
                                     onTap: () {
@@ -278,6 +285,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                         child: Icon(
                                           Icons.add,
                                           size: 18,
+                                          color:
+                                              kcBlackColor,
                                         ),
                                       ),
                                     ),
@@ -394,15 +403,15 @@ class RecommendedRow extends StatelessWidget {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
-                child: (product.raffleAd == null ||
-                            product.raffleAd?.pictures == null) ||
-                        product.raffleAd!.pictures!.isEmpty
+                child: (product.raffle == null ||
+                            product.raffle?.pictures == null) ||
+                        product.raffle!.pictures!.isEmpty
                     ? SizedBox(
                         height: 150,
                         width: MediaQuery.of(context).size.width,
                       )
                     : Image.network(
-                        product.raffleAd!.pictures![0].location!,
+                        product.raffle!.pictures![0].location!,
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
                         height: 150,
@@ -468,7 +477,7 @@ class RecommendedRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.raffleAd?.adName ?? "",
+                        product.raffle?.ticketName ?? "",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -511,7 +520,7 @@ class RecommendedRow extends StatelessWidget {
                     ),
                     verticalSpaceSmall,
                     Text(
-                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffleAd?.created ?? DateTime.now().toIso8601String()))}",
+                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?.created ?? DateTime.now().toIso8601String()))}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: const TextStyle(

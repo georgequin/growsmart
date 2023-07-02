@@ -43,9 +43,6 @@ class _CheckoutState extends State<Checkout> {
         centerTitle: true,
         title: const Text(
           "Checkout",
-          style: TextStyle(
-            color: kcBlackColor,
-          ),
         ),
       ),
       body: ListView(
@@ -70,7 +67,9 @@ class _CheckoutState extends State<Checkout> {
                     padding: const EdgeInsets.all(10),
                     height: 100,
                     decoration: BoxDecoration(
-                      color: kcWhiteColor,
+                      color: uiMode.value == AppUiModes.light
+                          ? kcWhiteColor
+                          : kcBlackColor,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
@@ -207,7 +206,6 @@ class _CheckoutState extends State<Checkout> {
                       "Sub-total",
                       style: TextStyle(
                         fontSize: 16,
-                        color: kcMediumGrey,
                       ),
                     ),
                     Text(
@@ -225,7 +223,6 @@ class _CheckoutState extends State<Checkout> {
                       "Delivery-Fee",
                       style: TextStyle(
                         fontSize: 16,
-                        color: kcMediumGrey,
                       ),
                     ),
                     Text(
@@ -245,10 +242,8 @@ class _CheckoutState extends State<Checkout> {
                   children: [
                     const Text(
                       "Total",
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: kcBlackColor,
-                          fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "N${getSubTotal()}",
@@ -515,7 +510,7 @@ class _CheckoutState extends State<Checkout> {
                     Expanded(
                       child: Text(
                         "We protect your payment information using encryption to provide bank-level security.",
-                        style: TextStyle(fontSize: 11, color: kcMediumGrey),
+                        style: TextStyle(fontSize: 11),
                       ),
                     ),
                   ],

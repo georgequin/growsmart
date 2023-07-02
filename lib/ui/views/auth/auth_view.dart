@@ -4,6 +4,7 @@ import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../../state.dart';
 import 'auth_viewmodel.dart';
 import 'login.dart';
 
@@ -73,7 +74,9 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                           TabBar(
                             controller: tabController,
                             labelColor: kcSecondaryColor,
-                            unselectedLabelColor: kcBlackColor,
+                            unselectedLabelColor: uiMode.value == AppUiModes.light
+                                ? kcBlackColor
+                                : kcWhiteColor,
                             indicatorWeight: 4,
                             indicatorColor: kcSecondaryColor,
                             tabs: const [

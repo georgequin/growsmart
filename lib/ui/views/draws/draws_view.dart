@@ -22,7 +22,6 @@ class DrawsView extends StackedView<DrawsViewModel> {
         centerTitle: true,
         title: const Text(
           "Draws",
-          style: TextStyle(color: kcBlackColor),
         ),
       ),
       body: viewModel.busy(viewModel.raffle)
@@ -118,7 +117,6 @@ class DrawsView extends StackedView<DrawsViewModel> {
                                 const Text(
                                   "Start time:",
                                   style: TextStyle(
-                                    color: kcMediumGrey,
                                     fontSize: 18,
                                   ),
                                 ),
@@ -126,7 +124,6 @@ class DrawsView extends StackedView<DrawsViewModel> {
                                   DateFormat("d MMM y").format(
                                       DateTime.parse(ticket.startDate!)),
                                   style: const TextStyle(
-                                    color: kcMediumGrey,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -135,7 +132,6 @@ class DrawsView extends StackedView<DrawsViewModel> {
                                 const Text(
                                   "End time:",
                                   style: TextStyle(
-                                    color: kcMediumGrey,
                                     fontSize: 18,
                                   ),
                                 ),
@@ -143,7 +139,6 @@ class DrawsView extends StackedView<DrawsViewModel> {
                                   DateFormat("d MMM y")
                                       .format(DateTime.parse(ticket.endDate!)),
                                   style: const TextStyle(
-                                    color: kcMediumGrey,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),

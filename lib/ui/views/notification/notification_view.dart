@@ -20,9 +20,6 @@ class NotificationView extends StackedView<NotificationViewModel> {
         centerTitle: true,
         title: const Text(
           "Notification",
-          style: TextStyle(
-            color: kcBlackColor,
-          ),
         ),
       ),
       body: const EmptyState(

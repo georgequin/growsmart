@@ -6,5 +6,5 @@ class LocalStorageDir {
   static const String lastImage = "profile_image";
   static const String lastEmail = "lastEmail";
   static const String remember = "remember";
-
+  static const String uiMode = "uiMode";
 }

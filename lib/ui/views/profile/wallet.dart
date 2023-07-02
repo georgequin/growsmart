@@ -83,7 +83,6 @@ class _WalletState extends State<Wallet> {
         centerTitle: true,
         title: const Text(
           "Wallet",
-          style: TextStyle(color: kcBlackColor),
         ),
       ),
       body: SafeArea(

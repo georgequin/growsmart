@@ -29,9 +29,6 @@ class ProfileView extends StackedView<ProfileViewModel> {
         centerTitle: true,
         title: const Text(
           "Profile",
-          style: TextStyle(
-            color: kcBlackColor,
-          ),
         ),
       ),
       body: profile.value.id == null || viewModel.isBusy
@@ -62,9 +59,9 @@ class ProfileView extends StackedView<ProfileViewModel> {
                         Text(
                           "${profile.value.firstname} ${profile.value.lastname}",
                           style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: kcMediumGrey),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(profile.value.country ?? "")
                       ],
@@ -141,11 +138,15 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     valueListenable: uiMode,
                     builder: (context, value, child) => Switch(
                       value: value == AppUiModes.dark ? true : false,
-                      onChanged: (val) {
+                      onChanged: (val) async {
                         if (value == AppUiModes.light) {
                           uiMode.value = AppUiModes.dark;
+                          await locator<LocalStorage>()
+                              .save(LocalStorageDir.uiMode, "dark");
                         } else {
                           uiMode.value = AppUiModes.light;
+                          await locator<LocalStorage>()
+                              .save(LocalStorageDir.uiMode, "light");
                         }
                       },
                     ),

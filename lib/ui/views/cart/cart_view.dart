@@ -27,9 +27,6 @@ class CartView extends StackedView<CartViewModel> {
         centerTitle: false,
         title: const Text(
           "My Carts",
-          style: TextStyle(
-            color: kcBlackColor,
-          ),
         ),
         actions: [
           viewModel.itemsToDelete.isNotEmpty
@@ -72,7 +69,9 @@ class CartView extends StackedView<CartViewModel> {
                           margin: const EdgeInsets.symmetric(vertical: 10),
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: kcWhiteColor,
+                            color: uiMode.value == AppUiModes.light
+                                ? kcWhiteColor
+                                : kcBlackColor,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
@@ -227,7 +226,6 @@ class CartView extends StackedView<CartViewModel> {
                       "Sub-total",
                       style: TextStyle(
                         fontSize: 16,
-                        color: kcMediumGrey,
                       ),
                     ),
                     Text(
@@ -245,7 +243,6 @@ class CartView extends StackedView<CartViewModel> {
                       "Delivery-Fee",
                       style: TextStyle(
                         fontSize: 16,
-                        color: kcMediumGrey,
                       ),
                     ),
                     Text(
@@ -265,10 +262,8 @@ class CartView extends StackedView<CartViewModel> {
                   children: [
                     const Text(
                       "Total",
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: kcBlackColor,
-                          fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "N${viewModel.subTotal}",

@@ -81,10 +81,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                         color: kcBlackColor.withOpacity(0.2),
-                                        image: ad.raffleAd!.pictures!.isEmpty
+                                        image: ad.raffle!.pictures!.isEmpty
                                             ? null
                                             : DecorationImage(
-                                                image: NetworkImage(ad.raffleAd!
+                                                image: NetworkImage(ad.raffle!
                                                     .pictures![0].location!),
                                                 fit: BoxFit.cover,
                                                 colorFilter: ColorFilter.mode(
@@ -130,7 +130,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         ),
                                         verticalSpaceTiny,
                                         Text(
-                                          "${ad.raffleAd!.adName}",
+                                          "${ad.raffle!.ticketName}",
                                           style: const TextStyle(
                                               fontSize: 16,
                                               color: kcWhiteColor,
@@ -189,7 +189,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: kcMediumGrey,
               ),
             ),
             verticalSpaceSmall,
@@ -211,7 +210,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               right: 15, top: 10, bottom: 10),
                           width: 350,
                           decoration: BoxDecoration(
-                              color: kcWhiteColor,
+                              color: uiMode.value == AppUiModes.light
+                                  ? kcWhiteColor
+                                  : kcBlackColor,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
@@ -229,14 +230,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "${product.raffleAd?.adName}",
+                                      "${product.raffle?.ticketName}",
                                       style: GoogleFonts.inter(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     verticalSpaceTiny,
                                     Text(
-                                      "${product.raffleAd?.adDescription}",
+                                      "${product.raffle?.ticketDescription}",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3,
                                       style: GoogleFonts.inter(
@@ -294,14 +295,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                 width: 120,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  image: product.raffleAd?.pictures == null ||
-                                          product.raffleAd!.pictures!.isEmpty
+                                  image: product.raffle?.pictures == null ||
+                                          product.raffle!.pictures!.isEmpty
                                       ? null
                                       : DecorationImage(
                                           fit: BoxFit.cover,
                                           image: NetworkImage(
-                                            product.raffleAd!.pictures![0]
-                                                .location!,
+                                            product
+                                                .raffle!.pictures![0].location!,
                                           ),
                                         ),
                                 ),
@@ -317,7 +318,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: kcMediumGrey,
               ),
             ),
             verticalSpaceSmall,
@@ -404,15 +404,16 @@ class ProductRow extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 5),
       height: 250,
       decoration: BoxDecoration(
-          color: kcWhiteColor,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: kcBlackColor.withOpacity(0.1),
-              offset: const Offset(0, 4),
-              blurRadius: 4,
-            )
-          ]),
+        color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: kcBlackColor.withOpacity(0.1),
+            offset: const Offset(0, 4),
+            blurRadius: 4,
+          )
+        ],
+      ),
       child: Column(
         children: [
           Stack(
@@ -421,15 +422,15 @@ class ProductRow extends StatelessWidget {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
-                child: (product.raffleAd == null ||
-                            product.raffleAd?.pictures == null) ||
-                        product.raffleAd!.pictures!.isEmpty
+                child: (product.raffle == null ||
+                            product.raffle?.pictures == null) ||
+                        product.raffle!.pictures!.isEmpty
                     ? SizedBox(
                         height: 170,
                         width: MediaQuery.of(context).size.width,
                       )
                     : Image.network(
-                        product.raffleAd!.pictures![0].location!,
+                        product.raffle!.pictures![0].location!,
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
                         height: 170,
@@ -443,7 +444,6 @@ class ProductRow extends StatelessWidget {
                   width: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: kcWhiteColor,
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -495,7 +495,7 @@ class ProductRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.raffleAd?.adName ?? "",
+                        product.raffle?.ticketName ?? "",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -505,7 +505,11 @@ class ProductRow extends StatelessWidget {
                             TextSpan(
                                 text: "Buy ${product.productName} for: ",
                                 style: GoogleFonts.inter(
-                                    color: kcBlackColor, fontSize: 12)),
+                                  fontSize: 12,
+                                  color: uiMode.value == AppUiModes.light
+                                      ? kcBlackColor
+                                      : kcWhiteColor,
+                                )),
                             TextSpan(
                                 text: " N${product.productPrice}",
                                 style: GoogleFonts.inter(
@@ -538,7 +542,7 @@ class ProductRow extends StatelessWidget {
                     ),
                     verticalSpaceSmall,
                     Text(
-                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffleAd?.created ?? DateTime.now().toIso8601String()))}",
+                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?.created ?? DateTime.now().toIso8601String()))}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: const TextStyle(

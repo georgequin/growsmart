@@ -106,9 +106,7 @@ class _LoginState extends State<Login> {
                       const Text(
                         "Remember Me",
                         style: TextStyle(
-                            color: kcMediumGrey,
-                            fontSize: 14,
-                            decoration: TextDecoration.underline),
+                            fontSize: 14, decoration: TextDecoration.underline),
                       )
                     ],
                   ),

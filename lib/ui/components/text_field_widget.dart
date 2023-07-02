@@ -1,3 +1,4 @@
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -33,14 +34,18 @@ class TextFieldWidget extends StatelessWidget {
       readOnly: readOnly,
       controller: controller,
       onChanged: onChanged as void Function(String value)?,
-      cursorColor: kcBlackColor,
-      style: const TextStyle(color: kcBlackColor, fontSize: 14),
+      cursorColor:
+          uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
+      style: TextStyle(
+          color: uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
+          fontSize: 14),
       validator: validator as String? Function(String?)?,
       obscureText: obscureText,
       keyboardType: inputType,
       decoration: InputDecoration(
         filled: true,
-        fillColor: kcWhiteColor,
+        fillColor:
+            uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: kcBlackColor.withOpacity(0.22)),
@@ -54,7 +59,10 @@ class TextFieldWidget extends StatelessWidget {
           borderSide: BorderSide(color: kcBlackColor.withOpacity(0.22)),
         ),
         labelText: hint,
-        labelStyle: const TextStyle(color: kcBlackColor, fontSize: 14),
+        labelStyle: TextStyle(
+            color:
+                uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
+            fontSize: 14),
         prefixIcon: leading == null
             ? null
             : Padding(

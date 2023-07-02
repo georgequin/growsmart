@@ -9,7 +9,7 @@ class Product {
   String? updated;
   Category? category;
   List<Pictures>? pictures;
-  RaffleAd? raffleAd;
+  Raffle? raffle;
 
   Product(
       {this.id,
@@ -22,7 +22,7 @@ class Product {
       this.updated,
       this.category,
       this.pictures,
-      this.raffleAd});
+      this.raffle});
 
   Product.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -41,8 +41,7 @@ class Product {
         pictures!.add(Pictures.fromJson(v));
       });
     }
-    raffleAd =
-        json['raffleAd'] != null ? RaffleAd.fromJson(json['raffleAd']) : null;
+    raffle = json['raffle'] != null ? Raffle.fromJson(json['raffle']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -61,8 +60,8 @@ class Product {
     if (pictures != null) {
       data['pictures'] = pictures!.map((v) => v.toJson()).toList();
     }
-    if (raffleAd != null) {
-      data['raffleAd'] = raffleAd!.toJson();
+    if (raffle != null) {
+      data['raffle'] = raffle!.toJson();
     }
     return data;
   }
@@ -143,104 +142,31 @@ class Pictures {
   }
 }
 
-class RaffleAd {
-  String? id;
-  String? adName;
-  String? adDescription;
-  bool? featured;
-  bool? status;
-  String? created;
-  String? updated;
-  Category? category;
-  List<Pictures>? pictures;
-  Product? product;
-  Raffledraw? raffledraw;
-
-  RaffleAd({
-    this.id,
-    this.adName,
-    this.adDescription,
-    this.featured,
-    this.status,
-    this.created,
-    this.updated,
-    this.category,
-    this.pictures,
-    this.product,
-    this.raffledraw,
-  });
-
-  RaffleAd.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    adName = json['ad_name'];
-    adDescription = json['ad_description'];
-    featured = json['featured'];
-    status = json['status'];
-    created = json['created'];
-    updated = json['updated'];
-    category =
-        json['category'] != null ? Category.fromJson(json['category']) : null;
-    if (json['pictures'] != null) {
-      pictures = <Pictures>[];
-      json['pictures'].forEach((v) {
-        pictures!.add(Pictures.fromJson(v));
-      });
-    }
-    product =
-        json['product'] != null ? Product.fromJson(json['product']) : null;
-    raffledraw = json['raffledraw'] != null
-        ? Raffledraw.fromJson(json['raffledraw'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['ad_name'] = adName;
-    data['ad_description'] = adDescription;
-    data['featured'] = featured;
-    data['status'] = status;
-    data['created'] = created;
-    data['updated'] = updated;
-    if (category != null) {
-      data['category'] = category!.toJson();
-    }
-    if (pictures != null) {
-      data['pictures'] = pictures!.map((v) => v.toJson()).toList();
-    }
-    if (product != null) {
-      data['product'] = product!.toJson();
-    }
-    if (raffledraw != null) {
-      data['raffledraw'] = raffledraw!.toJson();
-    }
-    return data;
-  }
-}
-
-class Raffledraw {
+class Raffle {
   String? id;
   String? ticketName;
   String? ticketDescription;
   String? ticketTracking;
   int? status;
+  List<Pictures>? pictures;
   String? startDate;
   String? endDate;
   String? created;
   String? updated;
 
-  Raffledraw(
+  Raffle(
       {this.id,
       this.ticketName,
       this.ticketDescription,
       this.ticketTracking,
       this.status,
+      this.pictures,
       this.startDate,
       this.endDate,
       this.created,
       this.updated});
 
-  Raffledraw.fromJson(Map<String, dynamic> json) {
+  Raffle.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     ticketName = json['ticket_name'];
     ticketDescription = json['ticket_description'];
@@ -250,6 +176,12 @@ class Raffledraw {
     endDate = json['end_date'];
     created = json['created'];
     updated = json['updated'];
+    if (json['pictures'] != null) {
+      pictures = <Pictures>[];
+      json['pictures'].forEach((v) {
+        pictures!.add(Pictures.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -263,6 +195,9 @@ class Raffledraw {
     data['end_date'] = endDate;
     data['created'] = created;
     data['updated'] = updated;
+    if (pictures != null) {
+      data['pictures'] = pictures!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }

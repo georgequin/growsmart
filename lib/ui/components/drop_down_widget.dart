@@ -1,3 +1,4 @@
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +26,8 @@ class DropdownWidget extends StatelessWidget {
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(12),
         filled: true,
-        fillColor: kcWhiteColor,
+        fillColor:
+            uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: kcBlackColor.withOpacity(0.22)),
@@ -43,15 +45,16 @@ class DropdownWidget extends StatelessWidget {
           borderSide: BorderSide(color: kcBlackColor.withOpacity(0.22)),
         ),
       ),
-      dropdownColor: kcSecondaryColor,
       iconSize: 30,
-      iconEnabledColor: kcPrimaryColor,
-      iconDisabledColor: kcPrimaryColor,
+      iconEnabledColor:
+          uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
+      iconDisabledColor:
+          uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
       hint: Text(
         value ?? hint,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.normal,
-          color: kcBlackColor,
+          color: uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
         ),
       ),
       value: value,
@@ -74,7 +77,11 @@ class DropdownWidget extends StatelessWidget {
                 child: Text(
                   value,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.black),
+                  style: TextStyle(
+                    color: uiMode.value == AppUiModes.light
+                        ? kcBlackColor
+                        : kcWhiteColor,
+                  ),
                 ),
               ),
             ],

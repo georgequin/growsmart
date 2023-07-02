@@ -170,7 +170,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getAds() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "raffle/ad/list",
+      endpoint: "raffle/list",
     );
 
     return response;
