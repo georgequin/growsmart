@@ -81,10 +81,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                         color: kcBlackColor.withOpacity(0.2),
-                                        image: ad.raffle!.pictures!.isEmpty
+                                        image: ad.raffle![0].pictures!.isEmpty
                                             ? null
                                             : DecorationImage(
-                                                image: NetworkImage(ad.raffle!
+                                                image: NetworkImage(ad.raffle![0]
                                                     .pictures![0].location!),
                                                 fit: BoxFit.cover,
                                                 colorFilter: ColorFilter.mode(
@@ -130,7 +130,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         ),
                                         verticalSpaceTiny,
                                         Text(
-                                          "${ad.raffle!.ticketName}",
+                                          "${ad.raffle![0].ticketName}",
                                           style: const TextStyle(
                                               fontSize: 16,
                                               color: kcWhiteColor,
@@ -230,14 +230,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "${product.raffle?.ticketName}",
+                                      "${product.raffle?[0].ticketName}",
                                       style: GoogleFonts.inter(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     verticalSpaceTiny,
                                     Text(
-                                      "${product.raffle?.ticketDescription}",
+                                      "${product.raffle?[0].ticketDescription}",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3,
                                       style: GoogleFonts.inter(
@@ -295,14 +295,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                 width: 120,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  image: product.raffle?.pictures == null ||
-                                          product.raffle!.pictures!.isEmpty
+                                  image: product.raffle?[0].pictures == null ||
+                                          product.raffle![0].pictures!.isEmpty
                                       ? null
                                       : DecorationImage(
                                           fit: BoxFit.cover,
                                           image: NetworkImage(
                                             product
-                                                .raffle!.pictures![0].location!,
+                                                .raffle![0].pictures![0].location!,
                                           ),
                                         ),
                                 ),
@@ -423,14 +423,14 @@ class ProductRow extends StatelessWidget {
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
                 child: (product.raffle == null ||
-                            product.raffle?.pictures == null) ||
-                        product.raffle!.pictures!.isEmpty
+                            product.raffle?[0].pictures == null) ||
+                        product.raffle![0].pictures!.isEmpty
                     ? SizedBox(
                         height: 170,
                         width: MediaQuery.of(context).size.width,
                       )
                     : Image.network(
-                        product.raffle!.pictures![0].location!,
+                        product.raffle![0].pictures![0].location!,
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
                         height: 170,
@@ -495,7 +495,7 @@ class ProductRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.raffle?.ticketName ?? "",
+                        product.raffle?[0].ticketName ?? "",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -542,7 +542,7 @@ class ProductRow extends StatelessWidget {
                     ),
                     verticalSpaceSmall,
                     Text(
-                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?.created ?? DateTime.now().toIso8601String()))}",
+                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].created ?? DateTime.now().toIso8601String()))}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: const TextStyle(

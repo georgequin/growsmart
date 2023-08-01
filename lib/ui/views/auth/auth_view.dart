@@ -49,7 +49,10 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  child: Image.asset("assets/images/logo.png"),
+                  child: Padding(
+                    padding: const EdgeInsets.all(50.0),
+                    child: Image.asset("assets/images/afriprize_light.png"),
+                  ),
                 )
               ],
             ),
@@ -74,9 +77,10 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                           TabBar(
                             controller: tabController,
                             labelColor: kcSecondaryColor,
-                            unselectedLabelColor: uiMode.value == AppUiModes.light
-                                ? kcBlackColor
-                                : kcWhiteColor,
+                            unselectedLabelColor:
+                                uiMode.value == AppUiModes.light
+                                    ? kcBlackColor
+                                    : kcWhiteColor,
                             indicatorWeight: 4,
                             indicatorColor: kcSecondaryColor,
                             tabs: const [

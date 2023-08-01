@@ -36,10 +36,10 @@ class _ProductDetailState extends State<ProductDetail> {
   void initState() {
     getRecommendedProducts();
     setState(() {
-      activePic = (widget.product.raffle?.pictures == null ||
-              widget.product.raffle!.pictures!.isEmpty)
+      activePic = (widget.product.raffle?[0].pictures == null ||
+              widget.product.raffle![0].pictures!.isEmpty)
           ? ""
-          : widget.product.raffle?.pictures?[0].location ?? "";
+          : widget.product.raffle?[0].pictures?[0].location ?? "";
     });
 
     super.initState();
@@ -74,8 +74,8 @@ class _ProductDetailState extends State<ProductDetail> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      image: (widget.product.raffle?.pictures == null ||
-                              widget.product.raffle!.pictures!.isEmpty)
+                      image: (widget.product.raffle?[0].pictures == null ||
+                              widget.product.raffle![0].pictures!.isEmpty)
                           ? null
                           : DecorationImage(
                               fit: BoxFit.cover,
@@ -103,7 +103,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     child: Center(
                       child: Text(
-                        "${widget.product.raffle?.ticketName}",
+                        "${widget.product.raffle?[0].ticketName}",
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -402,14 +402,14 @@ class RecommendedRow extends StatelessWidget {
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
                 child: (product.raffle == null ||
-                            product.raffle?.pictures == null) ||
-                        product.raffle!.pictures!.isEmpty
+                            product.raffle?[0].pictures == null) ||
+                        product.raffle![0].pictures!.isEmpty
                     ? SizedBox(
                         height: 150,
                         width: MediaQuery.of(context).size.width,
                       )
                     : Image.network(
-                        product.raffle!.pictures![0].location!,
+                        product.raffle![0].pictures![0].location!,
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
                         height: 150,
@@ -477,7 +477,7 @@ class RecommendedRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.raffle?.ticketName ?? "",
+                        product.raffle?[0].ticketName ?? "",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -520,7 +520,7 @@ class RecommendedRow extends StatelessWidget {
                     ),
                     verticalSpaceSmall,
                     Text(
-                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?.created ?? DateTime.now().toIso8601String()))}",
+                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].created ?? DateTime.now().toIso8601String()))}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: const TextStyle(

@@ -3,25 +3,35 @@ class Product {
   String? productName;
   String? productDescription;
   int? productPrice;
-  int? stock;
+  int? shippingFee;
+  int? availability;
   bool? featured;
+  bool? lowStockAlert;
+  int? stock;
+  int? status;
   String? created;
   String? updated;
   Category? category;
   List<Pictures>? pictures;
-  Raffle? raffle;
+  dynamic reviews;
+  List<Raffle>? raffle;
 
   Product(
       {this.id,
       this.productName,
       this.productDescription,
       this.productPrice,
+      this.shippingFee,
+      this.availability,
       this.featured,
+      this.lowStockAlert,
       this.stock,
+      this.status,
       this.created,
       this.updated,
       this.category,
       this.pictures,
+      this.reviews,
       this.raffle});
 
   Product.fromJson(Map<String, dynamic> json) {
@@ -29,10 +39,14 @@ class Product {
     productName = json['product_name'];
     productDescription = json['product_description'];
     productPrice = json['product_price'];
+    shippingFee = json['shipping_fee'];
+    availability = json['availability'];
     featured = json['featured'];
+    lowStockAlert = json['low_stock_alert'];
+    stock = json['stock'];
+    status = json['status'];
     created = json['created'];
     updated = json['updated'];
-    stock = json['stock'];
     category =
         json['category'] != null ? Category.fromJson(json['category']) : null;
     if (json['pictures'] != null) {
@@ -41,7 +55,18 @@ class Product {
         pictures!.add(Pictures.fromJson(v));
       });
     }
-    raffle = json['raffle'] != null ? Raffle.fromJson(json['raffle']) : null;
+    // if (json['reviews'] != null) {
+    //   reviews = <Null>[];
+    //   json['reviews'].forEach((v) {
+    //     reviews!.add(Null.fromJson(v));
+    //   });
+    // }
+    if (json['raffle'] != null) {
+      raffle = <Raffle>[];
+      json['raffle'].forEach((v) {
+        raffle!.add(Raffle.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -50,9 +75,13 @@ class Product {
     data['product_name'] = productName;
     data['product_description'] = productDescription;
     data['product_price'] = productPrice;
+    data['shipping_fee'] = shippingFee;
+    data['availability'] = availability;
     data['featured'] = featured;
-    data['created'] = created;
+    data['low_stock_alert'] = lowStockAlert;
     data['stock'] = stock;
+    data['status'] = status;
+    data['created'] = created;
     data['updated'] = updated;
     if (category != null) {
       data['category'] = category!.toJson();
@@ -60,8 +89,11 @@ class Product {
     if (pictures != null) {
       data['pictures'] = pictures!.map((v) => v.toJson()).toList();
     }
+    if (reviews != null) {
+      data['reviews'] = reviews!.map((v) => v.toJson()).toList();
+    }
     if (raffle != null) {
-      data['raffle'] = raffle!.toJson();
+      data['raffle'] = raffle!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -87,7 +119,12 @@ class Category {
     id = json['id'];
     name = json['name'];
     description = json['description'];
-    status = json['status'];
+    status = (json['status'].runtimeType == int)
+        ? json["status"] == 1
+            ? true
+            : false
+        : json['status'];
+
     created = json['created'];
     updated = json['updated'];
   }
@@ -108,25 +145,30 @@ class Pictures {
   String? id;
   String? token;
   String? location;
+  int? type;
+  bool? isPopup;
+  bool? front;
   String? create;
   String? updated;
-  bool? front;
 
-  Pictures({
-    this.id,
-    this.token,
-    this.location,
-    this.create,
-    this.updated,
-    this.front,
-  });
+  Pictures(
+      {this.id,
+      this.token,
+      this.location,
+      this.type,
+      this.isPopup,
+      this.front,
+      this.create,
+      this.updated});
 
   Pictures.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     token = json['token'];
     location = json['location'];
-    create = json['create'];
+    type = json['type'];
+    isPopup = json['isPopup'];
     front = json['front'];
+    create = json['create'];
     updated = json['updated'];
   }
 
@@ -135,8 +177,10 @@ class Pictures {
     data['id'] = id;
     data['token'] = token;
     data['location'] = location;
-    data['create'] = create;
+    data['type'] = type;
+    data['isPopup'] = isPopup;
     data['front'] = front;
+    data['create'] = create;
     data['updated'] = updated;
     return data;
   }
@@ -147,41 +191,52 @@ class Raffle {
   String? ticketName;
   String? ticketDescription;
   String? ticketTracking;
+  bool? featured;
   int? status;
-  List<Pictures>? pictures;
   String? startDate;
   String? endDate;
   String? created;
   String? updated;
+  Category? category;
+  List<Pictures>? pictures;
+  Product? product;
 
   Raffle(
       {this.id,
       this.ticketName,
       this.ticketDescription,
       this.ticketTracking,
+      this.featured,
       this.status,
-      this.pictures,
       this.startDate,
       this.endDate,
       this.created,
-      this.updated});
+      this.updated,
+      this.category,
+      this.pictures,
+      this.product});
 
   Raffle.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     ticketName = json['ticket_name'];
     ticketDescription = json['ticket_description'];
     ticketTracking = json['ticket_tracking'];
+    featured = json['featured'];
     status = json['status'];
     startDate = json['start_date'];
     endDate = json['end_date'];
     created = json['created'];
     updated = json['updated'];
+    category =
+        json['category'] != null ? Category.fromJson(json['category']) : null;
     if (json['pictures'] != null) {
       pictures = <Pictures>[];
       json['pictures'].forEach((v) {
         pictures!.add(Pictures.fromJson(v));
       });
     }
+    product =
+        json['product'] != null ? Product.fromJson(json['product']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -190,13 +245,20 @@ class Raffle {
     data['ticket_name'] = ticketName;
     data['ticket_description'] = ticketDescription;
     data['ticket_tracking'] = ticketTracking;
+    data['featured'] = featured;
     data['status'] = status;
     data['start_date'] = startDate;
     data['end_date'] = endDate;
     data['created'] = created;
     data['updated'] = updated;
+    if (category != null) {
+      data['category'] = category!.toJson();
+    }
     if (pictures != null) {
       data['pictures'] = pictures!.map((v) => v.toJson()).toList();
+    }
+    if (product != null) {
+      data['product'] = product!.toJson();
     }
     return data;
   }
