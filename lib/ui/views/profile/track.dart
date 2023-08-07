@@ -1,8 +1,15 @@
+import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/core/data/models/order_item.dart';
+import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
+import 'package:afriprize/ui/components/submit_button.dart';
+import 'package:afriprize/ui/components/text_field_widget.dart';
+import 'package:awesome_rating/awesome_rating.dart';
 import 'package:casa_vertical_stepper/casa_vertical_stepper.dart';
 import 'package:flutter/material.dart';
+import 'package:stacked_services/stacked_services.dart';
 
+import '../../../core/network/api_response.dart';
 import '../../common/app_colors.dart';
 
 // PENDING=1,
@@ -22,6 +29,10 @@ class Track extends StatefulWidget {
 }
 
 class _TrackState extends State<Track> {
+  double rating = 0;
+  bool loading = false;
+  final comment = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -277,6 +288,70 @@ class _TrackState extends State<Track> {
               ),
             ),
           ]),
+          verticalSpaceMedium,
+          widget.item.status! >= 6
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Add review"),
+                    verticalSpaceMedium,
+                    TextFieldWidget(
+                      hint: "Enter Comment",
+                      controller: comment,
+                    ),
+                    verticalSpaceSmall,
+                    Row(
+                      children: [
+                        const Text("Choose rating"),
+                        horizontalSpaceMedium,
+                        AwesomeStarRating(
+                          starCount: 5,
+                          rating: rating,
+                          size: 30.0,
+                          onRatingChanged: (double value) {
+                            setState(() {
+                              rating = value;
+                            });
+                          },
+                          color: Colors.orange,
+                          borderColor: Colors.orange,
+                        ),
+                      ],
+                    ),
+                    verticalSpaceMedium,
+                    SubmitButton(
+                      isLoading: loading,
+                      label: "Rate",
+                      submit: () async {
+                        setState(() {
+                          loading = true;
+                        });
+
+                        try {
+                          ApiResponse res = await locator<Repository>()
+                              .reviewOrder({
+                            "orderId": widget.item.id,
+                            "comment": comment.text,
+                            "rating": rating.toInt()
+                          });
+                          if (res.statusCode == 200) {
+                            locator<SnackbarService>()
+                                .showSnackbar(message: res.data["message"]);
+                            Navigator.pop(context);
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+
+                        setState(() {
+                          loading = false;
+                        });
+                      },
+                      color: kcPrimaryColor,
+                    )
+                  ],
+                )
+              : const SizedBox()
         ],
       ),
     );

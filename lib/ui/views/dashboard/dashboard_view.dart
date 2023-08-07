@@ -84,8 +84,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         image: ad.raffle![0].pictures!.isEmpty
                                             ? null
                                             : DecorationImage(
-                                                image: NetworkImage(ad.raffle![0]
-                                                    .pictures![0].location!),
+                                                image: NetworkImage(ad
+                                                    .raffle![0]
+                                                    .pictures![0]
+                                                    .location!),
                                                 fit: BoxFit.cover,
                                                 colorFilter: ColorFilter.mode(
                                                     Colors.black
@@ -160,6 +162,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                             "Win Now",
                                             style: GoogleFonts.inter(
                                               fontSize: 12,
+                                              color: kcWhiteColor,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -268,7 +271,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     ),
                                     verticalSpaceTiny,
                                     Text(
-                                      "0 sold out of ${product.stock}",
+                                      "${product.orders?.where((element) => element["status"] != 1).toList().length} sold out of ${product.stock}",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3,
                                       style: GoogleFonts.inter(
@@ -301,8 +304,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                       : DecorationImage(
                                           fit: BoxFit.cover,
                                           image: NetworkImage(
-                                            product
-                                                .raffle![0].pictures![0].location!,
+                                            product.raffle![0].pictures![0]
+                                                .location!,
                                           ),
                                         ),
                                 ),
@@ -445,19 +448,20 @@ class ProductRow extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.star,
                         color: kcStarColor,
                         size: 20,
                       ),
                       Text(
-                        "4.9",
-                        style: TextStyle(
+                        "${(product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / product.reviews!.length}",
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
+                          color: kcWhiteColor,
                         ),
                       )
                     ],
@@ -523,7 +527,7 @@ class ProductRow extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      "0 sold out of ${product.stock}",
+                      "${product.orders?.where((element) => element["status"] != 1).toList().length} sold out of ${product.stock}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: const TextStyle(
@@ -542,7 +546,7 @@ class ProductRow extends StatelessWidget {
                     ),
                     verticalSpaceSmall,
                     Text(
-                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].created ?? DateTime.now().toIso8601String()))}",
+                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: const TextStyle(

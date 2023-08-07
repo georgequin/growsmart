@@ -8,6 +8,7 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
+import 'package:afriprize/ui/views/dashboard/reviews.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -157,28 +158,36 @@ class _ProductDetailState extends State<ProductDetail> {
                   }),
                 ),
                 verticalSpaceMedium,
-                const Row(
+                Row(
                   children: [
                     horizontalSpaceMedium,
-                    Icon(
+                    const Icon(
                       Icons.star,
                       color: kcStarColor,
                     ),
                     horizontalSpaceSmall,
                     Text(
-                      "4.9",
-                      style: TextStyle(
+                      "${(widget.product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / widget.product.reviews!.length}",
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     horizontalSpaceSmall,
                     Text(
-                      "(85)",
-                      style: TextStyle(color: kcLightGrey),
+                      "(${widget.product.reviews?.length})",
+                      style: const TextStyle(color: kcLightGrey),
                     ),
                     horizontalSpaceSmall,
-                    Text(
-                      "Reviews",
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (ctx) {
+                          return Reviews(product: widget.product);
+                        }));
+                      },
+                      child: const Text(
+                        "Reviews",
+                      ),
                     )
                   ],
                 ),

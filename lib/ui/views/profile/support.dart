@@ -17,7 +17,6 @@ class _SupportState extends State<Support> {
         title: const Text(
           "Support",
           style: TextStyle(
-            color: kcBlackColor,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -26,12 +25,16 @@ class _SupportState extends State<Support> {
         padding: const EdgeInsets.all(20),
         children: const [
           ListTile(
-            title: Text("Contact us"),
-            subtitle: Text("Support@mail.com"),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text("Contact us"), Text("Support@mail.com")],
+            ),
           ),
           ListTile(
-            title: Text("Phone"),
-            subtitle: Text("09012345678"),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text("Phone"), Text("09012345678")],
+            ),
           )
         ],
       ),

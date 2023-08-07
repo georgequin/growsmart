@@ -31,8 +31,8 @@ class WithdrawViewModel extends BaseViewModel {
         "account_name": accountName.text,
         "account_number": accountNumber.text,
         "bank_code": bank.code,
-        "amount": amount.text,
-        "reason": ""
+        "amount": int.parse(amount.text),
+        "reason": "withdrawal"
       });
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: res.data["message"]);
@@ -55,7 +55,7 @@ class WithdrawViewModel extends BaseViewModel {
         "account_number": accountNumber.text,
       });
       if (res.statusCode == 200) {
-        accountName.text = res.data[""];
+        accountName.text = res.data["details"]["data"]["account_name"];
       } else {
         snackBar.showSnackbar(message: res.data["message"]);
       }

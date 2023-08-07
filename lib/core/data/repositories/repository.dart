@@ -274,7 +274,41 @@ class Repository extends IRepository {
   Future<ApiResponse> getNotifications(String userId) async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "event/$userId",
+      endpoint: "event/user/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> saveShipping(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.put,
+      endpoint: "user/saveshipping",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> setDefaultShipping(
+      Map<String, dynamic> req, String id) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "user/setdefaultshipping/$id",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> reviewOrder(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "orders/review/add",
+      reqBody: req,
     );
 
     return response;

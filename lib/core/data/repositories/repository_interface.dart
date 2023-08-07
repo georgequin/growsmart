@@ -52,4 +52,10 @@ abstract class IRepository {
   Future<ApiResponse> getResourceList();
 
   Future<ApiResponse> getNotifications(String userId);
+
+  Future<ApiResponse> saveShipping(Map<String, dynamic> req);
+
+  Future<ApiResponse> setDefaultShipping(Map<String, dynamic> req, String id);
+
+  Future<ApiResponse> reviewOrder(Map<String, dynamic> req);
 }

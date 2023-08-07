@@ -3,6 +3,7 @@ import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/order_item.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,6 @@ class _OrderListState extends State<OrderList> {
       appBar: AppBar(
         title: const Text(
           "My orders",
-          style: TextStyle(color: kcBlackColor),
         ),
         centerTitle: true,
       ),
@@ -92,7 +92,12 @@ class _OrderListState extends State<OrderList> {
                       title: Text(
                           "${order.product?.productName} (${order.quantity})"),
                       subtitle: Text(
-                          "N${order.quantity! * order.product!.productPrice!}"),
+                        "N${order.quantity! * order.product!.productPrice!}",
+                        style: TextStyle(
+                            color: uiMode.value == AppUiModes.light
+                                ? Colors.black
+                                : Colors.white),
+                      ),
                       trailing: Text(DateFormat("d MMM y, h:m")
                           .format(DateTime.parse(order.created!))),
                     );

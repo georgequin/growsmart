@@ -10,10 +10,11 @@ class Product {
   int? stock;
   int? status;
   String? created;
+  List<dynamic>? orders;
   String? updated;
   Category? category;
   List<Pictures>? pictures;
-  dynamic reviews;
+  List<dynamic>? reviews;
   List<Raffle>? raffle;
 
   Product(
@@ -23,6 +24,7 @@ class Product {
       this.productPrice,
       this.shippingFee,
       this.availability,
+      this.orders,
       this.featured,
       this.lowStockAlert,
       this.stock,
@@ -42,7 +44,9 @@ class Product {
     shippingFee = json['shipping_fee'];
     availability = json['availability'];
     featured = json['featured'];
+    orders = json['orders'];
     lowStockAlert = json['low_stock_alert'];
+    reviews = json['reviews'];
     stock = json['stock'];
     status = json['status'];
     created = json['created'];
@@ -78,6 +82,7 @@ class Product {
     data['shipping_fee'] = shippingFee;
     data['availability'] = availability;
     data['featured'] = featured;
+    data['orders'] = orders;
     data['low_stock_alert'] = lowStockAlert;
     data['stock'] = stock;
     data['status'] = status;
@@ -107,13 +112,14 @@ class Category {
   String? created;
   String? updated;
 
-  Category(
-      {this.id,
-      this.name,
-      this.description,
-      this.status,
-      this.created,
-      this.updated});
+  Category({
+    this.id,
+    this.name,
+    this.description,
+    this.status,
+    this.created,
+    this.updated,
+  });
 
   Category.fromJson(Map<String, dynamic> json) {
     id = json['id'];

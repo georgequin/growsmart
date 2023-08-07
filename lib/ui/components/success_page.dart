@@ -60,7 +60,7 @@ class _SuccessPageState extends State<SuccessPage> {
                       widget.callback();
                     },
                     child: const Text(
-                      "Okay",
+                      "Continue",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: kcPrimaryColor,
