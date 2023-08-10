@@ -37,10 +37,10 @@ class _ProductDetailState extends State<ProductDetail> {
   void initState() {
     getRecommendedProducts();
     setState(() {
-      activePic = (widget.product.raffle?[0].pictures == null ||
-              widget.product.raffle![0].pictures!.isEmpty)
-          ? ""
-          : widget.product.raffle?[0].pictures?[0].location ?? "";
+      activePic =
+          (widget.product.raffle == null || widget.product.raffle!.isEmpty)
+              ? ""
+              : widget.product.raffle?[0].pictures?[0].location ?? "";
     });
 
     super.initState();
@@ -75,8 +75,8 @@ class _ProductDetailState extends State<ProductDetail> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      image: (widget.product.raffle?[0].pictures == null ||
-                              widget.product.raffle![0].pictures!.isEmpty)
+                      image: (widget.product.raffle == null ||
+                              widget.product.raffle!.isEmpty)
                           ? null
                           : DecorationImage(
                               fit: BoxFit.cover,
@@ -104,7 +104,10 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     child: Center(
                       child: Text(
-                        "${widget.product.raffle?[0].ticketName}",
+                        (widget.product.raffle == null ||
+                                widget.product.raffle!.isEmpty)
+                            ? ""
+                            : "${widget.product.raffle?[0].ticketName}",
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -167,7 +170,10 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     horizontalSpaceSmall,
                     Text(
-                      "${(widget.product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / widget.product.reviews!.length}",
+                      (widget.product.reviews == null ||
+                              widget.product.reviews!.isEmpty)
+                          ? ""
+                          : "${(widget.product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / widget.product.reviews!.length}",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),

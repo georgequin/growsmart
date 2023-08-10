@@ -100,7 +100,7 @@ class _ReceiptState extends State<Receipt> {
                                         fontSize: 12),
                                   ),
                                   Text(
-                                    "${widget.info['order']["product"]["id"]}",
+                                    "${widget.info["id"]}",
                                     style: const TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
                                   )
@@ -128,8 +128,7 @@ class _ReceiptState extends State<Receipt> {
                                   ),
                                   Text(
                                     DateFormat("d MMM y, h:m").format(
-                                        DateTime.parse(
-                                            widget.info["order"]["created"])),
+                                        DateTime.parse(widget.info["created"])),
                                     //"25 Feb 2023, 13:22",
                                     style: const TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
@@ -187,9 +186,10 @@ class _ReceiptState extends State<Receipt> {
                                         color: kcWhiteColor.withOpacity(0.72),
                                         fontSize: 12),
                                   ),
-                                  Text(
-                                    "${widget.info["user"]["firstname"]} ${widget.info["user"]["lastname"]}",
-                                    style: const TextStyle(
+                                  const Text(
+                                    "",
+                                    // "${widget.info["user"]["firstname"]} ${widget.info["user"]["lastname"]}",
+                                    style: TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
                                   )
                                 ],

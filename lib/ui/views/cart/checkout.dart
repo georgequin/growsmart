@@ -653,7 +653,7 @@ class _CheckoutState extends State<Checkout> {
                     if (result) {
                       List<Map<String, dynamic>> receipts = [];
                       int totalAmount = 0;
-                      for (var element in (res.data["receipt"] as List)) {
+                      for (var element in (res.data["receipt"][0] as List)) {
                         if (element != null) {
                           receipts.add(Map<String, dynamic>.from(element));
                           totalAmount = totalAmount +
@@ -674,7 +674,7 @@ class _CheckoutState extends State<Checkout> {
                     }
                     List<Map<String, dynamic>> receipts = [];
                     int totalAmount = 0;
-                    for (var element in (res.data["receipt"] as List)) {
+                    for (var element in (res.data["receipt"][0] as List)) {
                       if (element != null) {
                         receipts.add(Map<String, dynamic>.from(element));
                         totalAmount = totalAmount +

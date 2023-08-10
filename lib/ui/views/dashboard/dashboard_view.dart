@@ -81,7 +81,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                         color: kcBlackColor.withOpacity(0.2),
-                                        image: ad.raffle![0].pictures!.isEmpty
+                                        image: ad.raffle == null ||
+                                                ad.raffle!.isEmpty
                                             ? null
                                             : DecorationImage(
                                                 image: NetworkImage(ad
@@ -132,7 +133,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         ),
                                         verticalSpaceTiny,
                                         Text(
-                                          "${ad.raffle![0].ticketName}",
+                                          (ad.raffle == null ||
+                                                  ad.raffle!.isEmpty)
+                                              ? ""
+                                              : "${ad.raffle![0].ticketName}",
                                           style: const TextStyle(
                                               fontSize: 16,
                                               color: kcWhiteColor,
@@ -425,9 +429,7 @@ class ProductRow extends StatelessWidget {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
-                child: (product.raffle == null ||
-                            product.raffle?[0].pictures == null) ||
-                        product.raffle![0].pictures!.isEmpty
+                child: (product.raffle == null || product.raffle!.isEmpty)
                     ? SizedBox(
                         height: 170,
                         width: MediaQuery.of(context).size.width,
@@ -458,7 +460,9 @@ class ProductRow extends StatelessWidget {
                         size: 20,
                       ),
                       Text(
-                        "${(product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / product.reviews!.length}",
+                        (product.reviews == null || product.reviews!.isEmpty)
+                            ? ""
+                            : "${(product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / product.reviews!.length}",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: kcWhiteColor,
@@ -499,7 +503,9 @@ class ProductRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.raffle?[0].ticketName ?? "",
+                        (product.raffle == null || product.raffle!.isEmpty)
+                            ? ""
+                            : product.raffle?[0].ticketName ?? "",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -546,7 +552,9 @@ class ProductRow extends StatelessWidget {
                     ),
                     verticalSpaceSmall,
                     Text(
-                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
+                      (product.raffle == null || product.raffle!.isEmpty)
+                          ? ""
+                          : "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: const TextStyle(

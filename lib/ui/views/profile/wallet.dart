@@ -34,7 +34,7 @@ class _WalletState extends State<Wallet> {
   void initState() {
     wallet = widget.wallet;
     getProfile();
-    getHistory();
+    // getHistory();
     super.initState();
   }
 
@@ -46,6 +46,9 @@ class _WalletState extends State<Wallet> {
             Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
         setState(() {
           wallet = profile.value.wallet!;
+          transactions = (res.data['user']['transaction'] as List)
+              .map((e) => Transaction.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
         });
       }
     } catch (e) {
