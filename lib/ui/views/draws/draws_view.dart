@@ -81,6 +81,16 @@ class DrawsView extends StackedView<DrawsViewModel> {
                                               height: 60,
                                               width: 60,
                                               decoration: BoxDecoration(
+                                                image: (ticket.pictures ==
+                                                            null ||
+                                                        ticket
+                                                            .pictures!.isEmpty)
+                                                    ? null
+                                                    : DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image: NetworkImage(
+                                                            ticket.pictures![0]
+                                                                .location!)),
                                                 color: kcWhiteColor,
                                                 borderRadius:
                                                     BorderRadius.circular(12),

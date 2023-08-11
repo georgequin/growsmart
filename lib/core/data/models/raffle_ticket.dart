@@ -1,3 +1,5 @@
+import 'package:afriprize/core/data/models/product.dart';
+
 class RaffleTicket {
   String? id;
   String? ticketName;
@@ -9,6 +11,7 @@ class RaffleTicket {
   String? created;
   String? updated;
   List<Participants>? participants;
+  List<Pictures>? pictures;
 
   RaffleTicket(
       {this.id,
@@ -18,6 +21,7 @@ class RaffleTicket {
       this.status,
       this.startDate,
       this.endDate,
+      this.pictures,
       this.created,
       this.updated,
       this.participants});
@@ -32,6 +36,12 @@ class RaffleTicket {
     endDate = json['end_date'];
     created = json['created'];
     updated = json['updated'];
+    if (json['pictures'] != null) {
+      pictures = <Pictures>[];
+      json['pictures'].forEach((v) {
+        pictures!.add(Pictures.fromJson(v));
+      });
+    }
     if (json['participants'] != null) {
       participants = <Participants>[];
       json['participants'].forEach((v) {
@@ -51,6 +61,9 @@ class RaffleTicket {
     data['end_date'] = endDate;
     data['created'] = created;
     data['updated'] = updated;
+    if (pictures != null) {
+      data['pictures'] = pictures!.map((v) => v.toJson()).toList();
+    }
     if (participants != null) {
       data['participants'] = participants!.map((v) => v.toJson()).toList();
     }

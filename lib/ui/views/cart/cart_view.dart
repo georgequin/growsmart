@@ -163,6 +163,7 @@ class CartView extends StackedView<CartViewModel> {
                                             item.quantity = item.quantity! - 1;
                                             cart.notifyListeners();
                                             viewModel.getSubTotal();
+                                            viewModel.getDeliveryTotal();
                                           }
                                         },
                                         child: Container(
@@ -189,6 +190,7 @@ class CartView extends StackedView<CartViewModel> {
                                           item.quantity = item.quantity! + 1;
                                           cart.notifyListeners();
                                           viewModel.getSubTotal();
+                                          viewModel.getDeliveryTotal();
                                         },
                                         child: Container(
                                           height: 30,
@@ -236,19 +238,19 @@ class CartView extends StackedView<CartViewModel> {
                   ],
                 ),
                 verticalSpaceSmall,
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "Delivery-Fee",
                       style: TextStyle(
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      "N0",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      "N${viewModel.deliveryFee}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -266,7 +268,7 @@ class CartView extends StackedView<CartViewModel> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "N${viewModel.subTotal}",
+                      "N${viewModel.subTotal + viewModel.deliveryFee}",
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -288,6 +290,7 @@ class CartView extends StackedView<CartViewModel> {
   @override
   void onViewModelReady(CartViewModel viewModel) {
     viewModel.getSubTotal();
+    viewModel.getDeliveryTotal();
     super.onViewModelReady(viewModel);
   }
 

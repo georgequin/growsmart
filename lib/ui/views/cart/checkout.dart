@@ -64,7 +64,7 @@ class _CheckoutState extends State<Checkout> {
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     padding: const EdgeInsets.all(10),
-                    height: 100,
+                    // height: 100,
                     decoration: BoxDecoration(
                       color: uiMode.value == AppUiModes.light
                           ? kcWhiteColor
@@ -80,107 +80,36 @@ class _CheckoutState extends State<Checkout> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              height: 65,
-                              width: 65,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                image: item.product!.pictures!.isEmpty
-                                    ? null
-                                    : DecorationImage(
-                                        image: NetworkImage(item
-                                            .product!.pictures![0].location!),
-                                      ),
-                              ),
-                            ),
-                            horizontalSpaceMedium,
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(item.product!.productName ?? ""),
-                                Text(item.product!.productName ?? ""),
-                                verticalSpaceTiny,
-                                Text(
-                                  "N${item.product!.productPrice}",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                )
-                              ],
-                            )
-                          ],
+                        Container(
+                          height: 65,
+                          width: 65,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            image: item.product!.pictures!.isEmpty
+                                ? null
+                                : DecorationImage(
+                                    image: NetworkImage(
+                                        item.product!.pictures![0].location!),
+                                  ),
+                          ),
                         ),
-                        const Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // viewModel.itemsToDelete.contains(index)
-                            //     ? Container(
-                            //         height: 20,
-                            //         width: 20,
-                            //         decoration: const BoxDecoration(
-                            //           color: kcSecondaryColor,
-                            //           shape: BoxShape.circle,
-                            //         ),
-                            //         child: const Center(
-                            //           child: Icon(
-                            //             Icons.check,
-                            //             color: kcWhiteColor,
-                            //             size: 16,
-                            //           ),
-                            //         ),
-                            //       )
-                            //     :
-                            // Container(
-                            //   height: 20,
-                            //   width: 20,
-                            //   decoration: BoxDecoration(
-                            //     shape: BoxShape.circle,
-                            //     border: Border.all(color: kcLightGrey),
-                            //   ),
-                            // ),
-                            // Row(
-                            //   children: [
-                            //     Container(
-                            //       height: 20,
-                            //       width: 20,
-                            //       decoration: BoxDecoration(
-                            //           border:
-                            //               Border.all(color: kcLightGrey),
-                            //           borderRadius:
-                            //               BorderRadius.circular(5)),
-                            //       child: const Center(
-                            //         child: Icon(
-                            //           Icons.remove,
-                            //           size: 18,
-                            //         ),
-                            //       ),
-                            //     ),
-                            //     horizontalSpaceSmall,
-                            //     const Text("2"),
-                            //     horizontalSpaceSmall,
-                            //     Container(
-                            //       height: 20,
-                            //       width: 20,
-                            //       decoration: BoxDecoration(
-                            //           border:
-                            //               Border.all(color: kcLightGrey),
-                            //           borderRadius:
-                            //               BorderRadius.circular(5)),
-                            //       child: const Align(
-                            //         alignment: Alignment.center,
-                            //         child: Icon(
-                            //           Icons.add,
-                            //           size: 18,
-                            //         ),
-                            //       ),
-                            //     )
-                            //   ],
-                            // )
-                          ],
-                        )
+                        horizontalSpaceMedium,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(item.product!.productName ?? ""),
+                              Text(item.product!.productName ?? ""),
+                              verticalSpaceTiny,
+                              Text(
+                                "N${item.product!.productPrice}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              )
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -215,19 +144,19 @@ class _CheckoutState extends State<Checkout> {
                   ],
                 ),
                 verticalSpaceSmall,
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "Delivery-Fee",
                       style: TextStyle(
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      "N0",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      "N${getDeliveryFee()}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -245,7 +174,7 @@ class _CheckoutState extends State<Checkout> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "N${getSubTotal()}",
+                      "N${getSubTotal() + getDeliveryFee()}",
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -626,7 +555,7 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMassive,
           SubmitButton(
             isLoading: loading,
-            label: "Pay N${getSubTotal()}",
+            label: "Pay N${getSubTotal() + getDeliveryFee()}",
             submit: () async {
               setState(() {
                 loading = true;
@@ -653,11 +582,12 @@ class _CheckoutState extends State<Checkout> {
                     if (result) {
                       List<Map<String, dynamic>> receipts = [];
                       int totalAmount = 0;
-                      for (var element in (res.data["receipt"][0] as List)) {
+                      for (var element in (res.data["receipt"] as List)) {
                         if (element != null) {
                           receipts.add(Map<String, dynamic>.from(element));
                           totalAmount = totalAmount +
-                              int.parse(element["amount"].toString());
+                              int.parse(element["transaction"][0]["amount"]
+                                  .toString());
                         }
                       }
                       locator<NavigationService>().navigateTo(Routes.receipt,
@@ -674,11 +604,12 @@ class _CheckoutState extends State<Checkout> {
                     }
                     List<Map<String, dynamic>> receipts = [];
                     int totalAmount = 0;
-                    for (var element in (res.data["receipt"][0] as List)) {
+                    for (var element in (res.data["receipt"] as List)) {
                       if (element != null) {
                         receipts.add(Map<String, dynamic>.from(element));
                         totalAmount = totalAmount +
-                            int.parse(element['amount'].toString());
+                            int.parse(
+                                element["transaction"][0]['amount'].toString());
                       }
                     }
                     locator<NavigationService>().navigateTo(Routes.receipt,
@@ -723,6 +654,16 @@ class _CheckoutState extends State<Checkout> {
 
     for (var element in cart.value) {
       total = total + (element.product!.productPrice! * element.quantity!);
+    }
+
+    return total;
+  }
+
+  int getDeliveryFee() {
+    int total = 0;
+
+    for (var element in cart.value) {
+      total = total + (element.product!.shippingFee!);
     }
 
     return total;

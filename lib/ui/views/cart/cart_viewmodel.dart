@@ -16,6 +16,7 @@ class CartViewModel extends BaseViewModel {
   final log = getLogger("CartViewModel");
   List<CartItem> itemsToDelete = [];
   int subTotal = 0;
+  int deliveryFee = 0;
 
   void addRemoveDelete(CartItem item) {
     itemsToDelete.contains(item)
@@ -42,6 +43,17 @@ class CartViewModel extends BaseViewModel {
     }
 
     subTotal = total;
+    rebuildUi();
+  }
+
+  void getDeliveryTotal() {
+    int total = 0;
+
+    for (var element in cart.value) {
+      total = total + (element.product!.shippingFee!);
+    }
+
+    deliveryFee = total;
     rebuildUi();
   }
 
