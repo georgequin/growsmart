@@ -27,7 +27,7 @@ class StartupView extends StackedView<StartupViewModel> {
             child: Padding(
               padding: const EdgeInsets.all(50.0),
               child: Image.asset(
-                "assets/images/afriprize_light.png",
+                "assets/images/logo_splash.png",
               ),
             ),
           )
