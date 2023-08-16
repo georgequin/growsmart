@@ -1,3 +1,4 @@
+import 'package:afriprize/core/data/models/app_notification.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,10 @@ class HomeView extends StackedView<HomeViewModel> {
               valueListenable: cart,
               builder: (context, value, child) => Badge(
                 isLabelVisible: value.isEmpty ? false : true,
-                label: Text("${value.length}"),
+                label: Text(
+                  "${value.length}",
+                  style: const TextStyle(color: kcWhiteColor),
+                ),
                 child: const Icon(
                   Icons.shopping_cart_outlined,
                   // color: viewModel.selectedTab == 2
@@ -59,13 +63,28 @@ class HomeView extends StackedView<HomeViewModel> {
             ),
             label: "Cart",
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none),
-            // icon: Image.asset(
-            //   "assets/images/notification.png",
-            //   color:
-            //       viewModel.selectedTab == 3 ? kcSecondaryColor : kcBlackColor,
-            // ),
+          BottomNavigationBarItem(
+            icon: ValueListenableBuilder<List<AppNotification>>(
+              valueListenable: notifications,
+              builder: (context, value, child) => Badge(
+                isLabelVisible: (value
+                        .where((element) => element.status != 1)
+                        .toList()
+                        .isEmpty)
+                    ? false
+                    : true,
+                label: Text(
+                  "${value.where((element) => element.status != 1).toList().length}",
+                  style: const TextStyle(color: kcWhiteColor),
+                ),
+                child: const Icon(
+                  Icons.notifications_none,
+                  // color: viewModel.selectedTab == 2
+                  //     ? kcSecondaryColor
+                  //     : kcBlackColor,
+                ),
+              ),
+            ),
             label: "Notifications",
           ),
           const BottomNavigationBarItem(

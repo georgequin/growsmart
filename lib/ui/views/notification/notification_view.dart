@@ -1,4 +1,7 @@
+import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/core/data/models/app_notification.dart';
+import 'package:afriprize/core/data/repositories/repository.dart';
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:flutter/material.dart';
@@ -24,41 +27,62 @@ class NotificationView extends StackedView<NotificationViewModel> {
           "Notification",
         ),
       ),
-      body: viewModel.isBusy
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : viewModel.nots.isEmpty
-              ? const EmptyState(
-                  animation: "empty_notifications.json",
-                  label: "No Notifications Yet",
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: viewModel.nots.length,
-                  itemBuilder: (context, index) {
-                    AppNotification notification = viewModel.nots[index];
-                    return Card(
-                      child: ListTile(
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              notification.eventName ?? "",
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+      body: ValueListenableBuilder<List<AppNotification>>(
+        valueListenable: notifications,
+        builder: (context, value, child) => value.isEmpty
+            ? const EmptyState(
+                animation: "empty_notifications.json",
+                label: "No Notifications Yet",
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.all(20),
+                itemCount: value.length,
+                itemBuilder: (context, index) {
+                  AppNotification notification = value[index];
+                  return Card(
+                    child: ListTile(
+                      onTap: () => viewModel.readNotification(notification),
+                      title: Row(
+                        children: [
+                          (viewModel.isBusy &&
+                                  viewModel.loadingId == notification.id)
+                              ? const SizedBox(
+                                  height: 8,
+                                  width: 8,
+                                  child: CircularProgressIndicator())
+                              : notification.status == 1
+                                  ? const SizedBox.shrink()
+                                  : Container(
+                                      height: 5,
+                                      width: 5,
+                                      decoration: const BoxDecoration(
+                                          color: Colors.red),
+                                    ),
+                          horizontalSpaceSmall,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  notification.eventName ?? "",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  notification.eventDescription ?? "",
+                                  style: const TextStyle(fontSize: 12),
+                                )
+                              ],
                             ),
-                            Text(
-                              notification.eventDescription ?? "",
-                              style: const TextStyle(fontSize: 12),
-                            )
-                          ],
-                        ),
-                        trailing: Text(DateFormat("d MMM y")
-                            .format(DateTime.parse(notification.created!))),
+                          ),
+                        ],
                       ),
-                    );
-                  }),
+                      trailing: Text(DateFormat("d MMM y")
+                          .format(DateTime.parse(notification.created!))),
+                    ),
+                  );
+                }),
+      ),
       // body: ListView(
       //   padding: const EdgeInsets.all(20),
       //   children: [
@@ -86,12 +110,6 @@ class NotificationView extends StackedView<NotificationViewModel> {
       //   ],
       // ),
     );
-  }
-
-  @override
-  void onViewModelReady(NotificationViewModel viewModel) {
-    viewModel.getNotifications();
-    super.onViewModelReady(viewModel);
   }
 
   @override

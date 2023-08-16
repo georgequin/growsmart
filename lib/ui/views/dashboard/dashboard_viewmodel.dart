@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../core/data/models/app_notification.dart';
+
 class DashboardViewModel extends BaseViewModel {
   final repo = locator<Repository>();
   int selectedIndex = 0;
@@ -35,6 +37,7 @@ class DashboardViewModel extends BaseViewModel {
     getAds();
     getProducts();
     getSellingFast();
+    getNotifications();
     // getResourceList();
 
     if (isFirstLaunch.value) {
@@ -125,5 +128,18 @@ class DashboardViewModel extends BaseViewModel {
       log.e(e);
     }
     setBusyForObject(sellingFast, false);
+  }
+
+  void getNotifications() async {
+    try {
+      ApiResponse res = await repo.getNotifications(profile.value.id!);
+      if (res.statusCode == 200) {
+        notifications.value = (res.data["events"] as List)
+            .map((e) => AppNotification.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+      }
+    } catch (e) {
+      log.e(e);
+    }
   }
 }

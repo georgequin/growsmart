@@ -53,6 +53,8 @@ abstract class IRepository {
 
   Future<ApiResponse> getNotifications(String userId);
 
+  Future<ApiResponse> updateNotification(String eventId);
+
   Future<ApiResponse> saveShipping(Map<String, dynamic> req);
 
   Future<ApiResponse> setDefaultShipping(Map<String, dynamic> req, String id);

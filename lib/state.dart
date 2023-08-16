@@ -1,3 +1,4 @@
+import 'package:afriprize/core/data/models/app_notification.dart';
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:flutter/material.dart';
 
@@ -11,3 +12,4 @@ ValueNotifier<Profile> profile = ValueNotifier(Profile());
 ValueNotifier<bool> userLoggedIn = ValueNotifier(false);
 ValueNotifier<bool> isFirstLaunch = ValueNotifier(true);
 ValueNotifier<AppUiModes> uiMode = ValueNotifier(AppUiModes.light);
+ValueNotifier<List<AppNotification>> notifications = ValueNotifier([]);

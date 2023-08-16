@@ -313,4 +313,14 @@ class Repository extends IRepository {
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> updateNotification(String eventId) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.put,
+      endpoint: "event/list/$eventId",
+    );
+
+    return response;
+  }
 }

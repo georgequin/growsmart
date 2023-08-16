@@ -1,4 +1,4 @@
-package com.afriprize.test
+package com.afriprize.afriprize
 
 import io.flutter.embedding.android.FlutterActivity
 

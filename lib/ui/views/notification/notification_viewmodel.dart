@@ -10,22 +10,30 @@ import '../../../state.dart';
 class NotificationViewModel extends BaseViewModel {
   final repo = locator<Repository>();
   final log = getLogger("NotificationViewModel");
-  List<AppNotification> nots = [];
+  String loadingId = "";
 
-  void getNotifications() async {
+  void readNotification(notification) async {
+    loadingId = notification.id;
+    rebuildUi();
     setBusy(true);
+    await locator<Repository>()
+        .updateNotification(notification.id!)
+        .whenComplete(() async {
+      await getNotifications();
+    });
+    setBusy(false);
+  }
+
+  Future<void> getNotifications() async {
     try {
       ApiResponse res = await repo.getNotifications(profile.value.id!);
       if (res.statusCode == 200) {
-        nots = (res.data["events"] as List)
+        notifications.value = (res.data["events"] as List)
             .map((e) => AppNotification.fromJson(Map<String, dynamic>.from(e)))
             .toList();
-        rebuildUi();
       }
     } catch (e) {
       log.e(e);
     }
-    setBusy(false);
-
   }
 }
