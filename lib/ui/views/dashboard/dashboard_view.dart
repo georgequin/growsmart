@@ -200,7 +200,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ),
             verticalSpaceSmall,
             SizedBox(
-              height: 200,
+              height: 250,
               child: viewModel.busy(viewModel.sellingFast)
                   ? const Center(
                       child: CircularProgressIndicator(),

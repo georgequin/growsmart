@@ -30,9 +30,21 @@ class NotificationView extends StackedView<NotificationViewModel> {
       body: ValueListenableBuilder<List<AppNotification>>(
         valueListenable: notifications,
         builder: (context, value, child) => value.isEmpty
-            ? const EmptyState(
-                animation: "empty_notifications.json",
-                label: "No Notifications Yet",
+            ? RefreshIndicator(
+                onRefresh: () async {
+                  viewModel.getNotifications();
+                },
+                child: ListView(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: const EmptyState(
+                        animation: "empty_notifications.json",
+                        label: "No Notifications Yet",
+                      ),
+                    ),
+                  ],
+                ),
               )
             : ListView.builder(
                 padding: const EdgeInsets.all(20),

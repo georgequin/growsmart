@@ -123,36 +123,50 @@ class DrawsView extends StackedView<DrawsViewModel> {
                                     ),
                                   ),
                                 ),
-                                verticalSpaceLarge,
+                                verticalSpaceMedium,
                                 const Text(
                                   "Start time:",
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 14,
                                   ),
                                 ),
                                 Text(
                                   DateFormat("d MMM y").format(
                                       DateTime.parse(ticket.startDate!)),
                                   style: const TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                verticalSpaceLarge,
+                                verticalSpaceMedium,
                                 const Text(
                                   "End time:",
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 14,
                                   ),
                                 ),
                                 Text(
                                   DateFormat("d MMM y")
                                       .format(DateTime.parse(ticket.endDate!)),
                                   style: const TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                verticalSpaceMedium,
+                                const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Rules:",
+                                      style: TextStyle(
+                                          decoration: TextDecoration.underline),
+                                    )),
+                                const Expanded(
+                                  child: Text(
+                                    "1. In other to be eligible for a draw, you have to purchase a product to gain entry.\n2. Each product gives you an entry and so on.\n3. Your registered name must match your government name.\n4. Winner will be contacted directly via email and sms",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                )
                               ],
                             ),
                           );

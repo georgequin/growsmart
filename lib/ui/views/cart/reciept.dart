@@ -100,7 +100,7 @@ class _ReceiptState extends State<Receipt> {
                                         fontSize: 12),
                                   ),
                                   Text(
-                                    "${widget.info["id"]}",
+                                    "${widget.info["user"]["order"][0]["tracking"]["tracking_number"]}",
                                     style: const TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
                                   )
@@ -128,7 +128,9 @@ class _ReceiptState extends State<Receipt> {
                                   ),
                                   Text(
                                     DateFormat("d MMM y, h:m").format(
-                                        DateTime.parse(widget.info["transaction"][0]["created"])),
+                                        DateTime.parse(
+                                            widget.info["transaction"][0]
+                                                ["created"])),
                                     //"25 Feb 2023, 13:22",
                                     style: const TextStyle(
                                         color: kcWhiteColor, fontSize: 12),
