@@ -29,9 +29,20 @@ class DrawsView extends StackedView<DrawsViewModel> {
               child: CircularProgressIndicator(),
             )
           : viewModel.raffle.isEmpty
-              ? const EmptyState(
-                  animation: "casino.json",
-                  label: "You're yet to participate in a draw")
+              ? Column(
+                  children: [
+                    const EmptyState(
+                        animation: "casino.json",
+                        label: "You're yet to participate in a draw"),
+                    verticalSpaceMedium,
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: rulesColumn(),
+                      ),
+                    )
+                  ],
+                )
               : Stack(
                   children: [
                     PageView.builder(
@@ -154,18 +165,8 @@ class DrawsView extends StackedView<DrawsViewModel> {
                                   ),
                                 ),
                                 verticalSpaceMedium,
-                                const Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Rules:",
-                                      style: TextStyle(
-                                          decoration: TextDecoration.underline),
-                                    )),
-                                const Expanded(
-                                  child: Text(
-                                    "1. In other to be eligible for a draw, you have to purchase a product to gain entry.\n2. Each product gives you an entry and so on.\n3. Your registered name must match your government name.\n4. Winner will be contacted directly via email and sms",
-                                    style: TextStyle(fontSize: 12),
-                                  ),
+                                Expanded(
+                                  child: rulesColumn(),
                                 )
                               ],
                             ),
@@ -186,6 +187,41 @@ class DrawsView extends StackedView<DrawsViewModel> {
                     ),
                   ],
                 ),
+    );
+  }
+
+  Widget rulesColumn() {
+    return const Column(
+      children: [
+        Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Rules:",
+              style: TextStyle(decoration: TextDecoration.underline),
+            )),
+        Text(
+          "1. In other to be eligible for a draw, you have to purchase a product to gain entry.\n2. Each product gives you an entry and so on.\n3. Your registered name must match your government name.\n4. Winner will be contacted directly via email and sms",
+          style: TextStyle(fontSize: 12),
+        ),
+        verticalSpaceSmall,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Note:",
+              style:
+                  TextStyle(decoration: TextDecoration.underline, fontSize: 12),
+            ),
+            horizontalSpaceSmall,
+            Expanded(
+              child: Text(
+                "Apple is not a sponsor or involved in any way with the draws.",
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
