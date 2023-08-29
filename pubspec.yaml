@@ -44,10 +44,10 @@ dependencies:
   intl: ^0.18.0
   flutter_image_compress: ^2.0.3
   lottie: ^2.4.0
-  
   stacked: ^3.2.0
   stacked_services: ^1.0.0
   awesome_rating: ^0.0.4
+  palette_generator: ^0.3.3+2
 
 dev_dependencies:
   flutter_test:

@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
     return ValueListenableBuilder<AppUiModes>(
       valueListenable: uiMode,
       builder: (context, value, child) => MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Afriprize',
         theme: value == AppUiModes.dark ? darkTheme() : lightTheme(),
         initialRoute: Routes.startupView,
         onGenerateRoute: StackedRouter().onGenerateRoute,

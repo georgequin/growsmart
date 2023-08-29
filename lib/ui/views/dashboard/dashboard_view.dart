@@ -12,6 +12,7 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -75,6 +76,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             onPageChanged: viewModel.changeSelected,
                             itemBuilder: (context, index) {
                               Product ad = viewModel.ads[index];
+                              String image =
+                                  ad.raffle![0].pictures![0].location!;
+
                               return Stack(
                                 children: [
                                   Container(
@@ -85,10 +89,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                                 ad.raffle!.isEmpty
                                             ? null
                                             : DecorationImage(
-                                                image: NetworkImage(ad
-                                                    .raffle![0]
-                                                    .pictures![0]
-                                                    .location!),
+                                                image: NetworkImage(image),
                                                 fit: BoxFit.cover,
                                                 colorFilter: ColorFilter.mode(
                                                     Colors.black
@@ -123,25 +124,34 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         verticalSpaceTiny,
                                         SizedBox(
                                           width: 140,
-                                          child: Text(
-                                            "Buy ${ad.productName} and stand a chance to",
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                color: kcWhiteColor,
-                                                fontWeight: FontWeight.bold),
+                                          child: FutureBuilder<Color?>(
+                                            future: _updateTextColor(image),
+                                            builder: (context, snapshot) =>
+                                                Text(
+                                              "Buy ${ad.productName} and stand a chance to",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: snapshot.data,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
                                         verticalSpaceTiny,
-                                        Text(
-                                          (ad.raffle == null ||
-                                                  ad.raffle!.isEmpty)
-                                              ? ""
-                                              : "${ad.raffle![0].ticketName}",
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              color: kcWhiteColor,
-                                              fontWeight: FontWeight.bold),
-                                        )
+                                        FutureBuilder<Color?>(
+                                            future: _updateTextColor(image),
+                                            builder: (context, snapshot) {
+                                              return Text(
+                                                (ad.raffle == null ||
+                                                        ad.raffle!.isEmpty)
+                                                    ? ""
+                                                    : "${ad.raffle![0].ticketName}",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: snapshot.data,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              );
+                                            })
                                       ],
                                     ),
                                   ),
@@ -286,7 +296,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     SizedBox(
                                       width: 100,
                                       child: LinearProgressIndicator(
-                                        value: 0.4,
+                                        value: ((product.orders
+                                                ?.where((element) =>
+                                                    element["status"] != 1)
+                                                .toList()
+                                                .length)! /
+                                            (product.stock!)),
                                         backgroundColor:
                                             kcSecondaryColor.withOpacity(0.3),
                                         valueColor:
@@ -390,6 +405,20 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
+  Future<Color?> _updateTextColor(String imageUrl) async {
+    final PaletteGenerator paletteGenerator =
+        await PaletteGenerator.fromImageProvider(
+      NetworkImage(imageUrl),
+    );
+
+    // Calculate the brightness of the dominant color
+    final Color dominantColor = paletteGenerator.dominantColor!.color;
+    final double luminance = dominantColor.computeLuminance();
+
+    // Decide text color based on luminance
+    return luminance < 0.1 ? Colors.white : Colors.black;
+  }
+
   @override
   DashboardViewModel viewModelBuilder(
     BuildContext context,
@@ -459,15 +488,21 @@ class ProductRow extends StatelessWidget {
                         color: kcStarColor,
                         size: 20,
                       ),
-                      Text(
-                        (product.reviews == null || product.reviews!.isEmpty)
-                            ? ""
-                            : "${(product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / product.reviews!.length}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: kcWhiteColor,
-                        ),
-                      )
+                      FutureBuilder<Color?>(
+                          future: _updateTextColor(
+                              product.raffle![0].pictures![0].location!),
+                          builder: (context, snapshot) {
+                            return Text(
+                              (product.reviews == null ||
+                                      product.reviews!.isEmpty)
+                                  ? "0"
+                                  : "${(product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / product.reviews!.length}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: snapshot.data,
+                              ),
+                            );
+                          })
                     ],
                   ),
                 ),
@@ -544,7 +579,11 @@ class ProductRow extends StatelessWidget {
                     SizedBox(
                       width: 100,
                       child: LinearProgressIndicator(
-                        value: 0.4,
+                        value: ((product.orders
+                                ?.where((element) => element["status"] != 1)
+                                .toList()
+                                .length)! /
+                            (product.stock!)),
                         backgroundColor: kcSecondaryColor.withOpacity(0.3),
                         valueColor:
                             const AlwaysStoppedAnimation(kcSecondaryColor),
@@ -569,5 +608,19 @@ class ProductRow extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<Color?> _updateTextColor(String imageUrl) async {
+    final PaletteGenerator paletteGenerator =
+        await PaletteGenerator.fromImageProvider(
+      NetworkImage(imageUrl),
+    );
+
+    // Calculate the brightness of the dominant color
+    final Color dominantColor = paletteGenerator.dominantColor!.color;
+    final double luminance = dominantColor.computeLuminance();
+
+    // Decide text color based on luminance
+    return luminance < 0.1 ? Colors.white : Colors.black;
   }
 }
