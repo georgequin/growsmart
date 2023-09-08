@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.router.dart';
+import '../../../core/utils/local_store_dir.dart';
+import '../../../core/utils/local_stotage.dart';
 import '../../common/ui_helpers.dart';
 import '../../components/text_field_widget.dart';
 import 'add_shipping.dart';
@@ -568,6 +570,12 @@ class _CheckoutState extends State<Checkout> {
                 if (res.statusCode == 200) {
                   cart.value.clear();
                   cart.notifyListeners();
+                  //update local cart
+                  List<Map<String, dynamic>> storedList =
+                      cart.value.map((e) => e.toJson()).toList();
+                  await locator<LocalStorage>()
+                      .save(LocalStorageDir.cart, storedList);
+
                   if ((res.data["paystack"] != null) &&
                       (res.data["paystack"] as Map).isNotEmpty) {
                     String? url =

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
 import 'package:afriprize/core/data/models/ad.dart';
@@ -6,6 +8,8 @@ import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/models/raffle_ticket.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
+import 'package:afriprize/core/utils/local_store_dir.dart';
+import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
@@ -21,11 +25,22 @@ class DashboardViewModel extends BaseViewModel {
   List<Product> sellingFast = [];
   List<Product> ads = [];
 
-  void addToCart(Product product) {
+  void addToCart(Product product) async {
     CartItem cartItem = CartItem(product: product, quantity: 1);
     cart.value.add(cartItem);
+    List<Map<String, dynamic>> storedList =
+        cart.value.map((e) => e.toJson()).toList();
+    await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
     locator<SnackbarService>().showSnackbar(message: "Product added to cart");
     cart.notifyListeners();
+  }
+
+  void initCart() async {
+    dynamic store = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
+    List<CartItem> localCart = List<Map<String, dynamic>>.from(store)
+        .map((e) => CartItem.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+    cart.value = localCart;
   }
 
   void changeSelected(int i) {
@@ -37,7 +52,10 @@ class DashboardViewModel extends BaseViewModel {
     getAds();
     getProducts();
     getSellingFast();
-    getNotifications();
+    if (userLoggedIn.value == true) {
+      initCart();
+      getNotifications();
+    }
     // getResourceList();
 
     if (isFirstLaunch.value) {

@@ -47,7 +47,7 @@ class InfoAlertDialog extends StackedView<InfoAlertDialogModel> {
                       ),
                       verticalSpaceTiny,
                       Text(
-                        request.description!,
+                        request.description ?? "",
                         style:
                             const TextStyle(fontSize: 14, color: kcMediumGrey),
                         maxLines: 3,
@@ -82,17 +82,17 @@ class InfoAlertDialog extends StackedView<InfoAlertDialogModel> {
                 height: 50,
                 width: double.infinity,
                 alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: const Text(
-                  'Got it',
+                  'Continue',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             )

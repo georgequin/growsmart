@@ -14,19 +14,19 @@ class TextFieldWidget extends StatelessWidget {
   final bool readOnly;
   final Function? onChanged;
 
-  const TextFieldWidget(
-      {Key? key,
-      this.label,
-      this.validator,
-      this.inputType,
-      required this.hint,
-      required this.controller,
-      this.readOnly = false,
-      this.obscureText = false,
-      this.onChanged,
-      this.leading,
-      this.suffix})
-      : super(key: key);
+  const TextFieldWidget({
+    Key? key,
+    this.label,
+    this.validator,
+    this.inputType,
+    required this.hint,
+    required this.controller,
+    this.readOnly = false,
+    this.obscureText = false,
+    this.onChanged,
+    this.leading,
+    this.suffix,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

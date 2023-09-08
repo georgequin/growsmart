@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
+import 'package:afriprize/core/utils/local_store_dir.dart';
+import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -25,12 +29,16 @@ class CartViewModel extends BaseViewModel {
     rebuildUi();
   }
 
-  void clearCart() {
+  void clearCart() async{
     for (var element in itemsToDelete) {
       cart.value.remove(element);
     }
     itemsToDelete.clear();
     cart.notifyListeners();
+    //update local cart
+    List<Map<String, dynamic>> storedList =
+    cart.value.map((e) => e.toJson()).toList();
+    await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
     rebuildUi();
     getSubTotal();
   }

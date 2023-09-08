@@ -30,7 +30,7 @@ class StartupViewModel extends BaseViewModel {
       _navigationService.replaceWithOnboardingView();
     } else {
       if (token != null && user != null) {
-        userLoggedIn.value = true;
+        // userLoggedIn.value = true;
         profile.value =
             Profile.fromJson(Map<String, dynamic>.from(jsonDecode(user)));
       }

@@ -1,5 +1,6 @@
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
+import 'package:afriprize/core/network/interceptors.dart';
 import 'package:afriprize/core/utils/config.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
@@ -32,17 +33,10 @@ class ApiService {
     Dio dio;
     if (!kReleaseMode) {
       dio = Dio(_options)
-        ..interceptors.add(PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: false,
-          error: true,
-          compact: true,
-          maxWidth: 90,
-        ));
+        ..interceptors.add(logInterceptor)
+        ..interceptors.add(requestInterceptors);
     } else {
-      dio = Dio(_options);
+      dio = Dio(_options)..interceptors.add(requestInterceptors);
     }
     return dio;
   }

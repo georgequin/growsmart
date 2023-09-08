@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
@@ -14,6 +16,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../core/utils/local_store_dir.dart';
+import '../../../core/utils/local_stotage.dart';
 import 'dashboard_view.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -308,11 +312,15 @@ class _ProductDetailState extends State<ProductDetail> {
                               ),
                             ),
                             InkWell(
-                              onTap: () {
+                              onTap: () async {
                                 CartItem cartItem = CartItem(
                                     product: widget.product,
                                     quantity: quantity);
                                 cart.value.add(cartItem);
+                                List<Map<String, dynamic>> storedList =
+                                    cart.value.map((e) => e.toJson()).toList();
+                                await locator<LocalStorage>()
+                                    .save(LocalStorageDir.cart, storedList);
                                 cart.notifyListeners();
                                 locator<SnackbarService>().showSnackbar(
                                     message: "Product added to cart");

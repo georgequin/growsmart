@@ -45,11 +45,11 @@ import 'package:afriprize/ui/views/withdraw/withdraw_view.dart';
     MaterialRoute(page: Wallet),
     MaterialRoute(page: Track),
 
-MaterialRoute(page: OtpView),
-MaterialRoute(page: ChangePasswordView),
-MaterialRoute(page: EnterEmailView),
-MaterialRoute(page: DeleteAccountView),
-MaterialRoute(page: WithdrawView),
+    MaterialRoute(page: OtpView),
+    MaterialRoute(page: ChangePasswordView),
+    MaterialRoute(page: EnterEmailView),
+    MaterialRoute(page: DeleteAccountView),
+    MaterialRoute(page: WithdrawView),
 // @stacked-route
   ],
   dependencies: [

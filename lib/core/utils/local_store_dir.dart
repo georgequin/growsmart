@@ -7,4 +7,6 @@ class LocalStorageDir {
   static const String lastEmail = "lastEmail";
   static const String remember = "remember";
   static const String uiMode = "uiMode";
+  static const String cart = "cart";
+
 }
