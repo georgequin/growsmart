@@ -23,7 +23,8 @@ class StartupView extends StackedView<StartupViewModel> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: 100,
+            bottom: 0,
+            top: 0 ,
             child: Padding(
               padding: const EdgeInsets.all(50.0),
               child: Image.asset(

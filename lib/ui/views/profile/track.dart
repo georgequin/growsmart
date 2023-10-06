@@ -104,9 +104,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: const Column(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text(
                     "Order Pending",
                     style: TextStyle(
@@ -137,9 +137,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: const Column(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text(
                     "Order Processing",
                     style: TextStyle(
@@ -170,9 +170,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: const Column(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text(
                     "Approved",
                     style: TextStyle(
@@ -203,9 +203,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: const Column(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text(
                     "Order Shipped",
                     style: TextStyle(
@@ -236,9 +236,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: const Column(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text(
                     "Order delivered",
                     style: TextStyle(
@@ -269,9 +269,9 @@ class _TrackState extends State<Track> {
                   ),
                 ),
               ),
-              title: const Column(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text(
                     "Order Received",
                     style: TextStyle(

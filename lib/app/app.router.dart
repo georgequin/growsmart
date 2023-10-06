@@ -10,6 +10,7 @@ import 'package:afriprize/core/data/models/order_item.dart' as _i26;
 import 'package:afriprize/core/data/models/product.dart' as _i24;
 import 'package:afriprize/core/data/models/profile.dart' as _i25;
 import 'package:afriprize/ui/views/auth/auth_view.dart' as _i5;
+import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:afriprize/ui/views/cart/cart_view.dart' as _i8;
 import 'package:afriprize/ui/views/cart/checkout.dart' as _i11;
 import 'package:afriprize/ui/views/cart/reciept.dart' as _i13;
@@ -75,6 +76,8 @@ class Routes {
 
   static const withdrawView = '/withdraw-view';
 
+  static const registerView = '/register-view';
+
   static const all = <String>{
     homeView,
     startupView,
@@ -95,6 +98,7 @@ class Routes {
     enterEmailView,
     deleteAccountView,
     withdrawView,
+    registerView,
   };
 }
 
@@ -175,6 +179,10 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.withdrawView,
       page: _i20.WithdrawView,
+    ),
+    _i1.RouteDef(
+      Routes.registerView,
+      page: Register,
     ),
   ];
 
@@ -303,6 +311,12 @@ class StackedRouter extends _i1.RouterBase {
     _i20.WithdrawView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => const _i20.WithdrawView(),
+        settings: data,
+      );
+    },
+    Register: (data) {
+      return _i21.MaterialPageRoute<dynamic>(
+        builder: (context) => const Register(),
         settings: data,
       );
     },
@@ -559,6 +573,20 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   ]) async {
     return navigateTo<dynamic>(Routes.authView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToRegisterView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.registerView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

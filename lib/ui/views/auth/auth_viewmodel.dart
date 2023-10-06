@@ -8,6 +8,7 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
+import 'package:afriprize/ui/views/auth/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -16,6 +17,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/data/models/profile.dart';
 
+enum RegistrationResult { success, failure }
 class AuthViewModel extends BaseViewModel {
   final log = getLogger("AuthViewModel");
   final repo = locator<Repository>();
@@ -91,10 +93,12 @@ class AuthViewModel extends BaseViewModel {
     setBusy(false);
   }
 
-  void register(TabController controller) async {
+
+
+  Future<RegistrationResult> register() async {
     if (!terms) {
       snackBar.showSnackbar(message: "Accept terms to continue");
-      return;
+      return RegistrationResult.failure;
     }
     setBusy(true);
 
@@ -109,7 +113,7 @@ class AuthViewModel extends BaseViewModel {
       });
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: res.data["message"]);
-        controller.animateTo(0);
+
         locator<NavigationService>().replaceWithOtpView(email: email.text);
         firstname.text = "";
         lastname.text = "";
@@ -117,18 +121,22 @@ class AuthViewModel extends BaseViewModel {
         phone.text = "";
         password.text = "";
         terms = false;
+        return RegistrationResult.success;
       } else {
         if (res.data["message"].runtimeType
             .toString()
             .toLowerCase()
             .contains("list")) {
           snackBar.showSnackbar(message: res.data["message"].join('\n'));
+          return RegistrationResult.success;
         } else {
           snackBar.showSnackbar(message: res.data["message"]);
+          return RegistrationResult.success;
         }
       }
     } catch (e) {
       log.e(e);
+      return RegistrationResult.failure;
     }
 
     setBusy(false);

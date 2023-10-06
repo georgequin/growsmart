@@ -536,8 +536,8 @@ class _CheckoutState extends State<Checkout> {
                   ),
                 ),
                 verticalSpaceSmall,
-                const Row(
-                  children: [
+                Row(
+                  children: const [
                     Icon(
                       Icons.lock,
                       color: kcSecondaryColor,

@@ -23,17 +23,17 @@ class _SupportState extends State<Support> {
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
-        children: const [
+        children: [
           ListTile(
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text("Contact us"), Text("Support@mail.com")],
+              children: const [Text("Contact us"), Text("Support@afriprize.com")],
             ),
           ),
           ListTile(
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text("Phone"), Text("09012345678")],
+              children: const [Text("Phone"), Text("08166580743")],
             ),
           )
         ],

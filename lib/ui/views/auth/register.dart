@@ -9,12 +9,12 @@ import 'package:stacked/stacked.dart';
 import '../../common/ui_helpers.dart';
 
 class Register extends StatefulWidget {
-  final TabController controller;
+  // final TabController controller;
 
   const Register({
-    required this.controller,
     Key? key,
   }) : super(key: key);
+
 
   @override
   State<Register> createState() => _RegisterState();
@@ -173,7 +173,7 @@ class _RegisterState extends State<Register> {
           SubmitButton(
             isLoading: model.isBusy,
             label: "Register",
-            submit: () => model.register(widget.controller),
+            submit: () => model.register(),
             color: kcPrimaryColor,
             boldText: true,
           ),

@@ -450,10 +450,10 @@ class RecommendedRow extends StatelessWidget {
                         ? kcWhiteColor
                         : kcBlackColor,
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    children: const [
                       Icon(
                         Icons.star,
                         color: kcStarColor,

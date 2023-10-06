@@ -26,9 +26,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
     tabController = TabController(length: 2, vsync: this);
     _tabs = [
       const Login(),
-      Register(
-        controller: tabController,
-      ),
+      const Register(),
     ];
     super.initState();
   }
@@ -41,7 +39,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 200,
+            expandedHeight: 150,
             flexibleSpace: Background(
               children: [
                 Positioned(
@@ -50,7 +48,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                   right: 0,
                   bottom: 0,
                   child: Padding(
-                    padding: const EdgeInsets.all(50.0),
+                    padding: const EdgeInsets.all(40.0),
                     child: Image.asset("assets/images/afriprize_light.png"),
                   ),
                 )
@@ -60,50 +58,70 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
           SliverList(
             delegate: SliverChildListDelegate(
               [
+
                 Container(
-                  padding: const EdgeInsets.all(30),
+                  padding: const EdgeInsets.all(25),
+                  height: MediaQuery.of(context).size.height,  // Set a specific height constraint
                   child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          Positioned(
-                            bottom: 0,
-                            child: Container(
-                              height: 4,
-                              width: MediaQuery.of(context).size.width,
-                              color: kcVeryLightGrey,
-                            ),
-                          ),
-                          TabBar(
-                            controller: tabController,
-                            labelColor: kcSecondaryColor,
-                            unselectedLabelColor:
-                                uiMode.value == AppUiModes.light
-                                    ? kcBlackColor
-                                    : kcWhiteColor,
-                            indicatorWeight: 4,
-                            indicatorColor: kcSecondaryColor,
-                            tabs: const [
-                              Tab(
-                                text: "Login",
-                              ),
-                              Tab(
-                                text: "Register",
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height / 1.7,
-                        child: TabBarView(
-                          controller: tabController,
-                          children: _tabs,
+                    children: const [
+                      Flexible(
+                        child: SingleChildScrollView(
+                          child: Login(),
                         ),
                       ),
                     ],
                   ),
                 ),
+                // Container(
+                //   padding: const EdgeInsets.all(30),
+                //   child: Column(
+                //     children: const [
+                //       Flexible(
+                //         child: SingleChildScrollView(
+                //           child: Login(),
+                //         ),
+                //       ),
+                //       // Stack(
+                //       //   children: [
+                //       //
+                //       //     // Positioned(
+                //       //     //   bottom: 0,
+                //       //     //   child: Container(
+                //       //     //     height: 4,
+                //       //     //     width: MediaQuery.of(context).size.width,
+                //       //     //     color: kcVeryLightGrey,
+                //       //     //   ),
+                //       //     // ),
+                //       //     // TabBar(
+                //       //     //   controller: tabController,
+                //       //     //   labelColor: kcSecondaryColor,
+                //       //     //   unselectedLabelColor:
+                //       //     //       uiMode.value == AppUiModes.light
+                //       //     //           ? kcBlackColor
+                //       //     //           : kcWhiteColor,
+                //       //     //   indicatorWeight: 4,
+                //       //     //   indicatorColor: kcSecondaryColor,
+                //       //     //   tabs: const [
+                //       //     //     Tab(
+                //       //     //       text: "Login",
+                //       //     //     ),
+                //       //     //     Tab(
+                //       //     //       text: "Register",
+                //       //     //     )
+                //       //     //   ],
+                //       //     // ),
+                //       //   ],
+                //       // ),
+                //       // SizedBox(
+                //       //   height: MediaQuery.of(context).size.height / 1.7,
+                //       //   child: TabBarView(
+                //       //     controller: tabController,
+                //       //     children: _tabs,
+                //       //   ),
+                //       // ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           )
