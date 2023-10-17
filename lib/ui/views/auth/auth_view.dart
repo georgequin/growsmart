@@ -20,15 +20,18 @@ class AuthView extends StatefulWidget {
 class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   late TabController tabController;
   late List<Widget> _tabs;
+  bool isLogin = true;
 
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
-    _tabs = [
-      const Login(),
-      const Register(),
-    ];
     super.initState();
+  }
+
+  void updateIsLogin(bool value) {
+    setState(() {
+      isLogin = value;
+    });
   }
 
   @override
@@ -63,10 +66,19 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                   padding: const EdgeInsets.all(25),
                   height: MediaQuery.of(context).size.height,  // Set a specific height constraint
                   child: Column(
-                    children: const [
+                    children:  [
                       Flexible(
                         child: SingleChildScrollView(
-                          child: Login(),
+                          child: isLogin ? Login(updateIsLogin: (value) {
+                            setState(() {
+                              isLogin = value;
+                            });
+                          })
+                              : Register(updateIsLogin: (value) {
+                            setState(() {
+                              isLogin = value;
+                            });
+                          }),
                         ),
                       ),
                     ],
