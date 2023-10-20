@@ -314,12 +314,12 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    Register: (data) {
-      return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const Register(),
-        settings: data,
-      );
-    },
+    // Register: (data) {
+    //   return _i21.MaterialPageRoute<dynamic>(
+    //     builder: (context) => Register(),
+    //     settings: data,
+    //   );
+    // },
   };
 
   @override

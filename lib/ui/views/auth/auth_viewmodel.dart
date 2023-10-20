@@ -26,6 +26,7 @@ class AuthViewModel extends BaseViewModel {
   final lastname = TextEditingController();
   final email = TextEditingController();
   final phone = TextEditingController();
+  late String phoneValue = "";
   final password = TextEditingController();
   final cPassword = TextEditingController();
   bool obscure = true;
@@ -38,6 +39,7 @@ class AuthViewModel extends BaseViewModel {
         await locator<LocalStorage>().fetch(LocalStorageDir.lastEmail);
 
     remember = rem;
+
 
     if (lastEmail != null) {
       email.text = lastEmail;
@@ -59,6 +61,7 @@ class AuthViewModel extends BaseViewModel {
     terms = !terms;
     rebuildUi();
   }
+
 
   void login() async {
     setBusy(true);
@@ -96,6 +99,7 @@ class AuthViewModel extends BaseViewModel {
 
 
   Future<RegistrationResult> register() async {
+
     if (!terms) {
       snackBar.showSnackbar(message: "Accept terms to continue");
       return RegistrationResult.failure;
@@ -107,7 +111,7 @@ class AuthViewModel extends BaseViewModel {
         "firstname": firstname.text,
         "lastname": lastname.text,
         "email": email.text,
-        "phone": phone.text,
+        "phone": phoneValue,
         "country": "Nigeria",
         "password": password.text
       });
@@ -121,22 +125,30 @@ class AuthViewModel extends BaseViewModel {
         phone.text = "";
         password.text = "";
         terms = false;
+        setBusy(false);
         return RegistrationResult.success;
       } else {
-        if (res.data["message"].runtimeType
-            .toString()
-            .toLowerCase()
-            .contains("list")) {
-          snackBar.showSnackbar(message: res.data["message"].join('\n'));
-          return RegistrationResult.success;
-        } else {
+        setBusy(false);
+        print("value of error is ${res.data.toString()}");
+        if (res.data["message"] is String) {
           snackBar.showSnackbar(message: res.data["message"]);
-          return RegistrationResult.success;
+          return RegistrationResult.failure; // Return failure since it's an error message
         }
+        else if (res.data["message"] is List<String>) {
+          snackBar.showSnackbar(message: res.data["message"].join('\n'));
+          return RegistrationResult.failure; // Return failure since it's an error message
+        } else {
+          // Handle unexpected data type (e.g., it's not a string or list)
+          snackBar.showSnackbar(message: "Unexpected response format");
+          return RegistrationResult.failure;
+        }
+
       }
     } catch (e) {
       log.e(e);
+      setBusy(false);
       return RegistrationResult.failure;
+
     }
 
     setBusy(false);

@@ -8,13 +8,15 @@ import 'package:afriprize/ui/views/auth/auth_viewmodel.dart';
 import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:afriprize/ui/views/home/home_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  final Function(bool) updateIsLogin;
+  const Login({Key? key, required this.updateIsLogin}) : super(key: key);
 
   @override
   State<Login> createState() => _LoginState();
@@ -54,10 +56,8 @@ class _LoginState extends State<Login> {
                 ),
               GestureDetector(
                 onTap: () {
-                  locator<NavigationService>()
-                      .navigateToRegisterView();
+                  gotoRegister();
 
-                  print("register clicked");
                 },
                 child: const Text(
                   "Create Account",
@@ -204,5 +204,10 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  void gotoRegister() {
+    widget.updateIsLogin(false);
+    print('goto register called');
   }
 }
