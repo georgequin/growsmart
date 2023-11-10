@@ -111,7 +111,6 @@ class CartView extends StackedView<CartViewModel> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(item.product!.productName ?? ""),
-                                          Text(item.product!.productName ?? ""),
                                           verticalSpaceTiny,
                                           Text(
                                             "N${item.product!.productPrice! * item.quantity!}",

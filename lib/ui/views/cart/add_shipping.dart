@@ -79,13 +79,25 @@ class _AddShippingState extends State<AddShipping> {
                   isLoading = true;
                 });
 
+                String formattedPhone = phone.text;
+                String formattedAdditionalPhone = profile.value.phone!;
+
+                if (!formattedPhone.startsWith('+234')) {
+                  // Add '+234' prefix to the phone number
+                  formattedPhone = '+234$formattedPhone';
+                }
+                if (!formattedAdditionalPhone.startsWith('+234')) {
+                  // Add '+234' prefix to the phone number
+                  formattedAdditionalPhone = '+234$formattedAdditionalPhone';
+                }
+
+
                 try {
                   ApiResponse res = await locator<Repository>().saveShipping({
                     "shipping_firstname": profile.value.firstname,
                     "shipping_lastname": profile.value.lastname,
-                    "shipping_phone": "+234${phone.text.substring(1)}",
-                    "shipping_additional_phone":
-                        "+234${profile.value.phone?.substring(1)}",
+                    "shipping_phone": formattedPhone,
+                    "shipping_additional_phone":formattedAdditionalPhone,
                     "shipping_address": address.text,
                     "shipping_additional_address": address.text,
                     "shipping_state": state,

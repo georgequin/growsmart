@@ -189,7 +189,9 @@ class DrawsView extends StackedView<DrawsViewModel> {
   }
 
   Widget rulesColumn() {
-    return Column(
+    return SingleChildScrollView( // Wrap with SingleChildScrollView
+        child:
+      Column(
       children: [
         const Align(
             alignment: Alignment.centerLeft,
@@ -220,6 +222,7 @@ class DrawsView extends StackedView<DrawsViewModel> {
           ],
         ),
       ],
+    )
     );
   }
 

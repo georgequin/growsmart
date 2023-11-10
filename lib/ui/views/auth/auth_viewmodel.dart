@@ -12,6 +12,7 @@ import 'package:afriprize/ui/views/auth/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -34,11 +35,38 @@ class AuthViewModel extends BaseViewModel {
   bool remember = false;
 
   init() async {
-    bool rem = await locator<LocalStorage>().fetch(LocalStorageDir.remember);
-    String? lastEmail =
-        await locator<LocalStorage>().fetch(LocalStorageDir.lastEmail);
 
+    bool rem = await locator<LocalStorage>().fetch(LocalStorageDir.remember);
+    String? token = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
+    String? lastEmail = await locator<LocalStorage>().fetch(LocalStorageDir.lastEmail);
     remember = rem;
+
+
+    // If remember me is true and we have a token, validate it
+    if (remember && token != null && JwtDecoder.isExpired(token)) {
+      // Here you should make a call to your backend to validate the token
+      // bool isValidToken = await validateToken(token);
+      // if (isValidToken) {
+        userLoggedIn.value = true;
+        // Retrieve and set user profile from saved JSON in local storage
+        String? userJson =
+        await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
+        if (userJson != null) {
+          profile.value = Profile.fromJson(jsonDecode(userJson));
+        }
+        locator<NavigationService>().clearStackAndShow(Routes.homeView);
+        return;
+      // }
+    }
+
+    // Set the lastEmail if remember me is true
+    if (remember) {
+      String? lastEmail =
+      await locator<LocalStorage>().fetch(LocalStorageDir.lastEmail);
+      if (lastEmail != null) {
+        email.text = lastEmail;
+      }
+    }
 
 
     if (lastEmail != null) {
@@ -73,13 +101,15 @@ class AuthViewModel extends BaseViewModel {
       });
       if (res.statusCode == 200) {
         userLoggedIn.value = true;
+
+
         profile.value =
             Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
-        locator<LocalStorage>()
-            .save(LocalStorageDir.authToken, res.data["token"]);
-        locator<LocalStorage>()
-            .save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
+        locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
         locator<LocalStorage>().save(LocalStorageDir.remember, remember);
+
+
         if (remember) {
           locator<LocalStorage>().save(LocalStorageDir.lastEmail, email.text);
         } else {

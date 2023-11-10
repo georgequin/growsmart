@@ -64,13 +64,32 @@ class NotificationView extends StackedView<NotificationViewModel> {
                                   child: CircularProgressIndicator())
                               : notification.status == 1
                                   ? const SizedBox.shrink()
-                                  : Container(
-                                      height: 5,
-                                      width: 5,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.red),
+                                  : (notification.eventName!.contains('Payment')
+                                    ? const Icon(
+                                        Icons.payment_outlined,
+                                        color: kcSecondaryColor,
+                                        size: 40,
+                                      )
+                                  : notification.eventName!.contains('sent')
+                                    ? const Icon(
+                                        Icons.local_shipping_outlined,
+                                        color: kcSecondaryColor,
+                                        size: 40,
+                                      )
+                                  : notification.eventName!.contains('congrats')
+                                    ? const Icon(
+                                        Icons.celebration_outlined,
+                                        color: kcSecondaryColor,
+                                        size: 40,
+                                   )
+                                  : const Icon(
+                                      Icons.notification_important_outlined,
+                                      color: kcSecondaryColor,
+                                      size: 40,
+                                    )
                                     ),
                           horizontalSpaceSmall,
+
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

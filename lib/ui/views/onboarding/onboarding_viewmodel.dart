@@ -15,7 +15,7 @@ class OnboardingViewModel extends BaseViewModel {
 
   List<Widget> pages = const [
     PageOne(),
-    PageTwo(),
+    // PageTwo(),
   ];
   int currentPage = 0;
 

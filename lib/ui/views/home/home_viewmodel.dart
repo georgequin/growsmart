@@ -22,7 +22,7 @@ class HomeViewModel extends BaseViewModel {
   final _dialogService = locator<DialogService>();
   final _bottomSheetService = locator<BottomSheetService>();
   List<Widget> pages = [
-    const DashboardView(),
+     DashboardView(),
     const DrawsView(),
     const CartView(),
     const NotificationView(),

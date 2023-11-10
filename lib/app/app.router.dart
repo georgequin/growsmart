@@ -213,7 +213,7 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i6.DashboardView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i6.DashboardView(),
+        builder: (context) =>  _i6.DashboardView(),
         settings: data,
       );
     },
@@ -689,6 +689,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   }) async {
+    print('product is: ${product.id}');
     return navigateTo<dynamic>(Routes.productDetail,
         arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,

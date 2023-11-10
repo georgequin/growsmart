@@ -14,6 +14,7 @@ import 'package:afriprize/ui/views/dashboard/reviews.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/utils/local_store_dir.dart';
@@ -66,80 +67,238 @@ class _ProductDetailState extends State<ProductDetail> {
     }
   }
 
+  Future<Color?> _updateTextColor(String imageUrl) async {
+    final PaletteGenerator paletteGenerator =
+    await PaletteGenerator.fromImageProvider(
+      NetworkImage(imageUrl),
+    );
+
+    // Calculate the brightness of the dominant color
+    final Color dominantColor = paletteGenerator.dominantColor!.color;
+    final double luminance = dominantColor.computeLuminance();
+
+    // Decide text color based on luminance
+    return luminance < 0.1 ? Colors.white : Colors.black;
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            iconTheme: const IconThemeData(color: kcWhiteColor),
-            floating: true,
-            expandedHeight: 300,
-            flexibleSpace: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      image: (widget.product.raffle == null ||
-                              widget.product.raffle!.isEmpty)
-                          ? null
-                          : DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(activePic),
-                            ),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(25),
-                        bottomRight: Radius.circular(25),
-                      )),
-                ),
-                Positioned(
-                  bottom: 30,
-                  child: Container(
-                    height: 40,
-                    width: 250,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: uiMode.value == AppUiModes.light
-                          ? kcWhiteColor
-                          : kcBlackColor,
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(5),
-                        bottomRight: Radius.circular(5),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        (widget.product.raffle == null ||
-                                widget.product.raffle!.isEmpty)
-                            ? ""
-                            : "${widget.product.raffle?[0].ticketName}",
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            shape: const ContinuousRectangleBorder(
-                borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(25),
-              bottomRight: Radius.circular(25),
-            )),
-          ),
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                Column(
+                  children: [
+                    Stack(
+
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12)),
+                          child: (widget.product.raffle == null || widget.product.raffle!.isEmpty)
+                              ? SizedBox(
+                            height: 178,
+                            width: MediaQuery.of(context).size.width,
+                          )
+                              : Image.network(
+                            (widget.product.raffle![0].pictures != null && widget.product.raffle![0].pictures!.isNotEmpty)
+                                ? widget.product.raffle![0].pictures![0].location!
+                                : '', // Provide a default value or handle the case when pictures are empty
+                            fit: BoxFit.cover,
+                            width: MediaQuery.of(context).size.width,
+                            height: 130,
+                          ),
+                        ),
+                        Positioned(
+                          top: 20,
+                          right: 20,
+                          child: Container(
+                            height: 20,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.star,
+                                  color: kcStarColor,
+                                  size: 20,
+                                ),
+                                FutureBuilder<Color?>(
+                                    future: _updateTextColor(
+                                        widget.product.raffle![0].pictures![0].location!),
+                                    builder: (context, snapshot) {
+                                      return Text(
+                                        (widget.product.reviews == null ||
+                                            widget.product.reviews!.isEmpty)
+                                            ? "0"
+                                            : "${(widget.product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / widget.product.reviews!.length}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: snapshot.data,
+                                        ),
+                                      );
+                                    })
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    ),
+                    Container(
+                      color: kcPrimaryColor, // Set the background color to blue
+                      padding: EdgeInsets.all(7.0), // Add padding to the container
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(child:  Text(
+                            (widget.product.raffle == null || widget.product.raffle!.isEmpty)
+                                ? ""
+                                : widget.product.raffle?[0].ticketName ?? "",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.white, // Set the text color to white
+                            ),
+                          ),),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(25.0, 20.0, 8.0, 0.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                        flex: 6, // Allocate 60% of the space to this widget
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: 50,
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                image: widget.product.pictures!.isEmpty
+                                                    ? null
+                                                    : DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: NetworkImage(widget.product.pictures![0].location!),
+                                                ),
+                                                color: kcWhiteColor,
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            SizedBox(width: 8), // Add some spacing between the image and text
+                                            Flexible(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Buy ${widget.product.productName!}',
+                                                    overflow: TextOverflow.ellipsis,
+                                                    maxLines: 3,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    " N${widget.product.productPrice}",
+                                                    overflow: TextOverflow.ellipsis,
+                                                    maxLines: 3,
+                                                    style: const TextStyle(
+                                                      fontSize: 19,
+                                                      color: Colors.black,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                    ),
+                                    Expanded(
+                                        flex: 3, // Allocate 60% of the space to this widget
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${widget.product.orders?.where((element) => element["status"] != 1).toList().length} sold out of ${widget.product.stock}",
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 3,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+
+                                            SizedBox(
+                                              width: 100,
+                                              child: LinearProgressIndicator(
+                                                // Compute the progress value safely with null checks and default values
+                                                value: widget.product.orders?.where((element) => element["status"] != 1).toList().length.toDouble() ?? 0.0 /
+                                                    (widget.product.stock?.toDouble() ?? 1.0), // Prevent division by zero by providing a default value of 1.0
+                                                backgroundColor: kcSecondaryColor.withOpacity(0.3),
+                                                valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
+                                              ),
+                                            ),
+
+
+                                            Text(
+                                              (widget.product.raffle == null || widget.product.raffle!.isEmpty)
+                                                  ? ""
+                                                  : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(widget.product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 3,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    )
+
+                  ],
+                ),
                 verticalSpaceMedium,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children:
-                      List.generate(widget.product.pictures!.length, (index) {
-                    String? image = widget.product.pictures![index].location;
-                    return image == null
-                        ? const SizedBox()
-                        : GestureDetector(
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(25.0, 10.0, 8.0, 0.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children:
+
+                    List.generate(widget.product.pictures!.length, (index) {
+                      String? image = widget.product.pictures![index].location;
+                      return Row( // Add a Row to contain each item
+                        children: [
+                          image == null
+                              ? const SizedBox()
+                              : GestureDetector(
                             onTap: () {
                               setState(() {
                                 activePic = image;
@@ -161,9 +320,15 @@ class _ProductDetailState extends State<ProductDetail> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                          );
-                  }),
+                          ),
+                          SizedBox(width: 10), // Add horizontal space between items
+                        ],
+                      );
+                    }),
+                  ),
                 ),
+
+
                 verticalSpaceMedium,
                 Row(
                   children: [
@@ -202,22 +367,6 @@ class _ProductDetailState extends State<ProductDetail> {
                   ],
                 ),
                 verticalSpaceSmall,
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    widget.product.productName ?? "",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    "N${widget.product.productPrice}",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 22),
-                  ),
-                ),
-                verticalSpaceMedium,
                 const Padding(
                   padding: EdgeInsets.only(left: 25.0),
                   child: Text(
@@ -313,32 +462,69 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                             InkWell(
                               onTap: () async {
-                                CartItem cartItem = CartItem(
-                                    product: widget.product,
-                                    quantity: quantity);
-                                cart.value.add(cartItem);
+
+
+                                // Check if the item already exists in the cart
+                                final existingItem = cart.value.firstWhere(
+                                      (cartItem) => cartItem.product?.id == widget.product.id,
+                                  orElse: () => CartItem(product: widget.product, quantity: 0),
+                                );
+
+                                if (existingItem.quantity != null && existingItem.quantity! > 0 && existingItem.product != null) {
+                                  // If the item exists, increase its quantity
+                                  existingItem.quantity = (existingItem.quantity! + quantity);
+                                } else {
+                                  // If the item is not in the cart, add it as a new item
+                                  existingItem.quantity = quantity;
+                                  cart.value.add(existingItem);
+                                }
+
+
                                 List<Map<String, dynamic>> storedList =
-                                    cart.value.map((e) => e.toJson()).toList();
+                                cart.value.map((e) => e.toJson()).toList();
                                 await locator<LocalStorage>()
                                     .save(LocalStorageDir.cart, storedList);
                                 cart.notifyListeners();
                                 locator<SnackbarService>().showSnackbar(
                                     message: "Product added to cart");
                                 Navigator.pop(context);
+
+                                // CartItem cartItem = CartItem(
+                                //     product: widget.product,
+                                //     quantity: quantity);
+                                // cart.value.add(cartItem);
+                                // List<Map<String, dynamic>> storedList =
+                                //     cart.value.map((e) => e.toJson()).toList();
+                                // await locator<LocalStorage>()
+                                //     .save(LocalStorageDir.cart, storedList);
+                                // cart.notifyListeners();
+                                // locator<SnackbarService>().showSnackbar(
+                                //     message: "Product added to cart");
+                                // Navigator.pop(context);
                               },
                               child: Container(
                                 height: 50,
                                 width: 160,
                                 decoration: BoxDecoration(
-                                    color: kcPrimaryColor,
-                                    borderRadius: BorderRadius.circular(9)),
-                                child: const Center(
-                                  child: Text(
-                                    "Add to cart",
-                                    style: TextStyle(color: kcWhiteColor),
-                                  ),
+                                  color: kcSecondaryColor,
+                                  borderRadius: BorderRadius.circular(9),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.shopping_bag_outlined, // You can choose the desired icon
+                                      color: kcWhiteColor,
+                                    ),
+                                    const SizedBox(width: 5), // Add spacing between the icon and text
+                                    Text(
+                                      "Add to cart",
+                                      style: TextStyle(color: kcWhiteColor),
+                                    ),
+                                  ],
                                 ),
                               ),
+
                             )
                           ],
                         ),
@@ -399,6 +585,9 @@ class RecommendedRow extends StatelessWidget {
     required this.product,
     super.key,
   });
+
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:afriprize/app/app.dart';
@@ -9,6 +10,7 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
+import 'package:afriprize/ui/views/dashboard/product_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -18,10 +20,14 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/raffle_ticket.dart';
+import '../../../widget/pagination_list.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
-  const DashboardView({Key? key}) : super(key: key);
+  DashboardView({Key? key}) : super(key: key);
+
+
+  final PageController _pageController = PageController();
 
   @override
   Widget builder(
@@ -72,10 +78,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   : Stack(
                       children: [
                         PageView.builder(
+                            controller: _pageController,
                             itemCount: viewModel.ads.length,
                             onPageChanged: viewModel.changeSelected,
                             itemBuilder: (context, index) {
                               Product ad = viewModel.ads[index];
+                              print('length of ad list is: ${ad.raffle?.length}');
                               String image =
                                   ad.raffle![0].pictures![0].location!;
 
@@ -200,16 +208,18 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       ],
                     ),
             ),
-            verticalSpaceMedium,
-            const Text(
+            if(viewModel.sellingFast.isNotEmpty)
+              verticalSpaceMedium,
+            if(viewModel.sellingFast.isNotEmpty)
+              const Text(
               "Selling fast",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            verticalSpaceSmall,
-            SizedBox(
+            if(viewModel.sellingFast.isNotEmpty)
+              SizedBox(
               height: 250,
               child: viewModel.busy(viewModel.sellingFast)
                   ? const Center(
@@ -334,53 +344,157 @@ class DashboardView extends StackedView<DashboardViewModel> {
                         );
                       }),
             ),
-            verticalSpaceSmall,
+              verticalSpaceSmall,
             const Text(
-              "Products",
+              "Upcoming Draws",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             verticalSpaceSmall,
+
+
+            // PaginationList<Product>(
+            //   key: paginationListKey,
+            //   scrollController: _scrollController,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   autoFetch: false,
+            //   singlePage: false,
+            //   shrinkWrap: true,
+            //   separatorWidget: const SizedBox(
+            //     height: 15,
+            //   ),
+            //   itemBuilder: (context, item) {
+            //     return InkWell(
+            //       onTap: () {
+            //         locator<NavigationService>().navigateTo(
+            //             Routes.productDetail,
+            //             arguments: ProductDetailArguments(product: product));
+            //       },
+            //       child: ProductRow(
+            //         product: product,
+            //         viewModel: viewModel,
+            //       ),
+            //     );
+            //   },
+            //   onEmpty: const Center(
+            //     child: Column(
+            //       mainAxisSize: MainAxisSize.min,
+            //       children: [
+            //         Icon(
+            //           Icons.remove_circle,
+            //           color: Colors.amber,
+            //           size: 60,
+            //         ),
+            //         Text(
+            //           'No Invoice found',
+            //           textScaleFactor: 1.1,
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            //   onError: (e) {
+            //     print(e);
+            //     return const Center(
+            //       child: Column(
+            //         mainAxisSize: MainAxisSize.min,
+            //         children: [
+            //           Icon(
+            //             Icons.warning_amber_outlined,
+            //             color: Colors.red,
+            //             size: 60,
+            //           ),
+            //           Text(
+            //             'Could not complete this request. Check your internet connection.',
+            //             textScaleFactor: 1.3,
+            //           ),
+            //         ],
+            //       ),
+            //     );
+            //   },
+            //   onPageLoading: const Center(
+            //     child: CircularProgressIndicator()
+            //   ),
+            //   onLoading: const Center(
+            //     child: CircularProgressIndicator()
+            //   ),
+            //   // pageFetch: (currentSize) {
+            //   //   log('data: $endDate');
+            //   //   return loadData(
+            //   //       category: category,
+            //   //       createdAfter: endDate?.toDate(),
+            //   //       paymentStatus: paymentStatus,
+            //   //       pendingMyReview: pendingMyReview,
+            //   //       reviewStatus: reviewStatus,
+            //   //       createdBefore: startDate?.toDate(),
+            //   //       status: status,
+            //   //       offset: currentSize,
+            //   //       limit: 10)
+            //   //       .then((value) {
+            //   //     _totalRecordsStream.add(value.data?.total??0);
+            //   //     return value.data?.results?.toList() ??
+            //   //         <InvoicePojo>[];
+            //   //   });
+            //   // },
+            // ),
             viewModel.busy(viewModel.productList)
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: viewModel.productList.length,
-                    itemBuilder: (context, index) {
-                      Product product = viewModel.productList[index];
-                      return Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              locator<NavigationService>().navigateTo(
-                                  Routes.productDetail,
-                                  arguments:
-                                      ProductDetailArguments(product: product));
+                : viewModel.productList.isEmpty ?
+            Center(child: Text('No products available')) :
+            ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: viewModel.productList.length,
+                itemBuilder: (context, index) {
+                  if (viewModel.productList.isEmpty) {
+                    // Return a placeholder or an empty container
+                    return Container(); // or SizedBox.shrink()
+                  }
+
+                  if (index >= viewModel.productList.length) {
+                    return Container(); // or SizedBox.shrink()
+                  }
+
+                  // if (index > viewModel.productList.length+1) {
+                  //   print('$index');
+                  //   print('${viewModel.productList.length}');
+                  //
+                  //   return null;
+                  // }
+
+                  Product product = viewModel.productList.elementAt(index);
+                  return Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            // barrierColor: Colors.black.withAlpha(50),
+                            // backgroundColor: Colors.transparent,
+                            backgroundColor: Colors.black.withOpacity(0.7),
+                            builder: (BuildContext context) {
+                              return FractionallySizedBox(
+                                heightFactor: 0.8, // 70% of the screen's height
+                                child: ProductDetail(product: product),
+                              );
                             },
-                            child: ProductRow(
-                              product: product,
-                            ),
-                          ),
-                          verticalSpaceMedium,
-                          userLoggedIn.value == false
-                              ? const SizedBox()
-                              : SubmitButton(
-                                  isLoading: false,
-                                  label: "Add to cart",
-                                  submit: () => viewModel.addToCart(product),
-                                  color: kcPrimaryColor,
-                                  boldText: true,
-                                  icon: Icons.shopping_cart_outlined,
-                                ),
-                          verticalSpaceMedium
-                        ],
-                      );
-                    }),
+                          );
+                        },
+                        child: ProductRow(
+                          product: product,
+                          viewModel: viewModel,
+                          index: index
+                        ),
+                      ),
+                      verticalSpaceMedium
+                    ],
+                  );
+                }),
           ],
         ),
       ),
@@ -391,6 +505,19 @@ class DashboardView extends StackedView<DashboardViewModel> {
   void onViewModelReady(DashboardViewModel viewModel) {
     viewModel.init();
     super.onViewModelReady(viewModel);
+    Timer.periodic(Duration(seconds: 8), (Timer timer) {
+      if (_pageController.hasClients) {
+        int nextPage = _pageController.page!.round() + 1;
+        if (nextPage >= viewModel.ads.length) {
+          nextPage = 0;
+        }
+        _pageController.animateToPage(
+          nextPage,
+          duration: Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   Widget _indicator(bool selected) {
@@ -428,17 +555,22 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
 class ProductRow extends StatelessWidget {
   final Product product;
+  final DashboardViewModel viewModel;
+  final int index;
 
   const ProductRow({
     required this.product,
-    super.key,
+    super.key, required this.viewModel, required this.index,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (viewModel.productList.isEmpty || index >= viewModel.productList.length) {
+      return Container();
+    }
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
-      height: 250,
+      height: 300,
       decoration: BoxDecoration(
         color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
         borderRadius: BorderRadius.circular(12),
@@ -450,163 +582,243 @@ class ProductRow extends StatelessWidget {
           )
         ],
       ),
-      child: Column(
-        children: [
-          Stack(
+      child:
+          Column(
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12)),
-                child: (product.raffle == null || product.raffle!.isEmpty)
-                    ? SizedBox(
-                        height: 170,
-                        width: MediaQuery.of(context).size.width,
-                      )
-                    : Image.network(
-                        product.raffle![0].pictures![0].location!,
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        height: 170,
-                      ),
-              ),
-              Positioned(
-                top: 20,
-                left: 20,
-                child: Container(
-                  height: 20,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
+              Stack(
+
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12)),
+                    child: (product.raffle == null || product.raffle!.isEmpty)
+                        ? SizedBox(
+                      height: 128,
+                      width: MediaQuery.of(context).size.width,
+                    )
+                        : Image.network(
+                      (product.raffle!.isNotEmpty)
+                          ? product.raffle![0].pictures![0].location!
+                          : '', // Provide a default value or handle the case when pictures are empty
+                      fit: BoxFit.cover,
+                      width: MediaQuery.of(context).size.width,
+                      height: 130,
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.star,
-                        color: kcStarColor,
-                        size: 20,
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: Container(
+                      height: 20,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      FutureBuilder<Color?>(
-                          future: _updateTextColor(
-                              product.raffle![0].pictures![0].location!),
-                          builder: (context, snapshot) {
-                            return Text(
-                              (product.reviews == null ||
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.star,
+                            color: kcStarColor,
+                            size: 20,
+                          ),
+                          FutureBuilder<Color?>(
+                              future: _updateTextColor(
+                                product.raffle!.isNotEmpty ?
+                                  product.raffle![0].pictures![0].location! : ''),
+                              builder: (context, snapshot) {
+                                return Text(
+                                  (product.reviews == null ||
                                       product.reviews!.isEmpty)
-                                  ? "0"
-                                  : "${(product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / product.reviews!.length}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: snapshot.data,
-                              ),
-                            );
-                          })
-                    ],
+                                      ? "0"
+                                      : "${(product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / product.reviews!.length}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: snapshot.data,
+                                  ),
+                                );
+                              })
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+
+                ],
               ),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    image: product.pictures!.isEmpty
-                        ? null
-                        : DecorationImage(
-                            fit: BoxFit.cover,
-                            image:
-                                NetworkImage(product.pictures![0].location!)),
-                    color: kcWhiteColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              )
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        (product.raffle == null || product.raffle!.isEmpty)
-                            ? ""
-                            : product.raffle?[0].ticketName ?? "",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                                text: "Buy ${product.productName} for: ",
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  color: uiMode.value == AppUiModes.light
-                                      ? kcBlackColor
-                                      : kcWhiteColor,
-                                )),
-                            TextSpan(
-                                text: " N${product.productPrice}",
-                                style: GoogleFonts.inter(
-                                    color: kcSecondaryColor, fontSize: 12))
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Column(
+              Container(
+                color: kcPrimaryColor, // Set the background color to blue
+                padding: EdgeInsets.all(7.0), // Add padding to the container
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "${product.orders?.where((element) => element["status"] != 1).toList().length} sold out of ${product.stock}",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    verticalSpaceTiny,
-                    SizedBox(
-                      width: 100,
-                      child: LinearProgressIndicator(
-                        value: ((product.orders
-                                ?.where((element) => element["status"] != 1)
-                                .toList()
-                                .length)! /
-                            (product.stock!)),
-                        backgroundColor: kcSecondaryColor.withOpacity(0.3),
-                        valueColor:
-                            const AlwaysStoppedAnimation(kcSecondaryColor),
-                      ),
-                    ),
-                    verticalSpaceSmall,
-                    Text(
+                    Expanded(child:  Text(
                       (product.raffle == null || product.raffle!.isEmpty)
                           ? ""
-                          : "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
+                          : product.raffle?[0].ticketName ?? "",
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white, // Set the text color to white
                       ),
-                    ),
+                    ),),
                   ],
                 ),
-              ],
-            ),
-          )
-        ],
-      ),
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                            Expanded(
+                            flex: 6, // Allocate 60% of the space to this widget
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                    image: product.pictures!.isEmpty
+                                        ? null
+                                        : DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(product.pictures![0].location!),
+                                    ),
+                                    color: kcWhiteColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                SizedBox(width: 8), // Add some spacing between the image and text
+                                Flexible(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        product.productName!,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                            ),
+                            Expanded(
+                            flex: 3, // Allocate 60% of the space to this widget
+                            child: Row(
+                              children: [
+                                Text(
+                                  " N${product.productPrice}",
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  style: const TextStyle(
+                                    fontSize: 19,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            )
+                            ),
+
+
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${product.orders?.where((element) => element["availability"] != 1).toList().length} sold out of ${product.stock}",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+
+                              SizedBox(
+                                width: 100,
+                                child: LinearProgressIndicator(
+                                  value: ((product.orders
+                                      ?.where((element) => element["status"] != 1)
+                                      .toList()
+                                      .length)! /
+                                      (product.stock!)),
+                                  backgroundColor: kcSecondaryColor.withOpacity(0.3),
+                                  valueColor:
+                                  const AlwaysStoppedAnimation(kcSecondaryColor),
+                                ),
+                              ),
+
+                              Text(
+                                (product.raffle == null || product.raffle!.isEmpty)
+                                    ? ""
+                                    : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              userLoggedIn.value == false
+                                  ? const SizedBox()
+                                  : SubmitButton(
+                                isLoading: false,
+                                label: "Add to cart",
+                                submit: () => viewModel.addToCart(product),
+                                color: kcSecondaryColor,
+                                boldText: true,
+                                icon: Icons.shopping_bag_outlined,
+                              ),
+
+                            ],
+                          ),
+                        ),
+
+
+
+                      ],
+                    ),
+                  )
+                ],
+              )
+
+            ],
+          ),
+
     );
   }
 
