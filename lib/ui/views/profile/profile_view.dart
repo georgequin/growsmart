@@ -7,7 +7,9 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/profile_picture.dart';
 import 'package:afriprize/ui/views/profile/order_list.dart';
+import 'package:afriprize/ui/views/profile/profile_details.dart';
 import 'package:afriprize/ui/views/profile/support.dart';
+import 'package:afriprize/ui/views/profile/ticket_list.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -39,11 +41,24 @@ class ProfileView extends StackedView<ProfileViewModel> {
               padding: const EdgeInsets.all(20),
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     GestureDetector(
                       onTap: () {
-                        viewModel.toggleShowChangePP();
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            // barrierColor: Colors.black.withAlpha(50),
+                            // backgroundColor: Colors.transparent,
+                            backgroundColor: Colors.black.withOpacity(0.7),
+                        builder: (BuildContext context) {
+                        return FractionallySizedBox(
+                        heightFactor: 1.0, // 70% of the screen's height
+                        child: ProfileScreen(),
+                        );
+                        },
+                        );
+                        // viewModel.updateProfilePicture();
                       },
                       child: ProfilePicture(
                         size: 100,
@@ -66,6 +81,27 @@ class ProfileView extends StackedView<ProfileViewModel> {
                         Text(profile.value.country ?? "")
                       ],
                     ),
+                    horizontalSpaceLarge,
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          // barrierColor: Colors.black.withAlpha(50),
+                          // backgroundColor: Colors.transparent,
+                          backgroundColor: Colors.black.withOpacity(0.7),
+                          builder: (BuildContext context) {
+                            return FractionallySizedBox(
+                              heightFactor: 1.0, // 70% of the screen's height
+                              child: ProfileScreen(),
+                            );
+                          },
+                        );
+                        // viewModel.updateProfilePicture();
+                      },
+                      child: Icon(Icons.edit, color: kcPrimaryColor,)
+                    ),
+
                   ],
                 ),
                 viewModel.showChangePP
@@ -117,6 +153,19 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 ),
                 ListTile(
                   onTap: () {
+                    // locator<NavigationService>().navigateToTrack();
+                    Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+                      return const TicketList();
+                    }));
+                  },
+                  leading: const Icon(
+                    Icons.wallet,
+                    color: kcSecondaryColor,
+                  ),
+                  title: const Text("My tickets"),
+                ),
+                ListTile(
+                  onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (c) {
                       return const Support();
                     }));
@@ -126,6 +175,38 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     color: kcSecondaryColor,
                   ),
                   title: const Text("Support"),
+                ),
+                // ListTile(
+                //   onTap: () async {
+                //     final res = await locator<DialogService>()
+                //         .showConfirmationDialog(
+                //             title: "Are you sure?",
+                //             cancelTitle: "No",
+                //             confirmationTitle: "Yes");
+                //     if (res!.confirmed) {
+                //       await locator<LocalStorage>()
+                //           .delete(LocalStorageDir.authToken);
+                //       await locator<LocalStorage>()
+                //           .delete(LocalStorageDir.authUser);
+                //       userLoggedIn.value = false;
+                //       locator<NavigationService>().replaceWithAuthView();
+                //     }
+                //   },
+                //   leading: const Icon(
+                //     Icons.logout,
+                //     color: kcSecondaryColor,
+                //   ),
+                //   title: const Text("Signout"),
+                // ),
+                ListTile(
+                  onTap: () {
+                    locator<NavigationService>().navigateToChangePasswordView();
+                  },
+                  leading: const Icon(
+                    Icons.lock_outlined,
+                    color: kcSecondaryColor,
+                  ),
+                  title: const Text("Change password"),
                 ),
                 ListTile(
                   onTap: () {},
@@ -152,48 +233,20 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     ),
                   ),
                 ),
-                ListTile(
-                  onTap: () async {
-                    final res = await locator<DialogService>()
-                        .showConfirmationDialog(
-                            title: "Are you sure?",
-                            cancelTitle: "No",
-                            confirmationTitle: "Yes");
-                    if (res!.confirmed) {
-                      await locator<LocalStorage>()
-                          .delete(LocalStorageDir.authToken);
-                      await locator<LocalStorage>()
-                          .delete(LocalStorageDir.authUser);
-                      userLoggedIn.value = false;
-                      locator<NavigationService>().replaceWithAuthView();
-                    }
-                  },
-                  leading: const Icon(
-                    Icons.logout,
-                    color: kcSecondaryColor,
+                verticalSpaceLarge,
+                Opacity(
+                  opacity: 0.4, // Set the opacity to 0.7 (70% opacity)
+                  child: ListTile(
+                    onTap: () {
+                      locator<NavigationService>().navigateToDeleteAccountView();
+                    },
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Colors.red,
+                    ),
+                    title: const Text("Delete my account"),
                   ),
-                  title: const Text("Signout"),
-                ),
-                ListTile(
-                  onTap: () {
-                    locator<NavigationService>().navigateToChangePasswordView();
-                  },
-                  leading: const Icon(
-                    Icons.lock_outlined,
-                    color: kcSecondaryColor,
-                  ),
-                  title: const Text("Change password"),
-                ),
-                ListTile(
-                  onTap: () {
-                    locator<NavigationService>().navigateToDeleteAccountView();
-                  },
-                  leading: const Icon(
-                    Icons.logout,
-                    color: Colors.red,
-                  ),
-                  title: const Text("Delete my account"),
-                ),
+                )
               ],
             ),
     );

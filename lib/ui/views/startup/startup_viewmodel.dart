@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
@@ -27,10 +28,11 @@ class StartupViewModel extends BaseViewModel {
     bool? onboarded =
         await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
     if (onboarded == null || onboarded == false) {
+
       _navigationService.replaceWithOnboardingView();
     } else {
       if (token != null && user != null) {
-        // userLoggedIn.value = true;
+        userLoggedIn.value = true;
         profile.value =
             Profile.fromJson(Map<String, dynamic>.from(jsonDecode(user)));
       }

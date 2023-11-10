@@ -243,9 +243,9 @@ class _ReceiptState extends State<Receipt> {
             ],
           ),
           verticalSpaceSmall,
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: const [
               Icon(Icons.download),
               horizontalSpaceSmall,
               Text("Get PDF Receipt"),

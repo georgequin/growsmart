@@ -26,30 +26,31 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+           title: Text('Change password', style: TextStyle(color: Colors.black)),
             leading: InkWell(
               onTap: () {
                 Navigator.of(context).pop();
               },
               child: const Icon(
                 Icons.arrow_back_ios,
-                color: kcWhiteColor,
+                color: kcBlackColor,
               ),
             ),
-            expandedHeight: 200,
-            flexibleSpace: Background(
-              children: [
-                Positioned(
-                  top: 30,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(80.0),
-                    child: Image.asset("assets/images/afriprize_light.png"),
-                  ),
-                )
-              ],
-            ),
+            // expandedHeight: 200,
+            // flexibleSpace: Background(
+            //   children: [
+            //     Positioned(
+            //       top: 30,
+            //       left: 0,
+            //       right: 0,
+            //       bottom: 0,
+            //       child: Padding(
+            //         padding: const EdgeInsets.all(80.0),
+            //         child: Image.asset("assets/images/afriprize_light.png"),
+            //       ),
+            //     )
+            //   ],
+            // ),
           ),
           SliverList(
               delegate: SliverChildListDelegate(
@@ -59,11 +60,7 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    verticalSpaceMassive,
-                    const Text(
-                      "Change Password",
-                      style: TextStyle(fontSize: 18),
-                    ),
+                    verticalSpaceMedium,
                     verticalSpaceMedium,
                     TextFieldWidget(
                         hint: "Enter Email", controller: viewModel.email),

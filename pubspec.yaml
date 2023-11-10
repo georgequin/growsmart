@@ -30,24 +30,38 @@ dependencies:
   flutter:
     sdk: flutter
 
-  flutter_svg: ^2.0.6
+
+
+  flutter_svg: any
   cupertino_icons: ^1.0.2
-  google_fonts: ^5.0.0
+  google_fonts: any
   casa_vertical_stepper: ^0.0.5
   dio: ^4.0.6
   pretty_dio_logger: ^1.1.1
   sembast: ^3.4.3+1
+  flutter_modular: ^5.0.3
+  intl_phone_number_input: any
+  intl_phone_field: ^3.0.0
   path_provider: ^2.0.14
   jwt_decoder: ^2.0.1
   webview_flutter: ^4.2.0
+  video_player: ^2.2.14
   image_picker: ^0.8.7+5
-  intl: ^0.18.0
+  intl: ^0.17.0
   flutter_image_compress: ^2.0.3
-  lottie: ^2.4.0
+  lottie: any
   stacked: ^3.2.0
   stacked_services: ^1.0.0
   awesome_rating: ^0.0.4
+  toggle_switch: ^2.1.0
   palette_generator: ^0.3.3+2
+  pdf: ^3.6.0
+  printing: ^5.6.0
+  fluttertoast: ^8.0.8
+  font_awesome_flutter: any
+  flutter_paystack: ^1.0.7
+  shared_preferences: ^2.2.2
+
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +92,19 @@ flutter_launcher_icons:
 
 # The following section is specific to Flutter.
 flutter:
+  fonts:
+    - family: Panchang
+      fonts:
+        - asset: assets/fonts/Panchang-Bold.ttf
+        - asset: assets/fonts/Panchang-Extrabold.ttf
+        - asset: assets/fonts/Panchang-Extralight.ttf
+        - asset: assets/fonts/Panchang-Light.ttf
+        - asset: assets/fonts/Panchang-Medium.ttf
+        - asset: assets/fonts/Panchang-Regular.ttf
+        - asset: assets/fonts/Panchang-Semibold.ttf
+        - asset: assets/fonts/Panchang-Variable.ttf
+          style: italic
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -88,6 +115,7 @@ flutter:
   assets:
     - assets/images/
     - assets/animations/
+    - assets/videos/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

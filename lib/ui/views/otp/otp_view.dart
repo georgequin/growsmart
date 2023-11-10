@@ -56,14 +56,45 @@ class OtpView extends StackedView<OtpViewModel> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    verticalSpaceMassive,
+                    verticalSpaceLarge,
                     const Text(
-                      "Enter verification code",
-                      style: TextStyle(fontSize: 18),
+                      "OTP Verification",
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Panchang"
+                      ),
+                    ),
+                    const Text(
+                      "We have sent a code to your Email Address",
+                      style: TextStyle(fontSize: 14),
                     ),
                     verticalSpaceMedium,
                     TextFieldWidget(
                         hint: "Enter Code", controller: viewModel.otp),
+                    Row(
+                        children:  [
+                          const Text(
+                            "Didnt get the OTP? ",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+
+                            },
+                            child: const Text(
+                              "Click here to resend",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: kcSecondaryColor,
+                              ),
+                            ),
+                          )
+
+                        ]
+                    ),
                     verticalSpaceMedium,
                     SubmitButton(
                       isLoading: viewModel.isBusy,

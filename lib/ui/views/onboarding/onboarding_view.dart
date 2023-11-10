@@ -3,15 +3,18 @@ import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:video_player/video_player.dart';
 
 import 'onboarding_viewmodel.dart';
 
 class OnboardingView extends StackedView<OnboardingViewModel> {
   const OnboardingView({Key? key}) : super(key: key);
+
 
   @override
   Widget builder(
@@ -20,36 +23,15 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      body: SafeArea(
+      body: Container(
+        color: Colors.white, // Set the background color to white
+        child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              viewModel.currentPage == 0
-                  ? InkWell(
-                      onTap: () {
-                        locator<NavigationService>().navigateToHomeView();
-                      },
-                      child: const Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "Skip",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-              viewModel.currentPage == 1
-                  ? InkWell(
-                      onTap: () {},
-                      child: const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Icon(Icons.arrow_back_ios),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
               Expanded(
                 child: PageView(
                   controller: viewModel.pageController,
@@ -59,42 +41,37 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
               ),
               verticalSpaceMedium,
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     flex: 2,
                     child: SubmitButton(
                       isLoading: false,
                       label:
-                          viewModel.currentPage == 0 ? "Next" : "Get Started",
+                          "Get Started",
                       submit: () {
-                        if (viewModel.currentPage == 0) {
-                          viewModel.pageController.nextPage(
-                              duration: const Duration(milliseconds: 100),
-                              curve: Curves.linear);
-                        } else {
                           locator<NavigationService>().navigateToHomeView();
-                        }
                       },
                       color: kcPrimaryColor,
                       boldText: true,
                     ),
                   ),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                          viewModel.pages.length,
-                          (index) =>
-                              _indicator(viewModel.currentPage == index)),
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: List.generate(
+                  //         viewModel.pages.length,
+                  //         (index) =>
+                  //             _indicator(viewModel.currentPage == index)),
+                  //   ),
+                  // ),
                 ],
               )
             ],
           ),
         ),
       ),
+    ),
     );
   }
 
@@ -123,58 +100,104 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
   }
 }
 
-class PageOne extends StatelessWidget {
+class PageOne extends StatefulWidget {
   const PageOne({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset("assets/images/on1.png"),
-          verticalSpaceLarge,
-          const Text(
-            "The best of both worlds",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          ),
-          verticalSpaceSmall,
-          const Text(
-            "Enjoy convenient shopping and the thrill of winning big!",
-            style: TextStyle(fontSize: 16),
-          )
-        ],
-      ),
-    );
-  }
+  _PageOneState createState() => _PageOneState();
 }
 
-class PageTwo extends StatelessWidget {
-  const PageTwo({Key? key}) : super(key: key);
+class _PageOneState extends State<PageOne> {
+
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.asset(
+      "assets/videos/onboarding.mp4",
+    )..initialize().then((_) {
+      // Ensure the first frame is shown and set the video to loop.
+      _controller.setLooping(true);
+      _controller.play();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset("assets/images/on2.png"),
-          verticalSpaceLarge,
-          const Text(
-            "but that’s not all!",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: VideoPlayer(_controller), // Use VideoPlayer widget
           ),
-          verticalSpaceSmall,
-          const Text(
-            "with every purchase, you'll also receive a unique lottery number that gives you the chance to win exciting prizes.",
-            style: TextStyle(fontSize: 16),
-          )
+          verticalSpaceLarge,
+          Image.asset("assets/images/onboarding1.png"),
         ],
       ),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+
+// @override
+  // Widget build(BuildContext context) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 20.0),
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Image.asset("assets/images/on1.png"),
+  //         verticalSpaceLarge,
+  //         const Text(
+  //           "The best of both worlds",
+  //           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+  //         ),
+  //         verticalSpaceSmall,
+  //         const Text(
+  //           "Enjoy convenient shopping and the thrill of winning big!",
+  //           style: TextStyle(fontSize: 16),
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
 }
+
+// class PageTwo extends StatelessWidget {
+//   const PageTwo({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Image.asset("assets/images/on2.png"),
+//           verticalSpaceLarge,
+//           const Text(
+//             "but that’s not all!",
+//             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+//           ),
+//           verticalSpaceSmall,
+//           const Text(
+//             "with every purchase, you'll also receive a unique lottery number that gives you the chance to win exciting prizes.",
+//             style: TextStyle(fontSize: 16),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }

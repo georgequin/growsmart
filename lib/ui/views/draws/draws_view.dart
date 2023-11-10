@@ -189,15 +189,17 @@ class DrawsView extends StackedView<DrawsViewModel> {
   }
 
   Widget rulesColumn() {
-    return const Column(
+    return SingleChildScrollView( // Wrap with SingleChildScrollView
+        child:
+      Column(
       children: [
-        Align(
+        const Align(
             alignment: Alignment.centerLeft,
             child: Text(
               "Rules:",
               style: TextStyle(decoration: TextDecoration.underline),
             )),
-        Text(
+        const Text(
           "1. In order to be eligible for a draw, you have to purchase a product to gain entry.\n2. Each product gives you an entry and so on.\n3. Your registered name must match your government name.\n4. Winner will be contacted directly via email and sms",
           style: TextStyle(fontSize: 12),
         ),
@@ -220,6 +222,7 @@ class DrawsView extends StackedView<DrawsViewModel> {
           ],
         ),
       ],
+    )
     );
   }
 

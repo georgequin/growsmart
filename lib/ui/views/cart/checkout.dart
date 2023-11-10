@@ -1,3 +1,4 @@
+
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/order_info.dart';
@@ -9,7 +10,9 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/drop_down_widget.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/profile/payment_view.dart';
+import 'package:afriprize/utils/moneyUtil.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.router.dart';
@@ -18,6 +21,7 @@ import '../../../core/utils/local_stotage.dart';
 import '../../common/ui_helpers.dart';
 import '../../components/text_field_widget.dart';
 import 'add_shipping.dart';
+import 'custom_reciept.dart';
 
 class Checkout extends StatefulWidget {
   final List<OrderInfo> infoList;
@@ -33,9 +37,18 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   bool loading = false;
-  String paymentMethod = "wallet";
+  String paymentMethod = "paystack";
   String shippingId = "";
   bool makingDefault = false;
+  String publicKeyTest = MoneyUtils().payStackPublicKey;
+  final plugin = PaystackPlugin();
+
+
+  @override
+  void initState() {
+    plugin.initialize(publicKey: publicKeyTest);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +114,6 @@ class _CheckoutState extends State<Checkout> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(item.product!.productName ?? ""),
                               Text(item.product!.productName ?? ""),
                               verticalSpaceTiny,
                               Text(
@@ -396,93 +408,108 @@ class _CheckoutState extends State<Checkout> {
                     ),
                   ),
                 ),
-                // verticalSpaceSmall,
-                // Container(
-                //   padding: const EdgeInsets.symmetric(horizontal: 10),
-                //   height: 250,
-                //   decoration: BoxDecoration(
-                //       border: Border.all(color: kcBlackColor, width: 0.5)),
-                //   child: Column(
-                //     children: [
-                //       verticalSpaceSmall,
-                //       Row(
-                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //         children: [
-                //           Row(
-                //             children: [
-                //               Container(
-                //                 height: 15,
-                //                 width: 15,
-                //                 decoration: BoxDecoration(
-                //                     shape: BoxShape.circle,
-                //                     border: Border.all(
-                //                       color: kcBlackColor,
-                //                       width: 1,
-                //                     )),
-                //               ),
-                //               horizontalSpaceSmall,
-                //               const Text(
-                //                 "Pay with Credit Card",
-                //                 style: TextStyle(
-                //                   fontWeight: FontWeight.bold,
+                verticalSpaceSmall,
+                // InkWell(
+                //   onTap: () {
+                //     setState(() {
+                //       paymentMethod = "card";
+                //     });
+                //   },
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(horizontal: 10),
+                //     height: 250,
+                //     decoration: BoxDecoration(
+                //         border: Border.all(color: kcBlackColor, width: 0.5)),
+                //     child: Column(
+                //       children: [
+                //         verticalSpaceSmall,
+                //         Row(
+                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //           children: [
+                //             Row(
+                //               children: [
+                //                 Container(
+                //                   height: 15,
+                //                   width: 15,
+                //                   decoration: BoxDecoration(
+                //                       shape: BoxShape.circle,
+                //                       border: Border.all(
+                //                         color: kcBlackColor,
+                //                         width: 1,
+                //                       )),
+                //                   child: paymentMethod == "card"
+                //                       ? const Center(
+                //                     child: Icon(
+                //                       Icons.check,
+                //                       size: 12,
+                //                     ),
+                //                   )
+                //                       : const SizedBox(),
                 //                 ),
+                //                 horizontalSpaceSmall,
+                //                 const Text(
+                //                   "Pay with Credit Card",
+                //                   style: TextStyle(
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //             Row(
+                //               children: [
+                //                 Image.asset("assets/images/visa.png"),
+                //                 verticalSpaceTiny,
+                //                 Image.asset("assets/images/discover.png"),
+                //                 verticalSpaceTiny,
+                //                 Image.asset("assets/images/maestro.png"),
+                //                 verticalSpaceTiny,
+                //                 Image.asset("assets/images/master_card.png"),
+                //               ],
+                //             )
+                //           ],
+                //         ),
+                //         verticalSpaceMedium,
+                //         Row(
+                //           children: [
+                //             Expanded(
+                //               flex: 3,
+                //               child: TextFieldWidget(
+                //                 hint: "Card number",
+                //                 controller: cardNumberController,
                 //               ),
-                //             ],
-                //           ),
-                //           Row(
-                //             children: [
-                //               Image.asset("assets/images/visa.png"),
-                //               verticalSpaceTiny,
-                //               Image.asset("assets/images/discover.png"),
-                //               verticalSpaceTiny,
-                //               Image.asset("assets/images/maestro.png"),
-                //               verticalSpaceTiny,
-                //               Image.asset("assets/images/master_card.png"),
-                //             ],
-                //           )
-                //         ],
-                //       ),
-                //       verticalSpaceMedium,
-                //       Row(
-                //         children: [
-                //           Expanded(
-                //             flex: 3,
-                //             child: TextFieldWidget(
-                //               hint: "Card number",
-                //               controller: TextEditingController(),
                 //             ),
-                //           ),
-                //           horizontalSpaceSmall,
-                //           Expanded(
-                //             flex: 2,
-                //             child: TextFieldWidget(
-                //               hint: "Expiry",
-                //               controller: TextEditingController(),
+                //             horizontalSpaceSmall,
+                //             Expanded(
+                //               flex: 2,
+                //               child: TextFieldWidget(
+                //                 hint: "Expiry",
+                //                 controller: cardExpiryController,
+                //               ),
                 //             ),
-                //           ),
-                //         ],
-                //       ),
-                //       verticalSpaceMedium,
-                //       Row(
-                //         children: [
-                //           Expanded(
-                //             flex: 3,
-                //             child: TextFieldWidget(
-                //               hint: "Card Security Code",
-                //               controller: TextEditingController(),
+                //           ],
+                //         ),
+                //         verticalSpaceMedium,
+                //         Row(
+                //           children: [
+                //             Expanded(
+                //               flex: 3,
+                //               child: TextFieldWidget(
+                //                 hint: "Card Security Code",
+                //                 controller: cardCvcController,
+                //               ),
                 //             ),
-                //           ),
-                //           horizontalSpaceSmall,
-                //           const Expanded(
-                //             flex: 2,
-                //             child: Text(
-                //               "What is this?",
-                //               style: TextStyle(color: Colors.blue),
+                //             horizontalSpaceSmall,
+                //             const Expanded(
+                //               flex: 2,
+                //               child: Text(
+                //                 "What is this?",
+                //                 style: TextStyle(color: Colors.blue),
+                //               ),
                 //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ],
+                //           ],
+                //         ),
+                //       ],
+                //     ),
                 //   ),
                 // ),
                 verticalSpaceSmall,
@@ -536,8 +563,8 @@ class _CheckoutState extends State<Checkout> {
                   ),
                 ),
                 verticalSpaceSmall,
-                const Row(
-                  children: [
+                Row(
+                  children: const [
                     Icon(
                       Icons.lock,
                       color: kcSecondaryColor,
@@ -563,72 +590,79 @@ class _CheckoutState extends State<Checkout> {
                 loading = true;
               });
               try {
-                ApiResponse res = await locator<Repository>().payForOrder({
-                  "orderId": widget.infoList.map((e) => e.id).toList(),
-                  "payment_method": paymentMethod == "wallet" ? 1 : 2
-                });
-                if (res.statusCode == 200) {
-                  cart.value.clear();
-                  cart.notifyListeners();
-                  //update local cart
-                  List<Map<String, dynamic>> storedList =
-                      cart.value.map((e) => e.toJson()).toList();
-                  await locator<LocalStorage>()
-                      .save(LocalStorageDir.cart, storedList);
 
-                  if ((res.data["paystack"] != null) &&
-                      (res.data["paystack"] as Map).isNotEmpty) {
-                    String? url =
-                        res.data["paystack"]?["data"]["authorization_url"];
-                    final result = await Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (c) {
-                      return PaymentView(
-                        url: url ?? "",
-                        isPayForOrder: true,
-                      );
-                    }));
-                    if (result) {
-                      List<Map<String, dynamic>> receipts = [];
-                      int totalAmount = 0;
-                      for (var element in (res.data["receipt"] as List)) {
-                        if (element != null) {
-                          receipts.add(Map<String, dynamic>.from(element));
-                          totalAmount = totalAmount +
-                              int.parse(element["transaction"][0]["amount"]
-                                  .toString());
-                        }
-                      }
-                      locator<NavigationService>().navigateTo(Routes.receipt,
-                          arguments: ReceiptArguments(
-                              totalAmount: totalAmount,
-                              info: Map<String, dynamic>.from(receipts[0])));
-                    }
-                  } else {
-                    if ((res.data["receipt"] as List).isEmpty) {
-                      locator<NavigationService>().back();
-                      locator<SnackbarService>()
-                          .showSnackbar(message: "Order Placed Successfully");
-                      return;
-                    }
-                    List<Map<String, dynamic>> receipts = [];
-                    int totalAmount = 0;
-                    for (var element in (res.data["receipt"] as List)) {
-                      if (element != null) {
-                        receipts.add(Map<String, dynamic>.from(element));
-                        totalAmount = totalAmount +
-                            int.parse(
-                                element["transaction"][0]['amount'].toString());
-                      }
-                    }
-                    locator<NavigationService>().navigateTo(Routes.receipt,
-                        arguments: ReceiptArguments(
-                            totalAmount: totalAmount,
-                            info: Map<String, dynamic>.from(receipts[0])));
-                  }
-                } else {
-                  locator<SnackbarService>()
-                      .showSnackbar(message: res.data["message"]);
-                }
+
+                chargeCard(getSubTotal() + getDeliveryFee());
+
+
+
+                // ApiResponse res = await locator<Repository>().payForOrder({
+                //   "orderId": widget.infoList.map((e) => e.id).toList(),
+                //   "payment_method": paymentMethod == "card" ? 2 : 1,
+                //   "Reference":
+                // });
+                // if (res.statusCode == 200) {
+                //   cart.value.clear();
+                //   cart.notifyListeners();
+                //   //update local cart
+                //   List<Map<String, dynamic>> storedList =
+                //       cart.value.map((e) => e.toJson()).toList();
+                //   await locator<LocalStorage>()
+                //       .save(LocalStorageDir.cart, storedList);
+                //
+                //   if ((res.data["paystack"] != null) &&
+                //       (res.data["paystack"] as Map).isNotEmpty) {
+                //     String? url =
+                //         res.data["paystack"]?["data"]["authorization_url"];
+                //     final result = await Navigator.of(context)
+                //         .push(MaterialPageRoute(builder: (c) {
+                //       return PaymentView(
+                //         url: url ?? "",
+                //         isPayForOrder: true,
+                //       );
+                //     }));
+                //     if (result) {
+                //       List<Map<String, dynamic>> receipts = [];
+                //       int totalAmount = 0;
+                //       for (var element in (res.data["receipt"] as List)) {
+                //         if (element != null) {
+                //           receipts.add(Map<String, dynamic>.from(element));
+                //           totalAmount = totalAmount +
+                //               int.parse(element["transaction"][0]["amount"]
+                //                   .toString());
+                //         }
+                //       }
+                //       locator<NavigationService>().navigateTo(Routes.receipt,
+                //           arguments: ReceiptArguments(
+                //               totalAmount: totalAmount,
+                //               info: Map<String, dynamic>.from(receipts[0])));
+                //     }
+                //   } else {
+                //     if ((res.data["receipt"] as List).isEmpty) {
+                //       locator<NavigationService>().back();
+                //       locator<SnackbarService>()
+                //           .showSnackbar(message: "Order Placed Successfully");
+                //       return;
+                //     }
+                //     List<Map<String, dynamic>> receipts = [];
+                //     int totalAmount = 0;
+                //     for (var element in (res.data["receipt"] as List)) {
+                //       if (element != null) {
+                //         receipts.add(Map<String, dynamic>.from(element));
+                //         totalAmount = totalAmount +
+                //             int.parse(
+                //                 element["transaction"][0]['amount'].toString());
+                //       }
+                //     }
+                //     locator<NavigationService>().navigateTo(Routes.receipt,
+                //         arguments: ReceiptArguments(
+                //             totalAmount: totalAmount,
+                //             info: Map<String, dynamic>.from(receipts[0])));
+                //   }
+                // } else {
+                //   locator<SnackbarService>()
+                //       .showSnackbar(message: res.data["message"]);
+                // }
               } catch (e) {
                 print(e);
               }
@@ -675,5 +709,126 @@ class _CheckoutState extends State<Checkout> {
     }
 
     return total;
+  }
+
+
+
+
+  chargeCard( int amount) async {
+    if(paymentMethod == 'wallet'){
+      print('payment is from wallet');
+      ApiResponse res = await locator<Repository>().payForOrder({
+        "orderId": widget.infoList.map((e) => e.id).toList(),
+        "payment_method": 1,
+        "reference": MoneyUtils().getReference(),
+        "id": profile.value.id
+      });
+
+      if (res.statusCode == 200) {
+        cart.value.clear();
+        cart.notifyListeners();
+        //update local cart
+        List<Map<String, dynamic>> storedList =
+        cart.value.map((e) => e.toJson()).toList();
+        await locator<LocalStorage>()
+            .save(LocalStorageDir.cart, storedList);
+        showReceipt('wallet', amount);
+      }else{
+        locator<SnackbarService>()
+            .showSnackbar(message: res.data["message"]);
+      }
+      }
+    else if(paymentMethod == 'paystack'){
+      var charge = Charge()
+        ..amount = (getSubTotal() + getDeliveryFee()) *
+            100 //the money should be in kobo hence the need to multiply the value by 100
+        ..reference = MoneyUtils().getReference()
+        ..email = profile.value.email;
+      CheckoutResponse response = await plugin.checkout(
+        context,
+        method: CheckoutMethod.card,
+        charge: charge,
+      );
+
+      if (response.status == true) {
+        print('paystack payment successful');
+        ApiResponse res = await locator<Repository>().payForOrder({
+          "orderId": widget.infoList.map((e) => e.id).toList(),
+          "payment_method": 2,
+          "reference": charge.reference,
+          "id": profile.value.id
+        });
+
+        if (res.statusCode == 200) {
+          cart.value.clear();
+          cart.notifyListeners();
+          //update local cart
+          List<Map<String, dynamic>> storedList =
+          cart.value.map((e) => e.toJson()).toList();
+          await locator<LocalStorage>()
+              .save(LocalStorageDir.cart, storedList);
+
+          if ((res.data["receipt"] as List).isEmpty) {
+            print('list is empty, no receipt');
+            showReceipt('paystack', amount);
+            locator<SnackbarService>()
+                .showSnackbar(message: "Order Placed Successfully");
+            return;
+          }
+          print('list is not empty, see receipt');
+          List<Map<String, dynamic>> receipts = [];
+          int totalAmount = 0;
+          for (var element in (res.data["receipt"] as List)) {
+            if (element != null && element["transaction"] is List && element["transaction"].isNotEmpty) {
+              var transactions = element["transaction"] as List;
+              if (transactions.isNotEmpty && transactions[0] != null) {
+                var transactionAmount = transactions[0]['amount'];
+                if (transactionAmount != null) {
+                  receipts.add(Map<String, dynamic>.from(element));
+                  totalAmount += int.parse(transactionAmount.toString());
+                }
+              }
+            }
+          }
+          if (receipts.isNotEmpty) {
+            showReceipt('paystack', amount);
+            locator<NavigationService>().navigateTo(Routes.receipt,
+              arguments: ReceiptArguments(
+                totalAmount: totalAmount,
+                info: Map<String, dynamic>.from(receipts[0]),
+              ),
+            );
+          } else {
+            print('no receipts found');
+            showReceipt('paystack', amount);
+            locator<SnackbarService>()
+                .showSnackbar(message: "Order Placed Successfully");
+            return;
+          }
+        } else {
+          locator<SnackbarService>()
+              .showSnackbar(message: res.data["message"]);
+        }
+      }
+    }
+
+
+  }
+
+  void showReceipt(String paymentMethod, int amount) {
+    print(getSubTotal());
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return ReceiptWidget(
+          amount: amount,
+          drawTicketNumber: '',
+          paymentMethod: paymentMethod,
+          senderName: profile.value.firstname!,
+          paymentTime: DateTime.now(),
+        );
+      },
+    );
   }
 }

@@ -7,8 +7,14 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/components/text_field_widget.dart';
 import 'package:afriprize/ui/views/profile/payment_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import '../../../state.dart';
+import '../../../utils/moneyUtil.dart';
+import '../cart/custom_reciept.dart';
 
 class Deposit extends StatefulWidget {
   const Deposit({Key? key}) : super(key: key);
@@ -20,6 +26,13 @@ class Deposit extends StatefulWidget {
 class _DepositState extends State<Deposit> {
   final amount = TextEditingController();
   bool isLoading = false;
+  final plugin = PaystackPlugin();
+
+  @override
+  void initState() {
+    plugin.initialize(publicKey: MoneyUtils().payStackPublicKey);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +51,18 @@ class _DepositState extends State<Deposit> {
               style: TextStyle(),
             ),
             verticalSpaceLarge,
-            TextFieldWidget(hint: "Amount", controller: amount),
+            // TextFieldWidget(hint: "Amount", controller: amount),
+          TextField(
+            controller: amount,
+            keyboardType: TextInputType.numberWithOptions(decimal: false),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              MoneyUtils(),
+            ],
+            decoration: InputDecoration(
+              hintText: "Amount",
+            ),
+          ),
             verticalSpaceMedium,
             SubmitButton(
               isLoading: isLoading,
@@ -48,28 +72,7 @@ class _DepositState extends State<Deposit> {
                   isLoading = true;
                 });
 
-                try {
-                  ApiResponse res = await locator<Repository>().initTransaction(
-                    {
-                      "amount": double.parse(amount.text),
-                    },
-                  );
-                  if (res.statusCode == 200) {
-                    String url =
-                        res.data["paystack"]["data"]["authorization_url"];
-                    String ref = res.data["paystack"]["data"]["reference"];
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (ctx) {
-                      return PaymentView(url: url);
-                    })).whenComplete(() async =>
-                            await locator<Repository>().verifyTransaction(ref));
-                  } else {
-                    locator<SnackbarService>()
-                        .showSnackbar(message: res.data['message']);
-                  }
-                } catch (e) {
-                  print(e);
-                }
+                chargeCard();
                 setState(() {
                   isLoading = false;
                 });
@@ -79,6 +82,54 @@ class _DepositState extends State<Deposit> {
           ],
         ),
       ),
+    );
+  }
+
+
+
+
+
+  chargeCard() async {
+    var charge = Charge()
+      ..amount = MoneyUtils().getAmountAsInt(amount) *
+          100 //the money should be in kobo hence the need to multiply the value by 100
+      ..reference = MoneyUtils().getReference()
+      ..email = profile.value.email;
+    CheckoutResponse response = await plugin.checkout(
+      context,
+      method: CheckoutMethod.card,
+      charge: charge,
+    );
+    if (response.status == true) {
+      print('paystack payment successful');
+    ApiResponse res = await locator<Repository>().initTransaction(
+    {
+    "amount": MoneyUtils().getAmountAsInt(amount),
+    "reference": charge.reference
+    });
+
+      if (res.statusCode == 200) {
+        showReceipt();
+      } else {
+        locator<SnackbarService>()
+            .showSnackbar(message: res.data["message"]);
+      }
+    }
+  }
+
+  void showReceipt() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return ReceiptWidget(
+          amount: MoneyUtils().getAmountAsInt(amount),
+          drawTicketNumber: '',
+          paymentMethod: 'PayStack',
+          senderName: profile.value.firstname!,
+          paymentTime: DateTime.now(),
+        );
+      },
     );
   }
 }

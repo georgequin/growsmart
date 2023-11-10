@@ -26,11 +26,26 @@ class DashboardViewModel extends BaseViewModel {
   List<Product> ads = [];
 
   void addToCart(Product product) async {
-    CartItem cartItem = CartItem(product: product, quantity: 1);
-    cart.value.add(cartItem);
+
+    final existingItem = cart.value.firstWhere(
+          (cartItem) => cartItem.product?.id == product.id,
+      orElse: () => CartItem(product: product, quantity: 0),
+    );
+
+    if (existingItem.quantity != null && existingItem.quantity! > 0 && existingItem.product != null) {
+      // If the item exists, increase its quantity
+      existingItem.quantity = (existingItem.quantity! + 1);
+    } else {
+      // If the item is not in the cart, add it as a new item
+      existingItem.quantity = 1;
+      cart.value.add(existingItem);
+
+    }
+
     List<Map<String, dynamic>> storedList =
-        cart.value.map((e) => e.toJson()).toList();
-    await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
+    cart.value.map((e) => e.toJson()).toList();
+    await locator<LocalStorage>()
+        .save(LocalStorageDir.cart, storedList);
     locator<SnackbarService>().showSnackbar(message: "Product added to cart");
     cart.notifyListeners();
   }

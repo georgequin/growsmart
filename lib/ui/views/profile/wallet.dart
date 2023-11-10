@@ -107,7 +107,7 @@ class _WalletState extends State<Wallet> {
               Container(
                 height: 150,
                 decoration: BoxDecoration(
-                    color: kcPrimaryColor,
+                    color: kcSecondaryColor,
                     borderRadius: BorderRadius.circular(15)),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 50.0),
@@ -116,7 +116,7 @@ class _WalletState extends State<Wallet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "Balance",
+                        " Available Balance",
                         style: TextStyle(fontSize: 18, color: kcWhiteColor),
                       ),
                       Text(
@@ -126,10 +126,49 @@ class _WalletState extends State<Wallet> {
                           color: kcWhiteColor,
                           fontWeight: FontWeight.bold,
                         ),
-                      )
+                      ),
+
                     ],
                   ),
+
+
                 ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Expanded(
+                  //   child: SubmitButton(
+                  //     isLoading: false,
+                  //     label: "Withdraw",
+                  //     submit: () {
+                  //       locator<NavigationService>()
+                  //           .navigateTo(Routes.withdrawView);
+                  //     },
+                  //     color: kcPrimaryColor,
+                  //     boldText: true,
+                  //   ),
+                  // ),
+                  // const SizedBox(width: 30),
+                  Expanded(
+                    child: SubmitButton(
+                      isLoading: false,
+                      icon: Icons.add_circle_outline,
+                      label: "Add money",
+                      submit: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (ctx) {
+                          return const Deposit();
+                        }));
+                      },
+                      color: Colors.transparent,
+                      iconColor: Colors.black,
+                      textColor: Colors.black,
+                      boldText: true,
+                    ),
+                  )
+                ],
               ),
               const SizedBox(
                 height: 20,
@@ -155,80 +194,71 @@ class _WalletState extends State<Wallet> {
                           child: ListView.builder(
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              Transaction transaction =
-                                  transactions.reversed.toList()[index];
+                              transactions.sort((b, a) => b.created!.compareTo(a.created!));
+                              Transaction transaction = transactions.reversed.toList()[index];
                               return Container(
-                                decoration: const BoxDecoration(
-                                    border: Border(
-                                        bottom:
-                                            BorderSide(color: kcLightGrey))),
-                                child: ListTile(
-                                  minLeadingWidth: 16,
-                                  leading: Icon(
-                                    transaction.type == 2
-                                        ? Icons.arrow_downward
-                                        : Icons.arrow_upward,
-                                    color: transaction.type == 2
-                                        ? Colors.green
-                                        : Colors.red,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(color: Colors.grey.shade300), // Adjusted color to light grey
                                   ),
+                                ),
+                                child: ListTile(
+                                  minLeadingWidth: 10, // Reduced to align with the design
+                                  // leading: Container(
+                                  //   margin: EdgeInsets.only(right: 8), // Adjust spacing if needed
+                                  //   child:
+                                  //   // Icon(
+                                  //   //   transaction.type == 2 ? Icons.add : Icons.remove, // Adjusted to + for credit, - for debit
+                                  //   //   color: transaction.type == 2 ? Colors.green : Colors.red,
+                                  //   // ),
+                                  // ),
                                   title: Text(
-                                    "Transaction (ID: ${transaction.id})",
-                                    style: const TextStyle(fontSize: 15),
+                                    transaction.type == 2 ? 'Wallet Top Up' : 'Purchase', // Changed from 'Transaction' to match design
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black, // Changed color to black to match the design
+                                    ),
                                   ),
                                   subtitle: Text(
-                                    DateFormat('E d MMM y').format(
-                                        DateTime.parse(transaction.created!)),
-                                    style: const TextStyle(
-                                        color: kcWhiteColor, fontSize: 12),
+                                    DateFormat('EEEE, d MMM').format(DateTime.parse(transaction.created!)), // Changed format to match design
+                                    style: TextStyle(
+                                      color: Colors.grey, // Adjusted color to grey to match design
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                  trailing: Text(
-                                    "N${NumberFormat.simpleCurrency(name: "").format(transaction.amount)}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        transaction.type == 2 ? "+N${transaction.amount}" : "-N${transaction.amount}",
+                                        style: TextStyle(
+                                          color: transaction.type == 2 ? Colors.green : Colors.red,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        DateFormat('hh:mm a').format(DateTime.parse(transaction.created!)), // Added to match the time design
+                                        style: TextStyle(
+                                          color: Colors.grey, // Adjusted color to grey to match design
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
                             },
                             itemCount: transactions.length,
                           ),
-                        ),
+
+              ),
               const SizedBox(
                 height: 50,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: SubmitButton(
-                      isLoading: false,
-                      label: "Withdraw",
-                      submit: () {
-                        locator<NavigationService>()
-                            .navigateTo(Routes.withdrawView);
-                      },
-                      color: kcPrimaryColor,
-                      boldText: true,
-                    ),
-                  ),
-                  const SizedBox(width: 30),
-                  Expanded(
-                    child: SubmitButton(
-                      isLoading: false,
-                      label: "Deposit",
-                      submit: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (ctx) {
-                          return const Deposit();
-                        }));
-                      },
-                      color: kcMediumGrey,
-                      boldText: true,
-                    ),
-                  )
-                ],
-              )
+
             ],
           ),
         ),
