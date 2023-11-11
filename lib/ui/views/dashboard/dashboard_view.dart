@@ -588,25 +588,29 @@ class ProductRow extends StatelessWidget {
               Stack(
 
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12)),
-                    child: (product.raffle == null || product.raffle!.isEmpty)
-                        ? SizedBox(
-                      height: 128,
-                      width: MediaQuery.of(context).size.width,
-                    )
-                        : Image.network(
-                      (product.raffle!.isNotEmpty)
-                          ? product.raffle![0].pictures![0].location!
-                          : '', // Provide a default value or handle the case when pictures are empty
-                      fit: BoxFit.cover,
-                      width: MediaQuery.of(context).size.width,
-                      height: 130,
-                    ),
-                  ),
-                  Positioned(
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12)),
+                child: (product.raffle == null ||
+                        product.raffle!.isEmpty ||
+                        product.raffle![0].pictures == null ||
+                        product.raffle![0].pictures!.isEmpty)
+                    ? SizedBox(
+                        height: 128,
+                        width: MediaQuery.of(context).size.width,
+                      )
+                    : Image.network(
+                        (product.raffle![0].pictures!.isNotEmpty)
+                            ? product.raffle![0].pictures![0].location ??
+                                '' // Use ?? to provide a default value if location is null
+                            : '',
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                        height: 130,
+                      ),
+              ),
+              Positioned(
                     top: 20,
                     right: 20,
                     child: Container(
@@ -725,7 +729,7 @@ class ProductRow extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 3,
                                   style: const TextStyle(
-                                    fontSize: 19,
+                                    fontSize: 25,
                                     color: Colors.black,
                                   ),
                                 ),
@@ -762,16 +766,16 @@ class ProductRow extends StatelessWidget {
                               SizedBox(
                                 width: 100,
                                 child: LinearProgressIndicator(
-                                  value: ((product.orders
-                                      ?.where((element) => element["status"] != 1)
-                                      .toList()
-                                      .length)! /
-                                      (product.stock!)),
+                                  value: product.orders != null
+                                      ? (product.orders!
+                                      .where((element) => element["status"] != 1)
+                                      .length / (product.stock ?? 1)) // Provide a default value for stock if it's null.
+                                      : 0, // If product.orders is null, the progress should be set to 0.
                                   backgroundColor: kcSecondaryColor.withOpacity(0.3),
-                                  valueColor:
-                                  const AlwaysStoppedAnimation(kcSecondaryColor),
+                                  valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
                                 ),
                               ),
+
 
                               Text(
                                 (product.raffle == null || product.raffle!.isEmpty)
