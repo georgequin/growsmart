@@ -36,15 +36,20 @@ class _ProfileScreen extends State<ProfileScreen> {
   final repo = locator<Repository>();
   String shippingId = "";
   bool makingDefault = false;
+  bool isUpdating = false;
   final snackBar = locator<SnackbarService>();
 
   void updateProfilePicture() async {
-
-    //pick photo
+    // pick photo
+    setState(() {
+      isUpdating = true;
+    });
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    String oldPath = image!.path;
+    if (image == null) return; // Handle null (user didn't pick an image)
+
+    String oldPath = image.path;
     String newPath = '${path.withoutExtension(oldPath)}.png';
     File inputFile = File(oldPath);
     File outputFile = File(newPath);
@@ -55,9 +60,21 @@ class _ProfileScreen extends State<ProfileScreen> {
       format: CompressFormat.png,
     );
 
+    if (result == null) return;
+
+    // Check file size
+    final fileSize = await outputFile.length();
+    if (fileSize > 5 * 1024 * 1024) { // 5 MB size limit
+      snackBar.showSnackbar(message: "Please pick an image smaller than 5MB");
+      setState(() {
+        isUpdating = false;
+      });
+      return;
+    }
+
     try {
       ApiResponse res = await locator<Repository>().updateProfilePicture({
-        "picture": await MultipartFile.fromFile(File(result!.path).path),
+        "picture": await MultipartFile.fromFile(outputFile.path),
       });
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: res.data["message"]);
@@ -66,6 +83,10 @@ class _ProfileScreen extends State<ProfileScreen> {
     } catch (e) {
       print(e);
     }
+
+    setState(() {
+      isUpdating = false;
+    });
   }
 
   void getProfile() async {
@@ -139,6 +160,9 @@ class _ProfileScreen extends State<ProfileScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
+                  isUpdating
+                      ? CircularProgressIndicator() // Show loader when updating
+                      :
                   GestureDetector(
                     onTap: () {
                       updateProfilePicture();
@@ -176,8 +200,6 @@ class _ProfileScreen extends State<ProfileScreen> {
               ),
             ),
           ),
-
-
 
           Padding(
               padding: EdgeInsets.all(16.0), // Add padding inside the card

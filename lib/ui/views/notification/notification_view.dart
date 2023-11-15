@@ -89,7 +89,6 @@ class NotificationView extends StackedView<NotificationViewModel> {
                                     )
                                     ),
                           horizontalSpaceSmall,
-
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,32 +113,6 @@ class NotificationView extends StackedView<NotificationViewModel> {
                   );
                 }),
       ),
-      // body: ListView(
-      //   padding: const EdgeInsets.all(20),
-      //   children: [
-      //     const Text(
-      //       "Yesterday",
-      //       style: TextStyle(
-      //         color: kcSecondaryColor,
-      //         fontWeight: FontWeight.bold,
-      //       ),
-      //     ),
-      //     verticalSpaceMedium,
-      //     ListView.builder(
-      //         shrinkWrap: true,
-      //         itemCount: 3,
-      //         itemBuilder: (context, index) {
-      //           return Container(
-      //             margin: const EdgeInsets.symmetric(vertical: 10),
-      //             color: kcWhiteColor,
-      //             child: const ListTile(
-      //               title: Text("Your order has been sent out"),
-      //               subtitle: Text("Delivery in progress"),
-      //             ),
-      //           );
-      //         })
-      //   ],
-      // ),
     );
   }
 
