@@ -5,6 +5,7 @@ import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
+import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:afriprize/ui/views/profile/track.dart';
 import 'package:flutter/material.dart';
@@ -168,18 +169,17 @@ class _OrderListState extends State<OrderList> {
                         ),
                         SizedBox(height: 4),
                         OrderUtil.statusChip(order.tracking!.status!),
-                        // Chip(
-                        //   label: Text('Delivered', style: TextStyle(color: Colors.white)),
-                        //   backgroundColor: Colors.green,
-                        // ),
                       ],
                     ),
                   ],
                 ),
                 SizedBox(height: 8),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(
+                    Align(
+                      alignment: Alignment.centerLeft,
                       child: ElevatedButton.icon(
                         onPressed: () {
                           locator<NavigationService>().navigateToTrack(item: order);
@@ -192,16 +192,36 @@ class _OrderListState extends State<OrderList> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
-                    TextButton.icon(
-                      onPressed: () {
-                        // handle See Ticket action
-                      },
-                      icon: Icon(Icons.receipt_long_outlined, color: Colors.black),
-                      label: Text("See Ticket", style: TextStyle(color: Colors.black)),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min, // Restrict the row size to its children
+                        children: [
+                          order.status == 1 ?
+                              const Row(
+                                children: [
+                                  Text( 'paid', style: TextStyle(color: Colors.green, fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                                  Icon(Icons.check_circle_outline, color: Colors.green, size: 15,)
+                                ],
+                              ) : ElevatedButton.icon(
+                            onPressed: () {
+                              locator<NavigationService>().navigateToTrack(item: order);
+                            },
+                            icon: Icon(Icons.payment_outlined, size: 16),
+                            label: Text("pay"),
+                            style: ElevatedButton.styleFrom(
+                              primary: kcSecondaryColor, // Background color
+                              onPrimary: Colors.white, // Text color
+                            ),
+                          ),
+
+                        ],
+                      ),
                     ),
                   ],
                 )
+
               ],
             ),
           ),

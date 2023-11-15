@@ -1,5 +1,5 @@
 import 'package:afriprize/ui/common/app_colors.dart';
-import 'package:afriprize/ui/components/background.dart';
+// import 'package:afriprize/ui/components/background.dart';
 import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
@@ -43,21 +43,23 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
         slivers: [
           SliverAppBar(
             expandedHeight: 150,
-            flexibleSpace: Background(
-              children: [
-                Positioned(
-                  top: 30,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: Image.asset("assets/images/afriprize_light.png"),
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              background: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 60.0), // Adjust the padding to move the image down
+                  child: Image.asset(
+                    "assets/images/img.png",
+                    height: 80, // Adjust the height to make the image smaller
+                    fit: BoxFit.fitHeight,
                   ),
-                )
-              ],
+                ),
+              ),
             ),
           ),
+
+
           SliverList(
             delegate: SliverChildListDelegate(
               [

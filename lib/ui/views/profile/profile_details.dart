@@ -12,6 +12,7 @@ import '../../../app/app.locator.dart';
 import '../../../core/data/models/profile.dart';
 import '../../../core/data/repositories/repository.dart';
 import '../../../core/network/api_response.dart';
+import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
@@ -35,15 +36,20 @@ class _ProfileScreen extends State<ProfileScreen> {
   final repo = locator<Repository>();
   String shippingId = "";
   bool makingDefault = false;
+  bool isUpdating = false;
   final snackBar = locator<SnackbarService>();
 
   void updateProfilePicture() async {
-
-    //pick photo
+    // pick photo
+    setState(() {
+      isUpdating = true;
+    });
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    String oldPath = image!.path;
+    if (image == null) return; // Handle null (user didn't pick an image)
+
+    String oldPath = image.path;
     String newPath = '${path.withoutExtension(oldPath)}.png';
     File inputFile = File(oldPath);
     File outputFile = File(newPath);
@@ -54,9 +60,21 @@ class _ProfileScreen extends State<ProfileScreen> {
       format: CompressFormat.png,
     );
 
+    if (result == null) return;
+
+    // Check file size
+    final fileSize = await outputFile.length();
+    if (fileSize > 5 * 1024 * 1024) { // 5 MB size limit
+      snackBar.showSnackbar(message: "Please pick an image smaller than 5MB");
+      setState(() {
+        isUpdating = false;
+      });
+      return;
+    }
+
     try {
       ApiResponse res = await locator<Repository>().updateProfilePicture({
-        "picture": await MultipartFile.fromFile(File(result!.path).path),
+        "picture": await MultipartFile.fromFile(outputFile.path),
       });
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: res.data["message"]);
@@ -65,6 +83,10 @@ class _ProfileScreen extends State<ProfileScreen> {
     } catch (e) {
       print(e);
     }
+
+    setState(() {
+      isUpdating = false;
+    });
   }
 
   void getProfile() async {
@@ -86,6 +108,39 @@ class _ProfileScreen extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final MaterialStateProperty<Color?> trackColor =
+    MaterialStateProperty.resolveWith<Color?>(
+          (Set<MaterialState> states) {
+        // Track color when the switch is selected.
+        if (states.contains(MaterialState.selected)) {
+          return Colors.amber;
+        }
+        // Otherwise return null to set default track color
+        // for remaining states such as when the switch is
+        // hovered, focused, or disabled.
+        return null;
+      },
+    );
+
+    final MaterialStateProperty<Color?> overlayColor =
+    MaterialStateProperty.resolveWith<Color?>(
+          (Set<MaterialState> states) {
+        // Material color when switch is selected.
+        if (states.contains(MaterialState.selected)) {
+          return Colors.amber.withOpacity(0.54);
+        }
+        // Material color when switch is disabled.
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.grey.shade400;
+        }
+        // Otherwise return null to set default material color
+        // for remaining states such as when the switch is
+        // hovered, or focused.
+        return null;
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile Details'),
@@ -105,28 +160,40 @@ class _ProfileScreen extends State<ProfileScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
+                  isUpdating
+                      ? CircularProgressIndicator() // Show loader when updating
+                      :
                   GestureDetector(
                     onTap: () {
                       updateProfilePicture();
                     },
-                    child: ProfilePicture(
-                      size: 80,
-                      url: profile.value.pictures!.isEmpty
-                          ? null
-                          : profile.value.pictures?[0].location,
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: () {
-                        updateProfilePicture();
-                      },
-                      child: Icon(
-                        Icons.edit,
-                        color: kcPrimaryColor,
-                      ),
+                    // This stack is just for the profile picture and the edit icon
+                    child: Stack(
+                      alignment: Alignment.bottomCenter, // Align the icon to the bottom right of the profile picture
+                      children: [
+                        ProfilePicture(
+                          size: 80,
+                          url: profile.value.pictures!.isEmpty
+                              ? null
+                              : profile.value.pictures?[0].location,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0), // Padding to position the edit icon correctly
+                          child: Container(
+                            child:  Text(
+                              'change', style: TextStyle(
+                              color: uiMode.value == AppUiModes.light ?  Colors.black : Colors.white,
+                            ),
+                            )
+
+                            // Icon(
+                            //   Icons.edit,
+                            //   color: uiMode.value == AppUiModes.light ?  kcPrimaryColor : kcSecondaryColor,
+                            //   size: 24, // Adjust the size of the icon as needed
+                            // ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -134,18 +201,16 @@ class _ProfileScreen extends State<ProfileScreen> {
             ),
           ),
 
-          Card(
-            margin: EdgeInsets.all(8.0), // Adjust the margin as needed
-            child: Padding(
+          Padding(
               padding: EdgeInsets.all(16.0), // Add padding inside the card
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                 const Text(
                     "Personal Details",
                     style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold
                     ),
                   ),
@@ -170,7 +235,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                     subtitle: Text("${profile.value.firstname} ${profile.value.lastname}",
                                       style: TextStyle(
                                           fontSize: 12,
-                                          fontWeight: FontWeight.bold
+                                          color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
                                       ),),
                                   ),
                                 ),
@@ -178,15 +243,15 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   flex: 4,
                                   // This will give bounded constraints to the ListTile.
                                   child: ListTile(
-                                    title: Text('Email Address',
+                                    title: const Text('Email Address',
                                       style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold
                                       ),),
                                     subtitle: Text('${profile.value.email}',
                                         style: TextStyle(
+                                        color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
                                         fontSize: 12,
-                                        fontWeight: FontWeight.bold
                                     ),),
                                   ),
                                 ),
@@ -202,8 +267,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                                     ),),
                                     subtitle: Text("${profile.value.phone}",
                                       style: TextStyle(
+                                          color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
                                           fontSize: 12,
-                                          fontWeight: FontWeight.bold
                                       ),),
                                   ),
                                 ),
@@ -217,18 +282,15 @@ class _ProfileScreen extends State<ProfileScreen> {
                   horizontalSpaceMedium,
 
                   const Text(
-                    "Personal Details",
+                    "Addresses",
                     style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold
                     ),
                   ),
 
-                  Card(
-                    margin: EdgeInsets.all(8.0),
-                    shadowColor: Colors.grey,
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
+                  Padding(
+                      padding: EdgeInsets.symmetric(vertical: 3.0),
                       child: Column(
                         children: [
                           ...List.generate(
@@ -239,138 +301,71 @@ class _ProfileScreen extends State<ProfileScreen> {
                               return Container(
                                 padding: const EdgeInsets.all(10),
                                 margin: const EdgeInsets.only(bottom: 10),
-                                // decoration: BoxDecoration(
-                                //     border: Border.all(
-                                //         color: kcBlackColor, width: 0.5)),
-                                child: Column(
-                                    mainAxisAlignment:MainAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:MainAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.location_on_outlined,
-                                            size: 20,
-                                          ),
-                                          Text('${shipping.shippingAddress} ${shipping.shippingCity} ${shipping.shippingState} ' ?? ""),
+                                child: Card(
+                                  shadowColor: Colors.grey,
+                                  child: Padding(
+                                  padding: const EdgeInsets.all(6.0), // This adds horizontal padding
+                                  child: Column(
+                                      mainAxisAlignment:MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:MainAxisAlignment.start,
+                                          children: [
+                                            const Icon(
+                                              Icons.location_on_outlined,
+                                              size: 20,
+                                            ),
+                                            Text('${shipping.shippingAddress} ${shipping.shippingCity} ${shipping.shippingState} ' ?? ""),
+                                          ],
+                                        ),
+                                        verticalSpaceSmall,
+                                        Row(
+                                          mainAxisAlignment:MainAxisAlignment.start,
+                                          children: [
+                                            const Icon(
+                                              Icons.phone,
+                                              size: 20,
+                                            ),
+                                            Text('${shipping.shippingPhone}' ?? ""),
 
-                                          // (shipping.isDefault ?? false)
-                                          //     ? const Text("Default")
-                                          //     : (shippingId == shipping.id &&
-                                          //     makingDefault)
-                                          //     ? const Center(
-                                          //   child:
-                                          //   CircularProgressIndicator(),
-                                          // )
-                                          //     : TextButton(
-                                          //   style: ButtonStyle(
-                                          //       backgroundColor:
-                                          //       MaterialStateProperty
-                                          //           .all(
-                                          //           kcPrimaryColor)),
-                                          //   onPressed: () async {
-                                          //     setState(() {
-                                          //       shippingId = shipping.id!;
-                                          //       makingDefault = true;
-                                          //     });
-                                          //
-                                          //     try {
-                                          //       ApiResponse res =
-                                          //       await locator<
-                                          //           Repository>()
-                                          //           .setDefaultShipping(
-                                          //           {},
-                                          //           shipping.id!);
-                                          //       if (res.statusCode == 200) {
-                                          //         ApiResponse pRes =
-                                          //         await locator<
-                                          //             Repository>()
-                                          //             .getProfile();
-                                          //         if (pRes.statusCode ==
-                                          //             200) {
-                                          //           profile.value = Profile
-                                          //               .fromJson(Map<
-                                          //               String,
-                                          //               dynamic>.from(
-                                          //               pRes.data[
-                                          //               "user"]));
-                                          //
-                                          //           profile
-                                          //               .notifyListeners();
-                                          //         }
-                                          //       }
-                                          //     } catch (e) {
-                                          //       print(e);
-                                          //     }
-                                          //
-                                          //     setState(() {
-                                          //       shippingId = "";
-                                          //       makingDefault = false;
-                                          //     });
-                                          //   },
-                                          //   child: const Text(
-                                          //     "Make default",
-                                          //     style: TextStyle(
-                                          //         color: kcWhiteColor),
-                                          //   ),
-                                          // )
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:MainAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.phone,
-                                            size: 20,
-                                          ),
-                                          Text('${shipping.shippingPhone}' ?? ""),
-
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:MainAxisAlignment.start,
-                                        children: [
-                                          horizontalSpaceSmall,
-                                          const Text('Set as default', style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal
-                                          ),),
-                                          horizontalSpaceTiny,
-                                          SizedBox(
-                                            height: 20.0, // Set your desired height constraint
-                                            child:
-                                                ToggleSwitch(
-                                                  initialLabelIndex: shipping.isDefault! ? 1 : 0,
-                                                  customWidths: const [30.0, 20.0], // Width for each side
-                                                  cornerRadius: 20.0,
-                                                  customHeights: const [10.0],
-                                                  activeBgColors: const [
-                                                    [Colors.grey], // Color for the left side when it's active
-                                                    [kcSecondaryColor] // Color for the right side when it's active
-                                                  ],
-                                                  activeFgColor: Colors.white, // Text/icon color for the active state
-                                                  inactiveBgColor: Colors.grey, // Background color for the inactive state
-                                                  inactiveFgColor: Colors.black, // Text/icon color for the inactive state
-                                                  totalSwitches: 2,
-                                                  labels: const ['', ''], // Labels for the switches
-                                                  onToggle: (index) async {
-                                                    print('switched to: $index');
-                                                    if(index == 1){
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:MainAxisAlignment.start,
+                                          children: [
+                                            horizontalSpaceSmall,
+                                            const Text('Set as default', style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.normal
+                                            ),),
+                                            horizontalSpaceTiny,
+                                            SizedBox(
+                                              height: 20.0,
+                                              child: Switch(
+                                                // This bool value toggles the switch.
+                                                value: shipping.isDefault!,
+                                                overlayColor: overlayColor,
+                                                trackColor: trackColor,
+                                                thumbColor: const MaterialStatePropertyAll<Color>(Colors.black),
+                                                onChanged: (bool value) {
+                                                  // This is called when the user toggles the switch.
+                                                  setState(() async {
+                                                    if(value){
                                                       setState(() {
                                                         shippingId = shipping.id!;
-                                                        makingDefault = true;
+                                                        makingDefault = value;
                                                       });
 
                                                       try {
                                                         ApiResponse res =
-                                                        await locator<
+                                                            await locator<
                                                             Repository>()
                                                             .setDefaultShipping(
                                                             {},
                                                             shipping.id!);
                                                         if (res.statusCode == 200) {
                                                           ApiResponse pRes =
-                                                          await locator<
+                                                              await locator<
                                                               Repository>()
                                                               .getProfile();
                                                           if (pRes.statusCode ==
@@ -392,59 +387,60 @@ class _ProfileScreen extends State<ProfileScreen> {
 
                                                       setState(() {
                                                         shippingId = "";
-                                                        makingDefault = false;
+                                                        makingDefault = value;
                                                       });
 
                                                     }
+                                                  });
+                                                },
+                                              )
+                                            ),
+                                            horizontalSpaceTiny,
+                                            InkWell(
+                                              onTap: () async {
 
-                                                  },
-                                                )
-                                          ),
-                                          // horizontalSpaceTiny,
-                                          // Icon(Icons.edit_note_outlined),
-                                          horizontalSpaceTiny,
-                                          InkWell(
-                                            onTap: () async {
-                                              // Put your click action here
-                                              // try {
-                                              //   ApiResponse res =
-                                              //       await locator<
-                                              //       Repository>()
-                                              //       .setDefaultShipping(
-                                              //       {},
-                                              //       shipping.id!);
-                                              //   if (res.statusCode == 200) {
-                                              //     ApiResponse pRes =
-                                              //         await locator<
-                                              //         Repository>()
-                                              //         .getProfile();
-                                              //     if (pRes.statusCode ==
-                                              //         200) {
-                                              //       profile.value = Profile
-                                              //           .fromJson(Map<
-                                              //           String,
-                                              //           dynamic>.from(
-                                              //           pRes.data[
-                                              //           "user"]));
-                                              //
-                                              //       profile
-                                              //           .notifyListeners();
-                                              //     }
-                                              //   }
-                                              // } catch (e) {
-                                              //   print(e);
-                                              // }
-                                              Fluttertoast.showToast(msg: 'cant delete..');
-                                            },
-                                            child: Icon(Icons.delete),
-                                          ),
+                                                  if (shipping.isDefault!) {
+                                                  Fluttertoast.showToast(msg: 'Can\'t delete default address.');
+                                                  } else {
+                                                    try {
+                                                      final res = await locator<DialogService>()
+                                                          .showConfirmationDialog(
+                                                          title: "Are you sure?",
+                                                          cancelTitle: "No",
+                                                          confirmationTitle: "Yes");
+
+                                                      if (res!.confirmed) {
+                                                        ApiResponse res = await locator<Repository>().deleteDefaultShipping(
+                                                            shipping.id!);
+                                                        if (res.statusCode == 200) {
+                                                          ApiResponse pRes = await locator<Repository>().getProfile();
+                                                          if (pRes.statusCode == 200) {
+                                                            setState(() {
+                                                              // Update your state here
+                                                              profile.value = Profile.fromJson(
+                                                                  Map<String, dynamic>.from(pRes.data["user"]));
+                                                              profile.notifyListeners();
+                                                            });
+                                                          }
+                                                        }
+                                                      }
+                                                    } catch (e) {
+                                                      print(e);
+                                                      Fluttertoast.showToast(msg: 'can\'t delete..');
+                                                    }
+                                                  }
+                                              },
+                                              child: Icon(Icons.delete),
+                                            ),
 
 
-                                        ],
-                                      ),
-                                    ]
+                                          ],
+                                        ),
+                                      ]
+                                  )
+                                  )
+
                                 )
-
 
                               );
                             },
@@ -453,7 +449,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                         ],
                       ),
                     ),
-                  ),
+
 
                   TextButton(
                     style: ButtonStyle(
@@ -473,11 +469,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                           .whenComplete(() => setState(() {}));
                     },
                   ),
-                  horizontalSpaceMedium,
+                  horizontalSpaceLarge,
                 ]
               ),
             ),
-          ),
 
 
            ],
