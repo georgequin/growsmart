@@ -64,6 +64,7 @@ class _CheckoutState extends State<Checkout> {
         children: [
           Card(
             child: ExpansionTile(
+              initiallyExpanded: true,
               title: const Text(
                 "Order review",
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -134,6 +135,7 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMedium,
           Card(
             child: ExpansionTile(
+              initiallyExpanded: true,
               childrenPadding: const EdgeInsets.symmetric(horizontal: 20),
               title: const Text(
                 "Billing summary",
@@ -151,7 +153,7 @@ class _CheckoutState extends State<Checkout> {
                       ),
                     ),
                     Text(
-                      "N${getSubTotal()}",
+                      MoneyUtils().formatAmount(getSubTotal()),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -168,7 +170,7 @@ class _CheckoutState extends State<Checkout> {
                       ),
                     ),
                     Text(
-                      "N${getDeliveryFee()}",
+                      getDeliveryFee() == 0 ? "Free" : "N${getDeliveryFee()}",
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -188,7 +190,7 @@ class _CheckoutState extends State<Checkout> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "N${getSubTotal() + getDeliveryFee()}",
+                      MoneyUtils().formatAmount(getSubTotal() + getDeliveryFee()),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -201,6 +203,7 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMedium,
           Card(
             child: ExpansionTile(
+              initiallyExpanded: true,
               childrenPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               title: const Text(
@@ -350,6 +353,7 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMedium,
           Card(
             child: ExpansionTile(
+              initiallyExpanded: true,
               childrenPadding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               title: const Text(
@@ -590,79 +594,8 @@ class _CheckoutState extends State<Checkout> {
                 loading = true;
               });
               try {
-
-
                 chargeCard(getSubTotal() + getDeliveryFee());
 
-
-
-                // ApiResponse res = await locator<Repository>().payForOrder({
-                //   "orderId": widget.infoList.map((e) => e.id).toList(),
-                //   "payment_method": paymentMethod == "card" ? 2 : 1,
-                //   "Reference":
-                // });
-                // if (res.statusCode == 200) {
-                //   cart.value.clear();
-                //   cart.notifyListeners();
-                //   //update local cart
-                //   List<Map<String, dynamic>> storedList =
-                //       cart.value.map((e) => e.toJson()).toList();
-                //   await locator<LocalStorage>()
-                //       .save(LocalStorageDir.cart, storedList);
-                //
-                //   if ((res.data["paystack"] != null) &&
-                //       (res.data["paystack"] as Map).isNotEmpty) {
-                //     String? url =
-                //         res.data["paystack"]?["data"]["authorization_url"];
-                //     final result = await Navigator.of(context)
-                //         .push(MaterialPageRoute(builder: (c) {
-                //       return PaymentView(
-                //         url: url ?? "",
-                //         isPayForOrder: true,
-                //       );
-                //     }));
-                //     if (result) {
-                //       List<Map<String, dynamic>> receipts = [];
-                //       int totalAmount = 0;
-                //       for (var element in (res.data["receipt"] as List)) {
-                //         if (element != null) {
-                //           receipts.add(Map<String, dynamic>.from(element));
-                //           totalAmount = totalAmount +
-                //               int.parse(element["transaction"][0]["amount"]
-                //                   .toString());
-                //         }
-                //       }
-                //       locator<NavigationService>().navigateTo(Routes.receipt,
-                //           arguments: ReceiptArguments(
-                //               totalAmount: totalAmount,
-                //               info: Map<String, dynamic>.from(receipts[0])));
-                //     }
-                //   } else {
-                //     if ((res.data["receipt"] as List).isEmpty) {
-                //       locator<NavigationService>().back();
-                //       locator<SnackbarService>()
-                //           .showSnackbar(message: "Order Placed Successfully");
-                //       return;
-                //     }
-                //     List<Map<String, dynamic>> receipts = [];
-                //     int totalAmount = 0;
-                //     for (var element in (res.data["receipt"] as List)) {
-                //       if (element != null) {
-                //         receipts.add(Map<String, dynamic>.from(element));
-                //         totalAmount = totalAmount +
-                //             int.parse(
-                //                 element["transaction"][0]['amount'].toString());
-                //       }
-                //     }
-                //     locator<NavigationService>().navigateTo(Routes.receipt,
-                //         arguments: ReceiptArguments(
-                //             totalAmount: totalAmount,
-                //             info: Map<String, dynamic>.from(receipts[0])));
-                //   }
-                // } else {
-                //   locator<SnackbarService>()
-                //       .showSnackbar(message: res.data["message"]);
-                // }
               } catch (e) {
                 print(e);
               }

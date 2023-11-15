@@ -25,38 +25,7 @@ class DashboardViewModel extends BaseViewModel {
   List<Product> sellingFast = [];
   List<Product> ads = [];
 
-  void addToCart(Product product) async {
 
-    final existingItem = cart.value.firstWhere(
-          (cartItem) => cartItem.product?.id == product.id,
-      orElse: () => CartItem(product: product, quantity: 0),
-    );
-
-    if (existingItem.quantity != null && existingItem.quantity! > 0 && existingItem.product != null) {
-      // If the item exists, increase its quantity
-      existingItem.quantity = (existingItem.quantity! + 1);
-    } else {
-      // If the item is not in the cart, add it as a new item
-      existingItem.quantity = 1;
-      cart.value.add(existingItem);
-
-    }
-
-    List<Map<String, dynamic>> storedList =
-    cart.value.map((e) => e.toJson()).toList();
-    await locator<LocalStorage>()
-        .save(LocalStorageDir.cart, storedList);
-    locator<SnackbarService>().showSnackbar(message: "Product added to cart");
-    cart.notifyListeners();
-  }
-
-  void initCart() async {
-    dynamic store = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
-    List<CartItem> localCart = List<Map<String, dynamic>>.from(store)
-        .map((e) => CartItem.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-    cart.value = localCart;
-  }
 
   void changeSelected(int i) {
     selectedIndex = i;
@@ -174,5 +143,76 @@ class DashboardViewModel extends BaseViewModel {
     } catch (e) {
       log.e(e);
     }
+  }
+
+  void addToCart(Product product) async {
+
+    final existingItem = cart.value.firstWhere(
+          (cartItem) => cartItem.product?.id == product.id,
+      orElse: () => CartItem(product: product, quantity: 0),
+    );
+
+    if (existingItem.quantity != null && existingItem.quantity! > 0 && existingItem.product != null) {
+      // If the item exists, increase its quantity
+      existingItem.quantity = (existingItem.quantity! + 1);
+    } else {
+      // If the item is not in the cart, add it as a new item
+      existingItem.quantity = 1;
+      cart.value.add(existingItem);
+
+    }
+
+    List<Map<String, dynamic>> storedList =
+    cart.value.map((e) => e.toJson()).toList();
+    await locator<LocalStorage>()
+        .save(LocalStorageDir.cart, storedList);
+    locator<SnackbarService>().showSnackbar(message: "Product added to cart");
+    cart.notifyListeners();
+  }
+
+  void initCart() async {
+    dynamic store = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
+    List<CartItem> localCart = List<Map<String, dynamic>>.from(store)
+        .map((e) => CartItem.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+    cart.value = localCart;
+  }
+
+  bool isProductInCart(Product product) {
+    return cart.value.any((CartItem item) => item.product?.id == product.id);
+  }
+
+  Future<void> decreaseQuantity(CartItem item) async {
+    if (item.quantity! > 1) {
+      // Decrease the item's quantity by 1
+      item.quantity = item.quantity! - 1;
+    } else if (item.quantity! == 1) {
+      // Remove the item from the cart if its quantity is 1
+      cart.value.removeWhere((cartItem) => cartItem.product?.id == item.product?.id);
+      // No need to set item.quantity to 0 since we're removing it
+    }
+
+    // Notify listeners and save the updated cart list to local storage
+    cart.notifyListeners();
+    List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+    await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
+  }
+
+  Future<void> increaseQuantity(CartItem item) async {
+    // Check if the item's quantity is greater than 1 before decreasing
+
+      item.quantity = item.quantity! +1;
+
+      // After modifying the cart item, replace the old cart item with the updated one
+      int index = cart.value.indexWhere((cartItem) => cartItem.product?.id == item.product?.id);
+      if (index != -1) {
+        cart.value[index] = item;
+        cart.value = List.from(cart.value);
+        cart.notifyListeners();
+
+        // Save the updated cart list to local storage
+        List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+        await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
+      }
   }
 }

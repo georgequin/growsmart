@@ -11,12 +11,14 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/dashboard/product_detail.dart';
+import 'package:afriprize/utils/moneyUtil.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/raffle_ticket.dart';
@@ -28,6 +30,24 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
 
   final PageController _pageController = PageController();
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    _controller = VideoPlayerController.asset(
+      "assets/videos/dashboard.mp4",
+    )..initialize().then((_) {
+      // Ensure the first frame is shown and set the video to loop.
+      _controller.setLooping(true);
+      _controller.play();
+    });
+  }
+
+
+  @override
+  void dispose() {
+    _controller.dispose();
+  }
 
   @override
   Widget builder(
@@ -35,13 +55,25 @@ class DashboardView extends StackedView<DashboardViewModel> {
     DashboardViewModel viewModel,
     Widget? child,
   ) {
+    _controller = VideoPlayerController.asset(
+      "assets/videos/dashboard.mp4",
+    )..initialize().then((_) {
+      // Ensure the first frame is shown and set the video to loop.
+      _controller.setLooping(true);
+      _controller.play();
+    });
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset(
-          "assets/images/afriprize.png",
-          width: 150,
-          height: 50,
-        ),
+        title: ValueListenableBuilder(
+        valueListenable: uiMode,
+        builder: (context, AppUiModes mode, child) {
+          return Image.asset(
+            mode == AppUiModes.dark ? "assets/images/afriprize_light.png" : "assets/images/afriprize.png",
+            width: 150,
+            height: 50,
+          );
+        },
+      ),
         actions: [
           userLoggedIn.value == false
               ? Padding(
@@ -69,145 +101,170 @@ class DashboardView extends StackedView<DashboardViewModel> {
         child: ListView(
           padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
           children: [
-            SizedBox(
-              height: 250,
-              child: viewModel.busy(viewModel.ads)
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Stack(
-                      children: [
-                        PageView.builder(
-                            controller: _pageController,
-                            itemCount: viewModel.ads.length,
-                            onPageChanged: viewModel.changeSelected,
-                            itemBuilder: (context, index) {
-                              Product ad = viewModel.ads[index];
-                              print('length of ad list is: ${ad.raffle?.length}');
-                              String image =
-                                  ad.raffle![0].pictures![0].location!;
-
-                              return Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        color: kcBlackColor.withOpacity(0.2),
-                                        image: ad.raffle == null ||
-                                                ad.raffle!.isEmpty
-                                            ? null
-                                            : DecorationImage(
-                                                image: NetworkImage(image),
-                                                fit: BoxFit.cover,
-                                                colorFilter: ColorFilter.mode(
-                                                    Colors.black
-                                                        .withOpacity(0.9),
-                                                    BlendMode.dstATop),
-                                              )),
-                                  ),
-                                  Positioned(
-                                    bottom: 20,
-                                    left: 20,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 70,
-                                          width: 70,
-                                          decoration: BoxDecoration(
-                                            image: ad.pictures == null ||
-                                                    ad.pictures!.isEmpty
-                                                ? null
-                                                : DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: NetworkImage(ad
-                                                        .pictures![0]
-                                                        .location!)),
-                                            color: kcLightGrey,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                        ),
-                                        verticalSpaceTiny,
-                                        SizedBox(
-                                          width: 140,
-                                          child: FutureBuilder<Color?>(
-                                            future: _updateTextColor(image),
-                                            builder: (context, snapshot) =>
-                                                Text(
-                                              "Buy ${ad.productName} and stand a chance to",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: snapshot.data,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                        verticalSpaceTiny,
-                                        FutureBuilder<Color?>(
-                                            future: _updateTextColor(image),
-                                            builder: (context, snapshot) {
-                                              return Text(
-                                                (ad.raffle == null ||
-                                                        ad.raffle!.isEmpty)
-                                                    ? ""
-                                                    : "${ad.raffle![0].ticketName}",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: snapshot.data,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              );
-                                            })
-                                      ],
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 20,
-                                    bottom: 20,
-                                    child: InkWell(
-                                      onTap: () {
-                                        locator<NavigationService>()
-                                            .navigateToProductDetail(
-                                                product: ad);
-                                      },
-                                      child: Container(
-                                        height: 40,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            color: kcPrimaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(4)),
-                                        child: Center(
-                                          child: Text(
-                                            "Win Now",
-                                            style: GoogleFonts.inter(
-                                              fontSize: 12,
-                                              color: kcWhiteColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              );
-                            }),
-                        Positioned(
-                          top: 20,
-                          right: 20,
-                          child: Row(
-                            children: List.generate(
-                                viewModel.ads.length,
-                                (index) => _indicator(
-                                    viewModel.selectedIndex == index)),
-                          ),
-                        ),
-                      ],
-                    ),
+            Container(
+              height: 250, // Set a fixed height for the video player
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), // Apply rounded corners to the container
+              ),
+              clipBehavior: Clip.antiAlias, // This will clip the video player to the border radius
+              child: AspectRatio(
+                aspectRatio: 16 / 9, // You can adjust the aspect ratio to the desired value
+                child: VideoPlayer(_controller),
+              ),
             ),
+
+
+            // SizedBox(
+            //   height: 250,
+            //   child: viewModel.busy(viewModel.ads)
+            //       ? const Center(
+            //           child: CircularProgressIndicator(),
+            //         )
+            //       : Stack(
+            //           children: [
+            //             PageView.builder(
+            //                 controller: _pageController,
+            //                 itemCount: viewModel.ads.length,
+            //                 onPageChanged: viewModel.changeSelected,
+            //                 itemBuilder: (context, index) {
+            //                   Product ad = viewModel.ads[index];
+            //
+            //                   String? image = (ad.raffle != null && ad.raffle!.isNotEmpty &&
+            //                       ad.raffle![0].pictures != null && ad.raffle![0].pictures!.isNotEmpty)
+            //                       ? ad.raffle![0].pictures![0].location
+            //                       : '';
+            //
+            //                   // String image =
+            //                   //     ad.raffle![0].pictures![0].location!;
+            //
+            //                   return Stack(
+            //                     children: [
+            //                       Container(
+            //                         decoration: BoxDecoration(
+            //                           borderRadius: BorderRadius.circular(12),
+            //                           color: kcBlackColor.withOpacity(0.2),
+            //                           image: (ad.raffle != null && ad.raffle!.isNotEmpty &&
+            //                               ad.raffle![0].pictures != null && ad.raffle![0].pictures!.isNotEmpty)
+            //                               ? DecorationImage(
+            //                             image: NetworkImage(ad.raffle![0].pictures![0].location!),
+            //                             fit: BoxFit.cover,
+            //                             colorFilter: ColorFilter.mode(
+            //                               Colors.black.withOpacity(0.9),
+            //                               BlendMode.dstATop,
+            //                             ),
+            //                           )
+            //                               : null,
+            //                         ),
+            //                       ),
+            //                       Positioned(
+            //                         bottom: 20,
+            //                         left: 20,
+            //                         child: Column(
+            //                           crossAxisAlignment:
+            //                               CrossAxisAlignment.start,
+            //                           children: [
+            //                             Container(
+            //                               height: 70,
+            //                               width: 70,
+            //                               decoration: BoxDecoration(
+            //                                 image:  (ad.pictures != null && ad.pictures!.isNotEmpty)
+            //                                     ? DecorationImage(
+            //                                   fit: BoxFit.cover,
+            //                                   image: NetworkImage(ad.pictures![0].location!),
+            //                                 )
+            //                                     : null,
+            //                                 color: kcLightGrey,
+            //                                 borderRadius:
+            //                                     BorderRadius.circular(12),
+            //                               ),
+            //                             ),
+            //                             verticalSpaceTiny,
+            //                             SizedBox(
+            //                               width: 140,
+            //                               child: FutureBuilder<Color?>(
+            //                                 future: image != null ? _updateTextColor(image) : Future.value(null),
+            //                                 builder: (context, snapshot) {
+            //                                   // Determine the text color - either from the snapshot or a default color
+            //                                   Color textColor = snapshot.data ?? Colors.black; // Default color if snapshot.data is null
+            //
+            //                                   return Text(
+            //                                     "Buy ${ad.productName} and stand a chance to",
+            //                                     style: TextStyle(
+            //                                         fontSize: 14,
+            //                                         color: textColor, // Use the determined color
+            //                                         fontWeight: FontWeight.bold
+            //                                     ),
+            //                                   );
+            //                                 },
+            //                               ),
+            //                             ),
+            //
+            //                             verticalSpaceTiny,
+            //                             FutureBuilder<Color?>(
+            //                               future: image != null ? _updateTextColor(image) : Future.value(null),
+            //                               builder: (context, snapshot) {
+            //                                 // Determine the text color - either from the snapshot or a default color
+            //                                 Color textColor = snapshot.data ?? Colors.black; // Default color if snapshot.data is null
+            //
+            //                                 return Text(
+            //                                   (ad.raffle == null || ad.raffle!.isEmpty) ? "" : "${ad.raffle![0].ticketName}",
+            //                                   style: TextStyle(
+            //                                     fontSize: 16,
+            //                                     color: textColor, // Use the determined color
+            //                                     fontWeight: FontWeight.bold,
+            //                                   ),
+            //                                 );
+            //                               },
+            //                             )
+            //
+            //                           ],
+            //                         ),
+            //                       ),
+            //                       Positioned(
+            //                         right: 20,
+            //                         bottom: 20,
+            //                         child: InkWell(
+            //                           onTap: () {
+            //                             locator<NavigationService>()
+            //                                 .navigateToProductDetail(
+            //                                     product: ad);
+            //                           },
+            //                           child: Container(
+            //                             height: 40,
+            //                             width: 100,
+            //                             decoration: BoxDecoration(
+            //                                 color: kcPrimaryColor,
+            //                                 borderRadius:
+            //                                     BorderRadius.circular(4)),
+            //                             child: Center(
+            //                               child: Text(
+            //                                 "Win Now",
+            //                                 style: GoogleFonts.inter(
+            //                                   fontSize: 12,
+            //                                   color: kcWhiteColor,
+            //                                   fontWeight: FontWeight.bold,
+            //                                 ),
+            //                               ),
+            //                             ),
+            //                           ),
+            //                         ),
+            //                       )
+            //                     ],
+            //                   );
+            //                 }),
+            //             Positioned(
+            //               top: 20,
+            //               right: 20,
+            //               child: Row(
+            //                 children: List.generate(
+            //                     viewModel.ads.length,
+            //                     (index) => _indicator(
+            //                         viewModel.selectedIndex == index)),
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            // ),
             if(viewModel.sellingFast.isNotEmpty)
               verticalSpaceMedium,
             if(viewModel.sellingFast.isNotEmpty)
@@ -295,7 +352,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     ),
                                     verticalSpaceTiny,
                                     Text(
-                                      "${product.orders?.where((element) => element["status"] != 1).toList().length} sold out of ${product.stock}",
+                                      "${product.verifiedSales} sold out of ${product.stockTotal}",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3,
                                       style: GoogleFonts.inter(
@@ -305,19 +362,17 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     verticalSpaceTiny,
                                     SizedBox(
                                       width: 100,
-                                      child: LinearProgressIndicator(
-                                        value: ((product.orders
-                                                ?.where((element) =>
-                                                    element["status"] != 1)
-                                                .toList()
-                                                .length)! /
-                                            (product.stock!)),
-                                        backgroundColor:
-                                            kcSecondaryColor.withOpacity(0.3),
-                                        valueColor:
-                                            const AlwaysStoppedAnimation(
-                                                kcSecondaryColor),
+                                      child: SizedBox(
+                                        width: 100,
+                                        child: LinearProgressIndicator(
+                                          value: (product.verifiedSales != null && product.stockTotal != null && product.stockTotal! > 0)
+                                              ? product.verifiedSales! / product.stockTotal!
+                                              : 0.0, // Default value in case of null or invalid stock
+                                          backgroundColor: kcSecondaryColor.withOpacity(0.3),
+                                          valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
+                                        ),
                                       ),
+
                                     )
                                   ],
                                 ),
@@ -354,90 +409,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ),
             verticalSpaceSmall,
 
-
-            // PaginationList<Product>(
-            //   key: paginationListKey,
-            //   scrollController: _scrollController,
-            //   physics: const NeverScrollableScrollPhysics(),
-            //   autoFetch: false,
-            //   singlePage: false,
-            //   shrinkWrap: true,
-            //   separatorWidget: const SizedBox(
-            //     height: 15,
-            //   ),
-            //   itemBuilder: (context, item) {
-            //     return InkWell(
-            //       onTap: () {
-            //         locator<NavigationService>().navigateTo(
-            //             Routes.productDetail,
-            //             arguments: ProductDetailArguments(product: product));
-            //       },
-            //       child: ProductRow(
-            //         product: product,
-            //         viewModel: viewModel,
-            //       ),
-            //     );
-            //   },
-            //   onEmpty: const Center(
-            //     child: Column(
-            //       mainAxisSize: MainAxisSize.min,
-            //       children: [
-            //         Icon(
-            //           Icons.remove_circle,
-            //           color: Colors.amber,
-            //           size: 60,
-            //         ),
-            //         Text(
-            //           'No Invoice found',
-            //           textScaleFactor: 1.1,
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            //   onError: (e) {
-            //     print(e);
-            //     return const Center(
-            //       child: Column(
-            //         mainAxisSize: MainAxisSize.min,
-            //         children: [
-            //           Icon(
-            //             Icons.warning_amber_outlined,
-            //             color: Colors.red,
-            //             size: 60,
-            //           ),
-            //           Text(
-            //             'Could not complete this request. Check your internet connection.',
-            //             textScaleFactor: 1.3,
-            //           ),
-            //         ],
-            //       ),
-            //     );
-            //   },
-            //   onPageLoading: const Center(
-            //     child: CircularProgressIndicator()
-            //   ),
-            //   onLoading: const Center(
-            //     child: CircularProgressIndicator()
-            //   ),
-            //   // pageFetch: (currentSize) {
-            //   //   log('data: $endDate');
-            //   //   return loadData(
-            //   //       category: category,
-            //   //       createdAfter: endDate?.toDate(),
-            //   //       paymentStatus: paymentStatus,
-            //   //       pendingMyReview: pendingMyReview,
-            //   //       reviewStatus: reviewStatus,
-            //   //       createdBefore: startDate?.toDate(),
-            //   //       status: status,
-            //   //       offset: currentSize,
-            //   //       limit: 10)
-            //   //       .then((value) {
-            //   //     _totalRecordsStream.add(value.data?.total??0);
-            //   //     return value.data?.results?.toList() ??
-            //   //         <InvoicePojo>[];
-            //   //   });
-            //   // },
-            // ),
             viewModel.busy(viewModel.productList)
                 ? const Center(
                     child: CircularProgressIndicator(),
@@ -474,6 +445,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+                            ),
                             // barrierColor: Colors.black.withAlpha(50),
                             // backgroundColor: Colors.transparent,
                             backgroundColor: Colors.black.withOpacity(0.7),
@@ -568,7 +542,8 @@ class ProductRow extends StatelessWidget {
     if (viewModel.productList.isEmpty || index >= viewModel.productList.length) {
       return Container();
     }
-    return Container(
+    return
+    Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
       height: 300,
       decoration: BoxDecoration(
@@ -585,6 +560,7 @@ class ProductRow extends StatelessWidget {
       child:
           Column(
             children: [
+              //product image
               Stack(
 
                 children: [
@@ -651,6 +627,7 @@ class ProductRow extends StatelessWidget {
 
                 ],
               ),
+              //Ticket name
               Container(
                 color: kcPrimaryColor, // Set the background color to blue
                 padding: EdgeInsets.all(7.0), // Add padding to the container
@@ -670,155 +647,198 @@ class ProductRow extends StatelessWidget {
                   ],
                 ),
               ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                            Expanded(
-                            flex: 6, // Allocate 60% of the space to this widget
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    image: product.pictures!.isEmpty
-                                        ? null
-                                        : DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(product.pictures![0].location!),
-                                    ),
-                                    color: kcWhiteColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                SizedBox(width: 8), // Add some spacing between the image and text
-                                Flexible(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        product.productName!,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 3,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                        ),
+
+              Padding(
+               padding: const EdgeInsets.symmetric(horizontal: 6.0), // This adds horizontal padding
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child:Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                              flex: 6, // Allocate 60% of the space to this widget
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      image: product.pictures!.isEmpty
+                                          ? null
+                                          : DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(product.pictures![0].location!),
                                       ),
-                                    ],
+                                      color: kcWhiteColor,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                   ),
+                                  SizedBox(width: 8), // spacing between the image and text
+                                  Flexible(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          product.productName!,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                          ),
+
+                          //product prize
+                          Expanded(
+                            flex: 4, // Allocate 40% of the space to this widget, adjust this as needed
+                            child: Container(
+                              alignment: Alignment.centerRight, // Align the text to the right
+                              child: Text(
+                                MoneyUtils().formatAmount(product.productPrice!),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "satoshi",
                                 ),
-                              ],
-                            )
+                              ),
                             ),
-                            Expanded(
-                            flex: 3, // Allocate 60% of the space to this widget
-                            child: Row(
+                          ),
+                        ],
+                      ),
+
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  " N${product.productPrice}",
+                                  "${product.verifiedSales} sold out of ${product.stockTotal}",
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 3,
                                   style: const TextStyle(
-                                    fontSize: 25,
-                                    color: Colors.black,
+                                    fontSize: 12,
+                                  ),
+                                ),
+
+                                SizedBox(
+                                  width: 100,
+                                  child: LinearProgressIndicator(
+                                    value: (product.verifiedSales != null && product.stockTotal != null && product.stockTotal! > 0)
+                                        ? product.verifiedSales! / product.stockTotal!
+                                        : 0.0, // Default value in case of null or invalid stock
+                                    backgroundColor: kcSecondaryColor.withOpacity(0.3),
+                                    valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
+                                  ),
+                                ),
+
+                                Text(
+                                  (product.raffle == null || product.raffle!.isEmpty)
+                                      ? ""
+                                      : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  style: const TextStyle(
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
-                            )
                             ),
-
-
-                            ],
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${product.orders?.where((element) => element["availability"] != 1).toList().length} sold out of ${product.stock}",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                style: const TextStyle(
-                                  fontSize: 12,
+
+                         Column(
+                              // crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                userLoggedIn.value == false
+                                    ? const SizedBox()
+                                    : ValueListenableBuilder<List<CartItem>>(
+                                  valueListenable: cart,
+                                  builder: (context, value, child) {
+                                    // Determine if product is in cart
+                                    bool isInCart = value.any((item) => item.product?.id == product.id);
+                                    CartItem? cartItem = isInCart
+                                        ? value.firstWhere((item) => item.product?.id == product.id)
+                                        : null;
+
+                                    return isInCart && cartItem != null
+                                        ? Row(
+                                      children: [
+                                        InkWell(
+                                          onTap: () => viewModel.decreaseQuantity(cartItem),
+                                          child: Container(
+                                            height: 30,
+                                            width: 30,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: kcLightGrey),
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            child: const Center(
+                                              child: Icon(Icons.remove, size: 18),
+                                            ),
+                                          ),
+                                        ),
+                                        horizontalSpaceSmall,
+                                        Text("${cartItem.quantity}"),
+                                        horizontalSpaceSmall,
+                                        InkWell(
+                                          onTap: () => viewModel.increaseQuantity(cartItem),
+                                          child: Container(
+                                            height: 30,
+                                            width: 30,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: kcLightGrey),
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            child: const Align(
+                                              alignment: Alignment.center,
+                                              child: Icon(Icons.add, size: 18),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                        : SizedBox(
+                                      width: 180, // Adjust width to your preference
+                                      height: 45,
+                                      child: SubmitButton(
+                                        isLoading: false,
+                                        label: "Add to cart",
+                                        submit: () => viewModel.addToCart(product),
+                                        color: kcSecondaryColor,
+                                        boldText: true,
+                                        icon: Icons.shopping_bag_outlined,
+                                        iconColor: Colors.black,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
-
-                              SizedBox(
-                                width: 100,
-                                child: LinearProgressIndicator(
-                                  value: product.orders != null
-                                      ? (product.orders!
-                                      .where((element) => element["status"] != 1)
-                                      .length / (product.stock ?? 1)) // Provide a default value for stock if it's null.
-                                      : 0, // If product.orders is null, the progress should be set to 0.
-                                  backgroundColor: kcSecondaryColor.withOpacity(0.3),
-                                  valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
-                                ),
-                              ),
-
-
-                              Text(
-                                (product.raffle == null || product.raffle!.isEmpty)
-                                    ? ""
-                                    : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              userLoggedIn.value == false
-                                  ? const SizedBox()
-                                  : SubmitButton(
-                                isLoading: false,
-                                label: "Add to cart",
-                                submit: () => viewModel.addToCart(product),
-                                color: kcSecondaryColor,
-                                boldText: true,
-                                icon: Icons.shopping_bag_outlined,
-                              ),
-
-                            ],
-                          ),
-                        ),
+                              ],
+                            )
 
 
 
-                      ],
-                    ),
-                  )
-                ],
-              )
+
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ),
+
+
+
 
             ],
           ),

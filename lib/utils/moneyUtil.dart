@@ -27,7 +27,8 @@ class MoneyUtils extends TextInputFormatter {
 
   String formatAmount(int amount) {
     final formatter = NumberFormat("#,##0", "en_US");
-    return formatter.format(amount);
+
+    return "₦${formatter.format(amount)}";
   }
 
   String getReference() {

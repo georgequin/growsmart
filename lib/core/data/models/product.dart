@@ -5,6 +5,8 @@ class Product {
   int? productPrice;
   int? shippingFee;
   int? availability;
+  int? verifiedSales;
+  int? stockTotal;
   bool? featured;
   bool? lowStockAlert;
   int? stock;
@@ -24,6 +26,8 @@ class Product {
       this.productPrice,
       this.shippingFee,
       this.availability,
+      this.verifiedSales,
+      this.stockTotal,
       this.orders,
       this.featured,
       this.lowStockAlert,
@@ -43,6 +47,8 @@ class Product {
     productPrice = json['product_price'];
     shippingFee = json['shipping_fee'];
     availability = json['availability'];
+    verifiedSales = json['verified_sales'];
+    stockTotal = json['stock_total'];
     featured = json['featured'];
     orders = json['orders'];
     lowStockAlert = json['low_stock_alert'];
@@ -81,6 +87,8 @@ class Product {
     data['product_price'] = productPrice;
     data['shipping_fee'] = shippingFee;
     data['availability'] = availability;
+    data['verified_sales'] = verifiedSales;
+    data['stock_total'] = stockTotal;
     data['featured'] = featured;
     data['orders'] = orders;
     data['low_stock_alert'] = lowStockAlert;

@@ -59,5 +59,7 @@ abstract class IRepository {
 
   Future<ApiResponse> setDefaultShipping(Map<String, dynamic> req, String id);
 
+  Future<ApiResponse> deleteDefaultShipping(String productId);
+
   Future<ApiResponse> reviewOrder(Map<String, dynamic> req);
 }

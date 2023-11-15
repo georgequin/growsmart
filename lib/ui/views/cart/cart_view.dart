@@ -11,6 +11,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/data/models/order_info.dart';
+import '../../../utils/moneyUtil.dart';
 import 'cart_viewmodel.dart';
 
 class CartView extends StackedView<CartViewModel> {
@@ -125,8 +126,8 @@ class CartView extends StackedView<CartViewModel> {
                                 ),
                               ),
                               Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   viewModel.itemsToDelete.contains(item)
                                       ? Container(
@@ -230,7 +231,7 @@ class CartView extends StackedView<CartViewModel> {
                       ),
                     ),
                     Text(
-                      "N${viewModel.subTotal}",
+                      MoneyUtils().formatAmount(viewModel.subTotal),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -247,7 +248,7 @@ class CartView extends StackedView<CartViewModel> {
                       ),
                     ),
                     Text(
-                      "N${viewModel.deliveryFee}",
+                      viewModel.deliveryFee == 0 ? "Free" : "N${viewModel.deliveryFee}",
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),

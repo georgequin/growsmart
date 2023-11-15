@@ -237,14 +237,26 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 Opacity(
                   opacity: 0.4, // Set the opacity to 0.7 (70% opacity)
                   child: ListTile(
-                    onTap: () {
-                      locator<NavigationService>().navigateToDeleteAccountView();
+                    onTap: () async{
+                      final res = await locator<DialogService>()
+                              .showConfirmationDialog(
+                                  title: "Are you sure?",
+                                  cancelTitle: "No",
+                                  confirmationTitle: "Yes");
+                          if (res!.confirmed) {
+                            await locator<LocalStorage>()
+                                .delete(LocalStorageDir.authToken);
+                            await locator<LocalStorage>()
+                                .delete(LocalStorageDir.authUser);
+                            userLoggedIn.value = false;
+                            locator<NavigationService>().replaceWithAuthView();
+                          }
                     },
                     leading: const Icon(
                       Icons.logout,
                       color: Colors.red,
                     ),
-                    title: const Text("Delete my account"),
+                    title: const Text("Log out"),
                   ),
                 )
               ],

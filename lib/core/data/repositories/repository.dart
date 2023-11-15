@@ -304,6 +304,16 @@ class Repository extends IRepository {
   }
 
   @override
+  Future<ApiResponse> deleteDefaultShipping(String id) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "user/delete_shipping/$id",
+    );
+
+    return response;
+  }
+
+  @override
   Future<ApiResponse> reviewOrder(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
