@@ -176,28 +176,6 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   ),
                   title: const Text("Support"),
                 ),
-                // ListTile(
-                //   onTap: () async {
-                //     final res = await locator<DialogService>()
-                //         .showConfirmationDialog(
-                //             title: "Are you sure?",
-                //             cancelTitle: "No",
-                //             confirmationTitle: "Yes");
-                //     if (res!.confirmed) {
-                //       await locator<LocalStorage>()
-                //           .delete(LocalStorageDir.authToken);
-                //       await locator<LocalStorage>()
-                //           .delete(LocalStorageDir.authUser);
-                //       userLoggedIn.value = false;
-                //       locator<NavigationService>().replaceWithAuthView();
-                //     }
-                //   },
-                //   leading: const Icon(
-                //     Icons.logout,
-                //     color: kcSecondaryColor,
-                //   ),
-                //   title: const Text("Signout"),
-                // ),
                 ListTile(
                   onTap: () {
                     locator<NavigationService>().navigateToChangePasswordView();
@@ -233,30 +211,40 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     ),
                   ),
                 ),
+                ListTile(
+                  onTap: () async {
+                    final res = await locator<DialogService>()
+                        .showConfirmationDialog(
+                        title: "Are you sure?",
+                        cancelTitle: "No",
+                        confirmationTitle: "Yes");
+                    if (res!.confirmed) {
+                      await locator<LocalStorage>()
+                          .delete(LocalStorageDir.authToken);
+                      await locator<LocalStorage>()
+                          .delete(LocalStorageDir.authUser);
+                      userLoggedIn.value = false;
+                      locator<NavigationService>().replaceWithAuthView();
+                    }
+                  },
+                  leading: const Icon(
+                    Icons.logout,
+                    color: kcSecondaryColor,
+                  ),
+                  title: const Text("Signout"),
+                ),
                 verticalSpaceLarge,
                 Opacity(
                   opacity: 0.4, // Set the opacity to 0.7 (70% opacity)
                   child: ListTile(
                     onTap: () async{
-                      final res = await locator<DialogService>()
-                              .showConfirmationDialog(
-                                  title: "Are you sure?",
-                                  cancelTitle: "No",
-                                  confirmationTitle: "Yes");
-                          if (res!.confirmed) {
-                            await locator<LocalStorage>()
-                                .delete(LocalStorageDir.authToken);
-                            await locator<LocalStorage>()
-                                .delete(LocalStorageDir.authUser);
-                            userLoggedIn.value = false;
-                            locator<NavigationService>().replaceWithAuthView();
-                          }
+                      locator<NavigationService>().navigateToDeleteAccountView();
                     },
                     leading: const Icon(
-                      Icons.logout,
+                      Icons.delete,
                       color: Colors.red,
                     ),
-                    title: const Text("Log out"),
+                    title: const Text("delete account"),
                   ),
                 )
               ],
