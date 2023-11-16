@@ -278,51 +278,51 @@ class _RegisterState extends State<Register> {
                   boldText: true,
                 ),
 
-                verticalSpaceMedium,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    Expanded(
-                      child: Divider(
-                        color: Colors.grey,
-                        thickness: 1,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        "OR",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        color: Colors.grey,
-                        thickness: 1,
-                      ),
-                    ),
-                  ],
-                ),
+                // verticalSpaceMedium,
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: const <Widget>[
+                //     Expanded(
+                //       child: Divider(
+                //         color: Colors.grey,
+                //         thickness: 1,
+                //       ),
+                //     ),
+                //     Padding(
+                //       padding: EdgeInsets.symmetric(horizontal: 8),
+                //       child: Text(
+                //         "OR",
+                //         style: TextStyle(
+                //           fontSize: 14,
+                //           color: Colors.grey,
+                //         ),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Divider(
+                //         color: Colors.grey,
+                //         thickness: 1,
+                //       ),
+                //     ),
+                //   ],
+                // ),
 
-                verticalSpaceMedium,
-
-                SubmitButton(
-                  isLoading: model.isBusy,
-                  boldText: true,
-                  iconIsPrefix: true,
-                  icon: FontAwesomeIcons.google,
-                  label: "Sign in with Google",
-                  textColor: Colors.black,
-                  submit: () {
-                    Fluttertoast.showToast(msg: 'Coming soon',
-                        toastLength: Toast.LENGTH_LONG
-                    );
-                  },
-                  color: Colors.grey,
-                ),
+                // verticalSpaceMedium,
+                //
+                // SubmitButton(
+                //   isLoading: model.isBusy,
+                //   boldText: true,
+                //   iconIsPrefix: true,
+                //   icon: FontAwesomeIcons.google,
+                //   label: "Sign in with Google",
+                //   textColor: Colors.black,
+                //   submit: () {
+                //     Fluttertoast.showToast(msg: 'Coming soon',
+                //         toastLength: Toast.LENGTH_LONG
+                //     );
+                //   },
+                //   color: Colors.grey,
+                // ),
 
                 verticalSpaceLarge,
                 const SizedBox(
