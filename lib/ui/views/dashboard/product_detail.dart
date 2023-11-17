@@ -122,7 +122,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 .pictures![0].location!
                                             : '',
                                         // Provide a default value or handle the case when pictures are empty
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                         width:
                                             MediaQuery.of(context).size.width,
                                         height: 130,
