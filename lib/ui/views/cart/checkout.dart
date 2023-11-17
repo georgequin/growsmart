@@ -677,10 +677,10 @@ class _CheckoutState extends State<Checkout> {
             .save(LocalStorageDir.cart, storedList);
         if (res.data != null && res.data['receipt'] is List && res.data['receipt'].isNotEmpty) {
           Map<String, dynamic> receiptInfo = res.data['receipt'][0];
-          showReceipt(receiptInfo);
-          locator<SnackbarService>()
-              .showSnackbar(message: "Order Placed Successfully");
-          return;
+          // showReceipt(receiptInfo);
+          // locator<SnackbarService>()
+          //     .showSnackbar(message: "Order Placed Successfully");
+          return showSuccess();
         } else {
           if (kDebugMode) {
             print('Error: Receipt data is null or not formatted correctly.');
@@ -724,10 +724,10 @@ class _CheckoutState extends State<Checkout> {
 
           if (res.data != null && res.data['receipt'] is List && res.data['receipt'].isNotEmpty) {
             Map<String, dynamic> receiptInfo = res.data['receipt'][0];
-            showReceipt(receiptInfo);
-            locator<SnackbarService>()
-                .showSnackbar(message: "Order Placed Successfully");
-            return;
+            // showReceipt(receiptInfo);
+            // locator<SnackbarService>()
+            //     .showSnackbar(message: "Order Placed Successfully");
+            return showSuccess();
           } else {
             print('Error: Receipt data is null or not formatted correctly.');
             return showSuccess();
@@ -747,9 +747,6 @@ class _CheckoutState extends State<Checkout> {
 
   void showReceipt(dynamic receiptData) {
 
-    setState(() {
-      isPaying = false;
-    });
     if (receiptData == null) {
       print('Receipt data is null.');
       // Handle the null case, perhaps show an error message or a placeholder
@@ -773,6 +770,22 @@ class _CheckoutState extends State<Checkout> {
 
   showSuccess(){
 
+    Navigator.pop(context);
+   return   Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentSuccessPage(
+          title: "Order Completed Successfully!",
+          animation: 'payment_success.json',
+          callback: () {
+            Navigator.popAndPushNamed(context, Routes.dashboardView);
+          },
+        ),
+      ),
+
+
+    );
+
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -781,8 +794,7 @@ class _CheckoutState extends State<Checkout> {
             title: "Order Completed Sucessfully!",
             animation: 'payment_success.json',
             callback: () {
-          locator<NavigationService>().replaceWithDashboardView();
-          Navigator.popAndPushNamed(context, Routes.dashboardView);
+          Navigator.popAndPushNamed(context, Routes.cartView);
         });
         // ReceiptWidget(info: info,);
       },
