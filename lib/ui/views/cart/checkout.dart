@@ -61,7 +61,8 @@ class _CheckoutState extends State<Checkout> {
         ),
       ),
       body: isPaying
-          ? CircularProgressIndicator() // Show loader when updating
+          ? const Center(
+            child: CircularProgressIndicator())
           : ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -672,8 +673,17 @@ class _CheckoutState extends State<Checkout> {
         cart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>()
             .save(LocalStorageDir.cart, storedList);
-        if(res.data['receipt'] != null){
-          showReceipt(res.data['receipt']);
+        if (res.data != null && res.data['receipt'] is List && res.data['receipt'].isNotEmpty) {
+          Map<String, dynamic> receiptInfo = res.data['receipt'][0];
+          showReceipt(receiptInfo);
+          locator<SnackbarService>()
+              .showSnackbar(message: "Order Placed Successfully");
+          return;
+        } else {
+          print('Error: Receipt data is null or not formatted correctly.');
+          locator<SnackbarService>()
+              .showSnackbar(message: "Order Placed Successfully");
+          return;
         }
 
       }else{
@@ -709,9 +719,14 @@ class _CheckoutState extends State<Checkout> {
           List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
           await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
 
-          if (res.data['receipt'] != null) {
-            print('receipt');
-            showReceipt(res.data['receipt']);
+          if (res.data != null && res.data['receipt'] is List && res.data['receipt'].isNotEmpty) {
+            Map<String, dynamic> receiptInfo = res.data['receipt'][0];
+            showReceipt(receiptInfo);
+            locator<SnackbarService>()
+                .showSnackbar(message: "Order Placed Successfully");
+            return;
+          } else {
+            print('Error: Receipt data is null or not formatted correctly.');
             locator<SnackbarService>()
                 .showSnackbar(message: "Order Placed Successfully");
             return;
@@ -729,8 +744,18 @@ class _CheckoutState extends State<Checkout> {
 
   }
 
-  void showReceipt(Map<String, dynamic> info) {
-    print(getSubTotal());
+  void showReceipt(dynamic receiptData) {
+    if (receiptData == null) {
+      print('Receipt data is null.');
+      // Handle the null case, perhaps show an error message or a placeholder
+      return;
+    }
+
+    // If 'receiptData' is a list, extract the first item
+    Map<String, dynamic> info = receiptData is List ? receiptData[0] : receiptData;
+
+    print(info);
+    print(receiptData);
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,

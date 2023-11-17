@@ -516,7 +516,7 @@ class _ReceiptState extends State<ReceiptWidget> {
                 // Delivery Address
                 ListTile(
                   title: Text('DELIVERY ADDRESS'),
-                  subtitle: Text('${user['shipping'][0]['shipping_address']}'), // Assuming it's the first shipping address
+                  subtitle: Text('${user['shipping']['shipping_address']}'), // Assuming it's the first shipping address
                 ),
                 Divider(),
                 // Draw Tickets Section
