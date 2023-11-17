@@ -581,7 +581,7 @@ class ProductRow extends StatelessWidget {
                             ? product.raffle![0].pictures![0].location ??
                                 '' // Use ?? to provide a default value if location is null
                             : '',
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         width: MediaQuery.of(context).size.width,
                         height: 130,
                       ),
