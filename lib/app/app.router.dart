@@ -9,6 +9,7 @@ import 'package:afriprize/core/data/models/order_info.dart' as _i22;
 import 'package:afriprize/core/data/models/order_item.dart' as _i26;
 import 'package:afriprize/core/data/models/product.dart' as _i24;
 import 'package:afriprize/core/data/models/profile.dart' as _i25;
+import 'package:afriprize/ui/components/payment_success_page.dart';
 import 'package:afriprize/ui/views/auth/auth_view.dart' as _i5;
 import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:afriprize/ui/views/cart/cart_view.dart' as _i8;
@@ -77,6 +78,7 @@ class Routes {
   static const withdrawView = '/withdraw-view';
 
   static const registerView = '/register-view';
+  static const successView = '/success-view';
 
   static const all = <String>{
     homeView,
@@ -99,6 +101,7 @@ class Routes {
     deleteAccountView,
     withdrawView,
     registerView,
+    successView,
   };
 }
 
@@ -183,6 +186,10 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.registerView,
       page: Register,
+    ),
+    _i1.RouteDef(
+      Routes.successView,
+      page: PaymentSuccessPage,
     ),
   ];
 

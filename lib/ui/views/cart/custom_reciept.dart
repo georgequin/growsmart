@@ -266,6 +266,7 @@
 // }
 
 
+import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -412,8 +413,6 @@ import 'package:intl/intl.dart';
 //   }
 // }
 
-
-
 class ReceiptWidget extends StatefulWidget {
   final Map<String, dynamic> info; // The receipt information
 
@@ -462,6 +461,7 @@ class _ReceiptState extends State<ReceiptWidget> {
                     Chip(
                       label: Text(transaction['status'] == 1 ? 'Successful' : 'Failed'),
                       backgroundColor: transaction['status'] == 1 ? Colors.green : Colors.red,
+                      shadowColor: Colors.transparent,
                     ),
                   ],
                 ),
@@ -470,18 +470,24 @@ class _ReceiptState extends State<ReceiptWidget> {
                   margin: EdgeInsets.symmetric(vertical: 16.0),
                   padding: EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: kcPrimaryColor,
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                   child: Image.asset(
                     "assets/images/receipt_header.png",
-                    height: 80,
-                    fit: BoxFit.fitHeight,
+
+                    fit: BoxFit.cover,
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Order Summary', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
                 ),
                 // Order Items List
                 ListTile(
-                  leading: Icon(Icons.shopping_bag), // Replace with actual image if available
+                  leading: Icon(Icons.shopping_bag), // Replace with actual image when available
                   title: Text(product['product_name']),
                   subtitle: Text('x${order['quantity']}'),
                   trailing: Text('N${product['product_price']}'),
@@ -516,7 +522,8 @@ class _ReceiptState extends State<ReceiptWidget> {
                 // Delivery Address
                 ListTile(
                   title: Text('DELIVERY ADDRESS'),
-                  subtitle: Text('${user['shipping']['shipping_address']}'), // Assuming it's the first shipping address
+                  // subtitle: Text('${user['shipping']['shipping_address']}'), // Assuming it's the first shipping address
+                  subtitle: Text('sub'), // Assuming it's the first shipping address
                 ),
                 Divider(),
                 // Draw Tickets Section

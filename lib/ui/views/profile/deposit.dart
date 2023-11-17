@@ -1,4 +1,5 @@
 import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
@@ -12,8 +13,10 @@ import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../../core/data/models/profile.dart';
 import '../../../state.dart';
 import '../../../utils/moneyUtil.dart';
+import '../../components/payment_success_page.dart';
 import '../cart/custom_reciept.dart';
 
 class Deposit extends StatefulWidget {
@@ -109,12 +112,46 @@ class _DepositState extends State<Deposit> {
     });
 
       if (res.statusCode == 200) {
-        // showReceipt();
+
+         showSuccess();
       } else {
         locator<SnackbarService>()
             .showSnackbar(message: res.data["message"]);
       }
     }
+  }
+
+  showSuccess(){
+
+    Navigator.pop(context);
+
+    return Navigator.push(context, MaterialPageRoute(
+      builder: (context) => PaymentSuccessPage(
+        title: "Wallet Funded Sucessfully!",
+                animation: 'payment_success.json',
+                callback: () {
+                  Navigator.popAndPushNamed(context, Routes.wallet);
+                  // locator<NavigationService>()
+                  //     .navigateToWallet(
+                  //     wallet: profile.value.wallet ?? Wallet());
+        }
+      ),
+    ),);
+    // return showModalBottomSheet(
+    //   isScrollControlled: true,
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return PaymentSuccessPage(
+    //         title: "Wallet Funded Sucessfully!",
+    //         animation: 'payment_success.json',
+    //         callback: () {
+    //           locator<NavigationService>()
+    //               .navigateToWallet(
+    //               wallet: profile.value.wallet ?? Wallet());
+    //         });
+    //     // ReceiptWidget(info: info,);
+    //   },
+    // );
   }
 
   // void showReceipt() {

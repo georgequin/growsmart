@@ -11,6 +11,7 @@ import 'package:afriprize/ui/components/drop_down_widget.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/profile/payment_view.dart';
 import 'package:afriprize/utils/moneyUtil.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -19,6 +20,7 @@ import '../../../app/app.router.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../common/ui_helpers.dart';
+import '../../components/payment_success_page.dart';
 import '../../components/text_field_widget.dart';
 import 'add_shipping.dart';
 import 'custom_reciept.dart';
@@ -680,10 +682,11 @@ class _CheckoutState extends State<Checkout> {
               .showSnackbar(message: "Order Placed Successfully");
           return;
         } else {
-          print('Error: Receipt data is null or not formatted correctly.');
-          locator<SnackbarService>()
-              .showSnackbar(message: "Order Placed Successfully");
-          return;
+          if (kDebugMode) {
+            print('Error: Receipt data is null or not formatted correctly.');
+          }
+
+          return showSuccess();
         }
 
       }else{
@@ -727,9 +730,7 @@ class _CheckoutState extends State<Checkout> {
             return;
           } else {
             print('Error: Receipt data is null or not formatted correctly.');
-            locator<SnackbarService>()
-                .showSnackbar(message: "Order Placed Successfully");
-            return;
+            return showSuccess();
           }
 
         } else {
@@ -745,6 +746,10 @@ class _CheckoutState extends State<Checkout> {
   }
 
   void showReceipt(dynamic receiptData) {
+
+    setState(() {
+      isPaying = false;
+    });
     if (receiptData == null) {
       print('Receipt data is null.');
       // Handle the null case, perhaps show an error message or a placeholder
@@ -760,9 +765,26 @@ class _CheckoutState extends State<Checkout> {
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
-        return ReceiptWidget(
-          info: info,
-        );
+        return showSuccess();
+         // ReceiptWidget(info: info,);
+      },
+    );
+  }
+
+  showSuccess(){
+
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return PaymentSuccessPage(
+            title: "Order Completed Sucessfully!",
+            animation: 'payment_success.json',
+            callback: () {
+          locator<NavigationService>().replaceWithDashboardView();
+          Navigator.popAndPushNamed(context, Routes.dashboardView);
+        });
+        // ReceiptWidget(info: info,);
       },
     );
   }
