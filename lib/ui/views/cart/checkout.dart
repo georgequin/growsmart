@@ -42,6 +42,7 @@ class _CheckoutState extends State<Checkout> {
   bool makingDefault = false;
   String publicKeyTest = MoneyUtils().payStackPublicKey;
   final plugin = PaystackPlugin();
+  bool isPaying = false;
 
 
   @override
@@ -59,7 +60,9 @@ class _CheckoutState extends State<Checkout> {
           "Checkout",
         ),
       ),
-      body: ListView(
+      body: isPaying
+          ? CircularProgressIndicator() // Show loader when updating
+          : ListView(
         padding: const EdgeInsets.all(20),
         children: [
           Card(
@@ -648,6 +651,10 @@ class _CheckoutState extends State<Checkout> {
 
 
   chargeCard( int amount) async {
+
+    setState(() {
+      isPaying = true;
+    });
     if(paymentMethod == 'wallet'){
       print('payment is from wallet');
       ApiResponse res = await locator<Repository>().payForOrder({
@@ -665,7 +672,10 @@ class _CheckoutState extends State<Checkout> {
         cart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>()
             .save(LocalStorageDir.cart, storedList);
-        showReceipt('wallet', amount);
+        if(res.data['receipt'] != null){
+          showReceipt(res.data['receipt']);
+        }
+
       }else{
         locator<SnackbarService>()
             .showSnackbar(message: res.data["message"]);
@@ -696,70 +706,37 @@ class _CheckoutState extends State<Checkout> {
           cart.value.clear();
           cart.notifyListeners();
           //update local cart
-          List<Map<String, dynamic>> storedList =
-          cart.value.map((e) => e.toJson()).toList();
-          await locator<LocalStorage>()
-              .save(LocalStorageDir.cart, storedList);
+          List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+          await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
 
-          if ((res.data["receipt"] as List).isEmpty) {
-            print('list is empty, no receipt');
-            showReceipt('paystack', amount);
+          if (res.data['receipt'] != null) {
+            print('receipt');
+            showReceipt(res.data['receipt']);
             locator<SnackbarService>()
                 .showSnackbar(message: "Order Placed Successfully");
             return;
           }
-          print('list is not empty, see receipt');
-          List<Map<String, dynamic>> receipts = [];
-          int totalAmount = 0;
-          for (var element in (res.data["receipt"] as List)) {
-            if (element != null && element["transaction"] is List && element["transaction"].isNotEmpty) {
-              var transactions = element["transaction"] as List;
-              if (transactions.isNotEmpty && transactions[0] != null) {
-                var transactionAmount = transactions[0]['amount'];
-                if (transactionAmount != null) {
-                  receipts.add(Map<String, dynamic>.from(element));
-                  totalAmount += int.parse(transactionAmount.toString());
-                }
-              }
-            }
-          }
-          if (receipts.isNotEmpty) {
-            showReceipt('paystack', amount);
-            locator<NavigationService>().navigateTo(Routes.receipt,
-              arguments: ReceiptArguments(
-                totalAmount: totalAmount,
-                info: Map<String, dynamic>.from(receipts[0]),
-              ),
-            );
-          } else {
-            print('no receipts found');
-            showReceipt('paystack', amount);
-            locator<SnackbarService>()
-                .showSnackbar(message: "Order Placed Successfully");
-            return;
-          }
+
         } else {
           locator<SnackbarService>()
               .showSnackbar(message: res.data["message"]);
         }
       }
     }
-
+    setState(() {
+      isPaying = false;
+    });
 
   }
 
-  void showReceipt(String paymentMethod, int amount) {
+  void showReceipt(Map<String, dynamic> info) {
     print(getSubTotal());
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
         return ReceiptWidget(
-          amount: amount,
-          drawTicketNumber: '',
-          paymentMethod: paymentMethod,
-          senderName: profile.value.firstname!,
-          paymentTime: DateTime.now(),
+          info: info,
         );
       },
     );

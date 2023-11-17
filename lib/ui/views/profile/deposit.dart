@@ -109,7 +109,7 @@ class _DepositState extends State<Deposit> {
     });
 
       if (res.statusCode == 200) {
-        showReceipt();
+        // showReceipt();
       } else {
         locator<SnackbarService>()
             .showSnackbar(message: res.data["message"]);
@@ -117,19 +117,15 @@ class _DepositState extends State<Deposit> {
     }
   }
 
-  void showReceipt() {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return ReceiptWidget(
-          amount: MoneyUtils().getAmountAsInt(amount),
-          drawTicketNumber: '',
-          paymentMethod: 'PayStack',
-          senderName: profile.value.firstname!,
-          paymentTime: DateTime.now(),
-        );
-      },
-    );
-  }
+  // void showReceipt() {
+  //   showModalBottomSheet(
+  //     isScrollControlled: true,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return ReceiptWidget(
+  //
+  //       );
+  //     },
+  //   );
+  // }
 }
