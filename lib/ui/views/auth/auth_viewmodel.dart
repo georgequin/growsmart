@@ -59,6 +59,12 @@ class AuthViewModel extends BaseViewModel {
       // }
     }
 
+    if( token != null && !JwtDecoder.isExpired(token)){
+      await locator<LocalStorage>()
+          .delete(LocalStorageDir.authToken);
+      userLoggedIn.value = false;
+    }
+
     // Set the lastEmail if remember me is true
     if (remember) {
       String? lastEmail =
