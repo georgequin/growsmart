@@ -1,4 +1,5 @@
 import 'package:afriprize/core/data/models/product.dart';
+import 'package:afriprize/core/data/models/raffle_ticket.dart';
 
 class OrderItem {
   String? id;
@@ -172,6 +173,8 @@ class Transaction {
   int? type;
   String? created;
   String? updated;
+  List<OrderItem> orders;
+  List<RaffleTicket> tickets;
 
   Transaction(
       {this.id,
@@ -181,18 +184,38 @@ class Transaction {
       this.meta,
       this.type,
       this.created,
-      this.updated});
+      this.updated,
+      List<OrderItem>? orders,
+      List<RaffleTicket>? tickets})
+      : orders = orders ?? [],
+        tickets = tickets ?? [];
 
-  Transaction.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    status = json['status'];
-    amount = json['amount'];
-    reference = json['reference'];
-    meta = json['meta'];
-    type = json['type'];
-    created = json['created'];
-    updated = json['updated'];
-  }
+  Transaction.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        status = json['status'],
+        amount = json['amount'],
+        reference = json['reference'],
+        meta = json['meta'],
+        type = json['type'],
+        created = json['created'],
+        updated = json['updated'],
+        orders = (json['orders'] as List<dynamic>?)
+            ?.map((e) => OrderItem.fromJson(e))
+            .toList() ?? [],
+        tickets = (json['raffles'] as List<dynamic>?)
+            ?.map((e) => RaffleTicket.fromJson(e))
+            .toList() ?? [];
+
+  // Transaction.fromJson(Map<String, dynamic> json) {
+  //   id = json['id'];
+  //   status = json['status'];
+  //   amount = json['amount'];
+  //   reference = json['reference'];
+  //   meta = json['meta'];
+  //   type = json['type'];
+  //   created = json['created'];
+  //   updated = json['updated'];
+  // }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
