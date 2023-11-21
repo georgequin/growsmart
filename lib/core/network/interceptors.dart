@@ -48,6 +48,7 @@ final requestInterceptors = InterceptorsWrapper(
             title: "Session Expired",
             description: "Login again to continue");
         if (res!.confirmed) {
+
           locator<NavigationService>().clearStackAndShow(Routes.authView);
         }
       }

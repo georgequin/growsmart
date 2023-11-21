@@ -658,8 +658,9 @@ class _CheckoutState extends State<Checkout> {
     setState(() {
       isPaying = true;
     });
+
     if(paymentMethod == 'wallet'){
-      print('payment is from wallet');
+
       ApiResponse res = await locator<Repository>().payForOrder({
         "orderId": widget.infoList.map((e) => e.id).toList(),
         "payment_method": 1,
@@ -667,25 +668,21 @@ class _CheckoutState extends State<Checkout> {
         "id": profile.value.id
       });
 
+      print(res);
+
       if (res.statusCode == 200) {
         cart.value.clear();
         cart.notifyListeners();
         //update local cart
-        List<Map<String, dynamic>> storedList =
-        cart.value.map((e) => e.toJson()).toList();
-        await locator<LocalStorage>()
-            .save(LocalStorageDir.cart, storedList);
+        List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+        await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
         if (res.data != null && res.data['receipt'] is List && res.data['receipt'].isNotEmpty) {
           Map<String, dynamic> receiptInfo = res.data['receipt'][0];
-          // showReceipt(receiptInfo);
-          // locator<SnackbarService>()
-          //     .showSnackbar(message: "Order Placed Successfully");
-          return showSuccess();
+          return showReceipt(receiptInfo);
         } else {
           if (kDebugMode) {
             print('Error: Receipt data is null or not formatted correctly.');
           }
-
           return showSuccess();
         }
 
@@ -707,7 +704,7 @@ class _CheckoutState extends State<Checkout> {
       );
 
       if (response.status == true) {
-        print('paystack payment successful');
+
         ApiResponse res = await locator<Repository>().payForOrder({
           "orderId": widget.infoList.map((e) => e.id).toList(),
           "payment_method": 2,
@@ -724,10 +721,10 @@ class _CheckoutState extends State<Checkout> {
 
           if (res.data != null && res.data['receipt'] is List && res.data['receipt'].isNotEmpty) {
             Map<String, dynamic> receiptInfo = res.data['receipt'][0];
-            // showReceipt(receiptInfo);
+            return showReceipt(receiptInfo);
             // locator<SnackbarService>()
             //     .showSnackbar(message: "Order Placed Successfully");
-            return showSuccess();
+            // return showSuccess();
           } else {
             print('Error: Receipt data is null or not formatted correctly.');
             return showSuccess();
@@ -754,7 +751,7 @@ class _CheckoutState extends State<Checkout> {
     }
 
     // If 'receiptData' is a list, extract the first item
-    Map<String, dynamic> info = receiptData is List ? receiptData[0] : receiptData;
+    List<Map<String, dynamic>> info = receiptData is List ? receiptData : receiptData;
 
     print(info);
     print(receiptData);
@@ -762,7 +759,7 @@ class _CheckoutState extends State<Checkout> {
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
-        return showSuccess();
+        return ReceiptWidget(info: info,);
          // ReceiptWidget(info: info,);
       },
     );
@@ -786,18 +783,5 @@ class _CheckoutState extends State<Checkout> {
 
     );
 
-    return showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return PaymentSuccessPage(
-            title: "Order Completed Sucessfully!",
-            animation: 'payment_success.json',
-            callback: () {
-          Navigator.popAndPushNamed(context, Routes.cartView);
-        });
-        // ReceiptWidget(info: info,);
-      },
-    );
   }
 }

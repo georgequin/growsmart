@@ -414,7 +414,7 @@ import 'package:intl/intl.dart';
 // }
 
 class ReceiptWidget extends StatefulWidget {
-  final Map<String, dynamic> info; // The receipt information
+  final List<Map<String, dynamic>> info; // The receipt information
 
   const ReceiptWidget({
     Key? key,
@@ -429,7 +429,7 @@ class _ReceiptState extends State<ReceiptWidget> {
   @override
   Widget build(BuildContext context) {
     // Extracting data from the passed `info` object.
-    final transaction = widget.info['transaction'];
+    final transactions = widget.info['transaction'];
     final user = widget.info['user'];
     final order = transaction['order'];
     final product = order['product'];
@@ -458,12 +458,13 @@ class _ReceiptState extends State<ReceiptWidget> {
                       orderDate,
                       style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                     ),
-                    Chip(
-                      label: Text(transaction['status'] == 1 ? 'Successful' : 'Failed'),
-                      backgroundColor: transaction['status'] == 1 ? Colors.green : Colors.red,
-                      shadowColor: Colors.transparent,
-                    ),
-                  ],
+                    Row(
+                      children: [
+                        Icon(Icons.ac_unit, size: 15, color: transaction['status'] == 1 ? Colors.green : Colors.red),
+                        Text(transaction['status'] == 1 ? 'Successful' : 'Failed', style: TextStyle(color: transaction['status'] == 1 ? Colors.green : Colors.red),),
+                      ],
+                    )
+                    ],
                 ),
                 // Banner thanking for the purchase
             Container(
@@ -479,7 +480,7 @@ class _ReceiptState extends State<ReceiptWidget> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Order Summary', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -487,8 +488,8 @@ class _ReceiptState extends State<ReceiptWidget> {
                 ),
                 // Order Items List
                 ListTile(
-                  leading: Icon(Icons.shopping_bag), // Replace with actual image when available
-                  title: Text(product['product_name']),
+                  leading: const Icon(Icons.shopping_bag,color: kcPrimaryColor, size: 50), // Replace with actual image when available
+                  title: Center(child: Text(product['product_name'], style: TextStyle(fontSize: 12),)),
                   subtitle: Text('x${order['quantity']}'),
                   trailing: Text('N${product['product_price']}'),
                 ),
