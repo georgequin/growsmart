@@ -1,25 +1,21 @@
-import 'package:afriprize/app/app.router.dart';
+import 'package:afriprize/core/data/models/country.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
-import 'package:afriprize/ui/components/drop_down_widget.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/components/text_field_widget.dart';
 import 'package:afriprize/ui/views/auth/auth_viewmodel.dart';
-import 'package:flutter/foundation.dart';
+import 'package:afriprize/utils/country_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
-
-import '../../../app/app.locator.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../utils/country_picker_utils.dart';
 import '../../common/ui_helpers.dart';
 
 class Register extends StatefulWidget {
   // final TabController controller;
   final Function(bool) updateIsLogin;
   const Register({Key? key, required this.updateIsLogin}) : super(key: key);
+
 
 
   @override
@@ -29,11 +25,23 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  List<Country> countries = [];
+  final List<String> genderOptions = ['Male', 'Female'];
+
+  bool? loadingCountries = true;
+
+  @override
+  void initState() {
+    loadCountries();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<AuthViewModel>.reactive(
       viewModelBuilder: () => AuthViewModel(),
       builder: (context, model, child) =>
+         loadingCountries == true ? const CircularProgressIndicator() :
           Form(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -143,15 +151,15 @@ class _RegisterState extends State<Register> {
                 IntlPhoneField(
                   decoration: InputDecoration(
                     labelText: 'Phone Number',
-                    labelStyle: TextStyle(color: Colors.black,fontSize: 13),
-                    floatingLabelStyle: TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black,fontSize: 13),
+                    floatingLabelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0), // Add border curve
-                      borderSide: BorderSide(color: Color(0xFFCC9933)),
+                      borderSide: const BorderSide(color: Color(0xFFCC9933)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0), // Add border curve
-                      borderSide: BorderSide(color: Color(0xFFCC9933)),
+                      borderSide: const BorderSide(color: Color(0xFFCC9933)),
                     ),
                   ),
                   validator: (value) {
@@ -161,10 +169,43 @@ class _RegisterState extends State<Register> {
                     return null; // Return null to indicate no validation error
                   },
                   initialCountryCode: 'NG',
+                  countries: countries.map((country) => CountryPickerUtils.getCountryByIsoCode(country.code!)).toList(),
                   controller: model.phone,
                   onChanged: (phone) {
-                      model.phoneValue = phone.completeNumber.toString();
+                      model.phoneNumber = phone;
+                      model.countryId = countries.firstWhere((country) => country.code == phone.countryISOCode).id!;
                   },
+                ),
+                //
+                verticalSpaceSmall,
+                DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Gender',
+                    labelStyle: const TextStyle(color: Colors.black,fontSize: 13),
+                    floatingLabelStyle: const TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Color(0xFFCC9933)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Color(0xFFCC9933)),
+                    ),
+                  ),
+                  value: model.selectedGender, // You should add selectedGender to your model
+                  onSaved: (String? newValue) {
+                    model.selectedGender = newValue!;
+                  },
+                  onChanged: (String? newValue) {
+                    model.selectedGender = newValue!;
+                  },
+                  items: genderOptions.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  validator: (value) => value == null ? 'Please select a gender' : null,
                 ),
                 verticalSpaceSmall,
                 TextFieldWidget(
@@ -265,6 +306,32 @@ class _RegisterState extends State<Register> {
                     ],
                   ),
                 ),
+                verticalSpaceSmall,
+                InkWell(
+                  onTap: () async {
+                    final Uri toLaunch =
+                    Uri(scheme: 'https', host: 'www.afriprize.com', path: '/legal/privacy-policy');
+
+                    if (!await launchUrl(toLaunch, mode: LaunchMode.inAppBrowserView)) {
+                      throw Exception('Could not launch www.afriprize.com/legal/privacy-policy');
+                    }
+                  },
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "View our Privacy Policy",
+                        style: TextStyle(
+                          fontSize: 15,
+                          decoration: TextDecoration.underline,
+                          color: kcSecondaryColor, // Feel free to change the color
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                verticalSpaceSmall,
+                const Text('Apple/Google is not a sponsor nor is involved in any way with our raffles/contest or sweepstakes.'),
                 verticalSpaceMedium,
                 SubmitButton(
                   isLoading: model.isBusy,
@@ -339,5 +406,22 @@ class _RegisterState extends State<Register> {
     widget.updateIsLogin(true);
   }
 
+
+  void loadCountries() async {
+    try {
+      setState(() {
+        loadingCountries = true;
+      });
+      List<Country> countries = await CountryUtils().getSupportedCountries();
+      setState(() {
+        this.countries = countries;
+        loadingCountries = false;
+      });
+    } catch (e) {
+      setState(() {
+        loadingCountries = false;
+      });
+    }
+  }
 
 }

@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:afriprize/app/app.locator.dart';
-import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
@@ -9,19 +6,13 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
-import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/dashboard/reviews.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
-
-import '../../../core/utils/local_store_dir.dart';
-import '../../../core/utils/local_stotage.dart';
-import '../../../utils/moneyUtil.dart';
-import 'dashboard_view.dart';
+import '../../../utils/money_util.dart';
 import 'dashboard_viewmodel.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -66,7 +57,7 @@ class _ProductDetailState extends State<ProductDetail> {
         });
       }
     } catch (e) {
-      print(e);
+      throw Exception(e);
     }
   }
 
@@ -170,7 +161,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           Container(
                             color: kcPrimaryColor,
                             // Set the background color to blue
-                            padding: EdgeInsets.all(7.0),
+                            padding: const EdgeInsets.all(7.0),
                             // Add padding to the container
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -237,7 +228,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                               12),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 8),
+                                                  const SizedBox(width: 8),
                                                   // Add some spacing between the image and text
                                                   Flexible(
                                                     child: Column(
@@ -260,13 +251,13 @@ class _ProductDetailState extends State<ProductDetail> {
                                                         ),
                                                         Text(
                                                           " ${MoneyUtils().formatAmount(widget.product.productPrice!)}",
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
+                                                          overflow: TextOverflow.ellipsis,
                                                           maxLines: 3,
                                                           style:
-                                                              const TextStyle(
+                                                               TextStyle(
+                                                                color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                                                                fontFamily: "satoshi",
                                                             fontSize: 19,
-                                                            color: Colors.black,
                                                           ),
                                                         )
                                                       ],
@@ -400,7 +391,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                           ),
                                         ),
                                       ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 // Add horizontal space between items
                               ],
                             );
@@ -420,7 +411,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             (widget.product.reviews == null ||
                                     widget.product.reviews!.isEmpty)
                                 ? ""
-                                : "${(widget.product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / widget.product.reviews!.length}",
+                                : "${(widget.product.reviews?.map<int>((review) => review.rating as int).reduce((value, element) => value + element))! / widget.product.reviews!.length}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
@@ -659,14 +650,14 @@ class RecommendedRow extends StatelessWidget {
                             product.raffle?[0].pictures == null) ||
                         product.raffle![0].pictures!.isEmpty
                     ? SizedBox(
-                        height: 150,
+                        height: 179,
                         width: MediaQuery.of(context).size.width,
                       )
                     : Image.network(
                         product.raffle![0].pictures![0].location!,
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
-                        height: 150,
+                        height: 179,
                       ),
               ),
               Positioned(
@@ -681,10 +672,10 @@ class RecommendedRow extends StatelessWidget {
                         ? kcWhiteColor
                         : kcBlackColor,
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
+                    children: [
                       Icon(
                         Icons.star,
                         color: kcStarColor,
@@ -743,9 +734,10 @@ class RecommendedRow extends StatelessWidget {
                                 style: GoogleFonts.inter(
                                     color: kcBlackColor, fontSize: 12)),
                             TextSpan(
-                                text: " N${product.productPrice}",
-                                style: GoogleFonts.inter(
-                                    color: kcSecondaryColor, fontSize: 12))
+                                text: " ${MoneyUtils().formatAmount(product.productPrice!)}",
+                                style: TextStyle(color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                                  fontFamily: "satoshi",),
+                            )
                           ],
                         ),
                       )

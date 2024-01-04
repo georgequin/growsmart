@@ -1,8 +1,6 @@
 import 'dart:async';
 
-// import 'package:expira_flutter/app_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 typedef PaginationBuilder<T> = Future<List<T>> Function(int currentListSize);
 typedef GroupedHeaderBuilder<T> = Widget Function(
@@ -31,7 +29,7 @@ class PaginationList<T> extends StatefulWidget {
         child: SizedBox(
           height: 25,
           width: 25,
-          child: const CircularProgressIndicator(
+          child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
             backgroundColor: Colors.amber,
           ),
@@ -41,7 +39,7 @@ class PaginationList<T> extends StatefulWidget {
     this.onLoading = const SizedBox(
       height: 25,
       width: 25,
-      child: const CircularProgressIndicator(
+      child: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
         backgroundColor: Colors.amber,
       ),
@@ -69,8 +67,8 @@ class PaginationList<T> extends StatefulWidget {
   PaginationListState<T> createState() => PaginationListState<T>();
 }
 
-Widget Img() {
-  return new Image(
+Widget img() {
+  return const Image(
     image: AssetImage("assets/loadingRainbow.gif"),
     height: 25,
     width: 25,
@@ -89,7 +87,7 @@ class PaginationListState<T> extends State<PaginationList<T>>
   @override
   void initState() {
     _itemList.addAll(widget.initialData);
-    if (widget.initialData.length > 0) _itemList.add(null);
+    if (widget.initialData.isNotEmpty) _itemList.add(null);
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       widget.scrollController?.addListener(()  {
@@ -115,7 +113,7 @@ class PaginationListState<T> extends State<PaginationList<T>>
     return StreamBuilder<PageState?>(
       stream: _streamController.stream,
       initialData:
-          (_itemList.length == 0) ? PageState.firstLoad : PageState.pageLoaded,
+          (_itemList.isEmpty) ? PageState.firstLoad : PageState.pageLoaded,
       builder: (BuildContext context, AsyncSnapshot<PageState?> snapshot) {
         if (!snapshot.hasData) {
           return widget.onLoading;
@@ -148,12 +146,12 @@ class PaginationListState<T> extends State<PaginationList<T>>
                       context,
                       index,
                       index == 0 ? null : _itemList[index - 1],
-                      _itemList[index]!,
+                      _itemList[index] as T,
                     ) ??
-                    SizedBox.shrink(),
+                    const SizedBox.shrink(),
                 widget.itemBuilder(
                   context,
-                  _itemList[index]!,
+                  _itemList[index] as T,
                 ),
               ],
             );
@@ -192,8 +190,8 @@ class PaginationListState<T> extends State<PaginationList<T>>
         latestPageState = PageState.pageLoaded;
         _streamController.add(PageState.pageLoaded);
       },
-      onError: (dynamic _error) {
-        this._error = _error;
+      onError: (dynamic error) {
+        this._error = error;
         if (offset == 0) {
           latestPageState = PageState.firstError;
           _streamController.add(PageState.firstError);
@@ -231,12 +229,12 @@ class PaginationListState<T> extends State<PaginationList<T>>
     } else {
       if (index == 0) {
         return widget.groupedHeaderBuilder
-                ?.call(context, index, null, _itemList[index]!) ??
-            SizedBox.shrink();
+                ?.call(context, index, null, _itemList[index] as T) ??
+            const SizedBox.shrink();
       } else {
         return widget.groupedHeaderBuilder?.call(
-                context, index, _itemList[index - 1], _itemList[index]!) ??
-            SizedBox.shrink();
+                context, index, _itemList[index - 1], _itemList[index] as T) ??
+            const SizedBox.shrink();
       }
     }
   }

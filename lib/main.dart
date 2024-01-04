@@ -18,7 +18,7 @@ void main() async{
   setupBottomSheetUi();
   final plugin = PaystackPlugin();
   WidgetsFlutterBinding.ensureInitialized();
-  await plugin.initialize(publicKey: 'pk_test_aae035e8425d5319b6500ef86c0472474a38a5fd');
+  await plugin.initialize(publicKey: 'pk_live_540bdf095640f7765b0a822f08161087b68df565');
   runApp(const MyApp());
 }
 

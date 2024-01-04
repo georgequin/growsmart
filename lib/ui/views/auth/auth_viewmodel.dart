@@ -8,11 +8,10 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
-import 'package:afriprize/ui/views/auth/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -27,7 +26,11 @@ class AuthViewModel extends BaseViewModel {
   final lastname = TextEditingController();
   final email = TextEditingController();
   final phone = TextEditingController();
+  final genderController = TextEditingController();
+  String? selectedGender;
   late String phoneValue = "";
+  late PhoneNumber phoneNumber;
+  late String countryId = "";
   final password = TextEditingController();
   final cPassword = TextEditingController();
   bool obscure = true;
@@ -112,6 +115,7 @@ class AuthViewModel extends BaseViewModel {
         profile.value =
             Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
         locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refresh_token"]);
         locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
         locator<LocalStorage>().save(LocalStorageDir.remember, remember);
 
@@ -147,9 +151,11 @@ class AuthViewModel extends BaseViewModel {
         "firstname": firstname.text,
         "lastname": lastname.text,
         "email": email.text,
-        "phone": phoneValue,
-        "country": "Nigeria",
-        "password": password.text
+        "phone": phoneNumber.completeNumber,
+        "country": countryId,
+        "password": password.text,
+        "gender": selectedGender
+
       });
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: res.data["message"]);
@@ -165,7 +171,7 @@ class AuthViewModel extends BaseViewModel {
         return RegistrationResult.success;
       } else {
         setBusy(false);
-        print("value of error is ${res.data.toString()}");
+
         if (res.data["message"] is String) {
           snackBar.showSnackbar(message: res.data["message"]);
           return RegistrationResult.failure; // Return failure since it's an error message
@@ -187,6 +193,5 @@ class AuthViewModel extends BaseViewModel {
 
     }
 
-    setBusy(false);
   }
 }

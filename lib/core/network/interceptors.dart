@@ -1,10 +1,18 @@
+
 import 'package:afriprize/app/app.dialogs.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../app/app.locator.dart';
 import '../../app/app.router.dart';
+import '../../utils/dialog_utils.dart';
+import '../data/repositories/repository.dart';
+import '../utils/local_store_dir.dart';
+import '../utils/local_stotage.dart';
+import 'api_response.dart';
+import 'api_service.dart';
 
 final nav = locator<NavigationService>();
 
@@ -18,6 +26,12 @@ final logInterceptor = PrettyDioLogger(
   maxWidth: 90,
 );
 
+int refreshTokenRetryCount = 0;
+final int maxRetryCount = 3;
+final repo = locator<Repository>();
+final apiService = locator<ApiService>();
+bool isDialogBeingDisplayed = false;
+
 final requestInterceptors = InterceptorsWrapper(
   onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
     handler.next(options);
@@ -26,33 +40,116 @@ final requestInterceptors = InterceptorsWrapper(
     handler.next(response);
   },
   onError: (DioError dioError, ErrorInterceptorHandler handler) async {
-    if (dioError.type == DioErrorType.connectTimeout) {
-      locator<DialogService>().showCustomDialog(
-        variant: DialogType.infoAlert,
-        title: "Connection Timed Out",
-      );
-    } else if (dioError.type == DioErrorType.other) {
-      locator<DialogService>().showCustomDialog(
-        variant: DialogType.infoAlert,
-        title: "Network is unreachable",
-      );
-    } else if (dioError.type == DioErrorType.receiveTimeout) {
-      locator<DialogService>().showCustomDialog(
-        variant: DialogType.infoAlert,
-        title: "Receive Timed Out",
-      );
-    } else {
-      if (dioError.response?.statusCode == 401) {
-        final res = await locator<DialogService>().showCustomDialog(
-            variant: DialogType.infoAlert,
-            title: "Session Expired",
-            description: "Login again to continue");
-        if (res!.confirmed) {
 
-          locator<NavigationService>().clearStackAndShow(Routes.authView);
+    // Future<DialogResponse?> showDialog(String title, String? description) async {
+    //   if (!isDialogBeingDisplayed) {
+    //     isDialogBeingDisplayed = true;
+    //      DialogResponse? res = await locator<DialogService>().showCustomDialog(
+    //       variant: DialogType.infoAlert,
+    //       title: title,
+    //       description: description,
+    //     );
+    //     isDialogBeingDisplayed = false;
+    //     return res;
+    //   }
+    //   return null;
+    // }
+
+    if (dioError.type == DioErrorType.connectTimeout) {
+      await showDialog("Connection Timed Out", null, isDialogBeingDisplayed);
+    }
+    else if (dioError.type == DioErrorType.other) {
+      await showDialog("Network is unreachable", null, isDialogBeingDisplayed);
+    }
+    else if (dioError.type == DioErrorType.receiveTimeout) {
+      await showDialog("Receive Timed Out", null, isDialogBeingDisplayed);
+    }
+    else if (dioError.response?.statusCode == 401 && !dioError.requestOptions.path.startsWith('auth')) {
+      print('value of path is ${dioError.requestOptions.path}');
+      if (refreshTokenRetryCount >= maxRetryCount) {
+        // Reset counter and redirect user to login
+        refreshTokenRetryCount = 0;
+        ApiResponse res = await repo.logOut();
+        if (res.statusCode == 200) {
+          return locator<NavigationService>().clearStackAndShow(Routes.authView);
         }
       }
+      refreshTokenRetryCount++;
+      String? refreshToken = await locator<LocalStorage>().fetch(LocalStorageDir.authRefreshToken);
+
+      if (refreshToken != null) {
+        bool refreshTokenResult = await refreshAccessToken();
+
+        if (refreshTokenResult) {
+          refreshTokenRetryCount = 0;
+          String newAccessToken = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
+          print('new access token is: $newAccessToken}');
+          final opts = Options(
+            method: dioError.requestOptions.method,
+            headers: {...dioError.requestOptions.headers,
+              'Authorization': 'Bearer $newAccessToken',},
+          );
+          apiService.dio.request(
+            dioError.requestOptions.path,
+            options: opts,
+            data: dioError.requestOptions.data,
+            queryParameters: dioError.requestOptions.queryParameters,
+          ).then(
+                (r) => handler.resolve(r),
+            onError: (e) => handler.reject(e),
+          );
+        } else {
+          print('couldnt refresh token');
+          final res = await locator<DialogService>().showCustomDialog(
+              variant: DialogType.infoAlert,
+              title: "Session Expired",
+              description: "Login again to continue");
+          if (res!.confirmed) {
+            return locator<NavigationService>().clearStackAndShow(Routes.authView);
+          }
+        }
+      }
+      else {
+        if (kDebugMode) {
+          print('refresh token is null');
+        }
+        final res = await showDialog("Session Expired", "Login again to continue", isDialogBeingDisplayed);
+        if (res!.confirmed) {
+          return locator<NavigationService>().clearStackAndShow(Routes.authView);
+        }
+
+      }
     }
-    handler.next(dioError);
+    else if(dioError.response?.statusCode == 401 && dioError.requestOptions.path.startsWith('/auth')){
+      if (kDebugMode) {
+        print('incorrect credentials');
+      }
+      if(dioError.response != null && dioError.response!.statusMessage != null){
+        await showDialog(dioError.response!.statusMessage!, null, isDialogBeingDisplayed);
+      }
+
+    }
+    else{
+      handler.next(dioError);
+    }
+
   },
 );
+
+Future<bool> refreshAccessToken() async {
+
+    ApiResponse res = await repo.refresh();
+    if (res.statusCode == 200 && res.data["tokens"] != null) {
+      Map<String, dynamic> tokens = res.data["tokens"];
+      String accessToken = tokens["access_token"];
+      String refreshToken = tokens["refresh_token"];
+      await locator<LocalStorage>().save(LocalStorageDir.authToken, accessToken);
+      await locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, refreshToken);
+      print('refresh successful');
+      return true; // Refresh successful
+    } else {
+      print('refresh conditions aint true');
+      return false; // Refresh failed
+    }
+
+}

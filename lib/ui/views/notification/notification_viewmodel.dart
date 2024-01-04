@@ -16,8 +16,7 @@ class NotificationViewModel extends BaseViewModel {
     loadingId = notification.id;
     rebuildUi();
     setBusy(true);
-    await locator<Repository>()
-        .updateNotification(notification.id!)
+    await locator<Repository>().updateNotification(notification.id!)
         .whenComplete(() async {
       await getNotifications();
     });

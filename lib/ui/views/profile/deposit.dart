@@ -5,19 +5,14 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:afriprize/ui/components/text_field_widget.dart';
-import 'package:afriprize/ui/views/profile/payment_view.dart';
+import 'package:afriprize/ui/views/profile/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-
-import '../../../core/data/models/profile.dart';
 import '../../../state.dart';
-import '../../../utils/moneyUtil.dart';
+import '../../../utils/money_util.dart';
 import '../../components/payment_success_page.dart';
-import '../cart/custom_reciept.dart';
 
 class Deposit extends StatefulWidget {
   const Deposit({Key? key}) : super(key: key);
@@ -43,7 +38,8 @@ class _DepositState extends State<Deposit> {
       appBar: AppBar(
         title: const Text("Deposit"),
       ),
-      body: Padding(
+      body: isLoading ? const Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,12 +53,12 @@ class _DepositState extends State<Deposit> {
             // TextFieldWidget(hint: "Amount", controller: amount),
           TextField(
             controller: amount,
-            keyboardType: TextInputType.numberWithOptions(decimal: false),
+            keyboardType: const TextInputType.numberWithOptions(decimal: false),
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
               MoneyUtils(),
             ],
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: "Amount",
             ),
           ),
@@ -76,9 +72,6 @@ class _DepositState extends State<Deposit> {
                 });
 
                 chargeCard();
-                setState(() {
-                  isLoading = false;
-                });
               },
               color: kcPrimaryColor,
             )
@@ -104,7 +97,6 @@ class _DepositState extends State<Deposit> {
       charge: charge,
     );
     if (response.status == true) {
-      print('paystack payment successful');
     ApiResponse res = await locator<Repository>().initTransaction(
     {
     "amount": MoneyUtils().getAmountAsInt(amount),
@@ -130,11 +122,15 @@ class _DepositState extends State<Deposit> {
         title: "Wallet Funded Sucessfully!",
                 animation: 'payment_success.json',
                 callback: () {
-                  Navigator.popAndPushNamed(context, Routes.wallet);
+                  ProfileViewModel().getProfile();
+                  Navigator.popUntil(context, ModalRoute.withName(Routes.wallet));
+                  Navigator.pushReplacementNamed(context, Routes.wallet);
+
+                  // Navigator.popAndPushNamed(context, Routes.wallet);
                   // locator<NavigationService>()
-                  //     .navigateToWallet(
-                  //     wallet: profile.value.wallet ?? Wallet());
-        }
+                  //     .clearStackAndShow(Routes.wallet )?.whenComplete(() =>
+                  //     ProfileViewModel().getProfile());
+                  }
       ),
     ),);
     // return showModalBottomSheet(

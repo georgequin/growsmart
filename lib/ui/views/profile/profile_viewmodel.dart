@@ -9,7 +9,6 @@ import 'package:afriprize/state.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
 import 'package:path/path.dart' as path;
 import 'package:stacked_services/stacked_services.dart';
@@ -53,7 +52,7 @@ class ProfileViewModel extends BaseViewModel {
         getProfile();
       }
     } catch (e) {
-      print(e);
+      throw Exception(e);
     }
     setBusy(false);
   }
@@ -66,6 +65,7 @@ class ProfileViewModel extends BaseViewModel {
       if (res.statusCode == 200) {
         profile.value =
             Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+
         rebuildUi();
       }
     } catch (e) {

@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:ui';
-
-import 'package:afriprize/app/app.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
-import 'package:afriprize/core/data/models/ad.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/dashboard/product_detail.dart';
-import 'package:afriprize/utils/moneyUtil.dart';
+import 'package:afriprize/utils/money_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -21,8 +18,6 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../core/data/models/product.dart';
-import '../../../core/data/models/raffle_ticket.dart';
-import '../../../widget/pagination_list.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
@@ -414,7 +409,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     child: CircularProgressIndicator(),
                   )
                 : viewModel.productList.isEmpty ?
-            Center(child: Text('No products available')) :
+            const Center(child: Text('No products available')) :
             ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -479,7 +474,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
   void onViewModelReady(DashboardViewModel viewModel) {
     viewModel.init();
     super.onViewModelReady(viewModel);
-    Timer.periodic(Duration(seconds: 8), (Timer timer) {
+    Timer.periodic(const Duration(seconds: 8), (Timer timer) {
       if (_pageController.hasClients) {
         int nextPage = _pageController.page!.round() + 1;
         if (nextPage >= viewModel.ads.length) {
@@ -487,7 +482,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
         }
         _pageController.animateToPage(
           nextPage,
-          duration: Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
         );
       }
@@ -545,7 +540,7 @@ class ProductRow extends StatelessWidget {
     return
     Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
-      height: 300,
+      height: 365,
       decoration: BoxDecoration(
         color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
         borderRadius: BorderRadius.circular(12),
@@ -562,31 +557,30 @@ class ProductRow extends StatelessWidget {
             children: [
               //product image
               Stack(
-
                 children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12)),
-                child: (product.raffle == null ||
-                        product.raffle!.isEmpty ||
-                        product.raffle![0].pictures == null ||
-                        product.raffle![0].pictures!.isEmpty)
-                    ? SizedBox(
-                        height: 128,
-                        width: MediaQuery.of(context).size.width,
-                      )
-                    : Image.network(
-                        (product.raffle![0].pictures!.isNotEmpty)
-                            ? product.raffle![0].pictures![0].location ??
-                                '' // Use ?? to provide a default value if location is null
-                            : '',
-                        fit: BoxFit.fill,
-                        width: MediaQuery.of(context).size.width,
-                        height: 130,
-                      ),
-              ),
-              Positioned(
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12)),
+                    child: (product.raffle == null ||
+                            product.raffle!.isEmpty ||
+                            product.raffle![0].pictures == null ||
+                            product.raffle![0].pictures!.isEmpty)
+                        ? SizedBox(
+                            height: 182,
+                            width: MediaQuery.of(context).size.width,
+                          )
+                        : Image.network(
+                            (product.raffle![0].pictures!.isNotEmpty)
+                                ? product.raffle![0].pictures![0].location ??
+                                    '' // Use ?? to provide a default value if location is null
+                                : '',
+                            fit: BoxFit.cover,
+                            width: MediaQuery.of(context).size.width,
+                            height: 182,
+                          ),
+                  ),
+                  Positioned(
                     top: 20,
                     right: 20,
                     child: Container(
@@ -613,7 +607,7 @@ class ProductRow extends StatelessWidget {
                                   (product.reviews == null ||
                                       product.reviews!.isEmpty)
                                       ? "0"
-                                      : "${(product.reviews?.map<int>((review) => review['rating'] as int).reduce((value, element) => value + element))! / product.reviews!.length}",
+                                      : "${(product.reviews?.map<int>((review) => review.rating as int).reduce((value, element) => value + element))! / product.reviews!.length}",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: snapshot.data,
@@ -624,13 +618,12 @@ class ProductRow extends StatelessWidget {
                       ),
                     ),
                   ),
-
                 ],
               ),
               //Ticket name
               Container(
                 color: kcPrimaryColor, // Set the background color to blue
-                padding: EdgeInsets.all(7.0), // Add padding to the container
+                padding: const EdgeInsets.all(7.0), // Add padding to the container
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -669,13 +662,16 @@ class ProductRow extends StatelessWidget {
                                           ? null
                                           : DecorationImage(
                                         fit: BoxFit.cover,
-                                        image: NetworkImage(product.pictures![0].location!),
+                                        image: NetworkImage(product.pictures!.firstWhere(
+                                              (picture) => picture.front == true,
+                                          orElse: () => product.pictures!.first,
+                                        ).location!),
                                       ),
                                       color: kcWhiteColor,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
-                                  SizedBox(width: 8), // spacing between the image and text
+                                  const SizedBox(width: 8), // spacing between the image and text
                                   Flexible(
                                     child: Column(
                                       children: [
@@ -747,7 +743,7 @@ class ProductRow extends StatelessWidget {
                                 Text(
                                   (product.raffle == null || product.raffle!.isEmpty)
                                       ? ""
-                                      : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
+                                      : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].endDate ?? DateTime.now().toIso8601String()))}",
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 3,
                                   style: const TextStyle(
@@ -836,9 +832,6 @@ class ProductRow extends StatelessWidget {
                   ],
                 )
               ),
-
-
-
 
             ],
           ),

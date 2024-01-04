@@ -7,10 +7,14 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/components/text_field_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:stacked_services/stacked_services.dart';
-
-import '../../components/drop_down_widget.dart';
+import '../../../core/data/models/country.dart';
+import '../../../utils/country_picker_utils.dart';
+import '../../../utils/country_utils.dart';
 
 class AddShipping extends StatefulWidget {
   const AddShipping({Key? key}) : super(key: key);
@@ -21,11 +25,24 @@ class AddShipping extends StatefulWidget {
 
 class _AddShippingState extends State<AddShipping> {
   final address = TextEditingController();
-  String? state;
+  String? countryId;
+  late PhoneNumber phoneNumber;
+  late PhoneNumber altPhoneNumber;
   final city = TextEditingController();
   final phone = TextEditingController();
+  final altPhone = TextEditingController();
+  final state = TextEditingController();
   final zipCode = TextEditingController();
+  List<Country> countries = [];
+  bool? loadingCountries = true;
   bool isLoading = false;
+
+
+  @override
+  void initState() {
+    loadCountries();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +58,19 @@ class _AddShippingState extends State<AddShipping> {
             controller: address,
           ),
           verticalSpaceMedium,
-          DropdownWidget(
-            value: state,
-            itemsList: states,
+          // DropdownWidget(
+          //   value: state,
+          //   itemsList: states,
+          //   hint: "State",
+          //   onChanged: (value) {
+          //     setState(() {
+          //       state = value;
+          //     });
+          //   },
+          // ),
+          TextFieldWidget(
             hint: "State",
-            onChanged: (value) {
-              setState(() {
-                state = value;
-              });
-            },
+            controller: state,
           ),
           verticalSpaceMedium,
           TextFieldWidget(
@@ -57,9 +78,64 @@ class _AddShippingState extends State<AddShipping> {
             controller: city,
           ),
           verticalSpaceMedium,
-          TextFieldWidget(
-            hint: "Phone",
+          loadingCountries == true ? const CircularProgressIndicator() :
+          IntlPhoneField(
+            decoration: InputDecoration(
+              labelText: 'Phone Number',
+              labelStyle: const TextStyle(color: Colors.black,fontSize: 13),
+              floatingLabelStyle: const TextStyle(color: Colors.black),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0), // Add border curve
+                borderSide: const BorderSide(color: Color(0xFFCC9933)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0), // Add border curve
+                borderSide: const BorderSide(color: Color(0xFFCC9933)),
+              ),
+            ),
+            validator: (value) {
+              if (value!.completeNumber.isEmpty) {
+                return 'required';
+              }
+              return null; // Return null to indicate no validation error
+            },
+            initialCountryCode: 'NG',
+            countries: countries.map((country) => CountryPickerUtils.getCountryByIsoCode(country.code!)).toList(),
             controller: phone,
+            onChanged: (phone) {
+              phoneNumber = phone;
+              countryId = countries.firstWhere((country) => country.code == phone.countryISOCode).id!;
+            },
+          ),
+          verticalSpaceMedium,
+          loadingCountries == true ? const CircularProgressIndicator() :
+          IntlPhoneField(
+            decoration: InputDecoration(
+              labelText: 'Alternative Phone Number',
+              labelStyle: const TextStyle(color: Colors.black,fontSize: 13),
+              floatingLabelStyle: const TextStyle(color: Colors.black),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0), // Add border curve
+                borderSide: const BorderSide(color: Color(0xFFCC9933)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0), // Add border curve
+                borderSide: const BorderSide(color: Color(0xFFCC9933)),
+              ),
+            ),
+            validator: (value) {
+              if (value!.completeNumber.isEmpty) {
+                return 'required';
+              }
+              return null; // Return null to indicate no validation error
+            },
+            initialCountryCode: 'NG',
+            countries: countries.map((country) => CountryPickerUtils.getCountryByIsoCode(country.code!)).toList(),
+            controller: altPhone,
+            onChanged: (phone) {
+              altPhoneNumber = phone;
+              countryId = countries.firstWhere((country) => country.code == phone.countryISOCode).id!;
+            },
           ),
           verticalSpaceMedium,
           TextFieldWidget(
@@ -71,65 +147,60 @@ class _AddShippingState extends State<AddShipping> {
             isLoading: isLoading,
             label: "Submit",
             submit: () async {
-              if (state == null) {
-                return;
-              }
               if (!isLoading) {
                 setState(() {
                   isLoading = true;
                 });
 
-                String formattedPhone = phone.text;
-                String formattedAdditionalPhone = profile.value.phone!;
-
-                if (!formattedPhone.startsWith('+234')) {
-                  // Add '+234' prefix to the phone number
-                  formattedPhone = '+234$formattedPhone';
-                }
-                if (!formattedAdditionalPhone.startsWith('+234')) {
-                  // Add '+234' prefix to the phone number
-                  formattedAdditionalPhone = '+234$formattedAdditionalPhone';
-                }
-
-
                 try {
                   ApiResponse res = await locator<Repository>().saveShipping({
                     "shipping_firstname": profile.value.firstname,
                     "shipping_lastname": profile.value.lastname,
-                    "shipping_phone": formattedPhone,
-                    "shipping_additional_phone":formattedAdditionalPhone,
+                    "shipping_phone": phoneNumber.completeNumber,
+                    "shipping_additional_phone":altPhoneNumber.completeNumber,
                     "shipping_address": address.text,
                     "shipping_additional_address": address.text,
-                    "shipping_state": state,
+                    "shipping_state": state.text,
                     "shipping_city": city.text,
+                    "shipping_country": countryId,
                     "shipping_zip_code": int.parse(zipCode.text)
+
                   });
                   if (res.statusCode == 200) {
-                    locator<SnackbarService>()
-                        .showSnackbar(message: res.data["message"]);
-                    ApiResponse pRes = await locator<Repository>().getProfile();
-                    if (pRes.statusCode == 200) {
-                      profile.value = Profile.fromJson(
-                          Map<String, dynamic>.from(pRes.data["user"]));
-                      profile.notifyListeners();
-                    }
-                    Navigator.pop(context);
+                    Shipping shipping = Shipping.fromJson(Map<String, dynamic>.from(res.data["shipment"]));
+                    locator<SnackbarService>().showSnackbar(message: res.data["message"]);
+                      try {
+                        ApiResponse res = await locator<Repository>().setDefaultShipping(
+                            {},
+                            shipping.id!);
+                        if (res.statusCode == 200) {
+                          ApiResponse pRes = await locator<Repository>().getProfile();
+                          if (pRes.statusCode == 200) {
+                            profile.value = Profile.fromJson(Map<String, dynamic>.from(pRes.data["user"]));
+                            profile.notifyListeners();
+                          }
+                        }
+                      } catch (e) {
+                        if (kDebugMode) {
+                          print(e);
+                        }
+                      }
+                      if (mounted) {
+                        Navigator.pop(context);
+                      }
                   } else {
-                    if (res.data["message"].runtimeType
-                        .toString()
-                        .toLowerCase()
-                        .contains("list")) {
+                    if (res.data["message"].runtimeType.toString().toLowerCase().contains("list")) {
                       for (var element in (res.data["message"] as List)) {
-                        locator<SnackbarService>()
-                            .showSnackbar(message: element);
+                        locator<SnackbarService>().showSnackbar(message: element);
                       }
                     } else {
-                      locator<SnackbarService>()
-                          .showSnackbar(message: res.data["message"]);
+                      locator<SnackbarService>().showSnackbar(message: res.data["message"]);
                     }
                   }
                 } catch (e) {
-                  print(e);
+                  if (kDebugMode) {
+                    print(e);
+                  }
                 }
 
                 setState(() {
@@ -143,7 +214,28 @@ class _AddShippingState extends State<AddShipping> {
       ),
     );
   }
+
+  void loadCountries() async {
+    try {
+      setState(() {
+        loadingCountries = true;
+      });
+      List<Country> countries = await CountryUtils().getSupportedCountries();
+      setState(() {
+        this.countries = countries;
+        loadingCountries = false;
+      });
+    } catch (e) {
+      setState(() {
+        loadingCountries = false;
+      });
+      if (kDebugMode) {
+        print('Error loading countries: $e');
+      }
+    }
+  }
 }
+
 
 List<String> states = [
   "Abia",

@@ -1,10 +1,8 @@
-import 'package:afriprize/app/app.locator.dart';
-import 'package:afriprize/app/app.router.dart';
+
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/background.dart';
 import 'package:flutter/material.dart';
-import 'package:stacked_services/stacked_services.dart';
 
 class SuccessPage extends StatefulWidget {
   final String title;
