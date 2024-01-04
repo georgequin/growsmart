@@ -25,6 +25,9 @@ class HomeView extends StackedView<HomeViewModel> {
         builder: (context, AppUiModes mode, child) {
           Color iconColor = mode == AppUiModes.dark ? Colors.white : Colors.black;
           Color selectedColor = mode == AppUiModes.dark ? Colors.white : kcSecondaryColor;
+          ValueListenable<List<dynamic>> filteredNotifications = ValueNotifier(
+              notifications.value.where((notification) => notification.status != 1).toList()
+          );
           return BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             backgroundColor: mode == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
@@ -46,8 +49,9 @@ class HomeView extends StackedView<HomeViewModel> {
                 icon: _navBarItemWithCounter(Icons.shopping_cart_outlined, viewModel.selectedTab == 2, cart, iconColor),
                 label: "Cart",
               ),
+              //TODO : MAKE SURE TO CHECK WHY THE VALUE ISNT CORRECT
               BottomNavigationBarItem(
-                icon: _navBarItemWithCounter(Icons.notifications_none, viewModel.selectedTab == 3, notifications, iconColor),
+                icon: _navBarItemWithCounter(Icons.notifications_none, viewModel.selectedTab == 3, filteredNotifications, iconColor),
                 label: "Notifications",
               ),
               BottomNavigationBarItem(
@@ -91,14 +95,14 @@ class HomeView extends StackedView<HomeViewModel> {
                 right: -6,
                 top: -6,
                 child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
                     color: Colors.red,
                     shape: BoxShape.circle,
                   ),
                   child: Text(
                     '${value.length}',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ),
               ),

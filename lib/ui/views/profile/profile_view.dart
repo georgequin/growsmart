@@ -15,6 +15,8 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/data/models/profile.dart';
+import '../../../core/network/api_response.dart';
+import '../../../core/network/interceptors.dart';
 import 'profile_viewmodel.dart';
 
 class ProfileView extends StackedView<ProfileViewModel> {
@@ -52,7 +54,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                             // backgroundColor: Colors.transparent,
                             backgroundColor: Colors.black.withOpacity(0.7),
                         builder: (BuildContext context) {
-                        return FractionallySizedBox(
+                        return const FractionallySizedBox(
                         heightFactor: 1.0, // 70% of the screen's height
                         child: ProfileScreen(),
                         );
@@ -78,7 +80,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(profile.value.country ?? "")
+                        Text(profile.value.country?.name ?? "")
                       ],
                     ),
                     horizontalSpaceLarge,
@@ -91,7 +93,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                           // backgroundColor: Colors.transparent,
                           backgroundColor: Colors.black.withOpacity(0.7),
                           builder: (BuildContext context) {
-                            return FractionallySizedBox(
+                            return const FractionallySizedBox(
                               heightFactor: 1.0, // 70% of the screen's height
                               child: ProfileScreen(),
                             );
@@ -99,7 +101,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                         );
                         // viewModel.updateProfilePicture();
                       },
-                      child: Icon(Icons.edit, color: kcPrimaryColor,)
+                      child: const Icon(Icons.edit, color: kcPrimaryColor,)
                     ),
 
                   ],
@@ -128,8 +130,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 ListTile(
                   onTap: () {
                     locator<NavigationService>()
-                        .navigateToWallet(
-                            wallet: profile.value.wallet ?? Wallet())
+                        .navigateToWallet()
                         .whenComplete(() => viewModel.getProfile());
                   },
                   leading: const Icon(
@@ -219,12 +220,20 @@ class ProfileView extends StackedView<ProfileViewModel> {
                         cancelTitle: "No",
                         confirmationTitle: "Yes");
                     if (res!.confirmed) {
-                      await locator<LocalStorage>()
-                          .delete(LocalStorageDir.authToken);
-                      await locator<LocalStorage>()
-                          .delete(LocalStorageDir.authUser);
-                      userLoggedIn.value = false;
-                      locator<NavigationService>().replaceWithAuthView();
+
+
+                      ApiResponse res = await repo.logOut();
+                      if (res.statusCode == 200) {
+                        userLoggedIn.value = false;
+                        await locator<LocalStorage>().delete(LocalStorageDir.authToken);
+                        await locator<LocalStorage>().delete(LocalStorageDir.authUser);
+                        await locator<LocalStorage>().delete(LocalStorageDir.cart);
+                        await locator<LocalStorage>().delete(LocalStorageDir.authRefreshToken);
+                        cart.value.clear();
+                        cart.notifyListeners();
+                        return locator<NavigationService>().clearStackAndShow(Routes.authView);
+                      }
+
                     }
                   },
                   leading: const Icon(

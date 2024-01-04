@@ -17,9 +17,9 @@ import '../../../state.dart';
 import '../../components/empty_state.dart';
 
 class Wallet extends StatefulWidget {
-  final pro.Wallet wallet;
+  // final pro.Wallet wallet;
 
-  const Wallet({required this.wallet, Key? key}) : super(key: key);
+  const Wallet({Key? key}) : super(key: key);
 
   @override
   State<Wallet> createState() => _WalletState();
@@ -28,33 +28,33 @@ class Wallet extends StatefulWidget {
 class _WalletState extends State<Wallet> {
   late pro.Wallet wallet;
   bool loading = false;
+  bool loadingProfile = true;
   List<Transaction> transactions = [];
 
   @override
   void initState() {
-    wallet = widget.wallet;
     getProfile();
-    // getHistory();
+    getHistory();
     super.initState();
   }
 
-  void getProfile() async {
-    try {
-      ApiResponse res = await locator<Repository>().getProfile();
-      if (res.statusCode == 200) {
-        profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
-        setState(() {
-          wallet = profile.value.wallet!;
-          transactions = (res.data['user']['transaction'] as List)
-              .map((e) => Transaction.fromJson(Map<String, dynamic>.from(e)))
-              .toList();
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+   // void getProfile() async {
+  //   try {
+  //     ApiResponse res = await locator<Repository>().getProfile();
+  //     if (res.statusCode == 200) {
+  //       profile.value =
+  //           Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+  //       setState(() {
+  //         wallet = profile.value.wallet!;
+  //         transactions = (res.data['user']['transaction'] as List)
+  //             .map((e) => Transaction.fromJson(Map<String, dynamic>.from(e)))
+  //             .toList();
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   void getHistory() async {
     setState(() {
@@ -71,11 +71,31 @@ class _WalletState extends State<Wallet> {
         });
       }
     } catch (e) {
-      print(e);
+      throw Exception("Error Api call");
     }
 
     setState(() {
       loading = false;
+    });
+  }
+
+  Future<void> getProfile() async {
+    ApiResponse res = await locator<Repository>().getProfile();
+    setState(() {
+      loadingProfile = false;
+      if (res.statusCode == 200) {
+        Map<String, dynamic> userData = res.data["user"] as Map<String, dynamic>;
+        profile.value = Profile.fromJson(userData);
+        if (profile.value.wallet != null) {
+          wallet = profile.value.wallet!;
+        } else {
+          wallet = pro.Wallet(balance: 0);
+        }
+
+      } else {
+        wallet = pro.Wallet(balance: 0);
+        locator<SnackbarService>().showSnackbar(message: res.data["message"]);
+      }
     });
   }
 
@@ -91,14 +111,7 @@ class _WalletState extends State<Wallet> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            ApiResponse res = await locator<Repository>().getProfile();
-            if (res.statusCode == 200) {
-              profile.value =
-                  Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
-              setState(() {
-                wallet = profile.value.wallet!;
-              });
-            }
+            getProfile();
           },
           child: ListView(
             padding: const EdgeInsets.all(30),
@@ -119,7 +132,8 @@ class _WalletState extends State<Wallet> {
                         " Available Balance",
                         style: TextStyle(fontSize: 18, color: kcWhiteColor),
                       ),
-                      Text(
+                      loadingProfile ? const CircularProgressIndicator()
+                          : Text(
                         "N${NumberFormat.simpleCurrency(name: "").format(wallet.balance ?? 0)}",
                         style: const TextStyle(
                           fontSize: 30,
@@ -127,7 +141,6 @@ class _WalletState extends State<Wallet> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
                     ],
                   ),
 
@@ -214,7 +227,7 @@ class _WalletState extends State<Wallet> {
                                   // ),
                                   title: Text(
                                     transaction.type == 2 ? 'Wallet Top Up' : 'Purchase', // Changed from 'Transaction' to match design
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black, // Changed color to black to match the design
@@ -222,7 +235,7 @@ class _WalletState extends State<Wallet> {
                                   ),
                                   subtitle: Text(
                                     DateFormat('EEEE, d MMM').format(DateTime.parse(transaction.created!)), // Changed format to match design
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.grey, // Adjusted color to grey to match design
                                       fontSize: 14,
                                     ),
@@ -241,7 +254,7 @@ class _WalletState extends State<Wallet> {
                                       ),
                                       Text(
                                         DateFormat('hh:mm a').format(DateTime.parse(transaction.created!)), // Added to match the time design
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.grey, // Adjusted color to grey to match design
                                           fontSize: 14,
                                         ),

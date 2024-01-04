@@ -1,17 +1,12 @@
-import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:afriprize/ui/views/cart/checkout.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
-
-import '../../../core/data/models/order_info.dart';
-import '../../../utils/moneyUtil.dart';
+import '../../../utils/money_util.dart';
 import 'cart_viewmodel.dart';
 
 class CartView extends StackedView<CartViewModel> {
@@ -114,10 +109,12 @@ class CartView extends StackedView<CartViewModel> {
                                           Text(item.product!.productName ?? ""),
                                           verticalSpaceTiny,
                                           Text(
-                                            "N${item.product!.productPrice! * item.quantity!}",
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            MoneyUtils().formatAmount(item.product!.productPrice! * item.quantity!),
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                                              fontFamily: "satoshi",
+                                            ),
                                           )
                                         ],
                                       ),
@@ -232,9 +229,11 @@ class CartView extends StackedView<CartViewModel> {
                     ),
                     Text(
                       MoneyUtils().formatAmount(viewModel.subTotal),
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                        fontFamily: "satoshi",
+                      ),)
                   ],
                 ),
                 verticalSpaceSmall,
@@ -268,9 +267,13 @@ class CartView extends StackedView<CartViewModel> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "N${viewModel.subTotal + viewModel.deliveryFee}",
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      MoneyUtils().formatAmount(viewModel.subTotal + viewModel.deliveryFee),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                        fontFamily: "satoshi",
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
                   ],
                 ),
@@ -286,6 +289,7 @@ class CartView extends StackedView<CartViewModel> {
             ),
     );
   }
+
 
   @override
   void onViewModelReady(CartViewModel viewModel) {

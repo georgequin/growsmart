@@ -11,15 +11,17 @@ import 'package:intl/intl.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/network/api_response.dart';
-import '../../../utils/orderUtil.dart';
+import '../../../utils/order_util.dart';
 import '../../common/app_colors.dart';
 
+// REJECTED=0,
 // PENDING=1,
 // PROCESSING=2,
 // APPROVED=3,
 // SHIPPED=4,
 // DELIVERED=5,
-// RECEIVED=6
+// RECEIVED=6,
+// INTRANSIT=7,
 
 class Track extends StatefulWidget {
   final OrderItem item;
@@ -49,9 +51,9 @@ class _TrackState extends State<Track> {
         padding: const EdgeInsets.all(20),
         children: [
           Card(
-            margin: EdgeInsets.all(8),
+            margin: const EdgeInsets.all(8),
             child: Padding(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
                   Row(
@@ -73,21 +75,21 @@ class _TrackState extends State<Track> {
                                 ),
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               '${widget.item.product?.productName}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text("Order ID: ${widget.item.id}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 12, color: Colors.grey)),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                           ],
                         ),
                       ),
@@ -96,13 +98,13 @@ class _TrackState extends State<Track> {
                         children: [
                           Text(
                             "Quantity: ${widget.item.quantity}",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                           Text(
                             "On ${DateFormat("d MMM").format(DateTime.parse(widget.item.created!))}",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           OrderUtil.statusChip(widget.item.status!),
                         ],
                       ),
@@ -114,7 +116,7 @@ class _TrackState extends State<Track> {
           ),
           verticalSpaceLarge,
           const Text(
-            "Estimated delivery time date",
+            "Estimated delivery date",
             style: TextStyle(fontSize: 18),
           ),
            Text(
@@ -413,7 +415,7 @@ class _TrackState extends State<Track> {
                             Navigator.pop(context);
                           }
                         } catch (e) {
-                          print(e);
+                         throw Exception(e);
                         }
 
                         setState(() {
@@ -436,10 +438,9 @@ class _TrackState extends State<Track> {
 
     // Define a utility method to map the integer status to the enum.
     OrderStatus getOrderStatusFromInt(int status) {
-      print(status);
       return OrderStatus.values.firstWhere(
             (e) => e.index == status,
-        orElse: () => OrderStatus.REJECTED, // Default case or error handling if status is out of range
+        orElse: () => OrderStatus.PENDING, // Default case or error handling if status is out of range
       );
     }
 
@@ -452,13 +453,13 @@ class _TrackState extends State<Track> {
       String title = "Unknown Status"; // Default title
       String subtitle = "Status is not recognized.";
 
-      // Switch case or if-else logic to assign icon, title, and subtitle based on the status
+
       switch (status) {
-        case OrderStatus.REJECTED:
-          icon = Icons.cancel_outlined;
-          title = "Order Rejected";
-          subtitle = "Rejected, please contact support.";
-          break;
+        // case OrderStatus.REJECTED:
+        //   icon = Icons.cancel_outlined;
+        //   title = "Order Rejected";
+        //   subtitle = "Rejected, please contact support.";
+        //   break;
         case OrderStatus.PENDING:
           icon = Icons.hourglass_empty;
           title = "Order Pending";
@@ -469,15 +470,15 @@ class _TrackState extends State<Track> {
           title = "Order Processing";
           subtitle = "Your order is being processed.";
           break;
-        case OrderStatus.APPROVED:
-          icon = Icons.thumb_up;
-          title = "Order Approved";
-          subtitle = "Your order has been approved.";
-          break;
         case OrderStatus.SHIPPED:
-          icon = Icons.local_shipping;
+          icon = Icons.local_shipping_outlined;
           title = "Order Shipped";
-          subtitle = "Your order has been shipped.";
+          subtitle = "Your package has been shipped.";
+          break;
+        case OrderStatus.INTRANSIT:
+          icon = Icons.check_circle_outline;
+          title = "Order In Transit";
+          subtitle = "Your order is on its way.";
           break;
         case OrderStatus.DELIVERED:
           icon = Icons.done_all;
@@ -490,11 +491,6 @@ class _TrackState extends State<Track> {
           subtitle = "You have received your order.";
           break;
 
-        case OrderStatus.INTRANSIT:
-          icon = Icons.check_circle_outline;
-          title = "Order In Transit";
-          subtitle = "Your order is on its way.";
-          break;
 
         default:
         // Handling for default case if required

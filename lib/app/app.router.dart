@@ -9,11 +9,13 @@ import 'package:afriprize/core/data/models/order_info.dart' as _i22;
 import 'package:afriprize/core/data/models/order_item.dart' as _i26;
 import 'package:afriprize/core/data/models/product.dart' as _i24;
 import 'package:afriprize/core/data/models/profile.dart' as _i25;
+import 'package:afriprize/ui/components/payment_success_page.dart';
 import 'package:afriprize/ui/views/auth/auth_view.dart' as _i5;
 import 'package:afriprize/ui/views/auth/register.dart';
+import 'package:afriprize/ui/views/cart/add_shipping.dart';
 import 'package:afriprize/ui/views/cart/cart_view.dart' as _i8;
 import 'package:afriprize/ui/views/cart/checkout.dart' as _i11;
-import 'package:afriprize/ui/views/cart/reciept.dart' as _i13;
+import 'package:afriprize/ui/views/cart/add_shipping.dart' as _i13;
 import 'package:afriprize/ui/views/change_password/change_password_view.dart'
     as _i17;
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart' as _i6;
@@ -36,6 +38,9 @@ import 'package:flutter/material.dart' as _i21;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i27;
+import '../core/data/models/cart_item.dart';
+import '../core/data/models/raffle_ticket.dart';
+import '../ui/views/profile/ticket_list.dart' as _i28;
 
 class Routes {
   static const homeView = '/home-view';
@@ -46,7 +51,11 @@ class Routes {
 
   static const authView = '/auth-view';
 
+  static const shippingView = '/shipping-view';
+
   static const dashboardView = '/dashboard-view';
+
+  static const ticketView = '/ticket-view';
 
   static const drawsView = '/draws-view';
 
@@ -77,6 +86,7 @@ class Routes {
   static const withdrawView = '/withdraw-view';
 
   static const registerView = '/register-view';
+  static const successView = '/success-view';
 
   static const all = <String>{
     homeView,
@@ -84,6 +94,7 @@ class Routes {
     onboardingView,
     authView,
     dashboardView,
+    ticketView,
     drawsView,
     cartView,
     notificationView,
@@ -99,6 +110,8 @@ class Routes {
     deleteAccountView,
     withdrawView,
     registerView,
+    successView,
+    shippingView,
   };
 }
 
@@ -107,6 +120,10 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.homeView,
       page: _i2.HomeView,
+    ),
+    _i1.RouteDef(
+      Routes.ticketView,
+      page: _i28.TicketList,
     ),
     _i1.RouteDef(
       Routes.startupView,
@@ -148,10 +165,10 @@ class StackedRouter extends _i1.RouterBase {
       Routes.productDetail,
       page: _i12.ProductDetail,
     ),
-    _i1.RouteDef(
-      Routes.receipt,
-      page: _i13.Receipt,
-    ),
+    // _i1.RouteDef(
+    //   Routes.receipt,
+    //   page: _i13.Receipt,
+    // ),
     _i1.RouteDef(
       Routes.wallet,
       page: _i14.Wallet,
@@ -184,12 +201,26 @@ class StackedRouter extends _i1.RouterBase {
       Routes.registerView,
       page: Register,
     ),
+    _i1.RouteDef(
+      Routes.successView,
+      page: PaymentSuccessPage,
+    ),
+    _i1.RouteDef(
+      Routes.shippingView,
+      page: AddShipping,
+    ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.HomeView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => const _i2.HomeView(),
+        settings: data,
+      );
+    },
+    _i28.TicketList: (data) {
+      return _i21.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i28.TicketList(),
         settings: data,
       );
     },
@@ -257,18 +288,15 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i13.Receipt: (data) {
-      final args = data.getArgs<ReceiptArguments>(nullOk: false);
+    _i13.AddShipping: (data) {
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => _i13.Receipt(
-            info: args.info, totalAmount: args.totalAmount, key: args.key),
+        builder: (context) => const _i13.AddShipping(),
         settings: data,
       );
     },
     _i14.Wallet: (data) {
-      final args = data.getArgs<WalletArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => _i14.Wallet(wallet: args.wallet, key: args.key),
+        builder: (context) => _i14.Wallet(),
         settings: data,
       );
     },
@@ -384,60 +412,57 @@ class ProductDetailArguments {
 
 class ReceiptArguments {
   const ReceiptArguments({
-    required this.info,
-    required this.totalAmount,
+    required this.cart,
+    required this.raffle,
     this.key,
   });
 
-  final Map<String, dynamic> info;
-
-  final int totalAmount;
+  final List<CartItem> cart;
+  final List<RaffleTicket> raffle;
 
   final _i23.Key? key;
 
   @override
   String toString() {
-    return '{"info": "$info", "totalAmount": "$totalAmount", "key": "$key"}';
+    return '{"cart": "$cart", "raffle": "$raffle", "key": "$key"}';
   }
 
   @override
   bool operator ==(covariant ReceiptArguments other) {
     if (identical(this, other)) return true;
-    return other.info == info &&
-        other.totalAmount == totalAmount &&
+    return other.cart == cart &&
+        other.raffle == raffle &&
         other.key == key;
   }
 
   @override
   int get hashCode {
-    return info.hashCode ^ totalAmount.hashCode ^ key.hashCode;
+    return cart.hashCode ^ raffle.hashCode ^ key.hashCode;
   }
 }
 
 class WalletArguments {
   const WalletArguments({
-    required this.wallet,
     this.key,
   });
 
-  final _i25.Wallet wallet;
 
   final _i23.Key? key;
 
   @override
   String toString() {
-    return '{"wallet": "$wallet", "key": "$key"}';
+    return '{"key": "$key"}';
   }
 
   @override
   bool operator ==(covariant WalletArguments other) {
     if (identical(this, other)) return true;
-    return other.wallet == wallet && other.key == key;
+    return  other.key == key;
   }
 
   @override
   int get hashCode {
-    return wallet.hashCode ^ key.hashCode;
+    return   key.hashCode;
   }
 }
 
@@ -579,6 +604,20 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToAddShippingView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.shippingView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> navigateToRegisterView([
     int? routerId,
     bool preventDuplicates = true,
@@ -699,8 +738,8 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> navigateToReceipt({
-    required Map<String, dynamic> info,
-    required int totalAmount,
+    required List<CartItem> cart,
+    required List<RaffleTicket> raffle,
     _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -710,7 +749,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.receipt,
         arguments:
-            ReceiptArguments(info: info, totalAmount: totalAmount, key: key),
+            ReceiptArguments(cart: cart, raffle: raffle, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -718,8 +757,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> navigateToWallet({
-    required _i25.Wallet wallet,
-    _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -727,7 +764,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.wallet,
-        arguments: WalletArguments(wallet: wallet, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -989,8 +1025,9 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> replaceWithReceipt({
-    required Map<String, dynamic> info,
-    required int totalAmount,
+    required List<CartItem> cart,
+    required List<RaffleTicket> raffle,
+
     _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -1000,7 +1037,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.receipt,
         arguments:
-            ReceiptArguments(info: info, totalAmount: totalAmount, key: key),
+            ReceiptArguments(cart: cart, raffle: raffle, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1017,7 +1054,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.wallet,
-        arguments: WalletArguments(wallet: wallet, key: key),
+        arguments: WalletArguments(key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

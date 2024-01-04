@@ -56,7 +56,6 @@ class _PaymentViewState extends State<PaymentView> {
           },
           onPageStarted: (String url) {},
           onPageFinished: (String url) async {
-            print("finished $url");
             if (url.contains("trxref")) {
               Uri uri = Uri.parse(url);
               String? trxref = uri.queryParameters['trxref'];

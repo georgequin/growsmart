@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
@@ -11,8 +9,11 @@ import 'package:afriprize/state.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.dialogs.dart';
+import '../../../app/app.router.dart';
 import '../../../core/data/models/order_info.dart';
 import 'checkout.dart';
+
 
 class CartViewModel extends BaseViewModel {
   final repo = locator<Repository>();
@@ -69,6 +70,21 @@ class CartViewModel extends BaseViewModel {
     if (cart.value.isEmpty) {
       return null;
     }
+
+    if(profile.value.shipping == null || profile.value.shipping!.isEmpty){
+
+      final shippingDialogResponse = await locator<DialogService>().showCustomDialog(
+          variant: DialogType.infoAlert,
+          title: "No Shipping Address",
+          showIconInMainButton: true,
+          description: "Shipping address is required for checkout",
+          mainButtonTitle: "Add Address");
+      if (shippingDialogResponse!.confirmed) {
+        return locator<NavigationService>().navigateToAddShippingView();
+      }
+    }
+
+
     setBusy(true);
     try {
       ApiResponse res = await repo.saveOrder({
@@ -87,6 +103,7 @@ class CartViewModel extends BaseViewModel {
             .whenComplete(() => rebuildUi());
       } else {
         snackBar.showSnackbar(message: res.data["message"]);
+
       }
     } catch (e) {
       log.e(e);

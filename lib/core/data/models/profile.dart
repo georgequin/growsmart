@@ -1,3 +1,4 @@
+import 'package:afriprize/core/data/models/country.dart';
 import 'package:afriprize/core/data/models/product.dart';
 
 class Profile {
@@ -6,7 +7,7 @@ class Profile {
   String? lastname;
   String? email;
   String? phone;
-  String? country;
+  Country? country;
   int? verified;
   int? status;
 
@@ -39,21 +40,26 @@ class Profile {
     lastname = json['lastname'];
     email = json['email'];
     phone = json['phone'];
-    country = json['country'];
+    country = json['country'] != null ? Country.fromJson(json['country']) : null;
     verified = json['verified'];
     status = json['status'];
     // role = json['role'];
     if (json['picture'] != null) {
       pictures = <Pictures>[];
-      json['picture'].forEach((v) {
-        pictures!.add(Pictures.fromJson(v));
-      });
+      if (json['picture'].isNotEmpty) {
+        json['picture'].forEach((v) {
+          pictures!.add(Pictures.fromJson(v));
+        });
+      }
     }
+
     if (json['shipping'] != null) {
       shipping = <Shipping>[];
-      json['shipping'].forEach((v) {
-        shipping!.add(Shipping.fromJson(v));
-      });
+      if (json['shipping'].isNotEmpty) {
+        json['shipping'].forEach((v) {
+          shipping!.add(Shipping.fromJson(v));
+        });
+      }
     }
     created = json['created'];
     updated = json['updated'];

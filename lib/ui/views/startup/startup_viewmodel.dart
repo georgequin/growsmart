@@ -21,20 +21,16 @@ class StartupViewModel extends BaseViewModel {
     // This is where you can make decisions on where your app should navigate when
     // you have custom startup logic
 
-    String? token =
-        await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
-    String? user =
-        await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
-    bool? onboarded =
-        await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
-    if (onboarded == null || onboarded == false) {
+    String? token = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
+    String? user = await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
+    bool? onboarded = await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
 
+    if (onboarded == null || onboarded == false) {
       _navigationService.replaceWithOnboardingView();
     } else {
       if (token != null && user != null) {
         userLoggedIn.value = true;
-        profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(jsonDecode(user)));
+        profile.value = Profile.fromJson(Map<String, dynamic>.from(jsonDecode(user)));
       }
       _navigationService.replaceWithHomeView();
       // _navigationService.replaceWithAuthView();

@@ -81,7 +81,7 @@ class _ProfileScreen extends State<ProfileScreen> {
         getProfile();
       }
     } catch (e) {
-      print(e);
+      throw Exception(e);
     }
 
     setState(() {
@@ -97,11 +97,11 @@ class _ProfileScreen extends State<ProfileScreen> {
             Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => ProfileScreen(),
+          builder: (context) => const ProfileScreen(),
         ));
       }
     } catch (e) {
-      print(e);
+      throw Exception(e);
     }
   }
 
@@ -143,9 +143,9 @@ class _ProfileScreen extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile Details'),
+        title: const Text('Profile Details'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -154,14 +154,14 @@ class _ProfileScreen extends State<ProfileScreen> {
       body: ListView(
         children: <Widget>[
           Card(
-            margin: EdgeInsets.all(8.0),
+            margin: const EdgeInsets.all(8.0),
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   isUpdating
-                      ? CircularProgressIndicator() // Show loader when updating
+                      ? const CircularProgressIndicator() // Show loader when updating
                       :
                   GestureDetector(
                     onTap: () {
@@ -179,18 +179,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0), // Padding to position the edit icon correctly
-                          child: Container(
-                            child:  Text(
-                              'change', style: TextStyle(
-                              color: uiMode.value == AppUiModes.light ?  Colors.black : Colors.white,
-                            ),
-                            )
-
-                            // Icon(
-                            //   Icons.edit,
-                            //   color: uiMode.value == AppUiModes.light ?  kcPrimaryColor : kcSecondaryColor,
-                            //   size: 24, // Adjust the size of the icon as needed
-                            // ),
+                          child: Text(
+                            'change', style: TextStyle(
+                            color: uiMode.value == AppUiModes.light ?  Colors.black : Colors.white,
+                          ),
                           ),
                         ),
                       ],
@@ -202,7 +194,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           ),
 
           Padding(
-              padding: EdgeInsets.all(16.0), // Add padding inside the card
+              padding: const EdgeInsets.all(16.0), // Add padding inside the card
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,9 +208,9 @@ class _ProfileScreen extends State<ProfileScreen> {
                   ),
 
                  Card(
-                  margin: EdgeInsets.all(8.0),
+                  margin: const EdgeInsets.all(8.0),
                       child: Padding(
-                        padding: EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -228,7 +220,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   flex: 3,
                                   // This will give bounded constraints to the ListTile.
                                   child: ListTile(
-                                    title: Text('Full Name',style: TextStyle(
+                                    title: const Text('Full Name',style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold
                                     ),),
@@ -261,7 +253,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                               children: [
                                 Expanded(
                                   child: ListTile(
-                                    title: Text('Phone Number',style: TextStyle(
+                                    title: const Text('Phone Number',style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold
                                     ),),
@@ -290,7 +282,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                   ),
 
                   Padding(
-                      padding: EdgeInsets.symmetric(vertical: 3.0),
+                      padding: const EdgeInsets.symmetric(vertical: 3.0),
                       child: Column(
                         children: [
                           ...List.generate(
@@ -309,13 +301,19 @@ class _ProfileScreen extends State<ProfileScreen> {
                                       mainAxisAlignment:MainAxisAlignment.start,
                                       children: [
                                         Row(
-                                          mainAxisAlignment:MainAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             const Icon(
                                               Icons.location_on_outlined,
                                               size: 20,
                                             ),
-                                            Text('${shipping.shippingAddress} ${shipping.shippingCity} ${shipping.shippingState} ' ?? ""),
+                                            Expanded(
+                                              child: Text(
+                                                '${shipping.shippingAddress} ${shipping.shippingCity} ${shipping.shippingState}' ?? "",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 3,
+                                              ),
+                                            ),
                                           ],
                                         ),
                                         verticalSpaceSmall,
@@ -382,7 +380,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                                           }
                                                         }
                                                       } catch (e) {
-                                                        print(e);
+                                                        throw Exception(e);
                                                       }
 
                                                       setState(() {
@@ -425,12 +423,11 @@ class _ProfileScreen extends State<ProfileScreen> {
                                                         }
                                                       }
                                                     } catch (e) {
-                                                      print(e);
                                                       Fluttertoast.showToast(msg: 'can\'t delete..');
                                                     }
                                                   }
                                               },
-                                              child: Icon(Icons.delete),
+                                              child: const Icon(Icons.delete),
                                             ),
 
 
@@ -485,14 +482,14 @@ class AddressTile extends StatelessWidget {
   final String address;
   final String phone;
 
-  AddressTile({required this.address, required this.phone});
+  const AddressTile({super.key, required this.address, required this.phone});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('Address'),
+      title: const Text('Address'),
       subtitle: Text(address),
-      trailing: Column(
+      trailing: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(Icons.edit),

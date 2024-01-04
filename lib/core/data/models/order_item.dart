@@ -1,11 +1,15 @@
 import 'package:afriprize/core/data/models/product.dart';
+import 'package:afriprize/core/data/models/profile.dart';
+import 'package:afriprize/core/data/models/raffle_ticket.dart';
 
 class OrderItem {
   String? id;
   int? quantity;
   int? status;
+  int? paymentStatus;
   String? created;
   String? updated;
+  bool? reviewStatus;
   User? user;
   Product? product;
   Tracking? tracking;
@@ -21,12 +25,16 @@ class OrderItem {
     this.product,
     this.tracking,
     this.transaction,
+    this.paymentStatus,
+    this.reviewStatus
   });
 
   OrderItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     quantity = json['quantity'];
     status = json['status'];
+    reviewStatus = json['review_status'];
+    paymentStatus = json['payment_status'];
     created = json['created'];
     updated = json['updated'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
@@ -47,6 +55,8 @@ class OrderItem {
     data['id'] = id;
     data['quantity'] = quantity;
     data['status'] = status;
+    data['review_status'] = reviewStatus;
+    data['payment_status'] = paymentStatus;
     data['created'] = created;
     data['updated'] = updated;
     if (user != null) {
@@ -172,6 +182,8 @@ class Transaction {
   int? type;
   String? created;
   String? updated;
+  Shipping? shipping;
+  OrderItem? order;
 
   Transaction(
       {this.id,
@@ -181,18 +193,33 @@ class Transaction {
       this.meta,
       this.type,
       this.created,
-      this.updated});
+      this.updated,
+      this.shipping,
+      this.order,
+     });
 
-  Transaction.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    status = json['status'];
-    amount = json['amount'];
-    reference = json['reference'];
-    meta = json['meta'];
-    type = json['type'];
-    created = json['created'];
-    updated = json['updated'];
-  }
+  Transaction.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        status = json['status'],
+        amount = json['amount'],
+        reference = json['reference'],
+        meta = json['meta'],
+        type = json['type'],
+        created = json['created'],
+        updated = json['updated'],
+        shipping = json['shipping'],
+        order = (json['order']);
+
+  // Transaction.fromJson(Map<String, dynamic> json) {
+  //   id = json['id'];
+  //   status = json['status'];
+  //   amount = json['amount'];
+  //   reference = json['reference'];
+  //   meta = json['meta'];
+  //   type = json['type'];
+  //   created = json['created'];
+  //   updated = json['updated'];
+  // }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -204,6 +231,29 @@ class Transaction {
     data['type'] = type;
     data['created'] = created;
     data['updated'] = updated;
+    data['shipping'] = shipping;
+    return data;
+  }
+}
+
+class Receipt {
+  Transaction? transaction;
+  RaffleTicket? ticket;
+
+  Receipt(
+      {
+        this.transaction,
+        this.ticket});
+
+  Receipt.fromJson(Map<String, dynamic> json) {
+    transaction = json['transaction'];
+    ticket = json['ticket'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['transaction'] = transaction;
+    data['ticket'] = ticket;
     return data;
   }
 }

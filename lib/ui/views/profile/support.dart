@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:afriprize/ui/common/app_colors.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../app/app.locator.dart'; // Make sure this is the correct path
+import '../../../app/app.locator.dart';
 
 class Support extends StatefulWidget {
   const Support({Key? key}) : super(key: key);
@@ -33,17 +33,23 @@ class _SupportState extends State<Support> {
             title: "Email Us",
             subtitle: "support@afriprize.com",
             onTap: () async {
-              sendEmail("support@afriprize.com");
-              print('Email Us tapped');
+              sendEmail("support@afriprize.com", context);
             },
           ),
           SupportOption(
             icon: Icons.call_end_outlined,
             title: "Call us",
-            subtitle: "+2348166580743",
+            subtitle: "+2347045007400",
             onTap: () {
-              _makePhoneCall("+2348166580743");
-              print('phone Us tapped');
+              _makePhoneCall("+23487045007400");
+            },
+          ),
+          SupportOption(
+            icon: Icons.chat,
+            title: "WhatsApp",
+            subtitle: "Chat with us on whatsApp", // Replace with your WhatsApp number
+            onTap: () {
+              chatOnWhatsApp("+2347045007400"); // Replace with your WhatsApp number
             },
           ),
           SupportOption(
@@ -52,22 +58,58 @@ class _SupportState extends State<Support> {
             subtitle: "",
             onTap: () {
               goToFaqs('https://afriprize.com/faq');
-              print('https://afriprize.com/faq Us tapped');
             },
           ),
+
         ],
       ),
     );
   }
 }
 
-Future<void> sendEmail(String emailAddress) async {
-  final Uri emailLaunchUri = Uri(
-    scheme: 'mailto',
-    path: emailAddress,
+Future<void> sendEmail(String emailAddress, BuildContext context) async {
+  EmailContent email = EmailContent(
+    to: [
+      emailAddress,
+    ],
+    bcc: ['dev@afriprize.com'],
   );
 
-  _launch(emailLaunchUri);
+  OpenMailAppResult result =
+  await OpenMailApp.composeNewEmailInMailApp(
+      nativePickerTitle: 'Select email app to compose',
+      emailContent: email);
+  if (!result.didOpen && !result.canOpen) {
+    showNoMailAppsDialog(context);
+  } else if (!result.didOpen && result.canOpen) {
+    showDialog(
+      context: context,
+      builder: (_) => MailAppPickerDialog(
+        mailApps: result.options,
+        emailContent: email,
+      ),
+    );
+  }
+}
+
+void showNoMailAppsDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Open Mail App"),
+        content: const Text("No mail apps installed"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("OK"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      );
+    },
+  );
 }
 
 Future<void> _makePhoneCall(String phoneNumber) async {
@@ -85,6 +127,16 @@ Future<void> goToFaqs(String url) async {
 
   if (!await launchUrl(toLaunch, mode: LaunchMode.inAppBrowserView)) {
     throw Exception('Could not launch $url');
+  }
+}
+
+Future<void> chatOnWhatsApp(String phoneNumber) async {
+  // Format the phone number for WhatsApp URL
+  String formattedPhoneNumber = phoneNumber.replaceAll('+', '').replaceAll(' ', '');
+  final Uri whatsappUri = Uri.parse("https://wa.me/$formattedPhoneNumber");
+
+  if (!await launchUrl(whatsappUri, mode: LaunchMode.inAppBrowserView)) {
+    locator<SnackbarService>().showSnackbar(message: "WhatsApp not installed");
   }
 }
 
@@ -156,10 +208,11 @@ class SupportOption extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey), // Replace with your color
+            const Icon(Icons.chevron_right, color: Colors.grey), // Replace with your color
           ],
         ),
       ),
     );
   }
+
 }

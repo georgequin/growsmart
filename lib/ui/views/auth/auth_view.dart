@@ -1,11 +1,5 @@
-import 'package:afriprize/ui/common/app_colors.dart';
-// import 'package:afriprize/ui/components/background.dart';
 import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:flutter/material.dart';
-import 'package:stacked/stacked.dart';
-
-import '../../../state.dart';
-import 'auth_viewmodel.dart';
 import 'login.dart';
 
 class AuthView extends StatefulWidget {
@@ -19,7 +13,6 @@ class AuthView extends StatefulWidget {
 
 class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   late TabController tabController;
-  late List<Widget> _tabs;
   bool isLogin = true;
 
   @override

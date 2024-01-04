@@ -3,7 +3,6 @@ import 'package:stacked/stacked.dart';
 
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
-import '../../components/background.dart';
 import '../../components/submit_button.dart';
 import '../../components/text_field_widget.dart';
 import 'change_password_viewmodel.dart';
@@ -26,7 +25,7 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-           title: Text('Change password', style: TextStyle(color: Colors.black)),
+           title: const Text('Change password', style: TextStyle(color: Colors.black)),
             leading: InkWell(
               onTap: () {
                 Navigator.of(context).pop();

@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -59,10 +58,20 @@ class OrderUtil {
   static Widget statusChip(int statusValue) {
     OrderStatus status = getStatusFromInt(statusValue);
     return Chip(
-      label: Text(getLabel(status), style: TextStyle(color: Colors.white)),
+      label: Text(getLabel(status), style: const TextStyle(color: Colors.white)),
       backgroundColor: getColor(status),
     );
   }
+
+  static Widget statusText(int statusValue) {
+    OrderStatus status = getStatusFromInt(statusValue);
+    return Text(
+        getLabel(status),
+        style: TextStyle(color: getColor(status)),
+    );
+  }
+
+
 }
 
 enum OrderStatus {

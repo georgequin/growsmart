@@ -3,9 +3,7 @@ import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
@@ -87,7 +85,7 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
   ) =>
       OnboardingViewModel();
 
-  Widget _indicator(bool selected) {
+  Widget indicator(bool selected) {
     return Container(
       margin: const EdgeInsets.all(3),
       height: selected ? 5 : 8,
@@ -104,10 +102,10 @@ class PageOne extends StatefulWidget {
   const PageOne({Key? key}) : super(key: key);
 
   @override
-  _PageOneState createState() => _PageOneState();
+  PageOneState createState() => PageOneState();
 }
 
-class _PageOneState extends State<PageOne> {
+class PageOneState extends State<PageOne> {
 
   late VideoPlayerController _controller;
 

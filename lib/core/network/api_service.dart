@@ -6,14 +6,17 @@ import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import 'api_response.dart';
 
-enum HttpMethod { get, post, patch, put, delete }
+enum HttpMethod { get, post, postRefresh, patch, put, delete }
 
 class ApiService {
   final log = getLogger('ApiService');
+
+  final Dio dio;
+
+  ApiService() : dio = _dio();
 
   static final Map<String, String> _requestHeaders = {
     'Content-Type': 'application/json',
@@ -29,7 +32,7 @@ class ApiService {
     receiveTimeout: _timeout,
   );
 
-  Dio _dio() {
+  static Dio _dio() {
     Dio dio;
     if (!kReleaseMode) {
       dio = Dio(_options)
@@ -40,6 +43,18 @@ class ApiService {
     }
     return dio;
   }
+
+  // Dio _dio() {
+  //   Dio dio;
+  //   if (!kReleaseMode) {
+  //     dio = Dio(_options)
+  //       ..interceptors.add(logInterceptor)
+  //       ..interceptors.add(requestInterceptors);
+  //   } else {
+  //     dio = Dio(_options)..interceptors.add(requestInterceptors);
+  //   }
+  //   return dio;
+  // }
 
   Future<ApiResponse> call({
     required HttpMethod method,
@@ -53,7 +68,7 @@ class ApiService {
     try {
       switch (method) {
         case HttpMethod.post:
-          Response response = await _dio().post(
+          Response response = await apiService.dio.post(
             endpoint,
             queryParameters: reqParams,
             data: useFormData ? formData : reqBody,
@@ -64,8 +79,21 @@ class ApiService {
           );
           return ApiResponse(response);
 
+
+        case HttpMethod.postRefresh:
+          Response response = await apiService.dio.post(
+            endpoint,
+            queryParameters: reqParams,
+            data: useFormData ? formData : reqBody,
+            options: Options(
+                headers: !protected
+                    ? {}
+                    : {"Authorization": "Bearer ${await _getRefreshToken()}"}),
+          );
+          return ApiResponse(response);
+
         case HttpMethod.get:
-          Response response = await _dio().get(
+          Response response = await apiService.dio.get(
             queryParameters: reqParams,
             endpoint,
             options: Options(
@@ -75,7 +103,7 @@ class ApiService {
           );
           return ApiResponse(response);
         case HttpMethod.patch:
-          Response response = await _dio().patch(
+          Response response = await apiService.dio.patch(
             endpoint,
             data: useFormData ? formData : reqBody,
             options: Options(
@@ -85,7 +113,7 @@ class ApiService {
           );
           return ApiResponse(response);
         case HttpMethod.put:
-          Response response = await _dio().put(
+          Response response = await apiService.dio.put(
             endpoint,
             data: useFormData ? formData : reqBody,
             options: Options(
@@ -95,7 +123,7 @@ class ApiService {
           );
           return ApiResponse(response);
         case HttpMethod.delete:
-          Response response = await _dio().delete(
+          Response response = await apiService.dio.delete(
             endpoint,
             data: useFormData ? formData : reqBody,
             options: Options(
@@ -139,6 +167,12 @@ class ApiService {
   Future<String> _getToken() async {
     final localStorage = locator<LocalStorage>();
     String? token = await localStorage.fetch(LocalStorageDir.authToken);
+    return token ?? "";
+  }
+
+  Future<String> _getRefreshToken() async {
+    final localStorage = locator<LocalStorage>();
+    String? token = await localStorage.fetch(LocalStorageDir.authRefreshToken);
     return token ?? "";
   }
 }

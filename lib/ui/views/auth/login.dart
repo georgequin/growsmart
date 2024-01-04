@@ -5,12 +5,7 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/components/text_field_widget.dart';
 import 'package:afriprize/ui/views/auth/auth_viewmodel.dart';
-import 'package:afriprize/ui/views/auth/register.dart';
-import 'package:afriprize/ui/views/home/home_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -208,6 +203,5 @@ class _LoginState extends State<Login> {
 
   void gotoRegister() {
     widget.updateIsLogin(false);
-    print('goto register called');
   }
 }

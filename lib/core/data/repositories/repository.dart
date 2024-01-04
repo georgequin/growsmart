@@ -19,6 +19,25 @@ class Repository extends IRepository {
   }
 
   @override
+  Future<ApiResponse> logOut() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/logout"
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> refresh() async {
+    ApiResponse response = await api.call(
+        method: HttpMethod.postRefresh,
+        endpoint: "auth/refresh_token"
+    );
+    return response;
+  }
+
+  @override
   Future<ApiResponse> register(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
@@ -54,7 +73,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getSellingFast() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "raffle/sellingfast",
+      endpoint: "products/featured",
     );
 
     return response;
@@ -232,9 +251,8 @@ class Repository extends IRepository {
   Future<ApiResponse> getTransactions() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "transaction/list",
+      endpoint: "transaction/user/list",
     );
-
     return response;
   }
 
@@ -244,7 +262,14 @@ class Repository extends IRepository {
       method: HttpMethod.get,
       endpoint: "products/recommended/$productId",
     );
+    return response;
+  }
 
+  Future<ApiResponse> supportCountries() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "resources/country/list",
+    );
     return response;
   }
 
@@ -304,10 +329,10 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> deleteDefaultShipping(String id) async {
+  Future<ApiResponse> deleteDefaultShipping(String productId) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "user/delete_shipping/$id",
+      endpoint: "user/delete_shipping/$productId",
     );
 
     return response;

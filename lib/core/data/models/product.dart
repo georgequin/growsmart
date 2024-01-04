@@ -1,3 +1,5 @@
+import 'package:afriprize/core/data/models/order_item.dart';
+
 class Product {
   String? id;
   String? productName;
@@ -65,12 +67,12 @@ class Product {
         pictures!.add(Pictures.fromJson(v));
       });
     }
-    // if (json['reviews'] != null) {
-    //   reviews = <Null>[];
-    //   json['reviews'].forEach((v) {
-    //     reviews!.add(Null.fromJson(v));
-    //   });
-    // }
+    if (json['reviews'] != null) {
+      reviews = <Review>[];
+      json['reviews'].forEach((v) {
+        reviews!.add(Review.fromJson(v));
+      });
+    }
     if (json['raffle'] != null) {
       raffle = <Raffle>[];
       json['raffle'].forEach((v) {
@@ -273,6 +275,52 @@ class Raffle {
     }
     if (product != null) {
       data['product'] = product!.toJson();
+    }
+    return data;
+  }
+}
+
+class Review {
+  String? id;
+  String? comment;
+  int? rating;
+  String? created;
+  String? updated;
+  Product? product;
+  User? user;
+
+  Review(
+      {this.id,
+        this.comment,
+        this.rating,
+        this.created,
+        this.updated,
+        this.product,
+        this.user,
+      });
+
+  Review.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    rating = json['rating'];
+    comment = json['comment'];
+    created = json['created'];
+    updated = json['updated'];
+    product = json['product'] != null ? Product.fromJson(json['product']) : null;
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['rating'] = rating;
+    data['comment'] = comment;
+    data['created'] = created;
+    data['updated'] = updated;
+    if (product != null) {
+      data['product'] = product!.toJson();
+    }
+    if (user != null) {
+      data['user'] = user!.toJson();
     }
     return data;
   }

@@ -21,7 +21,7 @@ class EnterEmailViewModel extends BaseViewModel {
         snackBar.showSnackbar(message: "Code sent to email");
       }
     }catch(e){
-
+      throw Exception(e);
     }
 
     setBusy(false);
