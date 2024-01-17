@@ -600,8 +600,8 @@ class ProductRow extends StatelessWidget {
                           ),
                           FutureBuilder<Color?>(
                               future: _updateTextColor(
-                                product.raffle!.isNotEmpty ?
-                                  product.raffle![0].pictures![0].location! : ''),
+                                  product.raffle!.isNotEmpty ?
+                                  product.raffle![0].pictures![0].location ?? '' : ''),
                               builder: (context, snapshot) {
                                 return Text(
                                   (product.reviews == null ||
@@ -651,7 +651,7 @@ class ProductRow extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                              flex: 6, // Allocate 60% of the space to this widget
+                              flex: 6,
                               child: Row(
                                 children: [
                                   Container(
@@ -662,10 +662,8 @@ class ProductRow extends StatelessWidget {
                                           ? null
                                           : DecorationImage(
                                         fit: BoxFit.cover,
-                                        image: NetworkImage(product.pictures!.firstWhere(
-                                              (picture) => picture.front == true,
-                                          orElse: () => product.pictures!.first,
-                                        ).location!),
+                                        image: NetworkImage(product.pictures!.firstWhere((picture) => picture.front == true,
+                                          orElse: () => product.pictures!.first,).location! ),
                                       ),
                                       color: kcWhiteColor,
                                       borderRadius: BorderRadius.circular(12),
