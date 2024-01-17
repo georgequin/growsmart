@@ -579,6 +579,56 @@ class _CheckoutState extends State<Checkout> {
                   ),
                 ),
                 verticalSpaceSmall,
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      paymentMethod = "binance";
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    height: 50,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: kcBlackColor, width: 0.5)),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 15,
+                          width: 15,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: kcBlackColor,
+                                width: 1,
+                              )),
+                          child: paymentMethod == "binance"
+                              ? const Center(
+                            child: Icon(
+                              Icons.check,
+                              size: 12,
+                            ),
+                          )
+                              : const SizedBox(),
+                        ),
+                        horizontalSpaceSmall,
+                        const Text(
+                          "Binance Pay",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        horizontalSpaceSmall,
+                        const Expanded(
+                          child: Text(
+                            "Make payment from your binance wallet",
+                            style: TextStyle(fontSize: 11),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                verticalSpaceSmall,
                 const Row(
                   children: [
                     Icon(

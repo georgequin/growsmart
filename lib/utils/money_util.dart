@@ -109,13 +109,13 @@ class MoneyUtils extends TextInputFormatter {
     // Prepare common payload
     var payload = {
       "orderId": orderIds,
-      "payment_method": paymentMethod == 'wallet' ? 1 : 2,
+      "payment_method": getPaymentMethodCode(paymentMethod),
       "reference": getReference(),
       "id": profile.value.id,
     };
 
     // Handle wallet payment
-    if (paymentMethod == 'wallet') {
+    if (paymentMethod == 'wallet' || paymentMethod == 'binance') {
       var res = await locator<Repository>().payForOrder(payload);
       if (res.statusCode != 200) {
         locator<SnackbarService>().showSnackbar(message: res.data["message"]);
@@ -157,6 +157,10 @@ class MoneyUtils extends TextInputFormatter {
       }
     }
 
+    if(paymentMethod == 'binance'){
+
+    }
+
 
     var defaultResponse = Response(
       requestOptions: RequestOptions(path: ''),
@@ -169,4 +173,16 @@ class MoneyUtils extends TextInputFormatter {
 
   // String payStackPublicKey = 'pk_test_aae035e8425d5319b6500ef86c0472474a38a5fd';
   String payStackPublicKey = 'pk_live_540bdf095640f7765b0a822f08161087b68df565';
+  int getPaymentMethodCode(String paymentMethod) {
+    switch (paymentMethod) {
+      case 'wallet':
+        return 1;
+      case 'paystack':
+        return 2;
+      case 'binance':
+        return 3;
+      default:
+        return 0;
+    }
+  }
 }
