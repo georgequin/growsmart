@@ -141,6 +141,16 @@ class _AddShippingState extends State<AddShipping> {
           TextFieldWidget(
             hint: "Zip Code",
             controller: zipCode,
+            validator: (value) {
+              String pattern = r'^[0-9]+$';
+              RegExp regExp = RegExp(pattern);
+
+              // Check if the value matches the pattern
+              if (value == null || value.isEmpty || !regExp.hasMatch(value)) {
+                return 'Please enter a valid zip code'; // Error message
+              }
+              return null; // Return null if the input is valid
+            },
           ),
           verticalSpaceMedium,
           SubmitButton(
@@ -153,6 +163,7 @@ class _AddShippingState extends State<AddShipping> {
                 });
 
                 try {
+
                   ApiResponse res = await locator<Repository>().saveShipping({
                     "shipping_firstname": profile.value.firstname,
                     "shipping_lastname": profile.value.lastname,
@@ -164,7 +175,6 @@ class _AddShippingState extends State<AddShipping> {
                     "shipping_city": city.text,
                     "shipping_country": countryId,
                     "shipping_zip_code": int.parse(zipCode.text)
-
                   });
                   if (res.statusCode == 200) {
                     Shipping shipping = Shipping.fromJson(Map<String, dynamic>.from(res.data["shipment"]));

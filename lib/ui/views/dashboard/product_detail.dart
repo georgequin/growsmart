@@ -110,7 +110,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 widget.product.raffle![0]
                                                     .pictures!.isNotEmpty)
                                             ? widget.product.raffle![0]
-                                                .pictures![0].location!
+                                                .pictures![0].location ?? ''
                                             : '',
                                         // Provide a default value or handle the case when pictures are empty
                                         fit: BoxFit.fill,
@@ -220,7 +220,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                                       .product
                                                                       .pictures![
                                                                           0]
-                                                                      .location!),
+                                                                      .location ?? 'assets/images/afriprize.png'),
                                                             ),
                                                       color: kcWhiteColor,
                                                       borderRadius:

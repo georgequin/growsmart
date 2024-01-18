@@ -5,5 +5,4 @@ class CountryPickerUtils {
   static Country getCountryByIsoCode(String isoCode) {
     return countries.firstWhere((country) => country.code == isoCode);
   }
-
 }

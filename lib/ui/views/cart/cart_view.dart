@@ -94,7 +94,7 @@ class CartView extends StackedView<CartViewModel> {
                                                 image: NetworkImage(item
                                                     .product!
                                                     .pictures![0]
-                                                    .location!),
+                                                    .location ?? "assets/images/paypal.png"),
                                               ),
                                       ),
                                     ),

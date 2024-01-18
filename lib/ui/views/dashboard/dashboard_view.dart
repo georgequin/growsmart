@@ -662,8 +662,10 @@ class ProductRow extends StatelessWidget {
                                           ? null
                                           : DecorationImage(
                                         fit: BoxFit.cover,
-                                        image: NetworkImage(product.pictures!.firstWhere((picture) => picture.front == true,
-                                          orElse: () => product.pictures!.first,).location! ),
+                                        image: NetworkImage(product.pictures!.firstWhere(
+                                              (picture) => picture.front == true,
+                                          orElse: () => product.pictures!.first,
+                                        ).location ?? ''),
                                       ),
                                       color: kcWhiteColor,
                                       borderRadius: BorderRadius.circular(12),

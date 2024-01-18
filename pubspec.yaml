@@ -41,6 +41,8 @@ dependencies:
   pretty_dio_logger: ^1.1.1
   sembast: ^3.4.3+1
   flutter_modular: ^5.0.3
+  device_apps: ^2.1.1
+  android_intent: ^2.0.0
   open_mail_app: ^0.4.5
   intl_phone_number_input: any
   intl_phone_field: ^3.0.0

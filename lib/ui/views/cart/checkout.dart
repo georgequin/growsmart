@@ -8,9 +8,12 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/utils/money_util.dart';
+import 'package:android_intent/android_intent.dart';
+import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/data/models/raffle_ticket.dart';
 import '../../../core/network/interceptors.dart';
 import '../../../core/utils/local_store_dir.dart';
@@ -109,7 +112,7 @@ class _CheckoutState extends State<Checkout> {
                                 ? null
                                 : DecorationImage(
                                     image: NetworkImage(
-                                        item.product!.pictures![0].location!),
+                                        item.product!.pictures![0].location ?? ''),
                                   ),
                           ),
                         ),
@@ -703,8 +706,16 @@ class _CheckoutState extends State<Checkout> {
     ApiResponse res = await MoneyUtils().chargeCardUtil(paymentMethod, orderIds, plugin, context, amount);
 
     if (res.statusCode == 200) {
-      getRaffles();
-      showReceipt();
+
+      if (paymentMethod == 'binance') {
+        // var binanceData = res.data["binance"]["data"];
+        Map<String, dynamic> binanceData = res.data['binance']['data'];
+        _showBinanceModal(binanceData);
+      } else {
+        // Handle other payment methods
+        getRaffles();
+        showReceipt();
+      }
     } else {
       locator<SnackbarService>().showSnackbar(message: res.data["message"]);
     }
@@ -712,6 +723,94 @@ class _CheckoutState extends State<Checkout> {
     setState(() {
       isPaying = false;
     });
+  }
+
+  void _showBinanceModal(Map binanceData) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+      ),
+      // barrierColor: Colors.black.withAlpha(50),
+      // backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.8, // 70% of the screen's height
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Image.asset("assets/images/binance.png",scale: 4),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Image.network(
+                    binanceData["qrcodeLink"],
+                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 20),
+                InkWell(
+                  onTap: () {
+                    _openBinanceApp(binanceData["deeplink"]);
+                  },
+                  child: const Text('Open App >', style: TextStyle(color: kcSecondaryColor, fontWeight: FontWeight.bold),)
+                ),
+
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _launchURL(String url) async {
+
+    final Uri uri = Uri.parse(url);
+    await canLaunchUrl(uri)
+        ? await launchUrl(uri)
+        : locator<SnackbarService>().showSnackbar(message: "No app found, please install binance app to continue ${url}");
+
+  }
+
+  _openBinanceApp(String deepLink) async {
+    // You need to replace 'com.binance.dev' with the actual package name of the Binance app
+    bool isInstalled = await DeviceApps.isAppInstalled('com.binance.dev');
+    printInstalledApps();
+
+    if (isInstalled) {
+      AndroidIntent intent = AndroidIntent(
+        action: 'action_view',
+        // data: deepLink, // The deep link URL that you have for the Binance app
+        package: 'com.binance.dev', // Again, replace with the actual Binance package name
+      );
+      await intent.launch();
+    } else {
+      if (await canLaunch(deepLink)) {
+        await launch(deepLink);
+      } else {
+        throw 'Could not launch $deepLink';
+      }
+    }
+  }
+
+  Future<void> printInstalledApps() async {
+    List<Application> apps = await DeviceApps.getInstalledApplications(includeSystemApps: true);
+    for (var app in apps) {
+      print('App: ${app.appName}, Package: ${app.packageName}');
+    }
   }
 
 

@@ -115,7 +115,7 @@ class MoneyUtils extends TextInputFormatter {
     };
 
     // Handle wallet payment
-    if (paymentMethod == 'wallet' || paymentMethod == 'binance') {
+    if (paymentMethod == 'wallet') {
       var res = await locator<Repository>().payForOrder(payload);
       if (res.statusCode != 200) {
         locator<SnackbarService>().showSnackbar(message: res.data["message"]);
@@ -157,8 +157,12 @@ class MoneyUtils extends TextInputFormatter {
       }
     }
 
-    if(paymentMethod == 'binance'){
-
+    if(paymentMethod == 'binance') {
+      var res = await locator<Repository>().payForOrder(payload);
+      if (res.statusCode != 200) {
+        locator<SnackbarService>().showSnackbar(message: res.data["message"]);
+      }
+      return res;
     }
 
 
