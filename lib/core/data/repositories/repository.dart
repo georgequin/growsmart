@@ -226,6 +226,29 @@ class Repository extends IRepository {
     return response;
   }
 
+  // @override
+  // Future<ApiResponse> getOrdersStatus(Map<String, dynamic> req) async {
+  //   print('order values are: ${req}');
+  //   ApiResponse response = await api.call(
+  //     method: HttpMethod.get,
+  //     endpoint: "orders/status/",
+  //     reqParams: req,
+  //   );
+  //
+  //   return response;
+  // }
+
+  @override
+  Future<ApiResponse> getOrdersStatus(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "orders/status",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
   @override
   Future<ApiResponse> raffleList() async {
     ApiResponse response = await api.call(

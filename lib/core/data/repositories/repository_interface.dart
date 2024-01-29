@@ -45,6 +45,8 @@ abstract class IRepository {
 
   Future<ApiResponse> getOrderList();
 
+  Future<ApiResponse> getOrdersStatus(Map<String, dynamic> req);
+
   Future<ApiResponse> raffleList();
 
   Future<ApiResponse> verifyName(Map<String, dynamic> req);

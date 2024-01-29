@@ -120,7 +120,6 @@ Future<void> _makePhoneCall(String phoneNumber) async {
   await launchUrl(launchUri);
 }
 
-
 Future<void> goToFaqs(String url) async {
   final Uri toLaunch =
   Uri(scheme: 'https', host: 'www.afriprize.com', path: '/faq');

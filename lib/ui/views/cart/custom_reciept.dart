@@ -131,7 +131,7 @@ class ReceiptPage extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                           ),
                           ...cart.map((cartItem) =>  ListTile(
-                            leading: Image.network(cartItem.product!.pictures!.first.location!, height: 44, width: 48), // Replace with your image URL field
+                            leading: Image.network(cartItem.product!.pictures!.first.location ?? '', height: 44, width: 48), // Replace with your image URL field
                             title: Text(cartItem.product!.productName!, style: const TextStyle(fontSize: 10.61)),
                             subtitle: Text('${cartItem.quantity}', style: const TextStyle(fontSize: 10.61)),
                             trailing: Text(MoneyUtils().formatAmount(cartItem.product!.productPrice!),style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,

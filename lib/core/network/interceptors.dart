@@ -83,7 +83,6 @@ final requestInterceptors = InterceptorsWrapper(
         if (refreshTokenResult) {
           refreshTokenRetryCount = 0;
           String newAccessToken = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
-          print('new access token is: $newAccessToken}');
           final opts = Options(
             method: dioError.requestOptions.method,
             headers: {...dioError.requestOptions.headers,
@@ -99,7 +98,6 @@ final requestInterceptors = InterceptorsWrapper(
             onError: (e) => handler.reject(e),
           );
         } else {
-          print('couldnt refresh token');
           final res = await locator<DialogService>().showCustomDialog(
               variant: DialogType.infoAlert,
               title: "Session Expired",

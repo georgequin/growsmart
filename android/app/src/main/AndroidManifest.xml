@@ -2,10 +2,16 @@
     package="com.afriprize.afriprize">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
+    <queries>
+        <package android:name="com.binance.dev" />
+    </queries>
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:label="afriprize">
+        android:label="afriprize"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

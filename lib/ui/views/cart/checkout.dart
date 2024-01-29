@@ -8,12 +8,11 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/utils/money_util.dart';
-import 'package:android_intent/android_intent.dart';
-import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../app/app.dialogs.dart';
 import '../../../core/data/models/raffle_ticket.dart';
 import '../../../core/network/interceptors.dart';
 import '../../../core/utils/local_store_dir.dart';
@@ -22,6 +21,7 @@ import '../../../utils/cart_utill.dart';
 import '../../common/ui_helpers.dart';
 import 'add_shipping.dart';
 import 'custom_reciept.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class Checkout extends StatefulWidget {
   final List<OrderInfo> infoList;
@@ -45,6 +45,7 @@ class _CheckoutState extends State<Checkout> {
   List<RaffleTicket> raffle = [];
   final plugin = PaystackPlugin();
   bool isPaying = false;
+  late final WebViewController controller;
 
 
   @override
@@ -650,7 +651,7 @@ class _CheckoutState extends State<Checkout> {
               ],
             ),
           ),
-          verticalSpaceMassive,
+          verticalSpaceLarge,
           SubmitButton(
             isLoading: loading,
             label: "Pay N${getSubTotal(cart.value) + getDeliveryFee(cart.value)}",
@@ -706,17 +707,18 @@ class _CheckoutState extends State<Checkout> {
     ApiResponse res = await MoneyUtils().chargeCardUtil(paymentMethod, orderIds, plugin, context, amount);
 
     if (res.statusCode == 200) {
-
       if (paymentMethod == 'binance') {
         // var binanceData = res.data["binance"]["data"];
         Map<String, dynamic> binanceData = res.data['binance']['data'];
-        _showBinanceModal(binanceData);
+        _showBinanceModal(binanceData, orderIds);
+        // _showBinanceWebViewModal(binanceData);
       } else {
         // Handle other payment methods
         getRaffles();
         showReceipt();
       }
     } else {
+      Navigator.pop(context);
       locator<SnackbarService>().showSnackbar(message: res.data["message"]);
     }
 
@@ -725,25 +727,104 @@ class _CheckoutState extends State<Checkout> {
     });
   }
 
-  void _showBinanceModal(Map binanceData) {
+  // void _showBinanceModal(Map binanceData) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+  //     ),
+  //     // barrierColor: Colors.black.withAlpha(50),
+  //     // backgroundColor: Colors.transparent,
+  //     backgroundColor: Colors.white,
+  //     builder: (BuildContext context) {
+  //       return FractionallySizedBox(
+  //         heightFactor: 0.8, // 70% of the screen's height
+  //         child: Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: <Widget>[
+  //               Image.asset("assets/images/binance.png",scale: 4),
+  //               Padding(
+  //                 padding: const EdgeInsets.all(16.0),
+  //                 child: Image.network(
+  //                   binanceData["qrcodeLink"],
+  //                   loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+  //                     if (loadingProgress == null) return child;
+  //                     return Center(
+  //                       child: CircularProgressIndicator(
+  //                         value: loadingProgress.expectedTotalBytes != null
+  //                             ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+  //                             : null,
+  //                       ),
+  //                     );
+  //                   },
+  //                 ),
+  //               ),
+  //               SizedBox(height: 20),
+  //               InkWell(
+  //                 onTap: () {
+  //                   _openBinanceApp(binanceData);
+  //                 },
+  //                 child: const Text('Open App >', style: TextStyle(color: kcSecondaryColor, fontWeight: FontWeight.bold),)
+  //               ),
+  //
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+
+  void _showBinanceModal(Map binanceData, List<String> orderIds) {
+    bool isModalOpen = true;
+    bool isLoading = false;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
       ),
-      // barrierColor: Colors.black.withAlpha(50),
-      // backgroundColor: Colors.transparent,
       backgroundColor: Colors.white,
       builder: (BuildContext context) {
+
+        void pollPaymentStatus() async {
+          if (!isModalOpen) {
+            // Modal is closed, stop cron
+            return;
+          }
+
+          setState(() {
+            isLoading = true;
+          });
+          bool paymentSuccessful = await checkPaymentStatus(orderIds);
+
+          if (paymentSuccessful) {
+            Navigator.pop(context);
+            setState(() {
+              showReceipt();
+            });
+
+
+
+          } else {
+            // Payment not successful, continue polling
+            Future.delayed(const Duration(seconds: 10), pollPaymentStatus);
+          }
+        }
+
+
         return FractionallySizedBox(
-          heightFactor: 0.8, // 70% of the screen's height
+          heightFactor: 0.8,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Image.asset("assets/images/binance.png",scale: 4),
+                Image.asset("assets/images/binance.png", scale: 4),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Image.network(
@@ -761,16 +842,45 @@ class _CheckoutState extends State<Checkout> {
                   ),
                 ),
                 SizedBox(height: 20),
-                InkWell(
-                  onTap: () {
-                    _openBinanceApp(binanceData["deeplink"]);
-                  },
-                  child: const Text('Open App >', style: TextStyle(color: kcSecondaryColor, fontWeight: FontWeight.bold),)
-                ),
 
+                if (!isLoading)
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      _openBinanceApp(binanceData);
+                      // Start the initial polling
+                      pollPaymentStatus();
+                    },
+                    child: const Text('Open App >', style: TextStyle(color: kcSecondaryColor, fontWeight: FontWeight.bold)),
+                  ),
+
+                if (isLoading) const CircularProgressIndicator(color: kcSecondaryColor,),
               ],
             ),
           ),
+        );
+      },
+    ).whenComplete(() {
+      isModalOpen = false;
+    });
+  }
+
+
+  void _showBinanceWebViewModal(Map binanceData) {
+    controller = WebViewController()..loadRequest(Uri.parse(binanceData["checkoutUrl"],));
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.8, // 80% of the screen's height
+          child: WebViewWidget(controller: controller)
         );
       },
     );
@@ -785,40 +895,65 @@ class _CheckoutState extends State<Checkout> {
 
   }
 
-  _openBinanceApp(String deepLink) async {
-    // You need to replace 'com.binance.dev' with the actual package name of the Binance app
-    bool isInstalled = await DeviceApps.isAppInstalled('com.binance.dev');
-    printInstalledApps();
+  _openBinanceApp(Map binanceData) async {
 
-    if (isInstalled) {
-      AndroidIntent intent = AndroidIntent(
-        action: 'action_view',
-        // data: deepLink, // The deep link URL that you have for the Binance app
-        package: 'com.binance.dev', // Again, replace with the actual Binance package name
-      );
-      await intent.launch();
-    } else {
-      if (await canLaunch(deepLink)) {
-        await launch(deepLink);
-      } else {
-        throw 'Could not launch $deepLink';
+    String deeplink = binanceData["deeplink"];
+    final Uri toLaunch = Uri.parse(deeplink);
+
+    if (!await launchUrl(toLaunch, mode: LaunchMode.platformDefault)) {
+      // Show the popup if the app launch fails
+      // final bool? result = await showDialog<bool>(
+      //   context: context,
+      //   builder: (context) {
+      //     return AlertDialog(
+      //       title: Text('Binance App not installed?'),
+      //       content: Text('Would you like to continue the payment in your web browser?'),
+      //       actions: <Widget>[
+      //         TextButton(
+      //           child: Text('No'),
+      //           onPressed: () => Navigator.of(context).pop(false), // User chose not to continue
+      //         ),
+      //         TextButton(
+      //           child: Text('Yes'),
+      //           onPressed: () => Navigator.of(context).pop(true), // User chose to continue
+      //         ),
+      //       ],
+      //     );
+      //   },
+      // );
+
+      // If the user chose to continue, launch the checkout URL
+      // if (result == true) {
+      //   if (!await launchUrl(Uri.parse(binanceData["checkoutUrl"]))) {
+      //     // Handle the error if the URL launch fails
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       SnackBar(content: Text('Could not open the web browser')),
+      //     );
+      //   }
+      // }
+
+      final res = await locator<DialogService>().showCustomDialog(
+          variant: DialogType.infoAlert,
+          title: "Binance App not installed",
+          description: "Continue on browser?");
+      if (res!.confirmed) {
+        if (!await launchUrl(Uri.parse(binanceData["checkoutUrl"]))) {
+          // Handle the error if the URL launch fails
+          locator<SnackbarService>().showSnackbar(message: 'Could not open the web browser');
+        }
       }
+
     }
   }
 
-  Future<void> printInstalledApps() async {
-    List<Application> apps = await DeviceApps.getInstalledApplications(includeSystemApps: true);
-    for (var app in apps) {
-      print('App: ${app.appName}, Package: ${app.packageName}');
-    }
-  }
+
+
 
 
   void showReceipt() {
 
 
     List<CartItem> receiptCart = List<CartItem>.from(cart.value);
-
 
     cart.value.clear();
     cart.notifyListeners();
@@ -828,6 +963,8 @@ class _CheckoutState extends State<Checkout> {
 
     showModalBottomSheet(
       isScrollControlled: true,
+      isDismissible: false,
+      backgroundColor: Colors.white,
       context: context,
       builder: (BuildContext context) {
         return ReceiptPage(cart:receiptCart, raffle: raffle,);
@@ -856,6 +993,30 @@ class _CheckoutState extends State<Checkout> {
       setState(() {
         // loading = false;
       });
+    }
+  }
+
+  checkPaymentStatus(List<String> orderIds) async {
+    print('order ids are${orderIds}');
+    try {
+      print('ordeer id is: ${orderIds.length}');
+      var payload = {
+        "orderId": [...orderIds],
+        "id": profile.value.id,
+      };
+      ApiResponse res = await locator<Repository>()
+          .getOrdersStatus(payload);
+      if (res.statusCode == 200) {
+        return true;
+      }else{
+        // locator<SnackbarService>()
+        //     .showSnackbar(message: res.data["message"]);
+        // Navigator.pop(context);
+        return false;
+
+      }
+    } catch (e) {
+      throw Exception(e);
     }
   }
 

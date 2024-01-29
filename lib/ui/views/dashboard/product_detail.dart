@@ -314,7 +314,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                           widget.product.raffle!
                                                               .isEmpty)
                                                       ? ""
-                                                      : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(widget.product.raffle?[0].startDate ?? DateTime.now().toIso8601String()))}",
+                                                      : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(widget.product.raffle?[0].endDate ?? DateTime.now().toIso8601String()))}",
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 3,
