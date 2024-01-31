@@ -9,5 +9,9 @@ class LocalStorageDir {
   static const String remember = "remember";
   static const String uiMode = "uiMode";
   static const String cart = "cart";
+  static const String product = "product";
+  static const String adverts = "adverts";
+  static const String sellingFast = "sellingFast";
+  static const String notification = "notification";
 
 }

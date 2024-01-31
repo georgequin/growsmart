@@ -7,6 +7,9 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -14,20 +17,83 @@ import '../../../core/data/models/app_notification.dart';
 
 class DashboardViewModel extends BaseViewModel {
   final repo = locator<Repository>();
+  bool _isDataLoaded = false;
   int selectedIndex = 0;
   final log = getLogger("DashboardViewModel");
   List<Product> productList = [];
   List<Product> sellingFast = [];
   List<Product> ads = [];
 
-
-
   void changeSelected(int i) {
     selectedIndex = i;
     rebuildUi();
   }
 
-  void init() {
+  Future<void> init() async {
+    await loadAds();
+    await loadProducts();
+
+    await loadSellingFast();
+    await loadNotifications();
+    notifyListeners();
+  }
+
+  Future<void> loadAds() async {
+    dynamic storedAds = await locator<LocalStorage>().fetch(LocalStorageDir.adverts);
+    if (storedAds != null) {
+      ads = List<Map<String, dynamic>>.from(storedAds)
+          .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+
+    } else {
+
+       getAds();
+    }
+  }
+
+  Future<void> loadProducts() async {
+    dynamic storedProducts = await locator<LocalStorage>().fetch(LocalStorageDir.product);
+    if (storedProducts != null) {
+      productList = List<Map<String, dynamic>>.from(storedProducts)
+          .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    } else {
+       getProducts();
+    }
+    notifyListeners();
+  }
+
+  Future<void> loadSellingFast() async {
+    dynamic storedSellingFast = await locator<LocalStorage>().fetch(LocalStorageDir.sellingFast);
+    if (storedSellingFast != null) {
+      sellingFast = List<Map<String, dynamic>>.from(storedSellingFast)
+          .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    } else {
+       getSellingFast();
+    }
+    notifyListeners();
+  }
+
+  Future<void> loadNotifications() async {
+    dynamic storedNotifications = await locator<LocalStorage>().fetch(LocalStorageDir.notification);
+    if (storedNotifications != null) {
+      notifications.value = List<Map<String, dynamic>>.from(storedNotifications)
+          .map((e) => AppNotification.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    } else {
+       getNotifications();
+    }
+    notifyListeners();
+  }
+
+  Future<void> refreshData() async {
+    setBusy(true); // Use this to show loading indicator
+    getResourceList();
+    setBusy(false); // Reset loading indicator after data is refreshed
+  }
+
+  void getResourceList(){
     getAds();
     getProducts();
     getSellingFast();
@@ -35,51 +101,21 @@ class DashboardViewModel extends BaseViewModel {
       initCart();
       getNotifications();
     }
-    // getResourceList();
-
-    if (isFirstLaunch.value) {
-      // showDialog(
-      //   context: StackedService.navigatorKey!.currentState!.context,
-      //   builder: (BuildContext context) {
-      //     return AlertDialog(
-      //       title: Text('Popup Ad'),
-      //       content: Container(
-      //         width: double.maxFinite,
-      //         height: 300,
-      //         child: Image.network(popupImageUrl),
-      //       ),
-      //       actions: [
-      //         TextButton(
-      //           child: const Text('Close'),
-      //           onPressed: () {
-      //             Navigator.of(context).pop();
-      //           },
-      //         ),
-      //       ],
-      //     );
-      //   });
-    }
-
-    isFirstLaunch.value = false;
-    isFirstLaunch.notifyListeners();
   }
-
 
   void getAds() async {
     setBusyForObject(ads, true);
-
     try {
       ApiResponse res = await repo.getAds();
       if (res.statusCode == 200) {
-        ads = (res.data["raffle"] as List)
-            .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
-            .toList();
+        ads = (res.data["raffle"] as List).map((e) => Product.fromJson(Map<String, dynamic>.from(e))).toList();
+        List<Map<String, dynamic>> storedAds = ads.map((e) => e.toJson()).toList();
+        locator<LocalStorage>().save(LocalStorageDir.adverts, storedAds);
         rebuildUi();
       }
     } catch (e) {
       log.e(e);
     }
-
     setBusyForObject(ads, false);
   }
 
@@ -92,6 +128,8 @@ class DashboardViewModel extends BaseViewModel {
         productList = (res.data["products"] as List)
             .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
+        List<Map<String, dynamic>> storedProducts = productList.map((e) => e.toJson()).toList();
+        locator<LocalStorage>().save(LocalStorageDir.product, storedProducts);
         rebuildUi();
       }
     } catch (e) {
@@ -109,10 +147,14 @@ class DashboardViewModel extends BaseViewModel {
       // ApiResponse res = await repo.getProducts();
 
       if (res.statusCode == 200) {
-        sellingFast = (res.data["sellingfast"] as List)
-            .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
-            .toList();
+        print('value of selling fast is: ${res.data}');
+        sellingFast = (res.data["products"] as List)
+            .map((e) => Product.fromJson(Map<String, dynamic>.from(e))).toList();
+
+        List<Map<String, dynamic>> storedAds = sellingFast.map((e) => e.toJson()).toList();
+        locator<LocalStorage>().save(LocalStorageDir.sellingFast, storedAds);
         rebuildUi();
+
       }
     } catch (e) {
       log.e(e);
@@ -127,6 +169,9 @@ class DashboardViewModel extends BaseViewModel {
         notifications.value = (res.data["events"] as List)
             .map((e) => AppNotification.fromJson(Map<String, dynamic>.from(e)))
             .toList();
+
+        List<Map<String, dynamic>> storedNotice = notifications.value.map((e) => e.toJson()).toList();
+        locator<LocalStorage>().save(LocalStorageDir.notification, storedNotice);
       }
     } catch (e) {
       log.e(e);
@@ -135,7 +180,7 @@ class DashboardViewModel extends BaseViewModel {
 
   void addToCart(Product product) async {
 
-    final existingItem = cart.value.firstWhere(
+    final existingItem = raffleCart.value.firstWhere(
           (cartItem) => cartItem.product?.id == product.id,
       orElse: () => CartItem(product: product, quantity: 0),
     );
@@ -146,15 +191,15 @@ class DashboardViewModel extends BaseViewModel {
     } else {
       // If the item is not in the cart, add it as a new item
       existingItem.quantity = 1;
-      cart.value.add(existingItem);
+      raffleCart.value.add(existingItem);
 
     }
 
-    List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+    List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
     await locator<LocalStorage>()
         .save(LocalStorageDir.cart, storedList);
     locator<SnackbarService>().showSnackbar(message: "Product added to cart");
-    cart.notifyListeners();
+    raffleCart.notifyListeners();
   }
 
   void initCart() async {
@@ -162,11 +207,11 @@ class DashboardViewModel extends BaseViewModel {
     List<CartItem> localCart = List<Map<String, dynamic>>.from(store)
         .map((e) => CartItem.fromJson(Map<String, dynamic>.from(e)))
         .toList();
-    cart.value = localCart;
+    raffleCart.value = localCart;
   }
 
   bool isProductInCart(Product product) {
-    return cart.value.any((CartItem item) => item.product?.id == product.id);
+    return raffleCart.value.any((CartItem item) => item.product?.id == product.id);
   }
 
   Future<void> decreaseQuantity(CartItem item) async {
@@ -175,13 +220,13 @@ class DashboardViewModel extends BaseViewModel {
       item.quantity = item.quantity! - 1;
     } else if (item.quantity! == 1) {
       // Remove the item from the cart if its quantity is 1
-      cart.value.removeWhere((cartItem) => cartItem.product?.id == item.product?.id);
+      raffleCart.value.removeWhere((cartItem) => cartItem.product?.id == item.product?.id);
       // No need to set item.quantity to 0 since we're removing it
     }
 
     // Notify listeners and save the updated cart list to local storage
-    cart.notifyListeners();
-    List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+    raffleCart.notifyListeners();
+    List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
     await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
   }
 
@@ -191,15 +236,41 @@ class DashboardViewModel extends BaseViewModel {
       item.quantity = item.quantity! +1;
 
       // After modifying the cart item, replace the old cart item with the updated one
-      int index = cart.value.indexWhere((cartItem) => cartItem.product?.id == item.product?.id);
+      int index = raffleCart.value.indexWhere((cartItem) => cartItem.product?.id == item.product?.id);
       if (index != -1) {
-        cart.value[index] = item;
-        cart.value = List.from(cart.value);
-        cart.notifyListeners();
+        raffleCart.value[index] = item;
+        raffleCart.value = List.from(raffleCart.value);
+        raffleCart.notifyListeners();
 
         // Save the updated cart list to local storage
-        List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+        List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
       }
   }
+
+  bool isDrawDateSoon(DateTime drawDate) {
+    final now = DateTime.now();
+    return drawDate.difference(now).inDays <= 5;
+  }
+
+  bool isStockLow(int stockTotal, int verifiedSales) {
+    return (stockTotal - verifiedSales) <= 10;
+  }
+
+  String formatRemainingTime(DateTime drawDate) {
+    final now = DateTime.now();
+    final difference = drawDate.difference(now);
+    // Format the Duration to your needs
+    final hours = difference.inHours;
+    final minutes = difference.inMinutes.remainder(60);
+    final seconds = difference.inSeconds.remainder(60);
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  void onEnd() {
+    print('onEnd');
+    //TODO SEND USER NOTIFICATION OF AVAILABILITY OF PRODUCT
+    notifyListeners();
+  }
+
 }

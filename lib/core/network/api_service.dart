@@ -132,6 +132,7 @@ class ApiService {
                     : {"Authorization": "Bearer ${await _getToken()}"}),
           );
           return ApiResponse(response);
+
       }
     } on DioError catch (e) {
       log.e(e.message);
@@ -174,5 +175,25 @@ class ApiService {
     final localStorage = locator<LocalStorage>();
     String? token = await localStorage.fetch(LocalStorageDir.authRefreshToken);
     return token ?? "";
+  }
+
+  Future<ApiResponse> getFlutterWaveExchangeRate({
+    required double amount,
+    required String destinationCurrency,
+    required String sourceCurrency,
+  }) async {
+    String endpoint = '${AppConfig.flutterWaveBaseUrl}/transfers/rates';
+    Map<String, dynamic> reqParams = {
+      'amount': amount.toString(),
+      'destination_currency': destinationCurrency,
+      'source_currency': sourceCurrency,
+    };
+
+    return await call(
+      method: HttpMethod.get,
+      endpoint: endpoint,
+      reqParams: reqParams,
+      // protected: true, // Assuming the API key is required for authentication
+    );
   }
 }

@@ -5,6 +5,7 @@ class Product {
   String? productName;
   String? productDescription;
   int? productPrice;
+
   int? shippingFee;
   int? availability;
   int? verifiedSales;
@@ -26,6 +27,7 @@ class Product {
       this.productName,
       this.productDescription,
       this.productPrice,
+
       this.shippingFee,
       this.availability,
       this.verifiedSales,
@@ -216,6 +218,7 @@ class Raffle {
   Category? category;
   List<Pictures>? pictures;
   Product? product;
+  int? rafflePrice;
 
   Raffle(
       {this.id,
@@ -230,7 +233,8 @@ class Raffle {
       this.updated,
       this.category,
       this.pictures,
-      this.product});
+      this.product,
+      this.rafflePrice,});
 
   Raffle.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -238,6 +242,7 @@ class Raffle {
     ticketDescription = json['ticket_description'];
     ticketTracking = json['ticket_tracking'];
     featured = json['featured'];
+    rafflePrice = json['raffle_price'];
     status = json['status'];
     startDate = json['start_date'];
     endDate = json['end_date'];
@@ -262,6 +267,7 @@ class Raffle {
     data['ticket_description'] = ticketDescription;
     data['ticket_tracking'] = ticketTracking;
     data['featured'] = featured;
+    data['raffle_price'] = rafflePrice;
     data['status'] = status;
     data['start_date'] = startDate;
     data['end_date'] = endDate;

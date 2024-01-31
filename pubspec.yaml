@@ -69,6 +69,9 @@ dependencies:
   path_provider: ^2.1.1
   flutter_paystack: ^1.0.7
   shared_preferences: ^2.2.2
+  flutter_countdown_timer: ^4.1.0
+  slidable_button: ^3.0.0+1
+  cached_network_image: ^3.3.1
 
 
 dev_dependencies:
@@ -112,6 +115,14 @@ flutter:
         - asset: assets/fonts/Panchang-Semibold.ttf
         - asset: assets/fonts/Panchang-Variable.ttf
           style: italic
+#    - family: Satoshi  # Add this section for Satoshi
+#      fonts:
+#        - asset: assets/fonts/satoshi/Satoshi-Variable.ttf  # Replace with your actual font file paths
+#        - asset: assets/fonts/satoshi/Satoshi-VariableItalic.ttf
+#          weight: 700
+        # Add other font weights or styles for Satoshi as necessary
+
+
 
 
   # The following line ensures that the Material Icons font is
@@ -124,6 +135,7 @@ flutter:
     - assets/images/
     - assets/animations/
     - assets/videos/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

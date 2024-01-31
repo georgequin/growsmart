@@ -19,7 +19,9 @@ import 'package:afriprize/ui/views/cart/add_shipping.dart' as _i13;
 import 'package:afriprize/ui/views/change_password/change_password_view.dart'
     as _i17;
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart' as _i6;
-import 'package:afriprize/ui/views/dashboard/product_detail.dart' as _i12;
+import 'package:afriprize/ui/views/dashboard/shop_dashboard_view.dart' as _i29;
+import 'package:afriprize/ui/views/dashboard/raffle_detail.dart' as _i12;
+import 'package:afriprize/ui/views/dashboard/shop_details.dart' as _i30;
 import 'package:afriprize/ui/views/delete_account/delete_account_view.dart'
     as _i19;
 import 'package:afriprize/ui/views/draws/draws_view.dart' as _i7;
@@ -55,6 +57,8 @@ class Routes {
 
   static const dashboardView = '/dashboard-view';
 
+  static const shopDashboardView = '/shop-dashboard-view';
+
   static const ticketView = '/ticket-view';
 
   static const drawsView = '/draws-view';
@@ -68,6 +72,8 @@ class Routes {
   static const checkout = '/Checkout';
 
   static const productDetail = '/product-detail';
+
+  static const shopDetail = '/shop-detail';
 
   static const receipt = '/Receipt';
 
@@ -94,6 +100,7 @@ class Routes {
     onboardingView,
     authView,
     dashboardView,
+    shopDashboardView,
     ticketView,
     drawsView,
     cartView,
@@ -101,6 +108,7 @@ class Routes {
     profileView,
     checkout,
     productDetail,
+    shopDetail,
     receipt,
     wallet,
     track,
@@ -142,6 +150,10 @@ class StackedRouter extends _i1.RouterBase {
       page: _i6.DashboardView,
     ),
     _i1.RouteDef(
+      Routes.shopDashboardView,
+      page: _i29.ShopDashboardView,
+    ),
+    _i1.RouteDef(
       Routes.drawsView,
       page: _i7.DrawsView,
     ),
@@ -163,7 +175,11 @@ class StackedRouter extends _i1.RouterBase {
     ),
     _i1.RouteDef(
       Routes.productDetail,
-      page: _i12.ProductDetail,
+      page: _i12.RaffleDetail,
+    ),
+    _i1.RouteDef(
+      Routes.shopDetail,
+      page: _i30.ShopDetail,
     ),
     // _i1.RouteDef(
     //   Routes.receipt,
@@ -248,6 +264,12 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
+    _i29.ShopDashboardView: (data) {
+      return _i21.MaterialPageRoute<dynamic>(
+        builder: (context) =>  _i29.ShopDashboardView(),
+        settings: data,
+      );
+    },
     _i7.DrawsView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => const _i7.DrawsView(),
@@ -280,11 +302,19 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i12.ProductDetail: (data) {
+    _i12.RaffleDetail: (data) {
       final args = data.getArgs<ProductDetailArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i12.ProductDetail(product: args.product, key: args.key),
+            _i12.RaffleDetail(product: args.product, key: args.key),
+        settings: data,
+      );
+    },
+    _i30.ShopDetail: (data) {
+      final args = data.getArgs<ProductDetailArguments>(nullOk: false);
+      return _i21.MaterialPageRoute<dynamic>(
+        builder: (context) =>
+            _i12.RaffleDetail(product: args.product, key: args.key),
         settings: data,
       );
     },
@@ -646,6 +676,20 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToShopDashboardView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.shopDashboardView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> navigateToDrawsView([
     int? routerId,
     bool preventDuplicates = true,
@@ -719,7 +763,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToProductDetail({
+  Future<dynamic> navigateToRaffleDetail({
     required _i24.Product product,
     _i23.Key? key,
     int? routerId,
@@ -730,6 +774,24 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }) async {
     print('product is: ${product.id}');
     return navigateTo<dynamic>(Routes.productDetail,
+        arguments: ProductDetailArguments(product: product, key: key),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToShopDetail({
+    required _i24.Product product,
+    _i23.Key? key,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  }) async {
+    print('product is: ${product.id}');
+    return navigateTo<dynamic>(Routes.shopDetail,
         arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
@@ -934,6 +996,20 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> replaceWithShopDashboardView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.shopDashboardView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> replaceWithDrawsView([
     int? routerId,
     bool preventDuplicates = true,
@@ -1017,6 +1093,23 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.productDetail,
+        arguments: ProductDetailArguments(product: product, key: key),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithShopDetail({
+    required _i24.Product product,
+    _i23.Key? key,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.shopDetail,
         arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,

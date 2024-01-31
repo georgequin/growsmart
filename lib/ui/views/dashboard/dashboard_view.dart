@@ -1,20 +1,20 @@
 import 'dart:async';
-import 'dart:ui';
-import 'package:afriprize/app/app.locator.dart';
-import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:afriprize/ui/views/dashboard/product_detail.dart';
-import 'package:afriprize/utils/money_util.dart';
+import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../core/data/models/product.dart';
@@ -58,43 +58,43 @@ class DashboardView extends StackedView<DashboardViewModel> {
       _controller.play();
     });
     return Scaffold(
-      appBar: AppBar(
-        title: ValueListenableBuilder(
-        valueListenable: uiMode,
-        builder: (context, AppUiModes mode, child) {
-          return Image.asset(
-            mode == AppUiModes.dark ? "assets/images/afriprize_light.png" : "assets/images/afriprize.png",
-            width: 150,
-            height: 50,
-          );
-        },
-      ),
-        actions: [
-          userLoggedIn.value == false
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(kcPrimaryColor)),
-                    onPressed: () {
-                      locator<NavigationService>().replaceWithAuthView();
-                    },
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(color: kcWhiteColor),
-                    ),
-                  ),
-                )
-              : const SizedBox()
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: ValueListenableBuilder(
+      //   valueListenable: uiMode,
+      //   builder: (context, AppUiModes mode, child) {
+      //     return Image.asset(
+      //       mode == AppUiModes.dark ? "assets/images/afriprize_light.png" : "assets/images/afriprize.png",
+      //       width: 150,
+      //       height: 50,
+      //     );
+      //   },
+      // ),
+      //   actions: [
+      //     userLoggedIn.value == false
+      //         ? Padding(
+      //             padding: const EdgeInsets.all(8.0),
+      //             child: TextButton(
+      //               style: ButtonStyle(
+      //                   backgroundColor:
+      //                       MaterialStateProperty.all(kcPrimaryColor)),
+      //               onPressed: () {
+      //                 locator<NavigationService>().replaceWithAuthView();
+      //               },
+      //               child: const Text(
+      //                 "Login",
+      //                 style: TextStyle(color: kcWhiteColor),
+      //               ),
+      //             ),
+      //           )
+      //         : const SizedBox()
+      //   ],
+      // ),
       body: RefreshIndicator(
         onRefresh: () async {
-          viewModel.init();
+          await viewModel.refreshData();
         },
         child: ListView(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
           children: [
             Container(
               height: 250, // Set a fixed height for the video player
@@ -107,299 +107,202 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 child: VideoPlayer(_controller),
               ),
             ),
-
-
-            // SizedBox(
-            //   height: 250,
-            //   child: viewModel.busy(viewModel.ads)
-            //       ? const Center(
-            //           child: CircularProgressIndicator(),
-            //         )
-            //       : Stack(
-            //           children: [
-            //             PageView.builder(
-            //                 controller: _pageController,
-            //                 itemCount: viewModel.ads.length,
-            //                 onPageChanged: viewModel.changeSelected,
-            //                 itemBuilder: (context, index) {
-            //                   Product ad = viewModel.ads[index];
-            //
-            //                   String? image = (ad.raffle != null && ad.raffle!.isNotEmpty &&
-            //                       ad.raffle![0].pictures != null && ad.raffle![0].pictures!.isNotEmpty)
-            //                       ? ad.raffle![0].pictures![0].location
-            //                       : '';
-            //
-            //                   // String image =
-            //                   //     ad.raffle![0].pictures![0].location!;
-            //
-            //                   return Stack(
-            //                     children: [
-            //                       Container(
-            //                         decoration: BoxDecoration(
-            //                           borderRadius: BorderRadius.circular(12),
-            //                           color: kcBlackColor.withOpacity(0.2),
-            //                           image: (ad.raffle != null && ad.raffle!.isNotEmpty &&
-            //                               ad.raffle![0].pictures != null && ad.raffle![0].pictures!.isNotEmpty)
-            //                               ? DecorationImage(
-            //                             image: NetworkImage(ad.raffle![0].pictures![0].location!),
-            //                             fit: BoxFit.cover,
-            //                             colorFilter: ColorFilter.mode(
-            //                               Colors.black.withOpacity(0.9),
-            //                               BlendMode.dstATop,
-            //                             ),
-            //                           )
-            //                               : null,
-            //                         ),
-            //                       ),
-            //                       Positioned(
-            //                         bottom: 20,
-            //                         left: 20,
-            //                         child: Column(
-            //                           crossAxisAlignment:
-            //                               CrossAxisAlignment.start,
-            //                           children: [
-            //                             Container(
-            //                               height: 70,
-            //                               width: 70,
-            //                               decoration: BoxDecoration(
-            //                                 image:  (ad.pictures != null && ad.pictures!.isNotEmpty)
-            //                                     ? DecorationImage(
-            //                                   fit: BoxFit.cover,
-            //                                   image: NetworkImage(ad.pictures![0].location!),
-            //                                 )
-            //                                     : null,
-            //                                 color: kcLightGrey,
-            //                                 borderRadius:
-            //                                     BorderRadius.circular(12),
-            //                               ),
-            //                             ),
-            //                             verticalSpaceTiny,
-            //                             SizedBox(
-            //                               width: 140,
-            //                               child: FutureBuilder<Color?>(
-            //                                 future: image != null ? _updateTextColor(image) : Future.value(null),
-            //                                 builder: (context, snapshot) {
-            //                                   // Determine the text color - either from the snapshot or a default color
-            //                                   Color textColor = snapshot.data ?? Colors.black; // Default color if snapshot.data is null
-            //
-            //                                   return Text(
-            //                                     "Buy ${ad.productName} and stand a chance to",
-            //                                     style: TextStyle(
-            //                                         fontSize: 14,
-            //                                         color: textColor, // Use the determined color
-            //                                         fontWeight: FontWeight.bold
-            //                                     ),
-            //                                   );
-            //                                 },
-            //                               ),
-            //                             ),
-            //
-            //                             verticalSpaceTiny,
-            //                             FutureBuilder<Color?>(
-            //                               future: image != null ? _updateTextColor(image) : Future.value(null),
-            //                               builder: (context, snapshot) {
-            //                                 // Determine the text color - either from the snapshot or a default color
-            //                                 Color textColor = snapshot.data ?? Colors.black; // Default color if snapshot.data is null
-            //
-            //                                 return Text(
-            //                                   (ad.raffle == null || ad.raffle!.isEmpty) ? "" : "${ad.raffle![0].ticketName}",
-            //                                   style: TextStyle(
-            //                                     fontSize: 16,
-            //                                     color: textColor, // Use the determined color
-            //                                     fontWeight: FontWeight.bold,
-            //                                   ),
-            //                                 );
-            //                               },
-            //                             )
-            //
-            //                           ],
-            //                         ),
-            //                       ),
-            //                       Positioned(
-            //                         right: 20,
-            //                         bottom: 20,
-            //                         child: InkWell(
-            //                           onTap: () {
-            //                             locator<NavigationService>()
-            //                                 .navigateToProductDetail(
-            //                                     product: ad);
-            //                           },
-            //                           child: Container(
-            //                             height: 40,
-            //                             width: 100,
-            //                             decoration: BoxDecoration(
-            //                                 color: kcPrimaryColor,
-            //                                 borderRadius:
-            //                                     BorderRadius.circular(4)),
-            //                             child: Center(
-            //                               child: Text(
-            //                                 "Win Now",
-            //                                 style: GoogleFonts.inter(
-            //                                   fontSize: 12,
-            //                                   color: kcWhiteColor,
-            //                                   fontWeight: FontWeight.bold,
-            //                                 ),
-            //                               ),
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       )
-            //                     ],
-            //                   );
-            //                 }),
-            //             Positioned(
-            //               top: 20,
-            //               right: 20,
-            //               child: Row(
-            //                 children: List.generate(
-            //                     viewModel.ads.length,
-            //                     (index) => _indicator(
-            //                         viewModel.selectedIndex == index)),
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            // ),
             if(viewModel.sellingFast.isNotEmpty)
               verticalSpaceMedium,
             if(viewModel.sellingFast.isNotEmpty)
               const Text(
               "Selling fast",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
+                  fontFamily: "Panchang"
               ),
             ),
             if(viewModel.sellingFast.isNotEmpty)
               SizedBox(
-              height: 250,
-              child: viewModel.busy(viewModel.sellingFast)
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: viewModel.sellingFast.length,
-                      itemBuilder: (context, index) {
-                        Product product = viewModel.sellingFast[index];
-                        return Container(
-                          padding: const EdgeInsets.all(15),
-                          margin: const EdgeInsets.only(
-                              right: 15, top: 10, bottom: 10),
-                          width: 350,
-                          decoration: BoxDecoration(
-                              color: uiMode.value == AppUiModes.light
-                                  ? kcWhiteColor
-                                  : kcBlackColor,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: kcBlackColor.withOpacity(0.1),
-                                  offset: const Offset(0, 4),
-                                  blurRadius: 4,
-                                )
-                              ]),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "${product.raffle?[0].ticketName}",
-                                      style: GoogleFonts.inter(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    verticalSpaceTiny,
-                                    Text(
-                                      "${product.raffle?[0].ticketDescription}",
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 3,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                    verticalSpaceTiny,
-                                    TextButton(
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  kcPrimaryColor),
-                                          shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ))),
-                                      onPressed: () {
-                                        locator<NavigationService>()
-                                            .navigateToProductDetail(
-                                                product: product);
-                                      },
-                                      child: Text(
-                                        "Learn More",
-                                        style: GoogleFonts.inter(
-                                            color: kcWhiteColor),
-                                      ),
-                                    ),
-                                    verticalSpaceTiny,
-                                    Text(
-                                      "${product.verifiedSales} sold out of ${product.stockTotal}",
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 3,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    verticalSpaceTiny,
-                                    SizedBox(
-                                      width: 100,
-                                      child: SizedBox(
-                                        width: 100,
-                                        child: LinearProgressIndicator(
-                                          value: (product.verifiedSales != null && product.stockTotal != null && product.stockTotal! > 0)
-                                              ? product.verifiedSales! / product.stockTotal!
-                                              : 0.0, // Default value in case of null or invalid stock
-                                          backgroundColor: kcSecondaryColor.withOpacity(0.3),
-                                          valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
-                                        ),
-                                      ),
-
-                                    )
-                                  ],
+                 height: 170,
+                child: viewModel.busy(viewModel.sellingFast)
+                    ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+                    : ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: viewModel.sellingFast.length,
+                  itemBuilder: (context, index) {
+                    Product product = viewModel.sellingFast[index];
+                    return Container(
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.only(right: 15, top: 10),
+                      width: 260,
+                      decoration: BoxDecoration(
+                        color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: kcBlackColor.withOpacity(0.1),
+                            offset: const Offset(0, 4),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          // ClipRRect(
+                          //   borderRadius: BorderRadius.circular(10),
+                          //   child: Image.network(
+                          //     product.raffle?[0].pictures?[0].location ?? 'https://via.placeholder.com/120',
+                          //     height: 140, // Adjust the height as needed
+                          //     width: 90, // Adjust the width as needed
+                          //     fit: BoxFit.cover,
+                          //   ),
+                          // ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0, // Make the loader thinner
+                                  valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
                                 ),
                               ),
-                              Container(
-                                height: MediaQuery.of(context).size.height,
-                                width: 120,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: product.raffle?[0].pictures == null ||
-                                          product.raffle![0].pictures!.isEmpty
-                                      ? null
-                                      : DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                            product.raffle![0].pictures![0]
-                                                .location!,
-                                          ),
-                                        ),
-                                ),
-                              )
-                            ],
+                              imageUrl: product.raffle?[0].pictures?[0].location ?? 'https://via.placeholder.com/120',
+                              height: 140,
+                              width: 90,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                              fadeInDuration: const Duration(milliseconds: 500),
+                              fadeOutDuration: const Duration(milliseconds: 300),
+                            ),
                           ),
-                        );
-                      }),
-            ),
-              verticalSpaceSmall,
+
+                          horizontalSpaceSmall,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  product.raffle?[0].ticketName ?? 'Product Name',
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Panchang"
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                verticalSpaceSmall,
+                                Text(
+                                  'Buy \$5 Afriprize Card',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                verticalSpaceSmall,
+                                Column(
+                                  // crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    userLoggedIn.value == false
+                                        ? const SizedBox()
+                                        : ValueListenableBuilder<List<CartItem>>(
+                                      valueListenable: raffleCart,
+                                      builder: (context, value, child) {
+                                        // Determine if product is in cart
+                                        bool isInCart = value.any((item) => item.product?.id == product.id);
+                                        CartItem? cartItem = isInCart
+                                            ? value.firstWhere((item) => item.product?.id == product.id)
+                                            : null;
+
+                                        return isInCart && cartItem != null
+                                            ? Row(
+                                          children: [
+                                            InkWell(
+                                              onTap: () => viewModel.decreaseQuantity(cartItem),
+                                              child: Container(
+                                                height: 30,
+                                                width: 30,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(color: kcLightGrey),
+                                                  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: const Center(
+                                                  child: Icon(Icons.remove, size: 18),
+                                                ),
+                                              ),
+                                            ),
+                                            horizontalSpaceSmall,
+                                            Text("${cartItem.quantity}"),
+                                            horizontalSpaceSmall,
+                                            InkWell(
+                                              onTap: () => viewModel.increaseQuantity(cartItem),
+                                              child: Container(
+                                                height: 30,
+                                                width: 30,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(color: kcLightGrey),
+                                                  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: const Align(
+                                                  alignment: Alignment.center,
+                                                  child: Icon(Icons.add, size: 18),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                            : ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            primary: kcPrimaryColor, // Button background color
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            viewModel.addToCart(product);
+                                          },
+                                          child:
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min, // Ensures the Row only takes up needed space
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/icons/your_icon.svg', // Replace with your asset path
+                                                height: 20, // Adjust the size as needed
+                                                color: kcWhiteColor, // If you need to recolor the SVG
+                                              ),
+                                              const SizedBox(width: 8), // Space between icon and text
+                                              Text(
+                                                "Buy Ticket",
+                                                style: GoogleFonts.inter(color: kcWhiteColor),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                )
+
+                              ],
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+            verticalSpaceSmall,
             const Text(
               "Upcoming Draws",
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Panchang"
               ),
             ),
             verticalSpaceSmall,
@@ -424,19 +327,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     return Container(); // or SizedBox.shrink()
                   }
 
-                  // if (index > viewModel.productList.length+1) {
-                  //   print('$index');
-                  //   print('${viewModel.productList.length}');
-                  //
-                  //   return null;
-                  // }
-
                   Product product = viewModel.productList.elementAt(index);
                   return Column(
                     children: [
                       InkWell(
                         onTap: () {
-
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
@@ -449,7 +344,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             builder: (BuildContext context) {
                               return FractionallySizedBox(
                                 heightFactor: 0.8, // 70% of the screen's height
-                                child: ProductDetail(product: product),
+                                child: RaffleDetail(product: product),
                               );
                             },
                           );
@@ -537,13 +432,36 @@ class ProductRow extends StatelessWidget {
     if (viewModel.productList.isEmpty || index >= viewModel.productList.length) {
       return Container();
     }
+    CountdownTimerController controller;
+    final int remainingStock = product.stockTotal! - product.verifiedSales!;
+
+    DateTime now = DateTime.now();
+    DateTime drawDate = DateFormat("yyyy-MM-dd").parse(product.raffle![0].endDate!);
+    // DateTime drawDate = DateFormat("yyyy-MM-dd").parse("2024-02-04T00:00:00.000Z");
+    Duration timeDifference = drawDate.difference(now);
+    int remainingDays = timeDifference.inDays;
+// Adding the current time to the timeDifference to get the future end time
+    int endTime = now.add(timeDifference).millisecondsSinceEpoch;
+    controller = CountdownTimerController(endTime: endTime, onEnd: viewModel.onEnd);
+
+    // Check conditions to set the color and text
+    Color containerColor = Colors.transparent; // Default color
+    String bannerText = ''; // Default text
+    if (remainingDays <= 5) {
+      containerColor = Colors.blue;
+      bannerText = 'Coming soon in';
+    } else if (remainingStock <= 10) {
+      containerColor = Colors.red;
+      bannerText = 'Sold out soon \n $remainingStock item left';
+    }
     return
     Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
-      height: 365,
+      height: 390,
       decoration: BoxDecoration(
         color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: kcSecondaryColor),
         boxShadow: [
           BoxShadow(
             color: kcBlackColor.withOpacity(0.1),
@@ -552,289 +470,365 @@ class ProductRow extends StatelessWidget {
           )
         ],
       ),
-      child:
+      child: Stack(
+        children: [
           Column(
             children: [
-              //product image
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12)),
-                    child: (product.raffle == null ||
-                            product.raffle!.isEmpty ||
-                            product.raffle![0].pictures == null ||
-                            product.raffle![0].pictures!.isEmpty)
-                        ? SizedBox(
-                            height: 182,
-                            width: MediaQuery.of(context).size.width,
-                          )
-                        : Image.network(
-                            (product.raffle![0].pictures!.isNotEmpty)
-                                ? product.raffle![0].pictures![0].location ??
-                                    '' // Use ?? to provide a default value if location is null
-                                : '',
-                            fit: BoxFit.cover,
-                            width: MediaQuery.of(context).size.width,
-                            height: 182,
-                          ),
+              // Container(
+              //   margin: const EdgeInsets.fromLTRB(14.0, 14.0, 14.0, 0.0),
+              //   child: ClipRRect(
+              //     borderRadius: const BorderRadius.all(
+              //       Radius.circular(12),
+              //     ),
+              //     child: Image.network(
+              //       product.raffle?[0].pictures?.first.location ?? 'https://via.placeholder.com/150',
+              //       fit: BoxFit.cover,
+              //       height: 182,
+              //       width: double.infinity,
+              //     ),
+              //   ),
+              // ),
+              Container(
+                margin: const EdgeInsets.fromLTRB(14.0, 14.0, 14.0, 0.0),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(12),
                   ),
-                  Positioned(
-                    top: 20,
-                    right: 20,
-                    child: Container(
-                      height: 20,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: kcStarColor,
-                            size: 20,
-                          ),
-                          FutureBuilder<Color?>(
-                              future: _updateTextColor(
-                                  product.raffle!.isNotEmpty ?
-                                  product.raffle![0].pictures![0].location ?? '' : ''),
-                              builder: (context, snapshot) {
-                                return Text(
-                                  (product.reviews == null ||
-                                      product.reviews!.isEmpty)
-                                      ? "0"
-                                      : "${(product.reviews?.map<int>((review) => review.rating as int).reduce((value, element) => value + element))! / product.reviews!.length}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: snapshot.data,
-                                  ),
-                                );
-                              })
-                        ],
+                  child: CachedNetworkImage(
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.0, // Make the loader thinner
+                        valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
                       ),
                     ),
+                    imageUrl: product.raffle?[0].pictures?.first.location ?? 'https://via.placeholder.com/150',
+                    fit: BoxFit.cover,
+                    height: 182,
+                    width: double.infinity,
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                    fadeInDuration: const Duration(milliseconds: 500),
+                    fadeOutDuration: const Duration(milliseconds: 300),
                   ),
-                ],
-              ),
-              //Ticket name
-              Container(
-                color: kcPrimaryColor, // Set the background color to blue
-                padding: const EdgeInsets.all(7.0), // Add padding to the container
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child:  Text(
-                      (product.raffle == null || product.raffle!.isEmpty)
-                          ? ""
-                          : product.raffle?[0].ticketName ?? "",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.white, // Set the text color to white
-                      ),
-                    ),),
-                  ],
                 ),
               ),
-
               Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 6.0), // This adds horizontal padding
+                padding: const EdgeInsets.fromLTRB(16.0,4.0,16.0,16.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child:Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                              flex: 6,
-                              child: Row(
+                    Text(
+                      'Win!!!',
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: uiMode.value == AppUiModes.light ? kcSecondaryColor : kcWhiteColor,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Panchang"
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          product.raffle?[0].ticketName ?? 'Product Name',
+                          style:  TextStyle(
+                              fontSize: 20,
+                              color: uiMode.value == AppUiModes.light ? kcPrimaryColor : kcSecondaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Panchang"
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300]?.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Buy \$5 Afriprize Card',
+                            style: TextStyle(
+                                color: uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: uiMode.value == AppUiModes.light ? kcPrimaryColor : kcSecondaryColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Afriprize Card',
+                                style: TextStyle(
+                                    color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10
+                                ),
+                              ),
+                              Row(
                                 children: [
-                                  Container(
-                                    height: 50,
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                      image: product.pictures!.isEmpty
-                                          ? null
-                                          : DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(product.pictures!.firstWhere(
-                                              (picture) => picture.front == true,
-                                          orElse: () => product.pictures!.first,
-                                        ).location ?? ''),
-                                      ),
-                                      color: kcWhiteColor,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
+                                  SvgPicture.asset(
+                                    'assets/icons/card_icon.svg',
+                                    height: 20, // Icon size
                                   ),
-                                  const SizedBox(width: 8), // spacing between the image and text
-                                  Flexible(
-                                    child: Column(
+                                  horizontalSpaceTiny,
+                                  RichText(
+                                    text: TextSpan(
                                       children: [
-                                        Text(
-                                          product.productName!,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                          style: const TextStyle(
-                                            fontSize: 12,
+                                        TextSpan(
+                                          text: '\$5',
+                                          style: TextStyle(
+                                            fontSize: 18, // Size for the dollar amount
+                                            fontWeight: FontWeight.bold,
+                                            color: uiMode.value == AppUiModes.light ? kcSecondaryColor : kcBlackColor,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '.00', // Assuming you want the decimal part smaller
+                                          style: TextStyle(
+                                            fontSize: 13, // Size for the cents
+                                            fontWeight: FontWeight.bold,
+                                            color: uiMode.value == AppUiModes.light ? kcSecondaryColor : kcBlackColor,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  )
                                 ],
                               )
+                            ],
                           ),
-
-                          //product prize
-                          Expanded(
-                            flex: 4, // Allocate 40% of the space to this widget, adjust this as needed
-                            child: Container(
-                              alignment: Alignment.centerRight, // Align the text to the right
-                              child: Text(
-                                MoneyUtils().formatAmount(product.productPrice!),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: "satoshi",
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${product.verifiedSales} sold out of ${product.stockTotal}",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 3,
-                                  style: const TextStyle(
-                                    fontSize: 12,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/loader.svg',
+                                    height: 20, // Icon size
                                   ),
+                                  horizontalSpaceTiny,
+                                  Column(
+                                    children: [
+                                      Text(
+                                        "${product.verifiedSales} sold out of ${product.stockTotal}",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 95,
+                                        child: LinearProgressIndicator(
+                                          value: (product.verifiedSales != null && product.stockTotal != null && product.stockTotal! > 0)
+                                              ? product.verifiedSales! / product.stockTotal!
+                                              : 0.0, // Default value in case of null or invalid stock
+                                          backgroundColor: kcSecondaryColor.withOpacity(0.3),
+                                          valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              verticalSpaceTiny,
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300]?.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
-
-                                SizedBox(
-                                  width: 100,
-                                  child: LinearProgressIndicator(
-                                    value: (product.verifiedSales != null && product.stockTotal != null && product.stockTotal! > 0)
-                                        ? product.verifiedSales! / product.stockTotal!
-                                        : 0.0, // Default value in case of null or invalid stock
-                                    backgroundColor: kcSecondaryColor.withOpacity(0.3),
-                                    valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
-                                  ),
-                                ),
-
-                                Text(
+                                child: Text(
                                   (product.raffle == null || product.raffle!.isEmpty)
                                       ? ""
                                       : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].endDate ?? DateTime.now().toIso8601String()))}",
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 3,
                                   style: const TextStyle(
-                                    fontSize: 12,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
+                        ),
+                        Column(
+                          // crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            userLoggedIn.value == false
+                                ? const SizedBox()
+                                : ValueListenableBuilder<List<CartItem>>(
+                              valueListenable: raffleCart,
+                              builder: (context, value, child) {
+                                // Determine if product is in cart
+                                bool isInCart = value.any((item) => item.product?.id == product.id);
+                                CartItem? cartItem = isInCart
+                                    ? value.firstWhere((item) => item.product?.id == product.id)
+                                    : null;
 
-                         Column(
-                              // crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                userLoggedIn.value == false
-                                    ? const SizedBox()
-                                    : ValueListenableBuilder<List<CartItem>>(
-                                  valueListenable: cart,
-                                  builder: (context, value, child) {
-                                    // Determine if product is in cart
-                                    bool isInCart = value.any((item) => item.product?.id == product.id);
-                                    CartItem? cartItem = isInCart
-                                        ? value.firstWhere((item) => item.product?.id == product.id)
-                                        : null;
-
-                                    return isInCart && cartItem != null
-                                        ? Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () => viewModel.decreaseQuantity(cartItem),
-                                          child: Container(
-                                            height: 30,
-                                            width: 30,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: kcLightGrey),
-                                              borderRadius: BorderRadius.circular(5),
-                                            ),
-                                            child: const Center(
-                                              child: Icon(Icons.remove, size: 18),
-                                            ),
-                                          ),
+                                return isInCart && cartItem != null
+                                    ? Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () => viewModel.decreaseQuantity(cartItem),
+                                      child: Container(
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: kcLightGrey),
+                                          borderRadius: BorderRadius.circular(5),
                                         ),
-                                        horizontalSpaceSmall,
-                                        Text("${cartItem.quantity}"),
-                                        horizontalSpaceSmall,
-                                        InkWell(
-                                          onTap: () => viewModel.increaseQuantity(cartItem),
-                                          child: Container(
-                                            height: 30,
-                                            width: 30,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: kcLightGrey),
-                                              borderRadius: BorderRadius.circular(5),
-                                            ),
-                                            child: const Align(
-                                              alignment: Alignment.center,
-                                              child: Icon(Icons.add, size: 18),
-                                            ),
-                                          ),
+                                        child: const Center(
+                                          child: Icon(Icons.remove, size: 18),
                                         ),
-                                      ],
-                                    )
-                                        : SizedBox(
-                                      width: 180, // Adjust width to your preference
-                                      height: 45,
-                                      child: SubmitButton(
-                                        isLoading: false,
-                                        label: "Add to cart",
-                                        submit: () => viewModel.addToCart(product),
-                                        color: kcSecondaryColor,
-                                        boldText: true,
-                                        icon: Icons.shopping_bag_outlined,
-                                        iconColor: Colors.black,
                                       ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            )
+                                    ),
+                                    horizontalSpaceSmall,
+                                    Text("${cartItem.quantity}"),
+                                    horizontalSpaceSmall,
+                                    InkWell(
+                                      onTap: () => viewModel.increaseQuantity(cartItem),
+                                      child: Container(
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: kcLightGrey),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        child: const Align(
+                                          alignment: Alignment.center,
+                                          child: Icon(Icons.add, size: 18),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                    : SizedBox(
+                                  width: 150, // Adjust width to your preference
+                                  height: 35,
+                                  child: SubmitButton(
+                                    isLoading: false,
+                                    label: "Buy Ticket",
+                                    submit: () => viewModel.addToCart(product),
+                                    color: kcSecondaryColor,
+                                    boldText: true,
+                                    iconColor: Colors.black,
+                                    borderRadius: 10.0,
+                                    textSize: 12,
+                                    svgFileName: "ticket.svg",
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
 
-
-
-
-                        ],
-                      ),
-                    )
                   ],
-                )
+                ),
               ),
 
             ],
           ),
+          if (containerColor != Colors.transparent)
+            Positioned(
+            top: 0, // Adjust the positioning as you see fit
+            left: 22, // Adjust the positioning as you see fit
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: containerColor,
+                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(8.0), bottomRight: Radius.circular(8.0)),
+              ),
+              child: Column(
+              children: [
+                Positioned(
+                    top: 16,
+                    left: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: containerColor, // Blue color for the "Closing Soon" banner
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                                children: [
+                                  Text(
+                                    bannerText,
+                                    style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                        fontFamily: "Panchang",
+                                        fontSize: 11
+                                    ),
+                                  ),
+                                  if (remainingDays <= 5)
+                                    CountdownTimer(
+                                    controller: controller,
+                                    onEnd: viewModel.onEnd,
+                                    endTime: endTime,
+                                    widgetBuilder: (_, CurrentRemainingTime? time) {
+                                      if (time == null) {
+                                        return const Text('in stock');
+                                      }
+
+                                      String dayText = '';
+                                      if (time.days != null) {
+                                        if (time.days! > 0) {
+                                          dayText = '${time.days} ${time.days == 1 ? 'day' : 'days'}, ';
+                                        }
+                                      }
+                                      String formattedHours = '${time.hours ?? 0}'.padLeft(2, '0');
+                                      String formattedMin = '${time.min ?? 0}'.padLeft(2, '0');
+                                      String formattedSec = '${time.sec ?? 0}'.padLeft(2, '0');
+
+                                      return Text(
+                                        '$dayText$formattedHours : $formattedMin : $formattedSec',
+                                        style: const TextStyle(
+                                            color: kcWhiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Panchang",
+                                            fontSize: 11
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              )
+
+                    ),
+                  ),
+              ],
+              )
+            ),
+          ),
+        ],
+      ),
+
 
     );
   }

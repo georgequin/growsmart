@@ -4,7 +4,6 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import '../../../utils/money_util.dart';
@@ -23,11 +22,7 @@ class CartView extends StackedView<CartViewModel> {
       appBar: AppBar(
         centerTitle: false,
         title: const Text(
-          "My Carts", style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            fontFamily: "Panchang"
-        ),
+          "My Carts",
         ),
         actions: [
           viewModel.itemsToDelete.isNotEmpty
@@ -89,22 +84,21 @@ class CartView extends StackedView<CartViewModel> {
                                 child: Row(
                                   children: [
                                     Container(
-                                      height: 70,
-                                      width: 70,
+                                      height: 65,
+                                      width: 65,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
                                         image: item.product!.pictures!.isEmpty
                                             ? null
                                             : DecorationImage(
-                                          image: CachedNetworkImageProvider(
-                                            item.product!.raffle?[0].pictures?[0].location ?? 'https://via.placeholder.com/120',
-                                          ),
-                                          fit: BoxFit.cover,
-                                        ),
-
+                                                image: NetworkImage(item
+                                                    .product!
+                                                    .pictures![0]
+                                                    .location ?? "assets/images/paypal.png"),
+                                              ),
                                       ),
                                     ),
-                                    horizontalSpaceSmall,
+                                    horizontalSpaceMedium,
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -112,61 +106,16 @@ class CartView extends StackedView<CartViewModel> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            'Win!!!',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: uiMode.value == AppUiModes.light ? kcSecondaryColor : kcWhiteColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: "Panchang"
-                                            ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          Text(
-                                            item.product!.raffle?[0].ticketName ?? 'Product Name',
-                                            style: const TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: "Panchang"
-                                            ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                          Text(item.product!.productName ?? ""),
                                           verticalSpaceTiny,
-                                          //TODO REMOVE STATE 5 VALUE AND REPLACE WITH RAFFLE PRICE
-                                          Row(
-                                            children: [
-                                              Text(
-                                                MoneyUtils().formatAmountToDollars(5 * item.quantity!),
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                                                    fontFamily: "Satoshi",
-                                                    fontWeight: FontWeight.w700
-                                                ),
-                                              ),
-                                              horizontalSpaceSmall,
-                                              Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey[300]?.withOpacity(0.2),
-                                                  borderRadius: BorderRadius.circular(8),
-                                                ),
-                                                child: Text(
-                                                  '~${MoneyUtils().formatAmount(MoneyUtils().getRate(5 * item.quantity!))}',
-                                                  style: TextStyle(
-                                                      color: uiMode.value == AppUiModes.light ? kcBlackColor.withOpacity(0.5) : kcWhiteColor,
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontFamily: "satoshi",
-                                                  ),
-                                                ),
-                                              ),
-
-                                            ],
+                                          Text(
+                                            MoneyUtils().formatAmount(item.product!.productPrice! * item.quantity!),
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                                              fontFamily: "satoshi",
+                                            ),
                                           )
-
                                         ],
                                       ),
                                     )
@@ -335,47 +284,11 @@ class CartView extends StackedView<CartViewModel> {
                   submit: viewModel.checkout,
                   color: kcPrimaryColor,
                   boldText: true,
-                ),
-                SafeArea(
-                  child: _buildProceedToPayButton(context),
                 )
               ],
             ),
     );
   }
-
-  Widget _buildProceedToPayButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        // TODO: Implement the navigation or payment logic
-      },
-      style: ElevatedButton.styleFrom(
-        primary: kcSecondaryColor, // Button color
-        onPrimary: Colors.white, // Text color
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Button corner radius
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min, // Ensures the Row only takes up needed space
-        children: [
-          Text(
-            "Proceed to Pay",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16, // Adjust the font size as needed
-            ),
-          ),
-          Icon(
-            Icons.arrow_forward, // Use the appropriate icon
-            // Add any additional icon styling here
-          ),
-        ],
-      ),
-    );
-  }
-
 
 
   @override

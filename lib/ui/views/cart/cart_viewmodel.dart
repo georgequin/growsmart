@@ -32,13 +32,13 @@ class CartViewModel extends BaseViewModel {
 
   void clearCart() async{
     for (var element in itemsToDelete) {
-      cart.value.remove(element);
+      raffleCart.value.remove(element);
     }
     itemsToDelete.clear();
-    cart.notifyListeners();
+    raffleCart.notifyListeners();
     //update local cart
     List<Map<String, dynamic>> storedList =
-    cart.value.map((e) => e.toJson()).toList();
+    raffleCart.value.map((e) => e.toJson()).toList();
     await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
     rebuildUi();
     getSubTotal();
@@ -47,7 +47,7 @@ class CartViewModel extends BaseViewModel {
   void getSubTotal() {
     int total = 0;
 
-    for (var element in cart.value) {
+    for (var element in raffleCart.value) {
       total = total + (element.product!.productPrice! * element.quantity!);
     }
 
@@ -58,7 +58,7 @@ class CartViewModel extends BaseViewModel {
   void getDeliveryTotal() {
     int total = 0;
 
-    for (var element in cart.value) {
+    for (var element in raffleCart.value) {
       total = total + (element.product!.shippingFee!);
     }
 
@@ -67,7 +67,7 @@ class CartViewModel extends BaseViewModel {
   }
 
   void checkout() async {
-    if (cart.value.isEmpty) {
+    if (raffleCart.value.isEmpty) {
       return null;
     }
 
@@ -86,11 +86,13 @@ class CartViewModel extends BaseViewModel {
 
 
     setBusy(true);
+    //TODO MAKE SURE TO SEPERATE AND HANDLE
     try {
       ApiResponse res = await repo.saveOrder({
-        "products": cart.value
+        "items": raffleCart.value
             .map((e) => {"id": e.product!.id, "quantity": e.quantity})
             .toList(),
+        // "type":
       });
       if (res.statusCode == 200) {
         List<OrderInfo> list = (res.data["orderDetails"] as List)

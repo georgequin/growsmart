@@ -381,4 +381,25 @@ class Repository extends IRepository {
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> getExchangeRate({
+    required double amount,
+    required String destinationCurrency,
+    required String sourceCurrency,
+  }) async {
+    String endpoint = '/transfers/rates';
+    Map<String, dynamic> reqParams = {
+      'amount': amount.toString(),
+      'destination_currency': destinationCurrency,
+      'source_currency': sourceCurrency,
+    };
+    return await api.call(
+      method: HttpMethod.get,
+      endpoint: endpoint,
+      reqParams: reqParams,
+      // protected: true, // This flag is used to decide if Authorization header should be included
+    );
+  }
+
 }

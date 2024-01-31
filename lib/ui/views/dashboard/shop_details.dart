@@ -15,19 +15,19 @@ import 'package:stacked/stacked.dart';
 import '../../../utils/money_util.dart';
 import 'dashboard_viewmodel.dart';
 
-class ProductDetail extends StatefulWidget {
+class ShopDetail extends StatefulWidget {
   final Product product;
 
-  const ProductDetail({
+  const ShopDetail({
     required this.product,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<ProductDetail> createState() => _ProductDetailState();
+  State<ShopDetail> createState() => _ShopDetailState();
 }
 
-class _ProductDetailState extends State<ProductDetail> {
+class _ShopDetailState extends State<ShopDetail> {
   int quantity = 1;
   String activePic = "";
   List<Product> recommended = [];
@@ -460,7 +460,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         child: userLoggedIn.value == false
                             ? const SizedBox()
                             : ValueListenableBuilder<List<CartItem>>(
-                            valueListenable: cart,
+                            valueListenable: raffleCart,
                             builder: (context, value, child) {
                               bool isInCart = value.any((item) =>
                               item.product?.id == widget.product.id);
@@ -589,7 +589,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                           onTap: () {
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(builder: (c) {
-                                              return ProductDetail(
+                                              return ShopDetail(
                                                   product: product);
                                             }));
                                           },

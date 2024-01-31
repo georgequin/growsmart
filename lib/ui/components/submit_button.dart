@@ -1,4 +1,6 @@
+import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class SubmitButton extends StatelessWidget {
   final bool isLoading;
@@ -11,6 +13,10 @@ class SubmitButton extends StatelessWidget {
   final Color? iconColor;
   final bool iconIsPrefix;
   final bool buttonDisabled;
+  final double? borderRadius;
+  final double? textSize;
+  final String? svgFileName;
+
 
   const SubmitButton(
       {Key? key,
@@ -20,10 +26,13 @@ class SubmitButton extends StatelessWidget {
       required this.color,
       this.icon,
       this.iconColor,
+      this.borderRadius = 14.15,
       this.textColor = Colors.white,
       this.boldText = false,
       this.iconIsPrefix = false,
-      this.buttonDisabled = false})
+      this.buttonDisabled = false,
+        this.textSize = 16.0,
+        this.svgFileName})
       : super(key: key);
 
   @override
@@ -37,7 +46,7 @@ class SubmitButton extends StatelessWidget {
       child: Container(
         height: 60,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14.15),
+          borderRadius: BorderRadius.circular(borderRadius ?? 14.15),
           color: buttonDisabled
               ? Colors.grey[600]
               : isLoading
@@ -71,11 +80,13 @@ class SubmitButton extends StatelessWidget {
                                 ],
                               )
                             : const SizedBox(),
+
+
                         Text(
                           label,
                           style: TextStyle(
                             color: textColor,
-                            fontSize: 16,
+                            fontSize: textSize,
                             fontWeight:
                                 boldText ? FontWeight.bold : FontWeight.normal,
                           ),
@@ -93,11 +104,31 @@ class SubmitButton extends StatelessWidget {
                               )
                       ],
                     )
+                  : svgFileName != null ?
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/$svgFileName',
+                        height: 20, // Icon size
+                      ),
+                      horizontalSpaceTiny,
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: textSize,
+                          fontWeight:
+                          boldText ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ]
+                  )
                   : Text(
                       label,
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 16,
+                        fontSize: textSize,
                         fontWeight:
                             boldText ? FontWeight.bold : FontWeight.normal,
                       ),

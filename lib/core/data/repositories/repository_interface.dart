@@ -68,4 +68,9 @@ abstract class IRepository {
   Future<ApiResponse> deleteDefaultShipping(String productId);
 
   Future<ApiResponse> reviewOrder(Map<String, dynamic> req);
+
+  Future<ApiResponse> getExchangeRate({required double amount,
+    required String destinationCurrency,
+    required String sourceCurrency,
+  });
 }

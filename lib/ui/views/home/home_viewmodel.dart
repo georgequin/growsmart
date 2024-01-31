@@ -7,6 +7,7 @@ import 'package:afriprize/ui/common/app_strings.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/cart/cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
+import 'package:afriprize/ui/views/dashboard/shop_dashboard_view.dart';
 import 'package:afriprize/ui/views/notification/notification_view.dart';
 import 'package:afriprize/ui/views/profile/profile_view.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../state.dart';
 import '../../common/ui_helpers.dart';
 import '../draws/draws_view.dart';
+import 'home_view.dart';
 
 class HomeViewModel extends BaseViewModel {
   final _dialogService = locator<DialogService>();
@@ -28,18 +30,64 @@ class HomeViewModel extends BaseViewModel {
     const ProfileView()
   ];
 
+  int selectedRafflesTab = 0;
+  int selectedShopTab = 0;
+
+  @override
+  void dispose() {
+    // Don't forget to remove the listener when the view model is disposed.
+    currentModuleNotifier.removeListener(notifyListeners);
+    super.dispose();
+  }
+
+  // Pages for the Raffles dashboard
+  List<Widget> rafflesPages = [
+    DashboardView(),
+    const DrawsView(),
+    const CartView(),
+    const NotificationView(),
+    const ProfileView()
+  ];
+
+  // Pages for the Shop dashboard
+  List<Widget> shopPages = [
+    ShopDashboardView(),
+    const DrawsView(),
+    const CartView(),
+    const NotificationView(),
+    const ProfileView()
+  ];
+
+  HomeViewModel() {
+    currentModuleNotifier.addListener(notifyListeners);
+  }
+
+
   String get counterLabel => 'Counter is: $_counter';
 
   int _counter = 0;
   int selectedTab = 0;
 
+  AppModules selectedModule = AppModules.raffle;
+
+  // void toggleModule(bool isRafflesSelected) {
+  //   selectedModule = isRafflesSelected ? AppModules.raffle : AppModules.shop;
+  //   notifyListeners();
+  // }
+
+  void toggleModule(bool isRafflesSelected) {
+    currentModuleNotifier.value = isRafflesSelected ? AppModules.raffle : AppModules.shop;
+    notifyListeners();
+  }
+
+  //for test
   void incrementCounter() {
     _counter++;
     rebuildUi();
   }
 
-  void changeSelected(int i) {
-    if (i != 0 && !userLoggedIn.value) {
+  void changeSelected(int index, AppModules module) {
+    if (index != 0 && !userLoggedIn.value) {
       showModalBottomSheet(
           context: StackedService.navigatorKey!.currentState!.context,
           shape: const RoundedRectangleBorder(
@@ -68,8 +116,19 @@ class HomeViewModel extends BaseViewModel {
           });
       return;
     }
-    selectedTab = i;
-    rebuildUi();
+    if (module == AppModules.raffle) {
+      selectedRafflesTab = index;
+    } else {
+      selectedShopTab = index;
+    }
+    notifyListeners();
+  }
+
+
+  Widget get currentPage {
+    return currentModuleNotifier.value == AppModules.raffle
+        ? rafflesPages[selectedRafflesTab]
+        : shopPages[selectedShopTab];
   }
 
   void showDialog() {

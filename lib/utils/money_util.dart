@@ -39,6 +39,19 @@ class MoneyUtils extends TextInputFormatter {
     return "₦${formatter.format(amount)}";
   }
 
+  int getRate(int amount) {
+    final formatter = NumberFormat("#,##0", "en_US");
+
+    amount =  1450 * amount;
+    return amount;
+  }
+
+  String formatAmountToDollars(int amount) {
+    final formatter = NumberFormat("#,##0", "en_US");
+
+    return "\$${formatter.format(amount)}";
+  }
+
   String getReference() {
     var platform = (Platform.isIOS) ? 'iOS' : 'Android';
     final thisDate = DateTime.now().millisecondsSinceEpoch;
@@ -49,6 +62,7 @@ class MoneyUtils extends TextInputFormatter {
     String text = amount.text.replaceAll(',', ''); // Remove commas
     return int.tryParse(text) ?? 0; // Convert to int, return 0 if null
   }
+
 
   // Future<ApiResponse> chargeCard( String paymentMethod, List<String> orderId, PaystackPlugin plugin, BuildContext context) async {
   //

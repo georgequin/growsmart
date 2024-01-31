@@ -77,9 +77,9 @@ class _CheckoutState extends State<Checkout> {
                 "Order review",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text("${getTotalItems(cart.value)} items in cart"),
-              children: List.generate(cart.value.length, (index) {
-                CartItem item = cart.value[index];
+              subtitle: Text("${getTotalItems(raffleCart.value)} items in cart"),
+              children: List.generate(raffleCart.value.length, (index) {
+                CartItem item = raffleCart.value[index];
 
                 return GestureDetector(
                   onTap: () {
@@ -165,7 +165,7 @@ class _CheckoutState extends State<Checkout> {
                       ),
                     ),
                     Text(
-                      MoneyUtils().formatAmount(getSubTotal(cart.value)),
+                      MoneyUtils().formatAmount(getSubTotal(raffleCart.value)),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold,
                         fontFamily: "satoshi"),
@@ -184,7 +184,7 @@ class _CheckoutState extends State<Checkout> {
                       ),
                     ),
                     Text(
-                      getDeliveryFee(cart.value) == 0 ? "Free" : "N${getDeliveryFee(cart.value)}",
+                      getDeliveryFee(raffleCart.value) == 0 ? "Free" : "N${getDeliveryFee(raffleCart.value)}",
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -204,7 +204,7 @@ class _CheckoutState extends State<Checkout> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      MoneyUtils().formatAmount(getSubTotal(cart.value) + getDeliveryFee(cart.value)),
+                      MoneyUtils().formatAmount(getSubTotal(raffleCart.value) + getDeliveryFee(raffleCart.value)),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold,  fontFamily: "satoshi"),
                     ),
@@ -654,7 +654,7 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceLarge,
           SubmitButton(
             isLoading: loading,
-            label: "Pay N${getSubTotal(cart.value) + getDeliveryFee(cart.value)}",
+            label: "Pay N${getSubTotal(raffleCart.value) + getDeliveryFee(raffleCart.value)}",
             submit: () async {
               setState(() {
                 loading = true;
@@ -700,7 +700,7 @@ class _CheckoutState extends State<Checkout> {
     });
 
     // Calculate the amount
-    int amount = getSubTotal(cart.value) + getDeliveryFee(cart.value);
+    int amount = getSubTotal(raffleCart.value) + getDeliveryFee(raffleCart.value);
     // Retrieve order IDs
     List<String> orderIds = widget.infoList.map((e) => e.id.toString()).toList();
 
@@ -953,11 +953,11 @@ class _CheckoutState extends State<Checkout> {
   void showReceipt() {
 
 
-    List<CartItem> receiptCart = List<CartItem>.from(cart.value);
+    List<CartItem> receiptCart = List<CartItem>.from(raffleCart.value);
 
-    cart.value.clear();
-    cart.notifyListeners();
-    List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+    raffleCart.value.clear();
+    raffleCart.notifyListeners();
+    List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
     locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
 
 
