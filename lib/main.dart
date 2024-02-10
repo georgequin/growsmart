@@ -1,6 +1,8 @@
+import 'package:afriprize/core/utils/config.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
+import 'package:afriprize/utils/paystack_service.dart';
 import 'package:flutter/material.dart';
 import 'package:afriprize/app/app.bottomsheets.dart';
 import 'package:afriprize/app/app.dialogs.dart';
@@ -8,7 +10,6 @@ import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -16,9 +17,8 @@ void main() async{
   setupLocator();
   setupDialogUi();
   setupBottomSheetUi();
-  final plugin = PaystackPlugin();
   WidgetsFlutterBinding.ensureInitialized();
-  await plugin.initialize(publicKey: 'pk_live_540bdf095640f7765b0a822f08161087b68df565');
+  // PaystackService().initialize(AppConfig.paystackApiKey);
   runApp(const MyApp());
 }
 

@@ -110,8 +110,6 @@ class AuthViewModel extends BaseViewModel {
       });
       if (res.statusCode == 200) {
         userLoggedIn.value = true;
-
-
         profile.value =
             Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
         locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);

@@ -1,12 +1,18 @@
 import 'package:afriprize/state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 
 import 'home_viewmodel.dart';
 import 'module_switch.dart';
 
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
 
 
 class HomeView extends StackedView<HomeViewModel> {
@@ -26,7 +32,11 @@ class HomeView extends StackedView<HomeViewModel> {
             ? viewModel.selectedRafflesTab == 0
             : viewModel.selectedShopTab == 0;
         return Scaffold(
+          backgroundColor: currentModuleNotifier.value == AppModules.shop ? Color(0xFFFFF3DB) : null,
           appBar: AppBar(
+            backgroundColor: currentModule == AppModules.shop && uiMode.value == AppUiModes.light
+                ? Color(0xFFFFF3DB)
+                : uiMode.value == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
             title: showModuleSwitch ? ModuleSwitch(
               isRafflesSelected: currentModule == AppModules.raffle,
               onToggle: (isRafflesSelected) {
@@ -73,7 +83,7 @@ class BottomNavBar extends StatelessWidget {
         return ValueListenableBuilder<AppUiModes>(
           valueListenable: uiMode,
           builder: (context, mode, _) {
-            Color iconColor = mode == AppUiModes.dark ? Colors.white : Colors.black;
+            Color iconColor = mode == AppUiModes.dark ? Colors.white : Colors.grey;
             Color selectedColor = mode == AppUiModes.dark ? Colors.white : kcSecondaryColor;
             ValueListenable<List<dynamic>> filteredNotifications = ValueNotifier(
                 notifications.value.where((notification) => notification.status != 1).toList());
@@ -88,7 +98,9 @@ class BottomNavBar extends StatelessWidget {
 
             return BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
-              backgroundColor: mode == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
+              backgroundColor: currentModule == AppModules.shop && mode == AppUiModes.light
+                  ? Color(0xFFFFF3DB)
+                  : mode == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
               selectedLabelStyle: TextStyle(color: selectedColor),
               selectedItemColor: selectedColor,
               unselectedItemColor: iconColor,
@@ -105,25 +117,25 @@ class BottomNavBar extends StatelessWidget {
   List<BottomNavigationBarItem> _rafflesItems(Color iconColor, Color selectedColor, ValueListenable<List<dynamic>> filteredNotifications) {
     return [
       BottomNavigationBarItem(
-        icon: _navBarItemIcon(Icons.home_outlined, "Home", viewModel.selectedRafflesTab == 0, iconColor),
+        icon: _navBarItemIcon('home.svg', viewModel.selectedRafflesTab == 0, iconColor),
         label: "Home",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon(Icons.bar_chart_outlined, "Draws", viewModel.selectedRafflesTab == 1, iconColor),
+        icon: _navBarItemIcon('home_ticket.svg',  viewModel.selectedRafflesTab == 1, iconColor),
         label: "Draws",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter(Icons.shopping_cart_outlined, viewModel.selectedRafflesTab == 2, raffleCart, iconColor),
+        icon: _navBarItemWithCounter('buy.svg', viewModel.selectedRafflesTab == 2, raffleCart, iconColor),
         label: "Cart",
       ),
       //TODO : MAKE SURE TO CHECK WHY THE VALUE ISNT CORRECT
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter(Icons.notifications_none, viewModel.selectedRafflesTab == 3, filteredNotifications, iconColor),
+        icon: _navBarItemWithCounter('notification.svg', viewModel.selectedRafflesTab == 3, filteredNotifications, iconColor),
         label: "Notifications",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon(Icons.person_outline, "Profile", viewModel.selectedRafflesTab == 4, iconColor),
-        label: "Profile",
+        icon: _navBarItemIcon('menu.svg', viewModel.selectedRafflesTab == 4, iconColor),
+        label: "Menu",
       ),
     ];
   }
@@ -131,52 +143,59 @@ class BottomNavBar extends StatelessWidget {
   List<BottomNavigationBarItem> _shopItems(Color iconColor, Color selectedColor, ValueListenable<List<dynamic>> filteredNotifications) {
     return [
       BottomNavigationBarItem(
-        icon: _navBarItemIcon(Icons.home_outlined, "Home", viewModel.selectedShopTab == 0, iconColor),
+        icon: _navBarItemIcon('home.svg',  viewModel.selectedShopTab == 0, iconColor),
         label: "Home",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon(Icons.bar_chart_outlined, "Draws", viewModel.selectedShopTab == 1, iconColor),
+        icon: _navBarItemIcon('home_ticket.svg', viewModel.selectedShopTab == 1, iconColor),
         label: "Draws",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter(Icons.shopping_cart_outlined, viewModel.selectedShopTab == 2, raffleCart, iconColor),
+        icon: _navBarItemWithCounter('buy.svg', currentModuleNotifier.value == AppModules.shop ? viewModel.selectedShopTab == 2 : viewModel.selectedRafflesTab == 2, currentModuleNotifier.value == AppModules.raffle ? raffleCart : shopCart, iconColor),
         label: "Cart",
       ),
       //TODO : MAKE SURE TO CHECK WHY THE VALUE ISNT CORRECT
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter(Icons.notifications_none, viewModel.selectedShopTab == 3, filteredNotifications, iconColor),
+        icon: _navBarItemWithCounter('notification.svg', viewModel.selectedShopTab == 3, filteredNotifications, iconColor),
         label: "Notifications",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon(Icons.menu_outlined, "Profile", viewModel.selectedShopTab == 4, iconColor),
+        icon: _navBarItemIcon('menu.svg', viewModel.selectedShopTab == 4, iconColor),
         label: "Menu",
       ),
     ];
   }
 
-  Widget _navBarItemIcon(IconData iconData, String label, bool isSelected, Color iconColor) {
+  Widget _navBarItemIcon(String iconData, bool isSelected, Color iconColor) {
     return Container(
-        width: 50,
+        width: 30,
         height: 50,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isSelected ? kcSecondaryColor.withOpacity(0.2) : Colors.transparent,
         ),
-        child: Icon(
-          iconData,
+        child: SvgPicture.asset(
+          'assets/icons/$iconData',
+          height: 16, // Icon size
           color: isSelected ? kcSecondaryColor : iconColor,
-        )
+        ),
+
+
+        // Icon(
+        //   iconData,
+        //   color: isSelected ? kcSecondaryColor : iconColor,
+        // )
     );
   }
 
-  Widget _navBarItemWithCounter(IconData icon, bool isSelected, ValueListenable<List<dynamic>> counterListenable, Color color) {
+  Widget _navBarItemWithCounter(String icon, bool isSelected, ValueListenable<List<dynamic>> counterListenable, Color color) {
     return ValueListenableBuilder<List<dynamic>>(
       valueListenable: counterListenable,
       builder: (context, value, child) {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            _navBarItemIcon(icon, '', isSelected, color),
+            _navBarItemIcon(icon,  isSelected, color),
             if (value.isNotEmpty)
               Positioned(
                 right: -6,

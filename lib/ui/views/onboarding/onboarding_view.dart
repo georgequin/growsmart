@@ -48,7 +48,7 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
                       label:
                           "Get Started",
                       submit: () {
-                          locator<NavigationService>().navigateToHomeView();
+                          locator<NavigationService>().clearStackAndShow(Routes.homeView);
                       },
                       color: kcPrimaryColor,
                       boldText: true,

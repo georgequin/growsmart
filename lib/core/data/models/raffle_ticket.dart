@@ -1,5 +1,7 @@
 import 'package:afriprize/core/data/models/product.dart';
 
+import 'order_item.dart';
+
 class RaffleTicket {
   String? id;
   String? ticketName;
@@ -99,3 +101,61 @@ class Participants {
     return data;
   }
 }
+
+class Winner {
+   String? id;
+   bool? status;
+   int? entry;
+   bool? winner;
+   DateTime? created;
+   DateTime? updated;
+   User? user;
+   Raffle? raffle;
+   List<RaffleTicket>? tickets;
+
+  Winner(
+      {this.id,
+     this.status,
+     this.entry,
+     this.winner,
+     this.created,
+     this.updated,
+     this.user,
+     this.tickets,
+     this.raffle,});
+
+   Winner.fromJson(Map<String, dynamic> json) {
+      id = json['id'];
+      status = json['status'];
+      entry = json['entry'];
+      // winner = json['winner'];
+      winner = json['winner'];
+      created = DateTime.parse(json['created']);
+      updated = DateTime.parse(json['updated']);
+      user =  User.fromJson(json['user']);
+      raffle = Raffle.fromJson(json['raffledraw']);
+      tickets = List<RaffleTicket>.from(json['ticket'].map((x) => RaffleTicket.fromJson(x)));
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    // data['status'] = status;
+    // data['entry'] = entry;
+    // data['winner'] = winner;
+    data['created'] = created;
+    data['updated'] = updated;
+
+    if (user != null) {
+      data['user'] = user!.toJson();
+    }
+    if (raffle != null) {
+      data['raffledraw'] = raffle!.toJson();
+    }
+    if (tickets != null) {
+      data['tickets'] = tickets!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+

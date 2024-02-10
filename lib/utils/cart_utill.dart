@@ -1,10 +1,22 @@
+import 'package:afriprize/core/data/models/raffle_cart_item.dart';
+
 import '../core/data/models/cart_item.dart';
 
-int getSubTotal(List<CartItem> cart) {
+int getShopSubTotal(List<CartItem> cart) {
   int total = 0;
 
   for (var element in cart) {
     total = total + (element.product!.productPrice! * element.quantity!);
+  }
+
+  return total;
+}
+
+int getRaffleSubTotal(List<RaffleCartItem> cart) {
+  int total = 0;
+
+  for (var element in cart) {
+    total = total + (element.raffle!.rafflePrice! * element.quantity!);
   }
 
   return total;
@@ -20,7 +32,16 @@ int getDeliveryFee(List<CartItem> cart) {
   return total;
 }
 
-int getTotalItems(List<CartItem> cart) {
+int getTotalShopItems(List<CartItem> cart) {
+  int quantity = 0;
+  for (var element in cart) {
+    quantity = quantity + element.quantity!;
+  }
+
+  return quantity;
+}
+
+int getTotalRaffleItems(List<RaffleCartItem> cart) {
   int quantity = 0;
   for (var element in cart) {
     quantity = quantity + element.quantity!;

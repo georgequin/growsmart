@@ -8,7 +8,7 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/profile/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_paystack/flutter_paystack.dart';
+// import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../state.dart';
 import '../../../utils/money_util.dart';
@@ -24,11 +24,11 @@ class Deposit extends StatefulWidget {
 class _DepositState extends State<Deposit> {
   final amount = TextEditingController();
   bool isLoading = false;
-  final plugin = PaystackPlugin();
+  // final plugin = PaystackPlugin();
 
   @override
   void initState() {
-    plugin.initialize(publicKey: MoneyUtils().payStackPublicKey);
+    // plugin.initialize(publicKey: MoneyUtils().payStackPublicKey);
     super.initState();
   }
 
@@ -70,8 +70,7 @@ class _DepositState extends State<Deposit> {
                 setState(() {
                   isLoading = true;
                 });
-
-                chargeCard();
+                // chargeCard();
               },
               color: kcPrimaryColor,
             )
@@ -85,33 +84,33 @@ class _DepositState extends State<Deposit> {
 
 
 
-  chargeCard() async {
-    var charge = Charge()
-      ..amount = MoneyUtils().getAmountAsInt(amount) *
-          100 //the money should be in kobo hence the need to multiply the value by 100
-      ..reference = MoneyUtils().getReference()
-      ..email = profile.value.email;
-    CheckoutResponse response = await plugin.checkout(
-      context,
-      method: CheckoutMethod.card,
-      charge: charge,
-    );
-    if (response.status == true) {
-    ApiResponse res = await locator<Repository>().initTransaction(
-    {
-    "amount": MoneyUtils().getAmountAsInt(amount),
-    "reference": charge.reference
-    });
-
-      if (res.statusCode == 200) {
-
-         showSuccess();
-      } else {
-        locator<SnackbarService>()
-            .showSnackbar(message: res.data["message"]);
-      }
-    }
-  }
+  // chargeCard() async {
+  //   var charge = Charge()
+  //     ..amount = MoneyUtils().getAmountAsInt(amount) *
+  //         100 //the money should be in kobo hence the need to multiply the value by 100
+  //     ..reference = MoneyUtils().getReference()
+  //     ..email = profile.value.email;
+  //   CheckoutResponse response = await plugin.checkout(
+  //     context,
+  //     method: CheckoutMethod.card,
+  //     charge: charge,
+  //   );
+  //   if (response.status == true) {
+  //   ApiResponse res = await locator<Repository>().initTransaction(
+  //   {
+  //   "amount": MoneyUtils().getAmountAsInt(amount),
+  //   "reference": charge.reference
+  //   });
+  //
+  //     if (res.statusCode == 200) {
+  //
+  //        showSuccess();
+  //     } else {
+  //       locator<SnackbarService>()
+  //           .showSnackbar(message: res.data["message"]);
+  //     }
+  //   }
+  // }
 
   showSuccess(){
 

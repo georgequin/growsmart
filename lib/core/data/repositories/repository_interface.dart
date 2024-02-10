@@ -13,7 +13,11 @@ abstract class IRepository {
 
   Future<ApiResponse> getProducts();
 
-  Future<ApiResponse> getAds();
+  Future<ApiResponse> getRaffle();
+
+  Future<ApiResponse> getSoldOutRaffle();
+
+  Future<ApiResponse> getRaffleResult();
 
   Future<ApiResponse> getSellingFast();
 

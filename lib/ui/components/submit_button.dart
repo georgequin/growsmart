@@ -16,6 +16,7 @@ class SubmitButton extends StatelessWidget {
   final double? borderRadius;
   final double? textSize;
   final String? svgFileName;
+  final String? family;
 
 
   const SubmitButton(
@@ -32,7 +33,7 @@ class SubmitButton extends StatelessWidget {
       this.iconIsPrefix = false,
       this.buttonDisabled = false,
         this.textSize = 16.0,
-        this.svgFileName})
+        this.svgFileName, this.family})
       : super(key: key);
 
   @override
@@ -87,6 +88,7 @@ class SubmitButton extends StatelessWidget {
                           style: TextStyle(
                             color: textColor,
                             fontSize: textSize,
+                            fontFamily: family ?? '',
                             fontWeight:
                                 boldText ? FontWeight.bold : FontWeight.normal,
                           ),
@@ -118,6 +120,7 @@ class SubmitButton extends StatelessWidget {
                         style: TextStyle(
                           color: textColor,
                           fontSize: textSize,
+                          fontFamily: family ?? '',
                           fontWeight:
                           boldText ? FontWeight.bold : FontWeight.normal,
                         ),

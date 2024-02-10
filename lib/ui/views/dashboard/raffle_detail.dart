@@ -2,6 +2,7 @@ import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/product.dart';
+import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
@@ -18,15 +19,16 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:slidable_button/slidable_button.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import '../../../core/network/interceptors.dart';
 import '../../../utils/money_util.dart';
 import '../../components/submit_button.dart';
 import 'dashboard_viewmodel.dart';
 
 class RaffleDetail extends StatefulWidget {
-  final Product product;
+  final Raffle raffle;
 
   const RaffleDetail({
-    required this.product,
+    required this.raffle,
     Key? key,
   }) : super(key: key);
 
@@ -40,22 +42,21 @@ class RaffleDetail extends StatefulWidget {
 class _RaffleDetailState extends State<RaffleDetail> {
   int quantity = 1;
   String activePic = "";
-  List<Product> recommended = [];
+  List<Raffle> recommended = [];
 
 
 
   @override
   void initState() {
-    getRecommendedProducts();
+    getRecommendedRaffles();
     setState(() {
       activePic =
-          (widget.product.raffle == null || widget.product.raffle!.isEmpty)
+          (widget.raffle == null)
               ? ""
-              : widget.product.raffle?[0].pictures?[0].location ?? "";
+              : widget.raffle.pictures?[0].location ?? "";
     });
 
     currentModuleNotifier.addListener(_handleModuleChange);
-
     super.initState();
   }
 
@@ -72,14 +73,13 @@ class _RaffleDetailState extends State<RaffleDetail> {
     }
   }
 
-  void getRecommendedProducts() async {
+  void getRecommendedRaffles() async {
     try {
-      ApiResponse res = await locator<Repository>()
-          .recommendedProducts(widget.product.id.toString());
+      ApiResponse res = await repo.getFeaturedRaffle();
       if (res.statusCode == 200) {
         setState(() {
-          recommended = (res.data["recommended"] as List)
-              .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+          recommended = (res.data["raffle"] as List)
+              .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e)))
               .toList();
         });
       }
@@ -139,7 +139,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                         valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
                                       ),
                                     ),
-                                    imageUrl:  widget.product.raffle?[0].pictures?.first.location ?? 'https://via.placeholder.com/150',
+                                    imageUrl:  widget.raffle.pictures?.first.location ?? 'https://via.placeholder.com/150',
                                     height: 182,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
@@ -172,7 +172,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      widget.product.raffle?[0].ticketName ?? 'Product Name',
+                                      widget.raffle.ticketName ?? 'Product Name',
                                       style:  TextStyle(
                                           fontSize: 20,
                                           color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcWhiteColor,
@@ -286,7 +286,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                               Column(
                                                 children: [
                                                   Text(
-                                                    "${widget.product.verifiedSales} sold out of ${widget.product.stockTotal}",
+                                                    "${widget.raffle.verifiedSales} sold out of ${widget.raffle.stockTotal}",
                                                     overflow: TextOverflow.ellipsis,
                                                     maxLines: 3,
                                                     style: const TextStyle(
@@ -296,8 +296,8 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                                   SizedBox(
                                                     width: 95,
                                                     child: LinearProgressIndicator(
-                                                      value: (widget.product.verifiedSales != null && widget.product.stockTotal != null && widget.product.stockTotal! > 0)
-                                                          ? widget.product.verifiedSales! / widget.product.stockTotal!
+                                                      value: (widget.raffle.verifiedSales != null && widget.raffle.stockTotal != null && widget.raffle.stockTotal! > 0)
+                                                          ? widget.raffle.verifiedSales! / widget.raffle.stockTotal!
                                                           : 0.0, // Default value in case of null or invalid stock
                                                       backgroundColor: kcSecondaryColor.withOpacity(0.3),
                                                       valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
@@ -319,9 +319,9 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
-                                        (widget.product.raffle == null || widget.product.raffle!.isEmpty)
+                                        (widget.raffle == null        )
                                             ? ""
-                                            : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(widget.product.raffle?[0].endDate ?? DateTime.now().toIso8601String()))}",
+                                                        : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(widget.raffle.endDate ?? DateTime.now().toIso8601String()))}",
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 3,
                                         style: const TextStyle(
@@ -423,14 +423,14 @@ class _RaffleDetailState extends State<RaffleDetail> {
                         padding: const EdgeInsets.symmetric(horizontal: 55.0),
                         child: userLoggedIn.value == false
                             ? const SizedBox()
-                            : ValueListenableBuilder<List<CartItem>>(
+                            : ValueListenableBuilder<List<RaffleCartItem>>(
                             valueListenable: raffleCart,
                             builder: (context, value, child) {
                               bool isInCart = value.any((item) =>
-                              item.product?.id == widget.product.id);
-                              CartItem? cartItem = isInCart
+                              item.raffle?.id == widget.raffle.id);
+                              RaffleCartItem? cartItem = isInCart
                                   ? value.firstWhere((item) =>
-                              item.product?.id == widget.product.id)
+                              item.raffle?.id == widget.raffle.id)
                                   : null;
 
                               return isInCart && cartItem != null
@@ -442,58 +442,100 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                     borderRadius:
                                     BorderRadius.circular(9)),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
+                                    Container(
+                                      height: 53,
+                                      decoration: BoxDecoration(
+                                        color: kcWhiteColor,
+                                        borderRadius:
+                                        BorderRadius.circular(9),
+                                      ),
+                                      child:  Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () => viewModel
+                                                .decreaseRaffleQuantity(cartItem),
+                                            child: Container(
+                                              height: 30,
+                                              width: 30,
+                                              decoration: BoxDecoration(
+                                                color: kcWhiteColor,
+                                                borderRadius:
+                                                BorderRadius.circular(5),
+                                              ),
+                                              child: const Center(
+                                                  child: Icon(Icons.remove,
+                                                      size: 18,
+                                                      color: kcBlackColor)),
+                                            ),
+                                          ),
+                                          horizontalSpaceSmall,
+                                          Text(
+                                            "${cartItem.quantity}",
+                                            style: const TextStyle(
+                                                color: kcBlackColor),
+                                          ),
+                                          horizontalSpaceSmall,
+                                          InkWell(
+                                            onTap: () => viewModel
+                                                .increaseRaffleQuantity(cartItem),
+                                            child: Container(
+                                              height: 30,
+                                              width: 30,
+                                              decoration: BoxDecoration(
+                                                color: kcWhiteColor,
+                                                borderRadius:
+                                                BorderRadius.circular(5),
+                                              ),
+                                              child: const Align(
+                                                  alignment: Alignment.center,
+                                                  child: Icon(Icons.add,
+                                                      size: 18,
+                                                      color: kcBlackColor)),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                     InkWell(
-                                      onTap: () => viewModel
-                                          .decreaseQuantity(cartItem),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        locator<NavigationService>()
+                                            .navigateToCartView();
+                                      },
                                       child: Container(
-                                        height: 30,
-                                        width: 30,
+                                        height: 50,
+                                        width: 120,
                                         decoration: BoxDecoration(
                                           color: kcWhiteColor,
                                           borderRadius:
-                                          BorderRadius.circular(5),
+                                          BorderRadius.circular(9),
                                         ),
-                                        child: const Center(
-                                            child: Icon(Icons.remove,
-                                                size: 18,
-                                                color: kcBlackColor)),
-                                      ),
-                                    ),
-                                    horizontalSpaceSmall,
-                                    Text(
-                                      "${cartItem.quantity}",
-                                      style: const TextStyle(
-                                          color: kcBlackColor),
-                                    ),
-                                    horizontalSpaceSmall,
-                                    InkWell(
-                                      onTap: () => viewModel
-                                          .increaseQuantity(cartItem),
-                                      child: Container(
-                                        height: 30,
-                                        width: 30,
-                                        decoration: BoxDecoration(
-                                          color: kcWhiteColor,
-                                          borderRadius:
-                                          BorderRadius.circular(5),
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Goto Cart",
+                                              style: TextStyle(
+                                                  color: kcPrimaryColor,
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                          ],
                                         ),
-                                        child: const Align(
-                                            alignment: Alignment.center,
-                                            child: Icon(Icons.add,
-                                                size: 18,
-                                                color: kcBlackColor)),
                                       ),
-                                    ),
+                                    )
                                   ],
                                 ),
+
                               )
                                   : InkWell(
                                 onTap: () async {
-                                  CartItem newItem = CartItem(
-                                      product: widget.product,
+                                  RaffleCartItem newItem = RaffleCartItem(
+                                      raffle: widget.raffle,
                                       quantity: 1);
-                                  viewModel.addToCart(widget.product);
+                                  viewModel.addToRaffleCart(widget.raffle);
                                 },
                                 child: Container(
                                   height: 50,
@@ -523,49 +565,6 @@ class _RaffleDetailState extends State<RaffleDetail> {
                               );
                             }),
                       ),
-
-                      verticalSpaceSmall,
-                      recommended.isEmpty
-                          ? const SizedBox()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Center(
-                                    child: Text(
-                                  "Related",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )),
-                                verticalSpaceMedium,
-                                SizedBox(
-                                  height: 250,
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: recommended.length,
-                                      itemBuilder: (context, index) {
-                                        Product product = recommended[index];
-                                        return InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(builder: (c) {
-                                              return RaffleDetail(
-                                                  product: product);
-                                            }));
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: RecommendedRow(
-                                                product: product),
-                                          ),
-                                        );
-                                      }),
-                                ),
-                                verticalSpaceMedium,
-                              ],
-                            ),
                     ],
                   ),
                 )
@@ -573,175 +572,5 @@ class _RaffleDetailState extends State<RaffleDetail> {
             ),
           );
         });
-  }
-}
-
-class RecommendedRow extends StatelessWidget {
-  final Product product;
-
-  const RecommendedRow({
-    required this.product,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 200,
-      width: 300,
-      margin: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: BoxDecoration(
-          color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: kcBlackColor.withOpacity(0.1),
-              offset: const Offset(0, 4),
-              blurRadius: 4,
-            )
-          ]),
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12)),
-                child: (product.raffle == null ||
-                            product.raffle?[0].pictures == null) ||
-                        product.raffle![0].pictures!.isEmpty
-                    ? SizedBox(
-                        height: 179,
-                        width: MediaQuery.of(context).size.width,
-                      )
-                    : Image.network(
-                        product.raffle![0].pictures![0].location!,
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        height: 179,
-                      ),
-              ),
-              Positioned(
-                top: 20,
-                left: 20,
-                child: Container(
-                  height: 20,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: uiMode.value == AppUiModes.light
-                        ? kcWhiteColor
-                        : kcBlackColor,
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: kcStarColor,
-                        size: 20,
-                      ),
-                      Text(
-                        "4.9",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    image: product.pictures!.isEmpty
-                        ? null
-                        : DecorationImage(
-                            fit: BoxFit.cover,
-                            image:
-                                NetworkImage(product.pictures![0].location!)),
-                    color: kcWhiteColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              )
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product.raffle?[0].ticketName ?? "",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                                text: "Buy ${product.productName} for: ",
-                                style: GoogleFonts.inter(
-                                    color: kcBlackColor, fontSize: 12)),
-                            TextSpan(
-                                text: " ${MoneyUtils().formatAmount(product.productPrice!)}",
-                                style: TextStyle(color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                                  fontFamily: "satoshi",),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "0 sold out of ${product.stock}",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    verticalSpaceTiny,
-                    SizedBox(
-                      width: 100,
-                      child: LinearProgressIndicator(
-                        value: 0.4,
-                        backgroundColor: kcSecondaryColor.withOpacity(0.3),
-                        valueColor:
-                            const AlwaysStoppedAnimation(kcSecondaryColor),
-                      ),
-                    ),
-                    verticalSpaceSmall,
-                    Text(
-                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].created ?? DateTime.now().toIso8601String()))}",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
   }
 }

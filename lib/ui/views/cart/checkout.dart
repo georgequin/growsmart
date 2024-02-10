@@ -9,7 +9,7 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/utils/money_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/flutter_paystack.dart';
+// import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../app/app.dialogs.dart';
@@ -38,19 +38,19 @@ class Checkout extends StatefulWidget {
 class _CheckoutState extends State<Checkout> {
   bool loading = false;
   bool loadingProfile = true;
-  String paymentMethod = "paystack";
+  PaymentMethod paymentMethod = PaymentMethod.payStack;
   String shippingId = "";
   bool makingDefault = false;
-  String publicKeyTest = MoneyUtils().payStackPublicKey;
+  // String publicKeyTest = MoneyUtils().payStackPublicKey;
   List<RaffleTicket> raffle = [];
-  final plugin = PaystackPlugin();
+  // final plugin = PaystackPlugin();
   bool isPaying = false;
   late final WebViewController controller;
 
 
   @override
   void initState() {
-    plugin.initialize(publicKey: publicKeyTest);
+    // plugin.initialize(publicKey: publicKeyTest);
     getProfile();
     super.initState();
   }
@@ -77,9 +77,9 @@ class _CheckoutState extends State<Checkout> {
                 "Order review",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text("${getTotalItems(raffleCart.value)} items in cart"),
-              children: List.generate(raffleCart.value.length, (index) {
-                CartItem item = raffleCart.value[index];
+              subtitle: Text("${getTotalShopItems(shopCart.value)} items in cart"),
+              children: List.generate(shopCart.value.length, (index) {
+                CartItem item = shopCart.value[index];
 
                 return GestureDetector(
                   onTap: () {
@@ -165,7 +165,7 @@ class _CheckoutState extends State<Checkout> {
                       ),
                     ),
                     Text(
-                      MoneyUtils().formatAmount(getSubTotal(raffleCart.value)),
+                      MoneyUtils().formatAmount(getShopSubTotal(shopCart.value)),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold,
                         fontFamily: "satoshi"),
@@ -184,7 +184,7 @@ class _CheckoutState extends State<Checkout> {
                       ),
                     ),
                     Text(
-                      getDeliveryFee(raffleCart.value) == 0 ? "Free" : "N${getDeliveryFee(raffleCart.value)}",
+                      getDeliveryFee(shopCart.value) == 0 ? "Free" : "N${getDeliveryFee(shopCart.value)}",
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -204,7 +204,7 @@ class _CheckoutState extends State<Checkout> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      MoneyUtils().formatAmount(getSubTotal(raffleCart.value) + getDeliveryFee(raffleCart.value)),
+                      MoneyUtils().formatAmount(getShopSubTotal(shopCart.value) + getDeliveryFee(shopCart.value)),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold,  fontFamily: "satoshi"),
                     ),
@@ -366,295 +366,295 @@ class _CheckoutState extends State<Checkout> {
               ],
             ),
           ),
-          verticalSpaceMedium,
-          Card(
-            child: ExpansionTile(
-              initiallyExpanded: true,
-              childrenPadding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              title: const Text(
-                "Payment method",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      paymentMethod = "paystack";
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    height: 50,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: kcBlackColor, width: 0.5)),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 15,
-                          width: 15,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: kcBlackColor,
-                                width: 1,
-                              )),
-                          child: paymentMethod == "paystack"
-                              ? const Center(
-                                  child: Icon(
-                                    Icons.check,
-                                    size: 12,
-                                  ),
-                                )
-                              : const SizedBox(),
-                        ),
-                        horizontalSpaceSmall,
-                        const Text(
-                          "Paystack",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        horizontalSpaceSmall,
-                        const Expanded(
-                          child: Text(
-                            "You will be redirected to the Paystack website after submitting your order",
-                            style: TextStyle(fontSize: 11),
-                          ),
-                        ),
-                        horizontalSpaceSmall,
-                        // Image.asset("assets/images/paypal.png")
-                      ],
-                    ),
-                  ),
-                ),
-                verticalSpaceSmall,
-                // InkWell(
-                //   onTap: () {
-                //     setState(() {
-                //       paymentMethod = "card";
-                //     });
-                //   },
-                //   child: Container(
-                //     padding: const EdgeInsets.symmetric(horizontal: 10),
-                //     height: 250,
-                //     decoration: BoxDecoration(
-                //         border: Border.all(color: kcBlackColor, width: 0.5)),
-                //     child: Column(
-                //       children: [
-                //         verticalSpaceSmall,
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             Row(
-                //               children: [
-                //                 Container(
-                //                   height: 15,
-                //                   width: 15,
-                //                   decoration: BoxDecoration(
-                //                       shape: BoxShape.circle,
-                //                       border: Border.all(
-                //                         color: kcBlackColor,
-                //                         width: 1,
-                //                       )),
-                //                   child: paymentMethod == "card"
-                //                       ? const Center(
-                //                     child: Icon(
-                //                       Icons.check,
-                //                       size: 12,
-                //                     ),
-                //                   )
-                //                       : const SizedBox(),
-                //                 ),
-                //                 horizontalSpaceSmall,
-                //                 const Text(
-                //                   "Pay with Credit Card",
-                //                   style: TextStyle(
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 ),
-                //               ],
-                //             ),
-                //             Row(
-                //               children: [
-                //                 Image.asset("assets/images/visa.png"),
-                //                 verticalSpaceTiny,
-                //                 Image.asset("assets/images/discover.png"),
-                //                 verticalSpaceTiny,
-                //                 Image.asset("assets/images/maestro.png"),
-                //                 verticalSpaceTiny,
-                //                 Image.asset("assets/images/master_card.png"),
-                //               ],
-                //             )
-                //           ],
-                //         ),
-                //         verticalSpaceMedium,
-                //         Row(
-                //           children: [
-                //             Expanded(
-                //               flex: 3,
-                //               child: TextFieldWidget(
-                //                 hint: "Card number",
-                //                 controller: cardNumberController,
-                //               ),
-                //             ),
-                //             horizontalSpaceSmall,
-                //             Expanded(
-                //               flex: 2,
-                //               child: TextFieldWidget(
-                //                 hint: "Expiry",
-                //                 controller: cardExpiryController,
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //         verticalSpaceMedium,
-                //         Row(
-                //           children: [
-                //             Expanded(
-                //               flex: 3,
-                //               child: TextFieldWidget(
-                //                 hint: "Card Security Code",
-                //                 controller: cardCvcController,
-                //               ),
-                //             ),
-                //             horizontalSpaceSmall,
-                //             const Expanded(
-                //               flex: 2,
-                //               child: Text(
-                //                 "What is this?",
-                //                 style: TextStyle(color: Colors.blue),
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-                verticalSpaceSmall,
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      paymentMethod = "wallet";
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    height: 50,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: kcBlackColor, width: 0.5)),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 15,
-                          width: 15,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: kcBlackColor,
-                                width: 1,
-                              )),
-                          child: paymentMethod == "wallet"
-                              ? const Center(
-                                  child: Icon(
-                                    Icons.check,
-                                    size: 12,
-                                  ),
-                                )
-                              : const SizedBox(),
-                        ),
-                        horizontalSpaceSmall,
-                        const Text(
-                          "Wallet",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        horizontalSpaceSmall,
-                        const Expanded(
-                          child: Text(
-                            "Make payment from your in-app wallet",
-                            style: TextStyle(fontSize: 11),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                verticalSpaceSmall,
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      paymentMethod = "binance";
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    height: 50,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: kcBlackColor, width: 0.5)),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 15,
-                          width: 15,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: kcBlackColor,
-                                width: 1,
-                              )),
-                          child: paymentMethod == "binance"
-                              ? const Center(
-                            child: Icon(
-                              Icons.check,
-                              size: 12,
-                            ),
-                          )
-                              : const SizedBox(),
-                        ),
-                        horizontalSpaceSmall,
-                        const Text(
-                          "Binance Pay",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        horizontalSpaceSmall,
-                        const Expanded(
-                          child: Text(
-                            "Make payment from your binance wallet",
-                            style: TextStyle(fontSize: 11),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                verticalSpaceSmall,
-                const Row(
-                  children: [
-                    Icon(
-                      Icons.lock,
-                      color: kcSecondaryColor,
-                    ),
-                    horizontalSpaceSmall,
-                    Expanded(
-                      child: Text(
-                        "We protect your payment information using encryption to provide bank-level security.",
-                        style: TextStyle(fontSize: 11),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
+          // verticalSpaceMedium,
+          // Card(
+          //   child: ExpansionTile(
+          //     initiallyExpanded: true,
+          //     childrenPadding:
+          //         const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          //     title: const Text(
+          //       "Payment method",
+          //       style: TextStyle(fontWeight: FontWeight.bold),
+          //     ),
+          //     children: [
+          //       InkWell(
+          //         onTap: () {
+          //           setState(() {
+          //             paymentMethod = PaymentMethod.payStack;
+          //           });
+          //         },
+          //         child: Container(
+          //           padding: const EdgeInsets.symmetric(horizontal: 10),
+          //           height: 50,
+          //           decoration: BoxDecoration(
+          //               border: Border.all(color: kcBlackColor, width: 0.5)),
+          //           child: Row(
+          //             children: [
+          //               Container(
+          //                 height: 15,
+          //                 width: 15,
+          //                 decoration: BoxDecoration(
+          //                     shape: BoxShape.circle,
+          //                     border: Border.all(
+          //                       color: kcBlackColor,
+          //                       width: 1,
+          //                     )),
+          //                 child: paymentMethod == "paystack"
+          //                     ? const Center(
+          //                         child: Icon(
+          //                           Icons.check,
+          //                           size: 12,
+          //                         ),
+          //                       )
+          //                     : const SizedBox(),
+          //               ),
+          //               horizontalSpaceSmall,
+          //               const Text(
+          //                 "Paystack",
+          //                 style: TextStyle(
+          //                   fontWeight: FontWeight.bold,
+          //                 ),
+          //               ),
+          //               horizontalSpaceSmall,
+          //               const Expanded(
+          //                 child: Text(
+          //                   "You will be redirected to the Paystack website after submitting your order",
+          //                   style: TextStyle(fontSize: 11),
+          //                 ),
+          //               ),
+          //               horizontalSpaceSmall,
+          //               // Image.asset("assets/images/paypal.png")
+          //             ],
+          //           ),
+          //         ),
+          //       ),
+          //       verticalSpaceSmall,
+          //       // InkWell(
+          //       //   onTap: () {
+          //       //     setState(() {
+          //       //       paymentMethod = "card";
+          //       //     });
+          //       //   },
+          //       //   child: Container(
+          //       //     padding: const EdgeInsets.symmetric(horizontal: 10),
+          //       //     height: 250,
+          //       //     decoration: BoxDecoration(
+          //       //         border: Border.all(color: kcBlackColor, width: 0.5)),
+          //       //     child: Column(
+          //       //       children: [
+          //       //         verticalSpaceSmall,
+          //       //         Row(
+          //       //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       //           children: [
+          //       //             Row(
+          //       //               children: [
+          //       //                 Container(
+          //       //                   height: 15,
+          //       //                   width: 15,
+          //       //                   decoration: BoxDecoration(
+          //       //                       shape: BoxShape.circle,
+          //       //                       border: Border.all(
+          //       //                         color: kcBlackColor,
+          //       //                         width: 1,
+          //       //                       )),
+          //       //                   child: paymentMethod == "card"
+          //       //                       ? const Center(
+          //       //                     child: Icon(
+          //       //                       Icons.check,
+          //       //                       size: 12,
+          //       //                     ),
+          //       //                   )
+          //       //                       : const SizedBox(),
+          //       //                 ),
+          //       //                 horizontalSpaceSmall,
+          //       //                 const Text(
+          //       //                   "Pay with Credit Card",
+          //       //                   style: TextStyle(
+          //       //                     fontWeight: FontWeight.bold,
+          //       //                   ),
+          //       //                 ),
+          //       //               ],
+          //       //             ),
+          //       //             Row(
+          //       //               children: [
+          //       //                 Image.asset("assets/images/visa.png"),
+          //       //                 verticalSpaceTiny,
+          //       //                 Image.asset("assets/images/discover.png"),
+          //       //                 verticalSpaceTiny,
+          //       //                 Image.asset("assets/images/maestro.png"),
+          //       //                 verticalSpaceTiny,
+          //       //                 Image.asset("assets/images/master_card.png"),
+          //       //               ],
+          //       //             )
+          //       //           ],
+          //       //         ),
+          //       //         verticalSpaceMedium,
+          //       //         Row(
+          //       //           children: [
+          //       //             Expanded(
+          //       //               flex: 3,
+          //       //               child: TextFieldWidget(
+          //       //                 hint: "Card number",
+          //       //                 controller: cardNumberController,
+          //       //               ),
+          //       //             ),
+          //       //             horizontalSpaceSmall,
+          //       //             Expanded(
+          //       //               flex: 2,
+          //       //               child: TextFieldWidget(
+          //       //                 hint: "Expiry",
+          //       //                 controller: cardExpiryController,
+          //       //               ),
+          //       //             ),
+          //       //           ],
+          //       //         ),
+          //       //         verticalSpaceMedium,
+          //       //         Row(
+          //       //           children: [
+          //       //             Expanded(
+          //       //               flex: 3,
+          //       //               child: TextFieldWidget(
+          //       //                 hint: "Card Security Code",
+          //       //                 controller: cardCvcController,
+          //       //               ),
+          //       //             ),
+          //       //             horizontalSpaceSmall,
+          //       //             const Expanded(
+          //       //               flex: 2,
+          //       //               child: Text(
+          //       //                 "What is this?",
+          //       //                 style: TextStyle(color: Colors.blue),
+          //       //               ),
+          //       //             ),
+          //       //           ],
+          //       //         ),
+          //       //       ],
+          //       //     ),
+          //       //   ),
+          //       // ),
+          //       verticalSpaceSmall,
+          //       InkWell(
+          //         onTap: () {
+          //           setState(() {
+          //             paymentMethod = PaymentMethod.wallet;
+          //           });
+          //         },
+          //         child: Container(
+          //           padding: const EdgeInsets.symmetric(horizontal: 10),
+          //           height: 50,
+          //           decoration: BoxDecoration(
+          //               border: Border.all(color: kcBlackColor, width: 0.5)),
+          //           child: Row(
+          //             children: [
+          //               Container(
+          //                 height: 15,
+          //                 width: 15,
+          //                 decoration: BoxDecoration(
+          //                     shape: BoxShape.circle,
+          //                     border: Border.all(
+          //                       color: kcBlackColor,
+          //                       width: 1,
+          //                     )),
+          //                 child: paymentMethod == "wallet"
+          //                     ? const Center(
+          //                         child: Icon(
+          //                           Icons.check,
+          //                           size: 12,
+          //                         ),
+          //                       )
+          //                     : const SizedBox(),
+          //               ),
+          //               horizontalSpaceSmall,
+          //               const Text(
+          //                 "Wallet",
+          //                 style: TextStyle(
+          //                   fontWeight: FontWeight.bold,
+          //                 ),
+          //               ),
+          //               horizontalSpaceSmall,
+          //               const Expanded(
+          //                 child: Text(
+          //                   "Make payment from your in-app wallet",
+          //                   style: TextStyle(fontSize: 11),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ),
+          //       verticalSpaceSmall,
+          //       InkWell(
+          //         onTap: () {
+          //           setState(() {
+          //             paymentMethod = PaymentMethod.binancePay;
+          //           });
+          //         },
+          //         child: Container(
+          //           padding: const EdgeInsets.symmetric(horizontal: 10),
+          //           height: 50,
+          //           decoration: BoxDecoration(
+          //               border: Border.all(color: kcBlackColor, width: 0.5)),
+          //           child: Row(
+          //             children: [
+          //               Container(
+          //                 height: 15,
+          //                 width: 15,
+          //                 decoration: BoxDecoration(
+          //                     shape: BoxShape.circle,
+          //                     border: Border.all(
+          //                       color: kcBlackColor,
+          //                       width: 1,
+          //                     )),
+          //                 child: paymentMethod == PaymentMethod.binancePay
+          //                     ? const Center(
+          //                   child: Icon(
+          //                     Icons.check,
+          //                     size: 12,
+          //                   ),
+          //                 )
+          //                     : const SizedBox(),
+          //               ),
+          //               horizontalSpaceSmall,
+          //               const Text(
+          //                 "Binance Pay",
+          //                 style: TextStyle(
+          //                   fontWeight: FontWeight.bold,
+          //                 ),
+          //               ),
+          //               horizontalSpaceSmall,
+          //               const Expanded(
+          //                 child: Text(
+          //                   "Make payment from your binance wallet",
+          //                   style: TextStyle(fontSize: 11),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ),
+          //       verticalSpaceSmall,
+          //       const Row(
+          //         children: [
+          //           Icon(
+          //             Icons.lock,
+          //             color: kcSecondaryColor,
+          //           ),
+          //           horizontalSpaceSmall,
+          //           Expanded(
+          //             child: Text(
+          //               "We protect your payment information using encryption to provide bank-level security.",
+          //               style: TextStyle(fontSize: 11),
+          //             ),
+          //           ),
+          //         ],
+          //       )
+          //     ],
+          //   ),
+          // ),
           verticalSpaceLarge,
           SubmitButton(
             isLoading: loading,
-            label: "Pay N${getSubTotal(raffleCart.value) + getDeliveryFee(raffleCart.value)}",
+            label: "Pay ${MoneyUtils().formatAmountToDollars(getShopSubTotal(shopCart.value) + getDeliveryFee(shopCart.value))}",
             submit: () async {
               setState(() {
                 loading = true;
@@ -700,11 +700,11 @@ class _CheckoutState extends State<Checkout> {
     });
 
     // Calculate the amount
-    int amount = getSubTotal(raffleCart.value) + getDeliveryFee(raffleCart.value);
+    int amount = getShopSubTotal(shopCart.value) + getDeliveryFee(shopCart.value);
     // Retrieve order IDs
     List<String> orderIds = widget.infoList.map((e) => e.id.toString()).toList();
 
-    ApiResponse res = await MoneyUtils().chargeCardUtil(paymentMethod, orderIds, plugin, context, amount);
+    ApiResponse res = await MoneyUtils().chargeCardUtil(PaymentMethod.wallet, orderIds, context, amount);
 
     if (res.statusCode == 200) {
       if (paymentMethod == 'binance') {
@@ -868,23 +868,23 @@ class _CheckoutState extends State<Checkout> {
   }
 
 
-  void _showBinanceWebViewModal(Map binanceData) {
-    controller = WebViewController()..loadRequest(Uri.parse(binanceData["checkoutUrl"],));
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (BuildContext context) {
-        return FractionallySizedBox(
-          heightFactor: 0.8, // 80% of the screen's height
-          child: WebViewWidget(controller: controller)
-        );
-      },
-    );
-  }
+  // void _showBinanceWebViewModal(Map binanceData) {
+  //   controller = WebViewController()..loadRequest(Uri.parse(binanceData["checkoutUrl"],));
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+  //     ),
+  //     backgroundColor: Colors.white,
+  //     builder: (BuildContext context) {
+  //       return FractionallySizedBox(
+  //         heightFactor: 0.8, // 80% of the screen's height
+  //         child: WebViewWidget(controller: controller)
+  //       );
+  //     },
+  //   );
+  // }
 
   void _launchURL(String url) async {
 
@@ -967,7 +967,7 @@ class _CheckoutState extends State<Checkout> {
       backgroundColor: Colors.white,
       context: context,
       builder: (BuildContext context) {
-        return ReceiptPage(cart:receiptCart, raffle: raffle,);
+        return ReceiptPage(cart:receiptCart);
       },
     );
   }

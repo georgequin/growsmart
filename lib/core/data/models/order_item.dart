@@ -7,11 +7,13 @@ class OrderItem {
   int? quantity;
   int? status;
   int? paymentStatus;
+  int? type;
   String? created;
   String? updated;
   bool? reviewStatus;
   User? user;
   Product? product;
+  Raffle? raffle;
   Tracking? tracking;
   List<Transaction>? transaction;
 
@@ -22,11 +24,13 @@ class OrderItem {
     this.created,
     this.updated,
     this.user,
+    this.type,
     this.product,
     this.tracking,
     this.transaction,
     this.paymentStatus,
-    this.reviewStatus
+    this.reviewStatus,
+    this.raffle
   });
 
   OrderItem.fromJson(Map<String, dynamic> json) {
@@ -36,10 +40,11 @@ class OrderItem {
     reviewStatus = json['review_status'];
     paymentStatus = json['payment_status'];
     created = json['created'];
+    type = json['order_type'];
     updated = json['updated'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
-    product =
-        json['product'] != null ? Product.fromJson(json['product']) : null;
+    product = json['product'] != null ? Product.fromJson(json['product']) : null;
+    raffle = json['raffle'] != null ? Raffle.fromJson(json['raffle']) : null;
     tracking =
         json['tracking'] != null ? Tracking.fromJson(json['tracking']) : null;
     if (json['transaction'] != null) {
@@ -59,6 +64,7 @@ class OrderItem {
     data['payment_status'] = paymentStatus;
     data['created'] = created;
     data['updated'] = updated;
+    data['order_type'] = type;
     if (user != null) {
       data['user'] = user!.toJson();
     }

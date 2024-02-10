@@ -1,18 +1,23 @@
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
+import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
+import 'package:afriprize/ui/views/cart/raffle_reciept.dart';
+import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-
 import '../../../app/app.dialogs.dart';
 import '../../../app/app.router.dart';
 import '../../../core/data/models/order_info.dart';
+import '../../../utils/binance_pay.dart';
+import '../../../utils/money_util.dart';
 import 'checkout.dart';
+import 'custom_reciept.dart';
 
 
 class CartViewModel extends BaseViewModel {
@@ -20,8 +25,30 @@ class CartViewModel extends BaseViewModel {
   final snackBar = locator<SnackbarService>();
   final log = getLogger("CartViewModel");
   List<CartItem> itemsToDelete = [];
-  int subTotal = 0;
+  List<RaffleCartItem> itemsToDeleteRaffle = [];
+  int shopSubTotal = 0;
+  int raffleSubTotal = 0;
   int deliveryFee = 0;
+
+  ValueNotifier<PaymentMethod> selectedPaymentMethod = ValueNotifier(PaymentMethod.binancePay);
+  ValueNotifier<bool> isPaymentProcessing = ValueNotifier(false);
+
+
+  PaymentMethod get selectedMethod => selectedPaymentMethod.value;
+
+  bool _isDisposed = false;
+
+  @override
+  void dispose() {
+    selectedPaymentMethod.dispose();
+    super.dispose();
+  }
+
+
+  void selectMethod(PaymentMethod method) {
+    selectedPaymentMethod.value = method;
+    notifyListeners(); // Notify overall ViewModel listeners
+  }
 
   void addRemoveDelete(CartItem item) {
     itemsToDelete.contains(item)
@@ -30,36 +57,71 @@ class CartViewModel extends BaseViewModel {
     rebuildUi();
   }
 
+  void addRemoveDeleteRaffle(RaffleCartItem item) {
+    itemsToDeleteRaffle.contains(item)
+        ? itemsToDeleteRaffle.remove(item)
+        : itemsToDeleteRaffle.add(item);
+    rebuildUi();
+  }
+
   void clearCart() async{
     for (var element in itemsToDelete) {
+      shopCart.value.remove(element);
+    }
+    itemsToDelete.clear();
+    shopCart.notifyListeners();
+    //update local cart
+    List<Map<String, dynamic>> storedList =
+    shopCart.value.map((e) => e.toJson()).toList();
+    await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
+    rebuildUi();
+    getShopSubTotal();
+  }
+
+  void clearRaffleCart() async{
+    for (var element in itemsToDeleteRaffle) {
       raffleCart.value.remove(element);
     }
     itemsToDelete.clear();
     raffleCart.notifyListeners();
-    //update local cart
     List<Map<String, dynamic>> storedList =
     raffleCart.value.map((e) => e.toJson()).toList();
-    await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
+    await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
     rebuildUi();
-    getSubTotal();
+    getRaffleSubTotal();
   }
 
-  void getSubTotal() {
+  void getShopSubTotal() {
+    int total = 0;
+
+    for (var element in shopCart.value) {
+      // Ensure we have a non-null product and product price before attempting to use them.
+      final product = element.product;
+      if (product != null && product.productPrice != null && element.quantity != null) {
+        total += product.productPrice! * element.quantity!;
+      }
+    }
+
+    shopSubTotal = total;
+    rebuildUi();
+  }
+
+  void getRaffleSubTotal() {
     int total = 0;
 
     for (var element in raffleCart.value) {
-      total = total + (element.product!.productPrice! * element.quantity!);
+      total = total + (element.raffle?.rafflePrice ?? 0 * element.quantity!);
     }
 
-    subTotal = total;
+    raffleSubTotal = total;
     rebuildUi();
   }
 
   void getDeliveryTotal() {
     int total = 0;
 
-    for (var element in raffleCart.value) {
-      total = total + (element.product!.shippingFee!);
+    for (var element in shopCart.value) {
+      total = total + (element.product?.shippingFee ?? 0);
     }
 
     deliveryFee = total;
@@ -67,7 +129,7 @@ class CartViewModel extends BaseViewModel {
   }
 
   void checkout() async {
-    if (raffleCart.value.isEmpty) {
+    if (shopCart.value.isEmpty) {
       return null;
     }
 
@@ -84,15 +146,14 @@ class CartViewModel extends BaseViewModel {
       }
     }
 
-
     setBusy(true);
     //TODO MAKE SURE TO SEPERATE AND HANDLE
     try {
       ApiResponse res = await repo.saveOrder({
-        "items": raffleCart.value
+        "items": shopCart.value
             .map((e) => {"id": e.product!.id, "quantity": e.quantity})
             .toList(),
-        // "type":
+           "type": 1
       });
       if (res.statusCode == 200) {
         List<OrderInfo> list = (res.data["orderDetails"] as List)
@@ -113,21 +174,126 @@ class CartViewModel extends BaseViewModel {
     setBusy(false);
   }
 
-// Future<OrderInfo?> getOrderInfo(CartItem item) async {
-//   try {
-//     ApiResponse res = await repo.saveOrder({
-//       "product": item.product!.id,
-//       "quantity": item.quantity,
-//     });
-//     if (res.statusCode == 200) {
-//       return OrderInfo.fromJson(
-//           Map<String, dynamic>.from(res.data["orderInfo"]));
-//     } else {
-//       return null;
-//     }
-//   } catch (e) {
-//     log.e(e);
-//     return null;
-//   }
-// }
+  void checkoutRaffle(BuildContext context) async {
+    if (raffleCart.value.isEmpty) {
+      return null;
+    }
+
+    isPaymentProcessing.value = true;
+    setBusy(true);
+    try {
+      ApiResponse res = await repo.saveOrder({
+        "items": raffleCart.value
+            .map((e) => {"id": e.raffle!.id, "quantity": e.quantity})
+            .toList(),
+        "type": 2
+      });
+      if (res.statusCode == 200) {
+        List<OrderInfo> list = (res.data["orderDetails"] as List)
+            .map((e) => OrderInfo.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+
+        processPayment(list, selectedMethod, context, AppModules.raffle);
+
+      } else {
+        snackBar.showSnackbar(message: res.data["message"]);
+
+      }
+    } catch (e) {
+      log.e(e);
+    }finally{
+      isPaymentProcessing.value = false;
+      setBusy(false);
+    }
+  }
+
+  processPayment(List<OrderInfo> list, PaymentMethod paymentMethod, BuildContext context, AppModules module) async {
+    // Calculate the amount
+    int amount = raffleSubTotal;
+    // Retrieve order IDs
+    List<String> orderIds = list.map((e) => e.id.toString()).toList();
+
+    ApiResponse res = await MoneyUtils().chargeCardUtil(paymentMethod, orderIds, context, amount);
+
+    if (res.statusCode == 200) {
+      if (paymentMethod == PaymentMethod.binancePay) {
+        Map<String, dynamic> binanceData = res.data['binance']['data'];
+        await Future.delayed(Duration(seconds: 1));
+        showBinancePayModal(context,binanceData, orderIds, module);
+      } else {
+        //other payment methods
+        showReceipt(module, context);
+      }
+    } else {
+      Navigator.pop(context);
+      locator<SnackbarService>().showSnackbar(message: res.data["message"]);
+      locator<NavigationService>().replaceWithHomeView();
+    }
+
+  }
+
+  void showBinancePayModal(
+      BuildContext context,
+      Map binanceData,
+      List<String> orderIds,
+      AppModules module,
+      ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return BinancePayModal(binanceData: binanceData, orderIds: orderIds, module: module);
+      },
+    );
+  }
+
+  void showReceipt(AppModules module, BuildContext context) {
+
+    if(module == AppModules.raffle){
+      List<RaffleCartItem> receiptCart = List<RaffleCartItem>.from(raffleCart.value);
+      raffleCart.value.clear();
+      raffleCart.notifyListeners();
+      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+
+
+      showModalBottomSheet(
+        isScrollControlled: true,
+        isDismissible: false,
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (BuildContext context) {
+          return RaffleReceiptPage(cart:receiptCart);
+        },
+      );
+    }else{
+      List<CartItem> receiptCart = List<CartItem>.from(shopCart.value);
+
+      shopCart.value.clear();
+      shopCart.notifyListeners();
+      List<Map<String, dynamic>> storedList = shopCart.value.map((e) => e.toJson()).toList();
+      locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
+
+
+      showModalBottomSheet(
+        isScrollControlled: true,
+        isDismissible: false,
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (BuildContext context) {
+          return ReceiptPage(cart:receiptCart);
+        },
+      );
+    }
+
+
+
+  }
+
+
+
 }

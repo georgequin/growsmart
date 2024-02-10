@@ -9,6 +9,7 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/profile/deposit.dart';
 import 'package:flutter/material.dart';
 import 'package:afriprize/core/data/models/profile.dart' as pro;
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -26,7 +27,7 @@ class Wallet extends StatefulWidget {
 }
 
 class _WalletState extends State<Wallet> {
-  late pro.Wallet wallet;
+  late pro.Wallet wallet = pro.Wallet(balance: 0);
   bool loading = false;
   bool loadingProfile = true;
   List<Transaction> transactions = [];
@@ -106,6 +107,7 @@ class _WalletState extends State<Wallet> {
         centerTitle: true,
         title: const Text(
           "Wallet",
+          style: TextStyle(fontFamily: "Panchang" ),
         ),
       ),
       body: SafeArea(
@@ -114,81 +116,85 @@ class _WalletState extends State<Wallet> {
             getProfile();
           },
           child: ListView(
-            padding: const EdgeInsets.all(30),
+            padding: const EdgeInsets.all(10),
             children: [
-              verticalSpaceMedium,
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                    color: kcSecondaryColor,
-                    borderRadius: BorderRadius.circular(15)),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 50.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              Stack(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        " Available Balance",
-                        style: TextStyle(fontSize: 18, color: kcWhiteColor),
+
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 0.0),
+                        child: Image(image: AssetImage('assets/images/wallet_home.png'), height: 210),
+                        // SvgPicture.asset(
+                        //   'assets/images/wallet_home.png',
+                        //   height: 210,
+                        // ),
                       ),
-                      loadingProfile ? const CircularProgressIndicator()
-                          : Text(
-                        "N${NumberFormat.simpleCurrency(name: "").format(wallet.balance ?? 0)}",
-                        style: const TextStyle(
-                          fontSize: 30,
-                          color: kcWhiteColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+
                     ],
                   ),
-
-
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Expanded(
-                  //   child: SubmitButton(
-                  //     isLoading: false,
-                  //     label: "Withdraw",
-                  //     submit: () {
-                  //       locator<NavigationService>()
-                  //           .navigateTo(Routes.withdrawView);
-                  //     },
-                  //     color: kcPrimaryColor,
-                  //     boldText: true,
-                  //   ),
-                  // ),
-                  // const SizedBox(width: 30),
-                  Expanded(
-                    child: SubmitButton(
-                      isLoading: false,
-                      icon: Icons.add_circle_outline,
-                      label: "Add money",
-                      submit: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (ctx) {
-                          return const Deposit();
-                        }));
-                      },
-                      color: Colors.transparent,
-                      iconColor: Colors.black,
-                      textColor: Colors.black,
-                      boldText: true,
+                  Positioned(
+                      bottom: 15, // Adjust the positioning as you see fit
+                      left: 33, // Adjust the positioning as you see fit
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Afriprize Card Balance',
+                            style: const TextStyle(
+                                color: kcPrimaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11
+                            ),
+                          ),
+                          Text(
+                            '\$${wallet.balance ?? 0}',
+                            style: TextStyle(
+                              fontSize: 34, // Size for the dollar amount
+                              fontWeight: FontWeight.w900,
+                              color: kcPrimaryColor,
+                            ),
+                          ),
+                        ],
+                      )
                     ),
-                  )
                 ],
               ),
+              Align(
+                      alignment: Alignment.bottomRight,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: SubmitButton(
+                              isLoading: false,
+                              svgFileName: 'plus.svg',
+                              iconIsPrefix: true,
+                              label: "Buy Afriprize Card",
+                              family: "Panchang",
+                              textSize: 13,
+                              submit: () {
+                                currentModuleNotifier.value = AppModules.raffle;
+                                locator<NavigationService>().clearStackAndShow(Routes.homeView);
+                              },
+                              color: Colors.transparent,
+                              iconColor: Colors.black,
+                              textColor: Colors.black,
+                              boldText: true,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
               const SizedBox(
                 height: 20,
               ),
               const Text(
-                "Transaction History",
-                style: TextStyle(fontSize: 18, color: kcLightGrey),
+                "Transactions",
+                style: TextStyle(fontSize: 15, color: kcBlackColor, fontFamily: "Panchang", fontWeight: FontWeight.w700),
               ),
               const SizedBox(
                 height: 20,
@@ -217,16 +223,25 @@ class _WalletState extends State<Wallet> {
                                 ),
                                 child: ListTile(
                                   minLeadingWidth: 10, // Reduced to align with the design
-                                  // leading: Container(
-                                  //   margin: EdgeInsets.only(right: 8), // Adjust spacing if needed
-                                  //   child:
-                                  //   // Icon(
-                                  //   //   transaction.type == 2 ? Icons.add : Icons.remove, // Adjusted to + for credit, - for debit
-                                  //   //   color: transaction.type == 2 ? Colors.green : Colors.red,
-                                  //   // ),
-                                  // ),
+                                  leading: Container(
+                                    margin: EdgeInsets.only(right: 8), // Adjust spacing if needed
+                                    child: transaction.type == 1 ?  SvgPicture.asset(
+                                      'assets/icons/shop_out.svg',
+                                      height: 28, // Icon size
+                                    ) : transaction.type == 2 ? SvgPicture.asset(
+                                      'assets/icons/card_in.svg',
+                                      height: 28, // Icon size
+                                    ) : transaction.type == 4 ? SvgPicture.asset(
+                                      'assets/icons/ticket_out.svg',
+                                      height: 28, // Icon size
+                                    ) :
+                                    Icon(
+                                       Icons.monetization_on, // Adjusted to + for credit, - for debit
+                                      color: kcPrimaryColor,
+                                    ),
+                                  ),
                                   title: Text(
-                                    transaction.type == 2 ? 'Wallet Top Up' : 'Purchase', // Changed from 'Transaction' to match design
+                                    transaction.type ==  1 ? 'Shop Purchase' : transaction.type == 2 ? 'Afriprize Card Top-Up' : transaction.type == 4 ? 'Ticket Purchase' : 'purchase',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -234,7 +249,7 @@ class _WalletState extends State<Wallet> {
                                     ),
                                   ),
                                   subtitle: Text(
-                                    DateFormat('EEEE, d MMM').format(DateTime.parse(transaction.created!)), // Changed format to match design
+                                    DateFormat('EEEE, d MMM hh:mm a').format(DateTime.parse(transaction.created!)), // Changed format to match design
                                     style: const TextStyle(
                                       color: Colors.grey, // Adjusted color to grey to match design
                                       fontSize: 14,
@@ -245,18 +260,11 @@ class _WalletState extends State<Wallet> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        transaction.type == 2 ? "+N${transaction.amount}" : "-N${transaction.amount}",
+                                        transaction.type ==  1 ? '-\$${transaction.amount}' : transaction.type == 2 ? '+\$${transaction.amount}' : transaction.type == 4 ? '-\$${transaction.amount}' : 'purchase',
                                         style: TextStyle(
-                                          color: transaction.type == 2 ? Colors.green : Colors.red,
+                                          color: transaction.type ==  1 ? Colors.red : transaction.type == 2 ? Colors.green : transaction.type == 4 ? Colors.red : kcPrimaryColor,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        DateFormat('hh:mm a').format(DateTime.parse(transaction.created!)), // Added to match the time design
-                                        style: const TextStyle(
-                                          color: Colors.grey, // Adjusted color to grey to match design
-                                          fontSize: 14,
                                         ),
                                       ),
                                     ],

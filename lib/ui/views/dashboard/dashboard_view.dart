@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:afriprize/core/data/models/cart_item.dart';
+import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
@@ -20,29 +20,18 @@ import 'package:video_player/video_player.dart';
 import '../../../core/data/models/product.dart';
 import 'dashboard_viewmodel.dart';
 
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
 class DashboardView extends StackedView<DashboardViewModel> {
   DashboardView({Key? key}) : super(key: key);
 
 
   final PageController _pageController = PageController();
-  late VideoPlayerController _controller;
 
-  @override
-  void initState() {
-    _controller = VideoPlayerController.asset(
-      "assets/videos/dashboard.mp4",
-    )..initialize().then((_) {
-      // Ensure the first frame is shown and set the video to loop.
-      _controller.setLooping(true);
-      _controller.play();
-    });
-  }
-
-
-  @override
-  void dispose() {
-    _controller.dispose();
-  }
 
   @override
   Widget builder(
@@ -50,13 +39,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
     DashboardViewModel viewModel,
     Widget? child,
   ) {
-    _controller = VideoPlayerController.asset(
-      "assets/videos/dashboard.mp4",
-    )..initialize().then((_) {
-      // Ensure the first frame is shown and set the video to loop.
-      _controller.setLooping(true);
-      _controller.play();
-    });
     return Scaffold(
       // appBar: AppBar(
       //   title: ValueListenableBuilder(
@@ -104,12 +86,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
               clipBehavior: Clip.antiAlias, // This will clip the video player to the border radius
               child: AspectRatio(
                 aspectRatio: 16 / 9, // You can adjust the aspect ratio to the desired value
-                child: VideoPlayer(_controller),
+                child: VideoPlayer(viewModel.controller),
               ),
             ),
-            if(viewModel.sellingFast.isNotEmpty)
+            if(viewModel.featuredRaffle.isNotEmpty)
               verticalSpaceMedium,
-            if(viewModel.sellingFast.isNotEmpty)
+            if(viewModel.featuredRaffle.isNotEmpty)
               const Text(
               "Selling fast",
               style: TextStyle(
@@ -118,19 +100,19 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   fontFamily: "Panchang"
               ),
             ),
-            if(viewModel.sellingFast.isNotEmpty)
+            if(viewModel.featuredRaffle.isNotEmpty)
               SizedBox(
                  height: 170,
-                child: viewModel.busy(viewModel.sellingFast)
+                child: viewModel.busy(viewModel.featuredRaffle)
                     ? const Center(
                   child: CircularProgressIndicator(),
                 )
                     : ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  itemCount: viewModel.sellingFast.length,
+                  itemCount: viewModel.featuredRaffle.length,
                   itemBuilder: (context, index) {
-                    Product product = viewModel.sellingFast[index];
+                    Raffle raffle = viewModel.featuredRaffle[index];
                     return Container(
                       padding: const EdgeInsets.all(10),
                       margin: const EdgeInsets.only(right: 15, top: 10),
@@ -148,15 +130,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       ),
                       child: Row(
                         children: [
-                          // ClipRRect(
-                          //   borderRadius: BorderRadius.circular(10),
-                          //   child: Image.network(
-                          //     product.raffle?[0].pictures?[0].location ?? 'https://via.placeholder.com/120',
-                          //     height: 140, // Adjust the height as needed
-                          //     width: 90, // Adjust the width as needed
-                          //     fit: BoxFit.cover,
-                          //   ),
-                          // ),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: CachedNetworkImage(
@@ -166,7 +139,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
                                 ),
                               ),
-                              imageUrl: product.raffle?[0].pictures?[0].location ?? 'https://via.placeholder.com/120',
+                              imageUrl: raffle.pictures?[0].location ?? 'https://via.placeholder.com/120',
                               height: 140,
                               width: 90,
                               fit: BoxFit.cover,
@@ -183,7 +156,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  product.raffle?[0].ticketName ?? 'Product Name',
+                                  raffle.ticketName ?? 'Product Name',
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -207,20 +180,20 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   children: [
                                     userLoggedIn.value == false
                                         ? const SizedBox()
-                                        : ValueListenableBuilder<List<CartItem>>(
+                                        : ValueListenableBuilder<List<RaffleCartItem>>(
                                       valueListenable: raffleCart,
                                       builder: (context, value, child) {
                                         // Determine if product is in cart
-                                        bool isInCart = value.any((item) => item.product?.id == product.id);
-                                        CartItem? cartItem = isInCart
-                                            ? value.firstWhere((item) => item.product?.id == product.id)
+                                        bool isInCart = value.any((item) => item.raffle?.id == raffle.id);
+                                        RaffleCartItem? cartItem = isInCart
+                                            ? value.firstWhere((item) => item.raffle?.id == raffle.id)
                                             : null;
 
                                         return isInCart && cartItem != null
                                             ? Row(
                                           children: [
                                             InkWell(
-                                              onTap: () => viewModel.decreaseQuantity(cartItem),
+                                              onTap: () => viewModel.decreaseRaffleQuantity(cartItem),
                                               child: Container(
                                                 height: 30,
                                                 width: 30,
@@ -237,7 +210,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                             Text("${cartItem.quantity}"),
                                             horizontalSpaceSmall,
                                             InkWell(
-                                              onTap: () => viewModel.increaseQuantity(cartItem),
+                                              onTap: () => viewModel.increaseRaffleQuantity(cartItem),
                                               child: Container(
                                                 height: 30,
                                                 width: 30,
@@ -261,16 +234,16 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                             ),
                                           ),
                                           onPressed: () {
-                                            viewModel.addToCart(product);
+                                            viewModel.addToRaffleCart(raffle);
                                           },
                                           child:
                                           Row(
-                                            mainAxisSize: MainAxisSize.min, // Ensures the Row only takes up needed space
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
                                               SvgPicture.asset(
-                                                'assets/icons/your_icon.svg', // Replace with your asset path
-                                                height: 20, // Adjust the size as needed
-                                                color: kcWhiteColor, // If you need to recolor the SVG
+                                                'assets/icons/ticket.svg',
+                                                height: 20,
+                                                color: kcPrimaryColor,
                                               ),
                                               const SizedBox(width: 8), // Space between icon and text
                                               Text(
@@ -284,7 +257,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     ),
                                   ],
                                 )
-
                               ],
                             ),
                           ),
@@ -295,7 +267,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   },
                 ),
               ),
-
             verticalSpaceSmall,
             const Text(
               "Upcoming Draws",
@@ -306,28 +277,27 @@ class DashboardView extends StackedView<DashboardViewModel> {
               ),
             ),
             verticalSpaceSmall,
-
-            viewModel.busy(viewModel.productList)
+            viewModel.busy(viewModel.raffleList)
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : viewModel.productList.isEmpty ?
+                : viewModel.raffleList.isEmpty ?
             const Center(child: Text('No products available')) :
             ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: viewModel.productList.length,
+                itemCount: viewModel.raffleList.length,
                 itemBuilder: (context, index) {
-                  if (viewModel.productList.isEmpty) {
+                  if (viewModel.raffleList.isEmpty) {
                     // Return a placeholder or an empty container
                     return Container(); // or SizedBox.shrink()
                   }
 
-                  if (index >= viewModel.productList.length) {
+                  if (index >= viewModel.raffleList.length) {
                     return Container(); // or SizedBox.shrink()
                   }
 
-                  Product product = viewModel.productList.elementAt(index);
+                  Raffle raffle = viewModel.raffleList.elementAt(index);
                   return Column(
                     children: [
                       InkWell(
@@ -344,13 +314,13 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             builder: (BuildContext context) {
                               return FractionallySizedBox(
                                 heightFactor: 0.8, // 70% of the screen's height
-                                child: RaffleDetail(product: product),
+                                child: RaffleDetail(raffle: raffle),
                               );
                             },
                           );
                         },
-                        child: ProductRow(
-                          product: product,
+                        child: RaffleRow(
+                          raffle: raffle,
                           viewModel: viewModel,
                           index: index
                         ),
@@ -369,10 +339,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
   void onViewModelReady(DashboardViewModel viewModel) {
     viewModel.init();
     super.onViewModelReady(viewModel);
+    viewModel.initialise();
     Timer.periodic(const Duration(seconds: 8), (Timer timer) {
       if (_pageController.hasClients) {
         int nextPage = _pageController.page!.round() + 1;
-        if (nextPage >= viewModel.ads.length) {
+        if (nextPage >= viewModel.featuredRaffle.length) {
           nextPage = 0;
         }
         _pageController.animateToPage(
@@ -382,6 +353,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
         );
       }
     });
+  }
+
+  @override
+  void onDispose(DashboardViewModel viewModel) {
+    viewModel.dispose();
   }
 
   Widget _indicator(bool selected) {
@@ -417,13 +393,13 @@ class DashboardView extends StackedView<DashboardViewModel> {
       DashboardViewModel();
 }
 
-class ProductRow extends StatelessWidget {
-  final Product product;
+class RaffleRow extends StatelessWidget {
+  final Raffle raffle;
   final DashboardViewModel viewModel;
   final int index;
 
-  const ProductRow({
-    required this.product,
+  const RaffleRow({
+    required this.raffle,
     super.key, required this.viewModel, required this.index,
   });
 
@@ -432,17 +408,26 @@ class ProductRow extends StatelessWidget {
     if (viewModel.productList.isEmpty || index >= viewModel.productList.length) {
       return Container();
     }
-    CountdownTimerController controller;
-    final int remainingStock = product.stockTotal! - product.verifiedSales!;
+    CountdownTimerController controller = CountdownTimerController(endTime: 0);;
+    int remainingStock = 0;
+    int remainingDays = 0;
+    int endTime = 0;
+    if(raffle != null){
 
-    DateTime now = DateTime.now();
-    DateTime drawDate = DateFormat("yyyy-MM-dd").parse(product.raffle![0].endDate!);
-    // DateTime drawDate = DateFormat("yyyy-MM-dd").parse("2024-02-04T00:00:00.000Z");
-    Duration timeDifference = drawDate.difference(now);
-    int remainingDays = timeDifference.inDays;
+      final int stockTotal = raffle.stockTotal ?? 0;
+      final int verifiedSales = raffle.verifiedSales ?? 0;
+      remainingStock = stockTotal - verifiedSales;
+
+      DateTime now = DateTime.now();
+      DateTime drawDate = DateFormat("yyyy-MM-dd").parse(raffle.endDate ?? '2024-02-04T00:00:00.000Z');
+      // DateTime drawDate = DateFormat("yyyy-MM-dd").parse("2024-02-04T00:00:00.000Z");
+      Duration timeDifference = drawDate.difference(now);
+      remainingDays = timeDifference.inDays;
 // Adding the current time to the timeDifference to get the future end time
-    int endTime = now.add(timeDifference).millisecondsSinceEpoch;
-    controller = CountdownTimerController(endTime: endTime, onEnd: viewModel.onEnd);
+      endTime = now.add(timeDifference).millisecondsSinceEpoch;
+      controller = CountdownTimerController(endTime: endTime, onEnd: viewModel.onEnd);
+    }
+
 
     // Check conditions to set the color and text
     Color containerColor = Colors.transparent; // Default color
@@ -457,7 +442,7 @@ class ProductRow extends StatelessWidget {
     return
     Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
-      height: 390,
+      // height: 400,
       decoration: BoxDecoration(
         color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
         borderRadius: BorderRadius.circular(12),
@@ -473,21 +458,9 @@ class ProductRow extends StatelessWidget {
       child: Stack(
         children: [
           Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Container(
-              //   margin: const EdgeInsets.fromLTRB(14.0, 14.0, 14.0, 0.0),
-              //   child: ClipRRect(
-              //     borderRadius: const BorderRadius.all(
-              //       Radius.circular(12),
-              //     ),
-              //     child: Image.network(
-              //       product.raffle?[0].pictures?.first.location ?? 'https://via.placeholder.com/150',
-              //       fit: BoxFit.cover,
-              //       height: 182,
-              //       width: double.infinity,
-              //     ),
-              //   ),
-              // ),
+
               Container(
                 margin: const EdgeInsets.fromLTRB(14.0, 14.0, 14.0, 0.0),
                 child: ClipRRect(
@@ -501,7 +474,7 @@ class ProductRow extends StatelessWidget {
                         valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
                       ),
                     ),
-                    imageUrl: product.raffle?[0].pictures?.first.location ?? 'https://via.placeholder.com/150',
+                    imageUrl: raffle.pictures?.first.location ?? 'https://via.placeholder.com/150',
                     fit: BoxFit.cover,
                     height: 182,
                     width: double.infinity,
@@ -527,22 +500,17 @@ class ProductRow extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          product.raffle?[0].ticketName ?? 'Product Name',
-                          style:  TextStyle(
-                              fontSize: 20,
-                              color: uiMode.value == AppUiModes.light ? kcPrimaryColor : kcSecondaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "Panchang"
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
 
-                      ],
+                    Text(
+                      raffle.ticketName ?? 'Product Name',
+                      style:  TextStyle(
+                          fontSize: 20,
+                          color: uiMode.value == AppUiModes.light ? kcPrimaryColor : kcSecondaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Panchang"
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -571,7 +539,7 @@ class ProductRow extends StatelessWidget {
                           child: Column(
                             children: [
                               Text(
-                                'Afriprize Card',
+                                'Shopping Card',
                                 style: TextStyle(
                                     color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
                                     fontWeight: FontWeight.bold,
@@ -632,7 +600,7 @@ class ProductRow extends StatelessWidget {
                                   Column(
                                     children: [
                                       Text(
-                                        "${product.verifiedSales} sold out of ${product.stockTotal}",
+                                        "${raffle.verifiedSales} sold out of ${raffle.stockTotal}",
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 3,
                                         style: const TextStyle(
@@ -642,8 +610,8 @@ class ProductRow extends StatelessWidget {
                                       SizedBox(
                                         width: 95,
                                         child: LinearProgressIndicator(
-                                          value: (product.verifiedSales != null && product.stockTotal != null && product.stockTotal! > 0)
-                                              ? product.verifiedSales! / product.stockTotal!
+                                          value: (raffle.verifiedSales != null && raffle.stockTotal != null && raffle.stockTotal! > 0)
+                                              ? raffle.verifiedSales! / raffle.stockTotal!
                                               : 0.0, // Default value in case of null or invalid stock
                                           backgroundColor: kcSecondaryColor.withOpacity(0.3),
                                           valueColor: const AlwaysStoppedAnimation(kcSecondaryColor),
@@ -661,9 +629,9 @@ class ProductRow extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  (product.raffle == null || product.raffle!.isEmpty)
+                                  (raffle == null)
                                       ? ""
-                                      : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].endDate ?? DateTime.now().toIso8601String()))}",
+                                      : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(raffle.endDate ?? DateTime.now().toIso8601String()))}",
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 3,
                                   style: const TextStyle(
@@ -680,20 +648,20 @@ class ProductRow extends StatelessWidget {
                           children: [
                             userLoggedIn.value == false
                                 ? const SizedBox()
-                                : ValueListenableBuilder<List<CartItem>>(
+                                : ValueListenableBuilder<List<RaffleCartItem>>(
                               valueListenable: raffleCart,
                               builder: (context, value, child) {
                                 // Determine if product is in cart
-                                bool isInCart = value.any((item) => item.product?.id == product.id);
-                                CartItem? cartItem = isInCart
-                                    ? value.firstWhere((item) => item.product?.id == product.id)
+                                bool isInCart = value.any((item) => item.raffle?.id == raffle.id);
+                                RaffleCartItem? cartItem = isInCart
+                                    ? value.firstWhere((item) => item.raffle?.id == raffle.id)
                                     : null;
 
                                 return isInCart && cartItem != null
                                     ? Row(
                                   children: [
                                     InkWell(
-                                      onTap: () => viewModel.decreaseQuantity(cartItem),
+                                      onTap: () => viewModel.decreaseRaffleQuantity(cartItem),
                                       child: Container(
                                         height: 30,
                                         width: 30,
@@ -710,7 +678,7 @@ class ProductRow extends StatelessWidget {
                                     Text("${cartItem.quantity}"),
                                     horizontalSpaceSmall,
                                     InkWell(
-                                      onTap: () => viewModel.increaseQuantity(cartItem),
+                                      onTap: () => viewModel.increaseRaffleQuantity(cartItem),
                                       child: Container(
                                         height: 30,
                                         width: 30,
@@ -732,7 +700,7 @@ class ProductRow extends StatelessWidget {
                                   child: SubmitButton(
                                     isLoading: false,
                                     label: "Buy Ticket",
-                                    submit: () => viewModel.addToCart(product),
+                                    submit: () => viewModel.addToRaffleCart(raffle),
                                     color: kcSecondaryColor,
                                     boldText: true,
                                     iconColor: Colors.black,
@@ -766,69 +734,64 @@ class ProductRow extends StatelessWidget {
               ),
               child: Column(
               children: [
-                Positioned(
-                    top: 16,
-                    left: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: containerColor, // Blue color for the "Closing Soon" banner
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                                children: [
-                                  Text(
-                                    bannerText,
-                                    style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                        fontFamily: "Panchang",
-                                        fontSize: 11
-                                    ),
-                                  ),
-                                  if (remainingDays <= 5)
-                                    CountdownTimer(
-                                    controller: controller,
-                                    onEnd: viewModel.onEnd,
-                                    endTime: endTime,
-                                    widgetBuilder: (_, CurrentRemainingTime? time) {
-                                      if (time == null) {
-                                        return const Text('in stock');
-                                      }
-
-                                      String dayText = '';
-                                      if (time.days != null) {
-                                        if (time.days! > 0) {
-                                          dayText = '${time.days} ${time.days == 1 ? 'day' : 'days'}, ';
-                                        }
-                                      }
-                                      String formattedHours = '${time.hours ?? 0}'.padLeft(2, '0');
-                                      String formattedMin = '${time.min ?? 0}'.padLeft(2, '0');
-                                      String formattedSec = '${time.sec ?? 0}'.padLeft(2, '0');
-
-                                      return Text(
-                                        '$dayText$formattedHours : $formattedMin : $formattedSec',
-                                        style: const TextStyle(
-                                            color: kcWhiteColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: "Panchang",
-                                            fontSize: 11
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              )
-
+                Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: containerColor, // Blue color for the "Closing Soon" banner
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ),
+                    child: Column(
+                      children: [
+                        Text(
+                          bannerText,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Panchang",
+                              fontSize: 11
+                          ),
+                        ),
+                        if (remainingDays <= 5)
+                          CountdownTimer(
+                            controller: controller,
+                            onEnd: viewModel.onEnd,
+                            endTime: endTime,
+                            widgetBuilder: (_, CurrentRemainingTime? time) {
+                              if (time == null) {
+                                return const Text('in stock');
+                              }
+
+                              String dayText = '';
+                              if (time.days != null) {
+                                if (time.days! > 0) {
+                                  dayText = '${time.days} ${time.days == 1 ? 'day' : 'days'}, ';
+                                }
+                              }
+                              String formattedHours = '${time.hours ?? 0}'.padLeft(2, '0');
+                              String formattedMin = '${time.min ?? 0}'.padLeft(2, '0');
+                              String formattedSec = '${time.sec ?? 0}'.padLeft(2, '0');
+
+                              return Text(
+                                '$dayText$formattedHours : $formattedMin : $formattedSec',
+                                style: const TextStyle(
+                                    color: kcWhiteColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Panchang",
+                                    fontSize: 11
+                                ),
+                              );
+                            },
+                          ),
+                      ],
+                    )
+
+                ),
               ],
               )
             ),
           ),
         ],
       ),
-
 
     );
   }

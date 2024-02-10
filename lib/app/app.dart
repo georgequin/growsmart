@@ -4,6 +4,7 @@ import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:afriprize/ui/dialogs/info_alert/info_alert_dialog.dart';
 import 'package:afriprize/ui/views/cart/checkout.dart';
+import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
 import 'package:afriprize/ui/views/dashboard/shop_dashboard_view.dart';
 import 'package:afriprize/ui/views/dashboard/shop_details.dart';
@@ -39,6 +40,7 @@ import 'package:afriprize/ui/views/withdraw/withdraw_view.dart';
     MaterialRoute(page: ShopDashboardView),
     MaterialRoute(page: DrawsView),
     MaterialRoute(page: CartView),
+    MaterialRoute(page: ShopCartView),
     MaterialRoute(page: NotificationView),
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: Checkout),

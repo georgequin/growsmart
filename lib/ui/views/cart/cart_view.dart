@@ -1,4 +1,5 @@
 import 'package:afriprize/core/data/models/cart_item.dart';
+import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
@@ -6,8 +7,11 @@ import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked/stacked.dart';
 import '../../../utils/money_util.dart';
+import '../../../utils/paymentModal.dart';
 import 'cart_viewmodel.dart';
 
 class CartView extends StackedView<CartViewModel> {
@@ -15,10 +19,10 @@ class CartView extends StackedView<CartViewModel> {
 
   @override
   Widget builder(
-    BuildContext context,
-    CartViewModel viewModel,
-    Widget? child,
-  ) {
+      BuildContext context,
+      CartViewModel viewModel,
+      Widget? child,
+      ) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -30,41 +34,44 @@ class CartView extends StackedView<CartViewModel> {
         ),
         ),
         actions: [
-          viewModel.itemsToDelete.isNotEmpty
+          viewModel.itemsToDeleteRaffle.isNotEmpty
               ? InkWell(
-                  onTap: () {
-                    viewModel.clearCart();
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      "Delete",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                )
+            onTap: () {
+              viewModel.clearRaffleCart();
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                "Delete",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          )
               : const SizedBox()
         ],
       ),
-      body: raffleCart.value.isEmpty
-          ? const EmptyState(
+      body: Column(
+        children: [
+          Expanded(
+            child: raffleCart.value.isEmpty
+                ? const EmptyState(
               animation: "empty_cart.json",
               label: "Cart Is Empty",
             )
-          : ListView(
+                : ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                ValueListenableBuilder<List<CartItem>>(
+                ValueListenableBuilder<List<RaffleCartItem>>(
                   valueListenable: raffleCart,
                   builder: (context, value, child) => ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: value.length,
                     itemBuilder: (context, index) {
-                      CartItem item = value[index];
+                      RaffleCartItem item = value[index];
                       return GestureDetector(
                         onTap: () {
-                          viewModel.addRemoveDelete(item);
+                          viewModel.addRemoveDeleteRaffle(item);
                         },
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 10),
@@ -77,7 +84,7 @@ class CartView extends StackedView<CartViewModel> {
                             boxShadow: [
                               BoxShadow(
                                   color:
-                                      const Color(0xFFE5E5E5).withOpacity(0.4),
+                                  const Color(0xFFE5E5E5).withOpacity(0.4),
                                   offset: const Offset(8.8, 8.8),
                                   blurRadius: 8.8)
                             ],
@@ -93,11 +100,9 @@ class CartView extends StackedView<CartViewModel> {
                                       width: 70,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
-                                        image: item.product!.pictures!.isEmpty
-                                            ? null
-                                            : DecorationImage(
+                                        image:DecorationImage(
                                           image: CachedNetworkImageProvider(
-                                            item.product!.raffle?[0].pictures?[0].location ?? 'https://via.placeholder.com/120',
+                                            item.raffle?.pictures?[0].location ?? 'https://via.placeholder.com/120',
                                           ),
                                           fit: BoxFit.cover,
                                         ),
@@ -108,9 +113,9 @@ class CartView extends StackedView<CartViewModel> {
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             'Win!!!',
@@ -124,7 +129,7 @@ class CartView extends StackedView<CartViewModel> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
-                                            item.product!.raffle?[0].ticketName ?? 'Product Name',
+                                            item.raffle?.ticketName ?? 'Product Name',
                                             style: const TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -134,11 +139,11 @@ class CartView extends StackedView<CartViewModel> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           verticalSpaceTiny,
-                                          //TODO REMOVE STATE 5 VALUE AND REPLACE WITH RAFFLE PRICE
+
                                           Row(
                                             children: [
                                               Text(
-                                                MoneyUtils().formatAmountToDollars(5 * item.quantity!),
+                                                MoneyUtils().formatAmountToDollars(item.raffle?.rafflePrice ?? 0 * item.quantity!),
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
@@ -146,23 +151,23 @@ class CartView extends StackedView<CartViewModel> {
                                                     fontWeight: FontWeight.w700
                                                 ),
                                               ),
-                                              horizontalSpaceSmall,
-                                              Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey[300]?.withOpacity(0.2),
-                                                  borderRadius: BorderRadius.circular(8),
-                                                ),
-                                                child: Text(
-                                                  '~${MoneyUtils().formatAmount(MoneyUtils().getRate(5 * item.quantity!))}',
-                                                  style: TextStyle(
-                                                      color: uiMode.value == AppUiModes.light ? kcBlackColor.withOpacity(0.5) : kcWhiteColor,
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontFamily: "satoshi",
-                                                  ),
-                                                ),
-                                              ),
+                                              // horizontalSpaceSmall,
+                                              // Container(
+                                              //   padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+                                              //   decoration: BoxDecoration(
+                                              //     color: Colors.grey[300]?.withOpacity(0.2),
+                                              //     borderRadius: BorderRadius.circular(8),
+                                              //   ),
+                                              //   child: Text(
+                                              //     '~${MoneyUtils().formatAmount(MoneyUtils().getRate(5 * item.quantity!))}',
+                                              //     style: TextStyle(
+                                              //       color: uiMode.value == AppUiModes.light ? kcBlackColor.withOpacity(0.5) : kcWhiteColor,
+                                              //       fontSize: 12,
+                                              //       fontWeight: FontWeight.bold,
+                                              //       fontFamily: "satoshi",
+                                              //     ),
+                                              //   ),
+                                              // ),
 
                                             ],
                                           )
@@ -177,31 +182,31 @@ class CartView extends StackedView<CartViewModel> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  viewModel.itemsToDelete.contains(item)
+                                  viewModel.itemsToDeleteRaffle.contains(item)
                                       ? Container(
-                                          height: 20,
-                                          width: 20,
-                                          decoration: const BoxDecoration(
-                                            color: kcSecondaryColor,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Center(
-                                            child: Icon(
-                                              Icons.check,
-                                              color: kcWhiteColor,
-                                              size: 16,
-                                            ),
-                                          ),
-                                        )
+                                    height: 20,
+                                    width: 20,
+                                    decoration: const BoxDecoration(
+                                      color: kcSecondaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.check,
+                                        color: kcWhiteColor,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  )
                                       : Container(
-                                          height: 20,
-                                          width: 20,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border:
-                                                Border.all(color: kcLightGrey),
-                                          ),
-                                        ),
+                                    height: 20,
+                                    width: 20,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border:
+                                      Border.all(color: kcLightGrey),
+                                    ),
+                                  ),
                                   verticalSpaceSmall,
                                   Row(
                                     children: [
@@ -210,8 +215,7 @@ class CartView extends StackedView<CartViewModel> {
                                           if (item.quantity! > 1) {
                                             item.quantity = item.quantity! - 1;
                                             raffleCart.notifyListeners();
-                                            viewModel.getSubTotal();
-                                            viewModel.getDeliveryTotal();
+                                            viewModel.getRaffleSubTotal();
                                           }
                                         },
                                         child: Container(
@@ -221,7 +225,7 @@ class CartView extends StackedView<CartViewModel> {
                                               border: Border.all(
                                                   color: kcLightGrey),
                                               borderRadius:
-                                                  BorderRadius.circular(5)),
+                                              BorderRadius.circular(5)),
                                           child: const Center(
                                             child: Icon(
                                               Icons.remove,
@@ -237,8 +241,7 @@ class CartView extends StackedView<CartViewModel> {
                                         onTap: () {
                                           item.quantity = item.quantity! + 1;
                                           raffleCart.notifyListeners();
-                                          viewModel.getSubTotal();
-                                          viewModel.getDeliveryTotal();
+                                          viewModel.getRaffleSubTotal();
                                         },
                                         child: Container(
                                           height: 30,
@@ -247,7 +250,7 @@ class CartView extends StackedView<CartViewModel> {
                                               border: Border.all(
                                                   color: kcLightGrey),
                                               borderRadius:
-                                                  BorderRadius.circular(5)),
+                                              BorderRadius.circular(5)),
                                           child: const Align(
                                             alignment: Alignment.center,
                                             child: Icon(
@@ -268,120 +271,248 @@ class CartView extends StackedView<CartViewModel> {
                     },
                   ),
                 ),
-                verticalSpaceMedium,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Sub-total",
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      MoneyUtils().formatAmount(viewModel.subTotal),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                        fontFamily: "satoshi",
-                      ),)
-                  ],
-                ),
-                verticalSpaceSmall,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Delivery-Fee",
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      viewModel.deliveryFee == 0 ? "Free" : "N${viewModel.deliveryFee}",
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                verticalSpaceSmall,
-                const Divider(
-                  thickness: 2,
-                ),
-                verticalSpaceSmall,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Total",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      MoneyUtils().formatAmount(viewModel.subTotal + viewModel.deliveryFee),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                        fontFamily: "satoshi",
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ],
-                ),
-                verticalSpaceLarge,
-                SubmitButton(
-                  isLoading: viewModel.isBusy,
-                  label: "Checkout",
-                  submit: viewModel.checkout,
-                  color: kcPrimaryColor,
-                  boldText: true,
-                ),
-                SafeArea(
-                  child: _buildProceedToPayButton(context),
-                )
+
               ],
             ),
+          ),
+          if(raffleCart.value.isNotEmpty)
+            _buildProceedToPaySection(context, viewModel), // This will be the bottom pinned section
+        ],
+      ),
     );
   }
 
-  Widget _buildProceedToPayButton(BuildContext context) {
+  Widget _buildProceedToPaySection(BuildContext context, CartViewModel viewModel) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: kcSecondaryColor, borderRadius: BorderRadius.circular(5),// Adjust the color to match the design
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 4,
+            offset: Offset(0, -2), // Shadow for the top edge
+          ),
+        ],
+        border: Border.all(color: kcPrimaryColor),
+      ),
+      child: SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                _buildProceedToPayButton(context, viewModel),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Total Amount",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // Adjust text color to match design
+                    fontSize: 12, // Adjust font size to match design
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      MoneyUtils().formatAmountToDollars(viewModel.raffleSubTotal),
+                      style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontFamily: "Satoshi",
+                          fontWeight: FontWeight.w700
+                      ),
+                    ),
+                    // horizontalSpaceTiny,
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.grey[300]?.withOpacity(0.2),
+                    //     borderRadius: BorderRadius.circular(8),
+                    //   ),
+                    //   child: Text(
+                    //     '~${MoneyUtils().formatAmount(MoneyUtils().getRate(viewModel.subTotal))}',
+                    //     style: TextStyle(
+                    //       color: kcWhiteColor,
+                    //       fontSize: 13,
+                    //       fontWeight: FontWeight.bold,
+                    //       fontFamily: "satoshi",
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                )
+
+              ],
+            )
+          ],
+        )
+      ),
+    );
+  }
+
+  Widget _buildProceedToPayButton(BuildContext context, CartViewModel viewModel) {
     return ElevatedButton(
       onPressed: () {
-        // TODO: Implement the navigation or payment logic
+          _showPaymentModal(context, viewModel);
       },
       style: ElevatedButton.styleFrom(
-        primary: kcSecondaryColor, // Button color
-        onPrimary: Colors.white, // Text color
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+        primary: kcSecondaryColor, // Adjust button color to match design
+        onPrimary: kcPrimaryColor, // Text color
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8), // Button corner radius
         ),
+        elevation: 0, // Remove elevation
+        textStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16, // Adjust the font size as needed
+        ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min, // Ensures the Row only takes up needed space
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Proceed to Pay",
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16, // Adjust the font size as needed
+              fontSize: 14,
+                fontWeight: FontWeight.bold,
+                fontFamily: "Panchang"
             ),
           ),
+          SizedBox(width: 8),
           Icon(
             Icons.arrow_forward, // Use the appropriate icon
-            // Add any additional icon styling here
           ),
         ],
       ),
     );
   }
 
+  // void _showPaymentModal(BuildContext context, CartViewModel viewModel) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         // height: MediaQuery.of(context).size.height, // Adjust the height as needed
+  //         decoration: BoxDecoration(
+  //           color: kcSecondaryColor,
+  //           borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(25),
+  //             topRight: Radius.circular(25),
+  //           ),
+  //           border: Border.all(
+  //         color: kcPrimaryColor),
+  //         ),
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(16.0),
+  //           child: Column(
+  //             children: [
+  //               Text(
+  //                 "Choose Payment Method",
+  //                 style: TextStyle(
+  //                   fontWeight: FontWeight.bold,
+  //                   fontSize: 16,
+  //                   color: kcPrimaryColor,
+  //                   fontFamily: "Panchang"
+  //                 ),
+  //               ),
+  //               SizedBox(height: 20),
+  //               Wrap(
+  //                 spacing: 0.0, // Space between the chips
+  //                 runSpacing: 1.0, //s
+  //                 children: [
+  //                   _buildPaymentMethodOption(
+  //                     context,
+  //                     paymentMethodIcon: "binance_pay",
+  //                     method: PaymentMethod.binancePay,
+  //                     selectedMethod: viewModel.selectedMethod,
+  //                     onTap: () => viewModel.selectMethod(PaymentMethod.binancePay),
+  //                   ),
+  //                   _buildPaymentMethodOption(
+  //                     context,
+  //                     paymentMethodIcon: "flutter_wave",
+  //                     method: PaymentMethod.payStack,
+  //                     selectedMethod: viewModel.selectedMethod,
+  //                     onTap: () => viewModel.selectMethod(PaymentMethod.payStack),
+  //                   ),
+  //                   _buildPaymentMethodOption(
+  //                     context,
+  //                     paymentMethodIcon: "flutter_wave",
+  //                     method: PaymentMethod.flutterWave,
+  //                     selectedMethod: viewModel.selectedMethod,
+  //                     onTap: () => viewModel.selectMethod(PaymentMethod.flutterWave),
+  //                   ),
+  //                 ],
+  //               ),
+  //               verticalSpaceMedium,
+  //               Divider(color: Colors.white54),
+  //               _buildTotalSection(viewModel),
+  //               SizedBox(height: 20),
+  //               _buildPayButton(
+  //                 context: context,
+  //                 amount: viewModel.raffleSubTotal, // Replace with total amount
+  //                 onPressed: () {
+  //                   // Handle payment logic
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+
+  void _showPaymentModal(BuildContext context, CartViewModel viewModel) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+      return ValueListenableBuilder<PaymentMethod>(
+          valueListenable: viewModel.selectedPaymentMethod,
+          builder: (context, value, child) {
+        return DraggableScrollableSheet(
+        expand: false,
+        builder: (_, controller) {
+          return ValueListenableBuilder<bool>(
+            valueListenable: viewModel.isPaymentProcessing,
+            builder: (context, isProcessing, child) {
+              return PaymentModalWidget(
+                onPaymentMethodSelected: (PaymentMethod method) {
+                  viewModel.selectMethod(method);
+                },
+                onProceedWithPayment: ()  async {
+                  viewModel.checkoutRaffle(context);
+                },
+                totalAmount: (viewModel.raffleSubTotal),
+                selectedPaymentMethod: viewModel.selectedPaymentMethod.value,
+                isPaymentProcessing: isProcessing,
+              );
+            });
+
+
+        },
+      );
+        });
+      },
+    );
+  }
 
 
   @override
   void onViewModelReady(CartViewModel viewModel) {
-    viewModel.getSubTotal();
-    viewModel.getDeliveryTotal();
+    viewModel.getRaffleSubTotal();
     super.onViewModelReady(viewModel);
   }
 
@@ -391,3 +522,9 @@ class CartView extends StackedView<CartViewModel> {
   ) =>
       CartViewModel();
 }
+
+
+
+
+
+

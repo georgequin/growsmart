@@ -7,6 +7,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../app/app.locator.dart';
 import '../../app/app.router.dart';
+import '../../state.dart';
 import '../../utils/dialog_utils.dart';
 import '../data/repositories/repository.dart';
 import '../utils/local_store_dir.dart';
@@ -103,6 +104,11 @@ final requestInterceptors = InterceptorsWrapper(
               title: "Session Expired",
               description: "Login again to continue");
           if (res!.confirmed) {
+            userLoggedIn.value = false;
+            await locator<LocalStorage>().delete(LocalStorageDir.authToken);
+            await locator<LocalStorage>().delete(LocalStorageDir.authUser);
+            await locator<LocalStorage>().delete(LocalStorageDir.cart);
+            await locator<LocalStorage>().delete(LocalStorageDir.authRefreshToken);
             return locator<NavigationService>().clearStackAndShow(Routes.authView);
           }
         }

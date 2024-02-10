@@ -6,6 +6,7 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/app_strings.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/cart/cart_view.dart';
+import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
 import 'package:afriprize/ui/views/dashboard/shop_dashboard_view.dart';
 import 'package:afriprize/ui/views/notification/notification_view.dart';
@@ -24,7 +25,7 @@ class HomeViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   List<Widget> pages = [
      DashboardView(),
-    const DrawsView(),
+     DrawsView(),
     const CartView(),
     const NotificationView(),
     const ProfileView()
@@ -43,7 +44,7 @@ class HomeViewModel extends BaseViewModel {
   // Pages for the Raffles dashboard
   List<Widget> rafflesPages = [
     DashboardView(),
-    const DrawsView(),
+     DrawsView(),
     const CartView(),
     const NotificationView(),
     const ProfileView()
@@ -52,8 +53,8 @@ class HomeViewModel extends BaseViewModel {
   // Pages for the Shop dashboard
   List<Widget> shopPages = [
     ShopDashboardView(),
-    const DrawsView(),
-    const CartView(),
+     DrawsView(),
+    const ShopCartView(),
     const NotificationView(),
     const ProfileView()
   ];

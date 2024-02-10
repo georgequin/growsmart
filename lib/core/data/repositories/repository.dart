@@ -186,10 +186,40 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> getAds() async {
+  Future<ApiResponse> getRaffle() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
       endpoint: "raffle/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getSoldOutRaffle() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "raffle/soldout/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getRaffleResult() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "raffle/result/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getFeaturedRaffle() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "raffle/featured/list",
     );
 
     return response;
@@ -242,7 +272,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getOrdersStatus(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "orders/status",
+      endpoint: "orders/validate",
       reqBody: req,
     );
 

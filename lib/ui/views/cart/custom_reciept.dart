@@ -23,10 +23,8 @@ import 'package:http/http.dart' as http;
 
 class ReceiptPage extends StatelessWidget {
   final List<CartItem> cart;
-  final List<RaffleTicket> raffle;
 
-  const ReceiptPage({Key? key, required this.cart, required this.raffle}) : super(key: key);
-
+  const ReceiptPage({Key? key, required this.cart}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +146,7 @@ class ReceiptPage extends StatelessWidget {
                                 style: TextStyle(fontWeight: FontWeight.w100),
                               ),
                               Text(
-                                MoneyUtils().formatAmount(getSubTotal(cart)),
+                                MoneyUtils().formatAmount(getShopSubTotal(cart)),
                                 style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12,
                                   color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
                                   fontFamily: "satoshi",),
@@ -180,7 +178,7 @@ class ReceiptPage extends StatelessWidget {
                                 style: TextStyle(fontWeight: FontWeight.w100),
                               ),
                               Text(
-                                MoneyUtils().formatAmount(getSubTotal(cart) + getDeliveryFee(cart)),
+                                MoneyUtils().formatAmount(getShopSubTotal(cart) + getDeliveryFee(cart)),
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.3),
                               ),
                             ],
@@ -311,7 +309,7 @@ class ReceiptPage extends StatelessWidget {
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
                   pw.Text(
-                    MoneyUtils().formatAmount(getSubTotal(cart)),
+                    MoneyUtils().formatAmount(getShopSubTotal(cart)),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 12,
                     ),
                   ),
@@ -340,7 +338,7 @@ class ReceiptPage extends StatelessWidget {
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
                   pw.Text(
-                    MoneyUtils().formatAmount(getSubTotal(cart) + getDeliveryFee(cart)),
+                    MoneyUtils().formatAmount(getShopSubTotal(cart) + getDeliveryFee(cart)),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14.3),
                   ),
                 ],

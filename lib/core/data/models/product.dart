@@ -219,7 +219,8 @@ class Raffle {
   List<Pictures>? pictures;
   Product? product;
   int? rafflePrice;
-
+  int? verifiedSales;
+  int? stockTotal;
   Raffle(
       {this.id,
       this.ticketName,
@@ -234,7 +235,10 @@ class Raffle {
       this.category,
       this.pictures,
       this.product,
-      this.rafflePrice,});
+      this.rafflePrice,
+      this.verifiedSales,
+      this.stockTotal,
+      });
 
   Raffle.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -248,6 +252,8 @@ class Raffle {
     endDate = json['end_date'];
     created = json['created'];
     updated = json['updated'];
+    verifiedSales = json['verified_sales'];
+    stockTotal = json['stock_total'];
     category =
         json['category'] != null ? Category.fromJson(json['category']) : null;
     if (json['pictures'] != null) {
@@ -273,6 +279,8 @@ class Raffle {
     data['end_date'] = endDate;
     data['created'] = created;
     data['updated'] = updated;
+    data['verified_sales'] = verifiedSales;
+    data['stock_total'] = stockTotal;
     if (category != null) {
       data['category'] = category!.toJson();
     }

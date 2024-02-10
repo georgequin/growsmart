@@ -16,6 +16,7 @@ import 'package:afriprize/ui/views/cart/add_shipping.dart';
 import 'package:afriprize/ui/views/cart/cart_view.dart' as _i8;
 import 'package:afriprize/ui/views/cart/checkout.dart' as _i11;
 import 'package:afriprize/ui/views/cart/add_shipping.dart' as _i13;
+import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
 import 'package:afriprize/ui/views/change_password/change_password_view.dart'
     as _i17;
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart' as _i6;
@@ -65,6 +66,8 @@ class Routes {
 
   static const cartView = '/cart-view';
 
+  static const shopCartView = '/shop-cart-view';
+
   static const notificationView = '/notification-view';
 
   static const profileView = '/profile-view';
@@ -104,6 +107,7 @@ class Routes {
     ticketView,
     drawsView,
     cartView,
+    shopCartView,
     notificationView,
     profileView,
     checkout,
@@ -160,6 +164,10 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.cartView,
       page: _i8.CartView,
+    ),
+    _i1.RouteDef(
+      Routes.shopCartView,
+      page: ShopCartView,
     ),
     _i1.RouteDef(
       Routes.notificationView,
@@ -272,13 +280,19 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i7.DrawsView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i7.DrawsView(),
+        builder: (context) =>  _i7.DrawsView(),
         settings: data,
       );
     },
     _i8.CartView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => const _i8.CartView(),
+        settings: data,
+      );
+    },
+    ShopCartView: (data) {
+      return _i21.MaterialPageRoute<dynamic>(
+        builder: (context) => const ShopCartView(),
         settings: data,
       );
     },
@@ -303,10 +317,10 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i12.RaffleDetail: (data) {
-      final args = data.getArgs<ProductDetailArguments>(nullOk: false);
+      final args = data.getArgs<RaffleDetailArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i12.RaffleDetail(product: args.product, key: args.key),
+            _i12.RaffleDetail(raffle: args.raffle, key: args.key),
         settings: data,
       );
     },
@@ -314,7 +328,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<ProductDetailArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i12.RaffleDetail(product: args.product, key: args.key),
+            _i30.ShopDetail(product: args.product, key: args.key),
         settings: data,
       );
     },
@@ -437,6 +451,33 @@ class ProductDetailArguments {
   @override
   int get hashCode {
     return product.hashCode ^ key.hashCode;
+  }
+}
+
+class RaffleDetailArguments {
+  const RaffleDetailArguments({
+    required this.raffle,
+    this.key,
+  });
+
+  final _i24.Raffle raffle;
+
+  final _i23.Key? key;
+
+  @override
+  String toString() {
+    return '{"product": "$raffle", "key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant RaffleDetailArguments other) {
+    if (identical(this, other)) return true;
+    return other.raffle == raffle && other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return raffle.hashCode ^ key.hashCode;
   }
 }
 
@@ -712,6 +753,20 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   ]) async {
     return navigateTo<dynamic>(Routes.cartView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToShopCartView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.shopCartView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

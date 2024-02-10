@@ -9,8 +9,8 @@ import 'package:stacked/stacked.dart';
 import '../../../utils/money_util.dart';
 import 'cart_viewmodel.dart';
 
-class CartView extends StackedView<CartViewModel> {
-  const CartView({Key? key}) : super(key: key);
+class ShopCartView extends StackedView<CartViewModel> {
+  const ShopCartView({Key? key}) : super(key: key);
 
   @override
   Widget builder(
@@ -19,7 +19,9 @@ class CartView extends StackedView<CartViewModel> {
     Widget? child,
   ) {
     return Scaffold(
+      backgroundColor: Color(0xFFFFF3DB),
       appBar: AppBar(
+        backgroundColor: Color(0xFFFFF3DB),
         centerTitle: false,
         title: const Text(
           "My Carts",
@@ -41,7 +43,7 @@ class CartView extends StackedView<CartViewModel> {
               : const SizedBox()
         ],
       ),
-      body: raffleCart.value.isEmpty
+      body: shopCart.value.isEmpty
           ? const EmptyState(
               animation: "empty_cart.json",
               label: "Cart Is Empty",
@@ -50,7 +52,7 @@ class CartView extends StackedView<CartViewModel> {
               padding: const EdgeInsets.all(20),
               children: [
                 ValueListenableBuilder<List<CartItem>>(
-                  valueListenable: raffleCart,
+                  valueListenable: shopCart,
                   builder: (context, value, child) => ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -65,9 +67,7 @@ class CartView extends StackedView<CartViewModel> {
                           margin: const EdgeInsets.symmetric(vertical: 10),
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: uiMode.value == AppUiModes.light
-                                ? kcWhiteColor
-                                : kcBlackColor,
+                            color: uiMode.value == AppUiModes.light ? Color(0xFFFFFAF0) : kcBlackColor,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
@@ -88,12 +88,10 @@ class CartView extends StackedView<CartViewModel> {
                                       width: 65,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
-                                        image: item.product!.pictures!.isEmpty
-                                            ? null
-                                            : DecorationImage(
+                                        image: DecorationImage(
                                                 image: NetworkImage(item
-                                                    .product!
-                                                    .pictures![0]
+                                                    .product
+                                                    ?.pictures![0]
                                                     .location ?? "assets/images/paypal.png"),
                                               ),
                                       ),
@@ -106,10 +104,15 @@ class CartView extends StackedView<CartViewModel> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Text(item.product!.productName ?? ""),
+                                          Text(item.product?.productName ?? "",
+                                            style: const TextStyle(
+                                            fontSize: 10,
+                                          ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,),
                                           verticalSpaceTiny,
                                           Text(
-                                            MoneyUtils().formatAmount(item.product!.productPrice! * item.quantity!),
+                                            MoneyUtils().formatAmount(item.product?.productPrice ?? 0 * item.quantity!),
                                             style: TextStyle(
                                               fontSize: 16,
                                               color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
@@ -158,8 +161,8 @@ class CartView extends StackedView<CartViewModel> {
                                         onTap: () {
                                           if (item.quantity! > 1) {
                                             item.quantity = item.quantity! - 1;
-                                            raffleCart.notifyListeners();
-                                            viewModel.getSubTotal();
+                                            shopCart.notifyListeners();
+                                            viewModel.getShopSubTotal();
                                             viewModel.getDeliveryTotal();
                                           }
                                         },
@@ -185,8 +188,8 @@ class CartView extends StackedView<CartViewModel> {
                                       InkWell(
                                         onTap: () {
                                           item.quantity = item.quantity! + 1;
-                                          raffleCart.notifyListeners();
-                                          viewModel.getSubTotal();
+                                          shopCart.notifyListeners();
+                                          viewModel.getShopSubTotal();
                                           viewModel.getDeliveryTotal();
                                         },
                                         child: Container(
@@ -228,7 +231,7 @@ class CartView extends StackedView<CartViewModel> {
                       ),
                     ),
                     Text(
-                      MoneyUtils().formatAmount(viewModel.subTotal),
+                      MoneyUtils().formatAmount(viewModel.shopSubTotal),
                       style: TextStyle(
                         fontSize: 16,
                         color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
@@ -267,7 +270,7 @@ class CartView extends StackedView<CartViewModel> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      MoneyUtils().formatAmount(viewModel.subTotal + viewModel.deliveryFee),
+                      MoneyUtils().formatAmount(viewModel.shopSubTotal + viewModel.deliveryFee),
                       style: TextStyle(
                         fontSize: 16,
                         color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
@@ -293,7 +296,7 @@ class CartView extends StackedView<CartViewModel> {
 
   @override
   void onViewModelReady(CartViewModel viewModel) {
-    viewModel.getSubTotal();
+    viewModel.getShopSubTotal();
     viewModel.getDeliveryTotal();
     super.onViewModelReady(viewModel);
   }

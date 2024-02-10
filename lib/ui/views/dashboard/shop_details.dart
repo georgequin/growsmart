@@ -1,4 +1,5 @@
 import 'package:afriprize/app/app.locator.dart';
+import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
@@ -7,11 +8,13 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/views/dashboard/reviews.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import '../../../utils/money_util.dart';
 import 'dashboard_viewmodel.dart';
 
@@ -34,32 +37,29 @@ class _ShopDetailState extends State<ShopDetail> {
 
   @override
   void initState() {
-    getRecommendedProducts();
+    // getRecommendedProducts();
     setState(() {
-      activePic =
-          (widget.product.raffle == null || widget.product.raffle!.isEmpty)
-              ? ""
-              : widget.product.raffle?[0].pictures?[0].location ?? "";
+      activePic = widget.product.pictures?[0].location ?? "https://via.placeholder.com/150";
     });
 
     super.initState();
   }
 
-  void getRecommendedProducts() async {
-    try {
-      ApiResponse res = await locator<Repository>()
-          .recommendedProducts(widget.product.id.toString());
-      if (res.statusCode == 200) {
-        setState(() {
-          recommended = (res.data["recommended"] as List)
-              .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
-              .toList();
-        });
-      }
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
+  // void getRecommendedProducts() async {
+  //   try {
+  //     ApiResponse res = await locator<Repository>()
+  //         .recommendedProducts(widget.product.id.toString());
+  //     if (res.statusCode == 200) {
+  //       setState(() {
+  //         recommended = (res.data["recommended"] as List)
+  //             .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+  //             .toList();
+  //       });
+  //     }
+  //   } catch (e) {
+  //     throw Exception(e);
+  //   }
+  // }
 
   Future<Color?> _updateTextColor(String imageUrl) async {
     final PaletteGenerator paletteGenerator =
@@ -84,6 +84,7 @@ class _ShopDetailState extends State<ShopDetail> {
         },
         builder: (context, viewModel, child) {
           return Scaffold(
+            backgroundColor: Color(0xFFFFF3DB),
             body: CustomScrollView(
               slivers: [
                 SliverList(
@@ -91,33 +92,27 @@ class _ShopDetailState extends State<ShopDetail> {
                     [
                       Column(
                         children: [
+                          verticalSpaceSmall,
                           Stack(
                             children: [
                               ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(12)),
-                                child: (widget.product.raffle == null ||
-                                        widget.product.raffle!.isEmpty)
-                                    ? SizedBox(
-                                        height: 178,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                      )
-                                    : Image.network(
-                                        (widget.product.raffle![0].pictures !=
-                                                    null &&
-                                                widget.product.raffle![0]
-                                                    .pictures!.isNotEmpty)
-                                            ? widget.product.raffle![0]
-                                                .pictures![0].location ?? ''
-                                            : '',
-                                        // Provide a default value or handle the case when pictures are empty
-                                        fit: BoxFit.fill,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 130,
-                                      ),
+                                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                                child:
+                                CachedNetworkImage(
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.0, // Make the loader thinner
+                                      valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
+                                    ),
+                                  ),
+                                  imageUrl: widget.product.pictures?.first.location ?? 'https://via.placeholder.com/150',
+                                  height: 311,
+                                  width: 354,
+                                  fit: BoxFit.fill,
+                                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                                  fadeInDuration: const Duration(milliseconds: 500),
+                                  fadeOutDuration: const Duration(milliseconds: 300),
+                                ),
                               ),
                               // Positioned(
                               //   top: 20,
@@ -158,182 +153,72 @@ class _ShopDetailState extends State<ShopDetail> {
                               // ),
                             ],
                           ),
-                          Container(
-                            color: kcPrimaryColor,
-                            // Set the background color to blue
-                            padding: const EdgeInsets.all(7.0),
-                            // Add padding to the container
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    (widget.product.raffle == null ||
-                                            widget.product.raffle!.isEmpty)
-                                        ? ""
-                                        : widget.product.raffle?[0]
-                                                .ticketName ??
-                                            "",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: Colors
-                                          .white, // Set the text color to white
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                           Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
                                     25.0, 20.0, 8.0, 0.0),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                              flex: 6,
-                                              // Allocate 60% of the space to this widget
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    height: 50,
-                                                    width: 50,
-                                                    decoration: BoxDecoration(
-                                                      image: widget.product
-                                                              .pictures!.isEmpty
-                                                          ? null
-                                                          : DecorationImage(
-                                                              fit: BoxFit.cover,
-                                                              image: NetworkImage(
-                                                                  widget
-                                                                      .product
-                                                                      .pictures![
-                                                                          0]
-                                                                      .location ?? 'assets/images/afriprize.png'),
-                                                            ),
-                                                      color: kcWhiteColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  // Add some spacing between the image and text
-                                                  Flexible(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          'Buy ${widget.product.productName!}',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 3,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          " ${MoneyUtils().formatAmount(widget.product.productPrice!)}",
-                                                          overflow: TextOverflow.ellipsis,
-                                                          maxLines: 3,
-                                                          style:
-                                                               TextStyle(
-                                                                color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                                                                fontFamily: "satoshi",
-                                                            fontSize: 19,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              )),
-                                          Expanded(
-                                            flex: 3,
-                                            // Allocate 60% of the space to this widget
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "${widget.product.verifiedSales} sold out of ${widget.product.stockTotal}",
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 3,
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 100,
-                                                  child:
-                                                      LinearProgressIndicator(
-                                                    value: (widget.product.verifiedSales != null &&
-                                                            widget.product
-                                                                    .stockTotal !=
-                                                                null &&
-                                                            widget.product
-                                                                    .stockTotal! >
-                                                                0)
-                                                        ? widget.product
-                                                                .verifiedSales! /
-                                                            widget.product
-                                                                .stockTotal!
-                                                        : 0.0,
-                                                    // Default value in case of null or invalid stock
-                                                    backgroundColor:
-                                                        kcSecondaryColor
-                                                            .withOpacity(0.3),
-                                                    valueColor:
-                                                        const AlwaysStoppedAnimation(
-                                                            kcSecondaryColor),
-                                                  ),
-                                                ),
-                                                Text(
-                                                  (widget.product.raffle ==
-                                                              null ||
-                                                          widget.product.raffle!
-                                                              .isEmpty)
-                                                      ? ""
-                                                      : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(widget.product.raffle?[0].endDate ?? DateTime.now().toIso8601String()))}",
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 3,
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
+                                    Flexible(
+                                      // Use Flexible for product name to take the remaining space
+                                      child: Text(
+                                        'Buy ${widget.product.productName!}',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2, // Adjust max lines as needed
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500
+                                        ),
                                       ),
-                                    )
+                                    ),
+                                    SizedBox(width: 8), // Space between the name and the price
+                                    Text(
+                                      " ${MoneyUtils().formatAmount(widget.product.productPrice!)}",
+                                      style: TextStyle(
+                                        color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: "Panchang",
+                                        fontSize: 19,
+                                      ),
+                                    ),
                                   ],
-                                ),
+                                )
+
                               ),
                             ],
                           )
                         ],
+                      ),
+                      verticalSpaceSmall,
+                      Container(
+                        margin:  EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFecdcb7),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.info,
+                              color: Color(0xFFCC9933),
+                            ),
+                            Expanded(child: Text(
+                              'Unlock shopping credit by joining raffles with Afriprize cards. Buy, win, and shop all in one go!',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black.withOpacity(0.7),
+                              ),
+                            ),)
+                          ],
+                        )
+
                       ),
                       verticalSpaceMedium,
                       Padding(
@@ -377,8 +262,11 @@ class _ShopDetailState extends State<ShopDetail> {
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
-                                              image: NetworkImage(image),
+                                              image: CachedNetworkImageProvider(
+                                                image ?? 'https://via.placeholder.com/120',
+                                              ),
                                             ),
+
                                             color: kcWhiteColor,
                                             border: Border.all(
                                               color: activePic == image
@@ -406,7 +294,7 @@ class _ShopDetailState extends State<ShopDetail> {
                             Icons.star,
                             color: kcStarColor,
                           ),
-                          horizontalSpaceSmall,
+                          horizontalSpaceTiny,
                           Text(
                             (widget.product.reviews == null ||
                                     widget.product.reviews!.isEmpty)
@@ -416,7 +304,7 @@ class _ShopDetailState extends State<ShopDetail> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          horizontalSpaceSmall,
+                          horizontalSpaceTiny,
                           Text(
                             "(${widget.product.reviews?.length})",
                             style: const TextStyle(color: kcLightGrey),
@@ -451,159 +339,161 @@ class _ShopDetailState extends State<ShopDetail> {
                         padding: const EdgeInsets.symmetric(horizontal: 25.0),
                         child: Text(
                           widget.product.productDescription ?? "",
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 11),
                         ),
                       ),
                       verticalSpaceLarge,
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 55.0),
-                        child: userLoggedIn.value == false
-                            ? const SizedBox()
-                            : ValueListenableBuilder<List<CartItem>>(
-                            valueListenable: raffleCart,
-                            builder: (context, value, child) {
-                              bool isInCart = value.any((item) =>
-                              item.product?.id == widget.product.id);
-                              CartItem? cartItem = isInCart
-                                  ? value.firstWhere((item) =>
-                              item.product?.id == widget.product.id)
-                                  : null;
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                          child: userLoggedIn.value == false
+                              ? const SizedBox()
+                              : ValueListenableBuilder<List<CartItem>>(
+                              valueListenable: shopCart,
+                              builder: (context, value, child) {
+                                bool isInCart = value.any((item) =>
+                                item.product?.id == widget.product.id);
+                                CartItem? cartItem = isInCart
+                                    ? value.firstWhere((item) =>
+                                item.product?.id == widget.product.id)
+                                    : null;
 
-                              return isInCart && cartItem != null
-                                  ? Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 20),
-                                decoration: BoxDecoration(
-                                    color: kcVeryLightGrey,
-                                    borderRadius:
-                                    BorderRadius.circular(9)),
-                                child: Row(
-                                  children: [
-                                    InkWell(
-                                      onTap: () => viewModel
-                                          .decreaseQuantity(cartItem),
-                                      child: Container(
-                                        height: 30,
-                                        width: 30,
+                                return isInCart && cartItem != null
+                                    ? Container(
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFFFFF3DB).withOpacity(0.9),
+                                      borderRadius:
+                                      BorderRadius.circular(9)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        height: 53,
                                         decoration: BoxDecoration(
                                           color: kcWhiteColor,
                                           borderRadius:
-                                          BorderRadius.circular(5),
+                                          BorderRadius.circular(9),
                                         ),
-                                        child: const Center(
+                                        child: Row(
+                                          children: [
+                                              InkWell(
+                                                  onTap: () => viewModel
+                                                .decreaseQuantity(cartItem),
+                                            child: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                            color: kcSecondaryColor,
+                                            borderRadius:
+                                            BorderRadius.circular(5),
+                                            ),
+                                            child: const Center(
                                             child: Icon(Icons.remove,
-                                                size: 18,
-                                                color: kcBlackColor)),
-                                      ),
-                                    ),
-                                    horizontalSpaceSmall,
-                                    Text(
-                                      "${cartItem.quantity}",
-                                      style: const TextStyle(
-                                          color: kcBlackColor),
-                                    ),
-                                    horizontalSpaceSmall,
-                                    InkWell(
-                                      onTap: () => viewModel
-                                          .increaseQuantity(cartItem),
-                                      child: Container(
-                                        height: 30,
-                                        width: 30,
-                                        decoration: BoxDecoration(
-                                          color: kcWhiteColor,
-                                          borderRadius:
-                                          BorderRadius.circular(5),
-                                        ),
-                                        child: const Align(
+                                            size: 18,
+                                            color: kcBlackColor)),
+                                            ),
+                                            ),
+                                            horizontalSpaceMedium,
+                                            Text(
+                                            "${cartItem.quantity}",
+                                            style: const TextStyle(
+                                            color: kcBlackColor),
+                                            ),
+                                            horizontalSpaceMedium,
+                                            InkWell(
+                                            onTap: () => viewModel
+                                                .increaseQuantity(cartItem),
+                                            child: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                            color: kcSecondaryColor,
+                                            borderRadius:
+                                            BorderRadius.circular(5),
+                                            ),
+                                            child: const Align(
                                             alignment: Alignment.center,
                                             child: Icon(Icons.add,
-                                                size: 18,
-                                                color: kcBlackColor)),
+                                            size: 18,
+                                            color: kcBlackColor)),
+                                            ),
+                                            ),
+                                          ]
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                                  : InkWell(
-                                onTap: () async {
-                                  CartItem newItem = CartItem(
-                                      product: widget.product,
-                                      quantity: 1);
-                                  viewModel.addToCart(widget.product);
-                                },
-                                child: Container(
-                                  height: 50,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                    color: kcSecondaryColor,
-                                    borderRadius:
-                                    BorderRadius.circular(9),
-                                  ),
-                                  child: const Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.shopping_bag_outlined,
-                                        color: kcWhiteColor,
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        "Add to cart",
-                                        style: TextStyle(
-                                            color: kcWhiteColor),
-                                      ),
+                                      InkWell(
+                                            onTap: () async {
+                                              Navigator.pop(context);
+                                              locator<NavigationService>()
+                                                  .navigateToShopCartView();
+                                            },
+                                        child: Container(
+                                            height: 50,
+                                            width: 120,
+                                            decoration: BoxDecoration(
+                                              color: kcWhiteColor,
+                                              borderRadius:
+                                              BorderRadius.circular(9),
+                                            ),
+                                            child: const Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Goto Cart",
+                                                    style: TextStyle(
+                                                    color: kcPrimaryColor,
+                                                    fontWeight: FontWeight.w700),
+                                                  ),
+                                                ],
+                                            ),
+                                        ),
+                                      )
                                     ],
                                   ),
-                                ),
-                              );
-                            }),
+                                )
+                                    : InkWell(
+                                  onTap: () async {
+                                    CartItem newItem = CartItem(
+                                        product: widget.product,
+                                        quantity: 1);
+                                    viewModel.addToProductCart(widget.product);
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    // width: 160,
+                                    decoration: BoxDecoration(
+                                      color: kcSecondaryColor,
+                                      borderRadius:
+                                      BorderRadius.circular(9),
+                                    ),
+                                    child: const Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.shopping_bag_outlined,
+                                          color: kcWhiteColor,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          "Add to cart",
+                                          style: TextStyle(
+                                              color: kcWhiteColor),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }),
+                        ),
                       ),
 
-
-
-                      verticalSpaceSmall,
-                      recommended.isEmpty
-                          ? const SizedBox()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Center(
-                                    child: Text(
-                                  "Related",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )),
-                                verticalSpaceMedium,
-                                SizedBox(
-                                  height: 250,
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: recommended.length,
-                                      itemBuilder: (context, index) {
-                                        Product product = recommended[index];
-                                        return InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(builder: (c) {
-                                              return ShopDetail(
-                                                  product: product);
-                                            }));
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: RecommendedRow(
-                                                product: product),
-                                          ),
-                                        );
-                                      }),
-                                ),
-                                verticalSpaceMedium,
-                              ],
-                            ),
+                      verticalSpaceLarge,
                     ],
                   ),
                 )
@@ -730,7 +620,7 @@ class RecommendedRow extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                                text: "Buy ${product.productName} for: ",
+                                text: " ${product.productName}",
                                 style: GoogleFonts.inter(
                                     color: kcBlackColor, fontSize: 12)),
                             TextSpan(
