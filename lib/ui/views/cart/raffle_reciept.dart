@@ -196,8 +196,7 @@ class RaffleReceiptPage extends StatelessWidget {
             children: <Widget>[
               ElevatedButton(
                 onPressed: () {
-                  locator<NavigationService>().replaceWithHomeView();
-                  // Navigator.of(context).pushNamedAndRemoveUntil(Routes.dashboardView, (Route<dynamic> route) => false);
+                  locator<NavigationService>().clearStackAndShow(Routes.homeView);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: kcSecondaryColor, // Use the appropriate color for your app
@@ -211,24 +210,24 @@ class RaffleReceiptPage extends StatelessWidget {
                   Text('Back to Home', style: TextStyle(fontSize: 15)),
                 ],),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  locator<NavigationService>().clearStackAndShow(Routes.ticketView);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey.shade300, // Use the appropriate color for your app
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child:
-                const Row(children: [
-                  Icon(Icons.airplane_ticket_outlined),
-                  horizontalSpaceTiny,
-                  Text('View Tickets', style: TextStyle(fontSize: 15)),
-                ],),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     locator<NavigationService>().clearStackAndShow(Routes.ticketView);
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.grey.shade300, // Use the appropriate color for your app
+              //     foregroundColor: Colors.black,
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(10),
+              //     ),
+              //   ),
+              //   child:
+              //   const Row(children: [
+              //     Icon(Icons.airplane_ticket_outlined),
+              //     horizontalSpaceTiny,
+              //     Text('View Tickets', style: TextStyle(fontSize: 15)),
+              //   ],),
+              // ),
             ],
           ),
         ),

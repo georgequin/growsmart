@@ -13,6 +13,9 @@ import 'package:stacked/stacked.dart';
 import 'package:path/path.dart' as path;
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../core/utils/local_store_dir.dart';
+import '../../../core/utils/local_stotage.dart';
+
 class ProfileViewModel extends BaseViewModel {
   final repo = locator<Repository>();
   final log = getLogger("ProfileViewModel");
@@ -60,13 +63,18 @@ class ProfileViewModel extends BaseViewModel {
   void getProfile() async {
     setBusy(true);
 
+    final localProfileJson = await locator<LocalStorage>().fetch(LocalStorageDir.profileView);
+    if (localProfileJson != null) {
+      profile.value = Profile.fromJson(localProfileJson);
+      rebuildUi();
+    }
+
     try {
       ApiResponse res = await repo.getProfile();
       if (res.statusCode == 200) {
-        profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
-
-        rebuildUi();
+        profile.value = Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+        await locator<LocalStorage>().save(LocalStorageDir.profileView, res.data["user"]); // Cache updated profile
+        rebuildUi(); // Update UI with fresh data
       }
     } catch (e) {
       log.e(e);
@@ -74,4 +82,22 @@ class ProfileViewModel extends BaseViewModel {
 
     setBusy(false);
   }
+
+
+  // void getProfile() async {
+  //   setBusy(true);
+  //   try {
+  //     ApiResponse res = await repo.getProfile();
+  //     if (res.statusCode == 200) {
+  //       profile.value =
+  //           Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+  //       rebuildUi();
+  //     }
+  //   } catch (e) {
+  //     log.e(e);
+  //   }
+  //   setBusy(false);
+  // }
+
+
 }

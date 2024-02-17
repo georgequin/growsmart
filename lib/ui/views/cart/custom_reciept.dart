@@ -5,6 +5,7 @@ import 'package:afriprize/utils/date_time_utils.dart';
 import 'package:afriprize/utils/money_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -19,6 +20,10 @@ import '../../common/app_colors.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
+import '../home/home_view.dart';
+import '../profile/order_list.dart';
+import '../profile/ticket_list.dart';
+
 
 
 class ReceiptPage extends StatelessWidget {
@@ -29,6 +34,7 @@ class ReceiptPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFFFF3DB),
       body: Stack(
         children: [
           Padding(
@@ -62,6 +68,7 @@ class ReceiptPage extends StatelessWidget {
             child: ClipPath(
                   clipper: MyClipper(),
                   child: Card(
+                    color: Color(0xFFFFFAF0),
                     elevation: 4.0,
                     margin: const EdgeInsets.all(8.0),
                     child: Padding(
@@ -202,32 +209,40 @@ class ReceiptPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
+        color: Color(0xFFFFF3DB),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              // ElevatedButton(
+              //   onPressed: () {
+              //     Navigator.popUntil(context, ModalRoute.withName(Routes.onboardingView));
+              //     Navigator.pushReplacementNamed(context, Routes.orderView);
+              //     // Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+              //     //   return const OrderList();
+              //     // }));
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     primary: kcSecondaryColor, // Use the appropriate color for your app
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(6),
+              //     ),
+              //   ),
+              //   child: Row(children: [
+              //     SvgPicture.asset(
+              //       'assets/icons/ticket.svg',
+              //       height: 20,
+              //       color: Colors.black,
+              //     ),
+              //     horizontalSpaceTiny,
+              //     Text('View Orders', style: TextStyle(fontSize: 15)),
+              //   ],),
+              // ),
               ElevatedButton(
-                onPressed: () {
-                  locator<NavigationService>().replaceWithHomeView();
-                  // Navigator.of(context).pushNamedAndRemoveUntil(Routes.dashboardView, (Route<dynamic> route) => false);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: kcSecondaryColor, // Use the appropriate color for your app
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Row(children: [
-                  Icon(Icons.home, color: Colors.black,),
-                  horizontalSpaceTiny,
-                  Text('Back to Home', style: TextStyle(fontSize: 15)),
-                ],),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  locator<NavigationService>().clearStackAndShow(Routes.ticketView);
+                onPressed: (){
+                  locator<NavigationService>().clearStackAndShow(Routes.homeView);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey.shade300, // Use the appropriate color for your app
@@ -237,10 +252,14 @@ class ReceiptPage extends StatelessWidget {
                   ),
                 ),
                 child:
-                const Row(children: [
-                  Icon(Icons.airplane_ticket_outlined),
+                 Row(children: [
+                  SvgPicture.asset(
+                    'assets/icons/home.svg',
+                    height: 20,
+                    color: Colors.black,
+                  ),
                   horizontalSpaceTiny,
-                  Text('View Tickets', style: TextStyle(fontSize: 15)),
+                  Text('Back to Home', style: TextStyle(fontSize: 15, color: Colors.grey)),
                 ],),
               ),
             ],
@@ -428,6 +447,21 @@ class ReceiptPage extends StatelessWidget {
       return pw.Text('Image load error');
     }
   }
+
+  void navigateToTicketsWithHomeBelow(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => HomeView()), // Push HomeView
+          (Route<dynamic> route) => false, // Remove all routes beneath
+    ).then((_) =>
+        Future.delayed(Duration(milliseconds: 500), () { // Delay to ensure the stack is updated
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const TicketList()), // Push TicketsPage
+          );
+        })
+    );
+  }
+
+
 
 }
 

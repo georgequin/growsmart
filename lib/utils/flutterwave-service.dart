@@ -22,8 +22,8 @@ class FlutterwavePaymentService {
 
     final Flutterwave flutterwave = Flutterwave(
       context: context,
-      publicKey: AppConfig.flutterWaveTestKey,
-      currency: "USD",
+      publicKey: AppConfig.flutterWaveLiveKey,
+      currency: "NGN",
       amount: amount,
       txRef: getReference(),
       redirectUrl: "https://www.afriprize.com",

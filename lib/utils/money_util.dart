@@ -65,63 +65,15 @@ class MoneyUtils extends TextInputFormatter {
     return int.tryParse(text) ?? 0; // Convert to int, return 0 if null
   }
 
-
-  // Future<ApiResponse> chargeCard( String paymentMethod, List<String> orderId, PaystackPlugin plugin, BuildContext context) async {
-  //
-  //   if(paymentMethod == 'wallet'){
-  //     ApiResponse res = await locator<Repository>().payForOrder({
-  //       "orderId": orderId,
-  //       "payment_method": 1,
-  //       "reference": getReference(),
-  //       "id": profile.value.id
-  //     });
-  //
-  //     if (res.statusCode == 200) {
-  //       print('wallet payment was successfully');
-  //       return res;
-  //     }else{
-  //       locator<SnackbarService>()
-  //           .showSnackbar(message: res.data["message"]);
-  //       return res;
-  //     }
-  //   }
-  //   else if(paymentMethod == 'paystack'){
-  //     var charge = Charge()
-  //       ..amount = (getSubTotal(cart.value) + getDeliveryFee(cart.value)) *
-  //           100 // money in kobo hence the need to multiply the value by 100
-  //       ..reference = getReference()
-  //       ..email = profile.value.email;
-  //     CheckoutResponse response = await plugin.checkout(
-  //       context,
-  //       method: CheckoutMethod.card,
-  //       charge: charge,
-  //     );
-  //
-  //     if (response.status == true) {
-  //       ApiResponse res = await locator<Repository>().payForOrder({
-  //         "orderId": orderId,
-  //         "payment_method": 2,
-  //         "reference": charge.reference,
-  //         "id": profile.value.id
-  //       });
-  //
-  //       if (res.statusCode == 200) {
-  //         print('paystack payment was suceessful');
-  //        return res;
-  //
-  //       } else {
-  //         locator<SnackbarService>()
-  //             .showSnackbar(message: res.data["message"]);
-  //         return res;
-  //       }
-  //     }
-  //   }
-  //
-  //   return ApiResponse(false, 'Payment method not supported', null, 500);
-  //
-  // }
-
   Future<ApiResponse> chargeCardUtil(PaymentMethod paymentMethod, List<String> orderIds, BuildContext context, int amount) async {
+
+    String convertAmount = '';
+    //convert amount
+    var res = await locator<Repository>().convertToNaira(amount.toString());
+    if (res.statusCode == 200) {
+      convertAmount = (res.data['rate']['source']['amount']).toString();
+    }
+
     // Prepare common payload
     var payload = {
       "orderId": orderIds,
@@ -179,11 +131,12 @@ class MoneyUtils extends TextInputFormatter {
       final FlutterwavePaymentService _paymentService = FlutterwavePaymentService();
       ChargeResponse response = await _paymentService.makePayment(
         context: context,
-        amount: amount.toString(),
+        amount: convertAmount,
         isTestMode: AppConfig.isTestMode,
       );
 
-      if (response.success == true) {
+      if (response.success == true || response.status == 'completed') {
+        print('flutterwave response was success');
         ApiResponse res = await locator<Repository>().payForOrder({
                   "orderId": orderIds,
                   "payment_method": 4,
@@ -195,11 +148,13 @@ class MoneyUtils extends TextInputFormatter {
                  return res;
 
                 } else {
+          print('backend call response failed');
                   locator<SnackbarService>()
-                      .showSnackbar(message: res.data["message"]);
+                      .showSnackbar(message: res.data["message"] ?? 'system error');
                   return res;
                 }
       }else{
+        print('flutterwave payment was different ${response.success}');
         locator<SnackbarService>().showSnackbar(message: response.status ?? 'flutterwave payment failed');
       }
     }
@@ -207,7 +162,7 @@ class MoneyUtils extends TextInputFormatter {
     if(paymentMethod == PaymentMethod.binancePay) {
       var res = await locator<Repository>().payForOrder(payload);
       if (res.statusCode != 200) {
-        locator<SnackbarService>().showSnackbar(message: res.data["message"]);
+        locator<SnackbarService>().showSnackbar(message: res.data["message"] ?? 'system error');
       }
       return res;
     }

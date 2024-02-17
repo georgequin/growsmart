@@ -1,5 +1,6 @@
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ModuleSwitch extends StatefulWidget {
   final bool isRafflesSelected;
@@ -33,7 +34,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
           _buildOption(
             context: context,
             text: 'Raffles',
-            icon: Icons.radio,
+            icon: 'ticket_star.svg',
             isSelected: widget.isRafflesSelected,
             onTap: () => widget.onToggle(!widget.isRafflesSelected),
           ),
@@ -42,7 +43,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
           _buildOption(
             context: context,
             text: 'AfriShop',
-            icon: Icons.shopping_bag,
+            icon: 'bag.svg',
             isSelected: !widget.isRafflesSelected,
             onTap: () => widget.onToggle(false),
           ),
@@ -54,7 +55,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
   Widget _buildOption({
     required BuildContext context,
     required String text,
-    required IconData icon,
+    required String icon,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
@@ -72,7 +73,12 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: isSelected ? kcSecondaryColor : kcPrimaryColor),
+            SvgPicture.asset(
+              'assets/icons/$icon',
+                color: isSelected ? kcSecondaryColor : kcPrimaryColor,
+              height: 20,
+            ),
+            // Icon(icon, color: isSelected ? kcSecondaryColor : kcPrimaryColor),
             SizedBox(width: 8.0),
             Text(
               text,

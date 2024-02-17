@@ -73,6 +73,73 @@ class RaffleTicket {
   }
 }
 
+class CombinedTicket {
+  String? ticketId;
+  String? raffleNumber;
+  // Raffle Draw details
+  String? raffleId;
+  String? ticketName;
+  String? ticketDescription;
+  String? ticketTracking;
+  String? startDate;
+  String? endDate;
+  double? rafflePrice;
+  bool? ticketStatus;
+  List<Pictures>? pictures;
+
+  CombinedTicket({
+    this.ticketId,
+    this.raffleNumber,
+
+    this.raffleId,
+    this.ticketName,
+    this.ticketDescription,
+    this.ticketTracking,
+    this.startDate,
+    this.endDate,
+    this.rafflePrice,
+    this.ticketStatus,
+    this.pictures,
+  });
+
+  CombinedTicket.fromJson(Map<String, dynamic> json) {
+    ticketId = json['id'];
+    raffleNumber = json['raffle_number'];
+
+    raffleId = json['raffledraw']['id'];
+    ticketStatus = json['raffledraw']['status'];
+    ticketName = json['raffledraw']['ticket_name'];
+    ticketDescription = json['raffledraw']['ticket_description'];
+    ticketTracking = json['raffledraw']['ticket_tracking'];
+    startDate = json['raffledraw']['start_date'];
+    endDate = json['raffledraw']['end_date'];
+    rafflePrice = json['raffledraw']['raffle_price'].toDouble();
+    if (json['raffledraw']['pictures'] != null) {
+      pictures = List<Pictures>.from(json['raffledraw']['pictures'].map((model) => Pictures.fromJson(model)));
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = ticketId;
+    data['raffle_number'] = raffleNumber;
+
+    data['raffledraw']['id'] = raffleId;
+    data['raffledraw']['ticket_name'] = ticketName;
+    data['raffledraw']['ticket_description'] = ticketDescription;
+    data['raffledraw']['ticket_tracking'] = ticketTracking;
+    data['raffledraw']['start_date'] = startDate;
+    data['raffledraw']['end_date'] = endDate;
+    data['raffledraw']['raffle_price'] = rafflePrice;
+    if (pictures != null) {
+      data['raffledraw']['pictures'] = pictures!.map((v) => v.toJson()).toList();
+    }
+
+
+    return data;
+  }
+}
+
 class Participants {
   String? id;
   String? raffleNumber;

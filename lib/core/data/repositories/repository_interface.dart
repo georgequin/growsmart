@@ -33,6 +33,8 @@ abstract class IRepository {
 
   Future<ApiResponse> resetPasswordRequest(String email);
 
+  Future<ApiResponse> convertToNaira(String amount);
+
   Future<ApiResponse> updatePassword(Map<String, dynamic> req, String email);
 
   Future<ApiResponse> resetPassword(Map<String, dynamic> req, String email);

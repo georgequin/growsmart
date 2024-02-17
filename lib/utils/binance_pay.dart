@@ -159,6 +159,7 @@ class _BinancePayModalState extends State<BinancePayModal> {
     }
   }
 
+
   Future<void> _openBinanceApp(Map binanceData) async {
 
     String deeplink = binanceData["deeplink"];
@@ -169,20 +170,11 @@ class _BinancePayModalState extends State<BinancePayModal> {
     if (await canLaunchUrl(deepLinkUri)) {
       await launchUrl(deepLinkUri, mode: LaunchMode.platformDefault);
     } else {
-      // No app found to handle the deep link, ask user to continue in browser
-      final DialogService dialogService = locator<DialogService>();
-      final res = await dialogService.showCustomDialog(
-        variant: DialogType.infoAlert,
-        title: "Binance App not installed",
-        description: "Continue on browser?",
-      );
-      if (res!.confirmed) {
-        // User confirmed to continue in browser
-        if (!await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication)) {
-          // Fallback failed, show an error message
-          final snackBarService = locator<SnackbarService>();
-          snackBarService.showSnackbar(message: 'Could not open the web browser');
-        }
+      // No app found to handle the deep link,continue in browser
+      if (!await launchUrl(checkoutUrl, mode: LaunchMode.platformDefault)) {
+        // Fallback failed, show an error message
+        final snackBarService = locator<SnackbarService>();
+        snackBarService.showSnackbar(message: 'Could not open the web browser');
       }
     }
   }

@@ -274,7 +274,7 @@ class _OrderListState extends State<OrderList> {
                             color: kcVeryLightGrey,
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(isRaffle ? order.raffle!.pictures![0].location ?? 'https://via.placeholder.com/120' : order.product?.pictures![0].location ?? 'https://via.placeholder.com/120'),
+                              image: NetworkImage(isRaffle ? order.raffle?.pictures![0].location ?? 'https://via.placeholder.com/120' : order.product?.pictures![0].location ?? 'https://via.placeholder.com/120'),
                             ),
                           ),
                         ),
@@ -343,7 +343,7 @@ class _OrderListState extends State<OrderList> {
                           icon: Icon(
                             Icons.airplane_ticket,
                             size: 16,
-                            color: order.tracking!.status! != 1 ? kcPrimaryColor : Colors.grey,
+                            color: order.paymentStatus == 1 ? kcPrimaryColor : Colors.grey,
                           ),
                           label: Text(
                             "View Tickets",
@@ -352,7 +352,7 @@ class _OrderListState extends State<OrderList> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: order.paymentStatus != 1 ? kcSecondaryColor : Colors.grey.shade400, disabledForegroundColor: Colors.grey.withOpacity(0.38), disabledBackgroundColor: Colors.grey.withOpacity(0.12), // Color when the button is disabled
+                            backgroundColor: order.paymentStatus == 1 ? kcSecondaryColor : Colors.grey.shade400, disabledForegroundColor: Colors.grey.withOpacity(0.38), disabledBackgroundColor: Colors.grey.withOpacity(0.12), // Color when the button is disabled
                             // Add other properties like padding, shape, etc., as needed
                           ),
                         ),

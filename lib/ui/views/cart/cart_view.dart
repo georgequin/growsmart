@@ -50,7 +50,15 @@ class CartView extends StackedView<CartViewModel> {
               : const SizedBox()
         ],
       ),
-      body: Column(
+      body:
+        viewModel.isPaymentProcessing.value
+      ? const Center(
+          child: EmptyState(
+            animation: "payment_process.json",
+            label: "payment processing...",
+          ) ) :
+
+      Column(
         children: [
           Expanded(
             child: raffleCart.value.isEmpty
@@ -214,8 +222,8 @@ class CartView extends StackedView<CartViewModel> {
                                         onTap: () {
                                           if (item.quantity! > 1) {
                                             item.quantity = item.quantity! - 1;
-                                            raffleCart.notifyListeners();
                                             viewModel.getRaffleSubTotal();
+                                            raffleCart.notifyListeners();
                                           }
                                         },
                                         child: Container(
@@ -240,8 +248,8 @@ class CartView extends StackedView<CartViewModel> {
                                       InkWell(
                                         onTap: () {
                                           item.quantity = item.quantity! + 1;
-                                          raffleCart.notifyListeners();
                                           viewModel.getRaffleSubTotal();
+                                          raffleCart.notifyListeners();
                                         },
                                         child: Container(
                                           height: 30,
@@ -320,7 +328,7 @@ class CartView extends StackedView<CartViewModel> {
                 Row(
                   children: [
                     Text(
-                      MoneyUtils().formatAmountToDollars(viewModel.raffleSubTotal),
+                      MoneyUtils().formatAmount(viewModel.raffleSubTotal),
                       style: const TextStyle(
                           fontSize: 20,
                           color: Colors.white,
@@ -472,7 +480,6 @@ class CartView extends StackedView<CartViewModel> {
   //   );
   // }
 
-
   void _showPaymentModal(BuildContext context, CartViewModel viewModel) {
     showModalBottomSheet(
       context: context,
@@ -500,15 +507,12 @@ class CartView extends StackedView<CartViewModel> {
                 isPaymentProcessing: isProcessing,
               );
             });
-
-
         },
       );
         });
       },
     );
   }
-
 
   @override
   void onViewModelReady(CartViewModel viewModel) {
@@ -521,6 +525,7 @@ class CartView extends StackedView<CartViewModel> {
     BuildContext context,
   ) =>
       CartViewModel();
+
 }
 
 

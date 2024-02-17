@@ -13,15 +13,12 @@ import 'package:afriprize/ui/views/profile/ticket_list.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-
-import '../../../core/data/models/profile.dart';
 import '../../../core/network/api_response.dart';
 import '../../../core/network/interceptors.dart';
 import 'profile_viewmodel.dart';
 
 class ProfileView extends StatelessWidget{
   const ProfileView({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {

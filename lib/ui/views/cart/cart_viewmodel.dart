@@ -93,9 +93,7 @@ class CartViewModel extends BaseViewModel {
 
   void getShopSubTotal() {
     int total = 0;
-
     for (var element in shopCart.value) {
-      // Ensure we have a non-null product and product price before attempting to use them.
       final product = element.product;
       if (product != null && product.productPrice != null && element.quantity != null) {
         total += product.productPrice! * element.quantity!;
@@ -108,9 +106,9 @@ class CartViewModel extends BaseViewModel {
 
   void getRaffleSubTotal() {
     int total = 0;
-
     for (var element in raffleCart.value) {
-      total = total + (element.raffle?.rafflePrice ?? 0 * element.quantity!);
+      final raffle = element.raffle;
+      total += (raffle?.rafflePrice ?? 0) * element.quantity!;
     }
 
     raffleSubTotal = total;
@@ -147,7 +145,6 @@ class CartViewModel extends BaseViewModel {
     }
 
     setBusy(true);
-    //TODO MAKE SURE TO SEPERATE AND HANDLE
     try {
       ApiResponse res = await repo.saveOrder({
         "items": shopCart.value
@@ -178,7 +175,6 @@ class CartViewModel extends BaseViewModel {
     if (raffleCart.value.isEmpty) {
       return null;
     }
-
     isPaymentProcessing.value = true;
     setBusy(true);
     try {
@@ -197,13 +193,9 @@ class CartViewModel extends BaseViewModel {
 
       } else {
         snackBar.showSnackbar(message: res.data["message"]);
-
       }
     } catch (e) {
       log.e(e);
-    }finally{
-      isPaymentProcessing.value = false;
-      setBusy(false);
     }
   }
 
@@ -213,22 +205,32 @@ class CartViewModel extends BaseViewModel {
     // Retrieve order IDs
     List<String> orderIds = list.map((e) => e.id.toString()).toList();
 
-    ApiResponse res = await MoneyUtils().chargeCardUtil(paymentMethod, orderIds, context, amount);
+    try{
+      ApiResponse res = await MoneyUtils().chargeCardUtil(paymentMethod, orderIds, context, amount);
 
-    if (res.statusCode == 200) {
-      if (paymentMethod == PaymentMethod.binancePay) {
-        Map<String, dynamic> binanceData = res.data['binance']['data'];
-        await Future.delayed(Duration(seconds: 1));
-        showBinancePayModal(context,binanceData, orderIds, module);
+      if (res.statusCode == 200) {
+        if (paymentMethod == PaymentMethod.binancePay) {
+          Map<String, dynamic> binanceData = res.data['binance']['data'];
+          await Future.delayed(Duration(seconds: 1));
+          showBinancePayModal(context,binanceData, orderIds, module);
+        }
+        else {
+          Navigator.pop(context);
+          showReceipt(module, context);
+        }
       } else {
-        //other payment methods
-        showReceipt(module, context);
+        Navigator.pop(context);
+        locator<SnackbarService>().showSnackbar(message: res.data["message"]);
+        locator<NavigationService>().replaceWithHomeView();
       }
-    } else {
-      Navigator.pop(context);
-      locator<SnackbarService>().showSnackbar(message: res.data["message"]);
-      locator<NavigationService>().replaceWithHomeView();
+    }catch(e){
+      log.e(e);
+    }finally{
+     
+      isPaymentProcessing.value = false;
+      setBusy(false);
     }
+
 
   }
 

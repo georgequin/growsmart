@@ -13,6 +13,7 @@ class LocalStorageDir {
   static const String product = "product";
   static const String adverts = "adverts";
   static const String featuredRaffle = "featuredRaffle";
+  static const String profileView = "profileView";
   static const String raffle = "raffle";
   static const String winners = "winners";
   static const String pastDraws = "pastDraws";

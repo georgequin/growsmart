@@ -7,6 +7,7 @@ import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../app/app.logger.dart';
+import '../../../core/data/models/product.dart';
 import '../../../core/data/models/raffle_ticket.dart';
 import '../../common/ui_helpers.dart';
 
@@ -25,6 +26,7 @@ class _OrderListState extends State<TicketList> {
   final repo = locator<Repository>();
   final log = getLogger("DrawsViewModel");
   List<RaffleTicket> raffle = [];
+  List<CombinedTicket> combinedTicket = [];
   int selectedIndex = 0;
 
   onPageChanged(int index) {
@@ -37,13 +39,38 @@ class _OrderListState extends State<TicketList> {
     try {
       ApiResponse res = await repo.raffleList();
       if (res.statusCode == 200) {
-        var raffleData = (res.data["participant"] as List)
-            .map((e) => RaffleTicket.fromJson(Map<String, dynamic>.from(e['raffledraw'])))
-            .toList();
+        // var raffleData = (res.data["participant"] as List)
+        //     .map((e) => RaffleTicket.fromJson(Map<String, dynamic>.from(e['raffledraw'])))
+        //     .toList();
+
+
+        (res.data["participant"] as List).forEach((participant) {
+          // Access the raffle draw information once since it's the same for all tickets of this participant
+          var raffleDraw = participant['raffledraw'];
+
+          (participant['ticket'] as List).forEach((ticket) {
+            // Combine ticket information with the raffle draw information
+            var combinedInfo = CombinedTicket(
+              raffleId: raffleDraw['id'],
+              ticketName: raffleDraw['ticket_name'],
+              ticketDescription: raffleDraw['ticket_description'],
+              ticketTracking: raffleDraw['ticket_tracking'],
+              endDate: raffleDraw['end_date'],
+              ticketStatus: ticket['status'],
+              startDate: raffleDraw['start_date'],
+              ticketId: ticket['id'],
+              raffleNumber: ticket['raffle_number'],
+              pictures: raffleDraw['pictures'].map<Pictures>((pic) => Pictures.fromJson(pic)).toList(),
+            );
+            setState(() {
+              combinedTicket.add(combinedInfo);
+            });
+          });
+        });
+
 
         setState(() {
-          raffle = raffleData;
-          loading = false; // Now we set loading to false after we get data
+          loading = false;
         });
       } else {
         setState(() {
@@ -86,7 +113,7 @@ class _OrderListState extends State<TicketList> {
           ? const Center(
         child: CircularProgressIndicator(),
       )
-          : raffle.isEmpty
+          : combinedTicket.isEmpty
           ? const EmptyState(
           animation: "empty_order.json", label: "No Tikets Yet")
           :
@@ -100,12 +127,12 @@ class _OrderListState extends State<TicketList> {
   }
 
   Widget _buildOrderList() {
-    return raffle.isEmpty ?  const EmptyState(
+    return combinedTicket.isEmpty ?  const EmptyState(
         animation: "empty_order.json", label: "No Ticket Yet") :
     ListView.builder(
-      itemCount: raffle.length,
+      itemCount: combinedTicket.length,
       itemBuilder: (context, index) {
-        RaffleTicket ticket = raffle[index];
+        CombinedTicket ticket = combinedTicket[index];
         return Card(
             margin: const EdgeInsets.all(8.0),
             elevation: 0,
@@ -139,7 +166,7 @@ class _OrderListState extends State<TicketList> {
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
                                             fit: BoxFit.cover,
-                                            image: NetworkImage(ticket.pictures!.isEmpty ? 'default_image_url' : ticket.pictures![0].location!),
+                                            image: NetworkImage(ticket.pictures?[0].location ?? 'https://via.placeholder.com/120'),
                                           ),
                                         ),
                                       ),
@@ -168,16 +195,16 @@ class _OrderListState extends State<TicketList> {
 
                                               children: [
                                                 Text(
-                                                  'Draw Date: ${DateFormat("d MMM").format(DateTime.parse(ticket.startDate!))}',
+                                                  'Draw Date: ${DateFormat("d MMM").format(DateTime.parse(ticket.endDate!))}',
                                                   style: const TextStyle(
                                                     fontSize: 14, // Adjust the size as needed
                                                     color: Colors.grey,
                                                   ),
                                                 ),
                                                 Chip(
-                                                  label: Text(ticket.status == 1 ? 'Active' : 'Completed',
+                                                  label: Text(ticket.ticketStatus == 1 ? 'Active' : 'Completed',
                                                       style: const TextStyle(color: Colors.white, fontSize: 12)),
-                                                  backgroundColor: ticket.status == 1 ? Colors.green : Colors.grey,
+                                                  backgroundColor: ticket.ticketStatus == 1 ? Colors.green : Colors.grey,
                                                 ),
                                               ],
                                             )
@@ -215,7 +242,7 @@ class _OrderListState extends State<TicketList> {
                                             ),
                                           ),
                                           Text(
-                                            ticket.ticketTracking ?? '',
+                                            ticket.raffleNumber ?? '',
                                             style: const TextStyle(
                                               fontSize: 17, // Adjust the size as needed
                                               fontWeight: FontWeight.bold,

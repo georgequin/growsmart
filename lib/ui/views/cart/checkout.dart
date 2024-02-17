@@ -58,7 +58,9 @@ class _CheckoutState extends State<Checkout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFFFF3DB),
       appBar: AppBar(
+        backgroundColor: Color(0xFFFFF3DB),
         centerTitle: true,
         title: const Text(
           "Checkout",
@@ -73,6 +75,7 @@ class _CheckoutState extends State<Checkout> {
           Card(
             child: ExpansionTile(
               initiallyExpanded: true,
+              backgroundColor: Color(0xFFFFFAF0),
               title: const Text(
                 "Order review",
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -91,7 +94,7 @@ class _CheckoutState extends State<Checkout> {
                     // height: 100,
                     decoration: BoxDecoration(
                       color: uiMode.value == AppUiModes.light
-                          ? kcWhiteColor
+                          ? Color(0xFFFFFAF0)
                           : kcBlackColor,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
@@ -148,6 +151,7 @@ class _CheckoutState extends State<Checkout> {
           Card(
             child: ExpansionTile(
               initiallyExpanded: true,
+              backgroundColor: Color(0xFFFFFAF0),
               childrenPadding: const EdgeInsets.symmetric(horizontal: 20),
               title: const Text(
                 "Billing summary",
@@ -217,6 +221,7 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMedium,
           Card(
             child: ExpansionTile(
+              backgroundColor: Color(0xFFFFFAF0),
               initiallyExpanded: true,
               childrenPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -706,6 +711,7 @@ class _CheckoutState extends State<Checkout> {
 
     ApiResponse res = await MoneyUtils().chargeCardUtil(PaymentMethod.wallet, orderIds, context, amount);
 
+
     if (res.statusCode == 200) {
       if (paymentMethod == 'binance') {
         // var binanceData = res.data["binance"]["data"];
@@ -807,8 +813,6 @@ class _CheckoutState extends State<Checkout> {
             setState(() {
               showReceipt();
             });
-
-
 
           } else {
             // Payment not successful, continue polling
@@ -952,14 +956,12 @@ class _CheckoutState extends State<Checkout> {
 
   void showReceipt() {
 
+    List<CartItem> receiptCart = List<CartItem>.from(shopCart.value);
 
-    List<CartItem> receiptCart = List<CartItem>.from(raffleCart.value);
-
-    raffleCart.value.clear();
-    raffleCart.notifyListeners();
-    List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+    shopCart.value.clear();
+    shopCart.notifyListeners();
+    List<Map<String, dynamic>> storedList = shopCart.value.map((e) => e.toJson()).toList();
     locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
-
 
     showModalBottomSheet(
       isScrollControlled: true,

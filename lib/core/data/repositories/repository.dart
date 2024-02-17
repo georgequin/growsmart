@@ -130,6 +130,15 @@ class Repository extends IRepository {
   }
 
   @override
+  Future<ApiResponse> convertToNaira(String amount) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "transaction/rates?amount=$amount",
+    );
+    return response;
+  }
+
+  @override
   Future<ApiResponse> resetPasswordRequest(String email) async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,

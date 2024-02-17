@@ -43,6 +43,7 @@ import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i27;
 import '../core/data/models/cart_item.dart';
 import '../core/data/models/raffle_ticket.dart';
+import '../ui/views/profile/order_list.dart';
 import '../ui/views/profile/ticket_list.dart' as _i28;
 
 class Routes {
@@ -61,6 +62,8 @@ class Routes {
   static const shopDashboardView = '/shop-dashboard-view';
 
   static const ticketView = '/ticket-view';
+
+  static const orderView = '/order-view';
 
   static const drawsView = '/draws-view';
 
@@ -136,6 +139,10 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.ticketView,
       page: _i28.TicketList,
+    ),
+    _i1.RouteDef(
+      Routes.orderView,
+      page: OrderList,
     ),
     _i1.RouteDef(
       Routes.startupView,
@@ -245,6 +252,12 @@ class StackedRouter extends _i1.RouterBase {
     _i28.TicketList: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => const _i28.TicketList(),
+        settings: data,
+      );
+    },
+    OrderList: (data) {
+      return _i21.MaterialPageRoute<dynamic>(
+        builder: (context) => const OrderList(),
         settings: data,
       );
     },
