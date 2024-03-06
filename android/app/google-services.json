@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "877177955248",
+    "project_id": "afriprize-762ab",
+    "storage_bucket": "afriprize-762ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877177955248:android:0ba0a0e8629d652030ac75",
+        "android_client_info": {
+          "package_name": "com.afriprize.afriprize"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0JGun_aEZTJ6RmvRciGRv_ZK5OR_k4eI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
