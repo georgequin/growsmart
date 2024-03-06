@@ -25,6 +25,12 @@ import '../profile/order_list.dart';
 import '../profile/ticket_list.dart';
 
 
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
 
 class ReceiptPage extends StatelessWidget {
   final List<CartItem> cart;

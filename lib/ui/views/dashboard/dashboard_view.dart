@@ -156,7 +156,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  raffle.ticketName ?? 'Product Name',
+                                  raffle.ticketName ?? 'raffle Name',
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -183,7 +183,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         : ValueListenableBuilder<List<RaffleCartItem>>(
                                       valueListenable: raffleCart,
                                       builder: (context, value, child) {
-                                        // Determine if product is in cart
+                                        // Determine if raffle is in cart
                                         bool isInCart = value.any((item) => item.raffle?.id == raffle.id);
                                         RaffleCartItem? cartItem = isInCart
                                             ? value.firstWhere((item) => item.raffle?.id == raffle.id)
@@ -282,14 +282,13 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     child: CircularProgressIndicator(),
                   )
                 : viewModel.raffleList.isEmpty ?
-            const Center(child: Text('No products available')) :
+            const Center(child: Text('No raffle available')) :
             ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: viewModel.raffleList.length,
                 itemBuilder: (context, index) {
                   if (viewModel.raffleList.isEmpty) {
-                    // Return a placeholder or an empty container
                     return Container(); // or SizedBox.shrink()
                   }
 
@@ -298,7 +297,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   }
 
                   Raffle raffle = viewModel.raffleList.elementAt(index);
-                  return Column(
+                 return Column(
                     children: [
                       InkWell(
                         onTap: () {
@@ -405,28 +404,25 @@ class RaffleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (viewModel.productList.isEmpty || index >= viewModel.productList.length) {
+    if (viewModel.raffleList.isEmpty || index >= viewModel.raffleList.length) {
       return Container();
     }
     CountdownTimerController controller = CountdownTimerController(endTime: 0);;
     int remainingStock = 0;
     int remainingDays = 0;
     int endTime = 0;
-    if(raffle != null){
+    final int stockTotal = raffle.stockTotal ?? 0;
+    final int verifiedSales = raffle.verifiedSales ?? 0;
+    remainingStock = stockTotal - verifiedSales;
 
-      final int stockTotal = raffle.stockTotal ?? 0;
-      final int verifiedSales = raffle.verifiedSales ?? 0;
-      remainingStock = stockTotal - verifiedSales;
-
-      DateTime now = DateTime.now();
-      DateTime drawDate = DateFormat("yyyy-MM-dd").parse(raffle.endDate ?? '2024-02-04T00:00:00.000Z');
-      // DateTime drawDate = DateFormat("yyyy-MM-dd").parse("2024-02-04T00:00:00.000Z");
-      Duration timeDifference = drawDate.difference(now);
-      remainingDays = timeDifference.inDays;
+    DateTime now = DateTime.now();
+    DateTime drawDate = DateFormat("yyyy-MM-dd").parse(raffle.endDate ?? '2024-02-04T00:00:00.000Z');
+    // DateTime drawDate = DateFormat("yyyy-MM-dd").parse("2024-02-04T00:00:00.000Z");
+    Duration timeDifference = drawDate.difference(now);
+    remainingDays = timeDifference.inDays;
 // Adding the current time to the timeDifference to get the future end time
-      endTime = now.add(timeDifference).millisecondsSinceEpoch;
-      controller = CountdownTimerController(endTime: endTime, onEnd: viewModel.onEnd);
-    }
+    endTime = now.add(timeDifference).millisecondsSinceEpoch;
+    controller = CountdownTimerController(endTime: endTime, onEnd: viewModel.onEnd);
 
 
     // Check conditions to set the color and text
@@ -502,7 +498,7 @@ class RaffleRow extends StatelessWidget {
                     ),
 
                     Text(
-                      raffle.ticketName ?? 'Product Name',
+                      raffle.ticketName ?? 'raffle Name',
                       style:  TextStyle(
                           fontSize: 20,
                           color: uiMode.value == AppUiModes.light ? kcPrimaryColor : kcSecondaryColor,
@@ -651,7 +647,7 @@ class RaffleRow extends StatelessWidget {
                                 : ValueListenableBuilder<List<RaffleCartItem>>(
                               valueListenable: raffleCart,
                               builder: (context, value, child) {
-                                // Determine if product is in cart
+                                // Determine if raffle is in cart
                                 bool isInCart = value.any((item) => item.raffle?.id == raffle.id);
                                 RaffleCartItem? cartItem = isInCart
                                     ? value.firstWhere((item) => item.raffle?.id == raffle.id)

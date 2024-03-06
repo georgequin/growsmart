@@ -606,7 +606,7 @@ class DrawsCard extends StatelessWidget {
                           color: kcSecondaryColor, // Set the background color to blue
                           padding: const EdgeInsets.all(7.0),
                           child: Marquee(
-                            text: isWinner ?  'SOLD OUT SOLD OUT SOLD OUT' : 'WINNER WINNER WINNER WINNER', // Your text here
+                            text: !isWinner ?  'SOLD OUT SOLD OUT SOLD OUT' : 'WINNER WINNER WINNER WINNER', // Your text here
                             style: TextStyle(fontWeight: FontWeight.bold,
                             fontSize: 19, fontFamily: "Panchang"),
                             scrollAxis: Axis.horizontal,

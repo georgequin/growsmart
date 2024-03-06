@@ -2,6 +2,14 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class DropdownWidget extends StatelessWidget {
   final value;
   final List<String> itemsList;

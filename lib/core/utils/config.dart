@@ -1,3 +1,9 @@
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
 class AppConfig {
   // static const String baseUrl = "https://api.afriprize.com/api/v1/";
   // static const String baseUrl = "https://staging-server.afriprize.com/api/v1/";
@@ -13,5 +19,7 @@ class AppConfig {
   static const String youtubeOfficial = 'https://www.youtube.com/@Afriprize/featured';
   static const String instagramOfficial = 'https://www.instagram.com/afriprize/?hl=en';
   static const bool isTestMode = false;
+  static const String APPLESTOREURL = 'https://apps.apple.com/ng/app/afriprize-mobile/id6474942596';
+  static const String GOOGLESTOREURL = 'https://play.google.com/store/apps/details?id=com.afriprize.afriprize&pcampaignid=web_share';
 
 }

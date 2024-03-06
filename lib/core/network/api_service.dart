@@ -9,6 +9,14 @@ import 'package:flutter/foundation.dart';
 
 import 'api_response.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 enum HttpMethod { get, post, postRefresh, patch, put, delete }
 
 class ApiService {

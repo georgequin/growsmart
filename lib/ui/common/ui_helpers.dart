@@ -2,6 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 const double _tinySize = 5.0;
 const double _smallSize = 10.0;
 const double _mediumSize = 25.0;

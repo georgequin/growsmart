@@ -6,6 +6,12 @@ import 'package:sembast/sembast_io.dart';
 
 import 'local_store_dir.dart';
 
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
 class LocalStorage {
   Future save(String key, dynamic value) async {
     var store = StoreRef.main();

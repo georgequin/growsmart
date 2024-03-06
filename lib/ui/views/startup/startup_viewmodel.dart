@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
@@ -24,7 +23,6 @@ class StartupViewModel extends BaseViewModel {
     String? token = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
     String? user = await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
     bool? onboarded = await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
-
     if (onboarded == null || onboarded == false) {
       _navigationService.replaceWithOnboardingView();
     } else {
@@ -36,4 +34,6 @@ class StartupViewModel extends BaseViewModel {
       // _navigationService.replaceWithAuthView();
     }
   }
+
+
 }

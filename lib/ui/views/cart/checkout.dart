@@ -23,6 +23,14 @@ import 'add_shipping.dart';
 import 'custom_reciept.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class Checkout extends StatefulWidget {
   final List<OrderInfo> infoList;
 

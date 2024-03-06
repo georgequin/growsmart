@@ -6,6 +6,14 @@ import 'package:stacked_services/stacked_services.dart';
 
 import 'info_alert_dialog_model.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 const double _graphicSize = 60;
 
 class InfoAlertDialog extends StackedView<InfoAlertDialogModel> {

@@ -28,6 +28,11 @@ import 'package:afriprize/ui/views/enter_email/enter_email_view.dart';
 import 'package:afriprize/ui/views/delete_account/delete_account_view.dart';
 import 'package:afriprize/ui/views/withdraw/withdraw_view.dart';
 // @stacked-import
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
 
 @StackedApp(
   logger: StackedLogger(),

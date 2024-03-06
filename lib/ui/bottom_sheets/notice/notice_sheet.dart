@@ -6,6 +6,14 @@ import 'package:stacked_services/stacked_services.dart';
 
 import 'notice_sheet_model.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class NoticeSheet extends StackedView<NoticeSheetModel> {
   final Function(SheetResponse)? completer;
   final SheetRequest request;

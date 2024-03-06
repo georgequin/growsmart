@@ -58,34 +58,8 @@ class _BinancePayModalState extends State<BinancePayModal> {
                 animation: "binance_loader.json",
                 label: "paying...",
               ),
-              // Image.network(
-              //   widget.binanceData["qrcodeLink"],
-              //   loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-              //     if (loadingProgress == null) return child;
-              //     return Center(
-              //       child: CircularProgressIndicator(
-              //         value: loadingProgress.expectedTotalBytes != null
-              //             ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-              //             : null,
-              //       ),
-              //     );
-              //   },
-              // ),
             ),
             SizedBox(height: 20),
-            // if (!isLoading)
-            //   InkWell(
-            //     onTap: () {
-            //       setState(() {
-            //         isLoading = true;
-            //       });
-            //       _openBinanceApp(widget.binanceData);
-            //       // Start the initial polling
-            //       pollPaymentStatus();
-            //     },
-            //     child: const Text('Open App >', style: TextStyle(color: kcSecondaryColor, fontWeight: FontWeight.bold)),
-            //   ),
-            // if (isLoading) const CircularProgressIndicator(color: kcSecondaryColor),
           ],
         ),
       ),

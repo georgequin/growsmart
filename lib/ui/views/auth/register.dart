@@ -11,6 +11,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/country_picker_utils.dart';
 import '../../common/ui_helpers.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class Register extends StatefulWidget {
   // final TabController controller;
   final Function(bool) updateIsLogin;

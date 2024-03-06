@@ -9,6 +9,14 @@ import 'package:stacked/stacked.dart';
 import '../../../utils/money_util.dart';
 import 'cart_viewmodel.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class ShopCartView extends StackedView<CartViewModel> {
   const ShopCartView({Key? key}) : super(key: key);
 

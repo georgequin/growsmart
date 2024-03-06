@@ -20,6 +20,13 @@ import '../../common/app_colors.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 
 
 class RaffleReceiptPage extends StatelessWidget {

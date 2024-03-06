@@ -2,6 +2,14 @@ import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class AuthView extends StatefulWidget {
   const AuthView({Key? key}) : super(key: key);
 

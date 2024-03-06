@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../common/app_colors.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class Background extends StatelessWidget {
   final List<Widget> children;
 

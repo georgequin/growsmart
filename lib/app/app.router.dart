@@ -46,6 +46,12 @@ import '../core/data/models/raffle_ticket.dart';
 import '../ui/views/profile/order_list.dart';
 import '../ui/views/profile/ticket_list.dart' as _i28;
 
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
 class Routes {
   static const homeView = '/home-view';
 

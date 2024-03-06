@@ -24,6 +24,7 @@ class HomeView extends StackedView<HomeViewModel> {
       HomeViewModel viewModel,
       Widget? child,
       ) {
+    viewModel.checkForUpdates(context);
     // You can use ValueListenableBuilder to react to changes in currentModuleNotifier
     return ValueListenableBuilder<AppModules>(
       valueListenable: currentModuleNotifier, // Your ValueNotifier
@@ -169,7 +170,7 @@ class BottomNavBar extends StatelessWidget {
   Widget _navBarItemIcon(String iconData, bool isSelected, Color iconColor) {
     return Container(
         width: 30,
-        height: 50,
+        height: 30,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isSelected ? kcSecondaryColor.withOpacity(0.2) : Colors.transparent,
@@ -217,6 +218,7 @@ class BottomNavBar extends StatelessWidget {
       },
     );
   }
+
 
 }
 

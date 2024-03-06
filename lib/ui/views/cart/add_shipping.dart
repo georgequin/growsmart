@@ -16,6 +16,14 @@ import '../../../core/data/models/country.dart';
 import '../../../utils/country_picker_utils.dart';
 import '../../../utils/country_utils.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class AddShipping extends StatefulWidget {
   const AddShipping({Key? key}) : super(key: key);
 

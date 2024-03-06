@@ -4,6 +4,14 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/background.dart';
 import 'package:flutter/material.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class SuccessPage extends StatefulWidget {
   final String title;
   final String description;

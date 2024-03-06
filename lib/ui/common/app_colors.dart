@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 const Color kcPrimaryColor = Color(0xFF010038);
 const Color kcSecondaryColor = Color(0xFFCC9933);
 const Color kcStarColor = Color(0xFFFDCC0D);

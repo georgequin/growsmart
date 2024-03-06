@@ -2,6 +2,14 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class TextFieldWidget extends StatelessWidget {
   final String? label;
   final String hint;

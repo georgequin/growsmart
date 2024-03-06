@@ -1,5 +1,12 @@
 import 'package:dio/dio.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
 class ApiResponse {
   Response response;
 

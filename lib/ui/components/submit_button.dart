@@ -2,6 +2,14 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class SubmitButton extends StatelessWidget {
   final bool isLoading;
   final String label;

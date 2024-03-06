@@ -20,6 +20,14 @@ import 'checkout.dart';
 import 'custom_reciept.dart';
 
 
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
+
 class CartViewModel extends BaseViewModel {
   final repo = locator<Repository>();
   final snackBar = locator<SnackbarService>();

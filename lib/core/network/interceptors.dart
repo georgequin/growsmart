@@ -15,6 +15,14 @@ import '../utils/local_stotage.dart';
 import 'api_response.dart';
 import 'api_service.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 final nav = locator<NavigationService>();
 
 final logInterceptor = PrettyDioLogger(

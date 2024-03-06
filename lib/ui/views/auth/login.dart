@@ -9,6 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class Login extends StatefulWidget {
   final Function(bool) updateIsLogin;
   const Login({Key? key, required this.updateIsLogin}) : super(key: key);

@@ -5,6 +5,14 @@ import 'package:afriprize/ui/components/background.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class PaymentSuccessPage extends StatefulWidget {
   final String title;
   final String animation;

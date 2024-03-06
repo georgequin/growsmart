@@ -17,6 +17,14 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/data/models/profile.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 enum RegistrationResult { success, failure }
 class AuthViewModel extends BaseViewModel {
   final log = getLogger("AuthViewModel");

@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
+
 class ProfilePicture extends StatelessWidget {
   final double? size;
   final String? url;

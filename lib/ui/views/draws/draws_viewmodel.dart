@@ -36,7 +36,7 @@ class DrawsViewModel extends BaseViewModel {
   }
 
   Future<void> loadSoldOuts() async {
-    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.raffle);
+    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.soldOut);
     if (storedRaffle != null) {
       soldOutDraws = List<Map<String, dynamic>>.from(storedRaffle)
           .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e)))
@@ -81,7 +81,7 @@ class DrawsViewModel extends BaseViewModel {
       if (res.statusCode == 200) {
         soldOutDraws = (res.data["raffle"] as List).map((e) => Raffle.fromJson(Map<String, dynamic>.from(e))).toList();
         List<Map<String, dynamic>> storedRaffles = soldOutDraws.map((e) => e.toJson()).toList();
-        locator<LocalStorage>().save(LocalStorageDir.raffle, storedRaffles);
+        locator<LocalStorage>().save(LocalStorageDir.soldOut, storedRaffles);
         rebuildUi();
       }
     } catch (e) {

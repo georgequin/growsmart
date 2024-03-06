@@ -1,3 +1,9 @@
+/**
+ * @author George David
+ * email: georgequin19@gmail.com
+ * Feb, 2024
+ **/
+
 class LocalStorageDir {
   static const String dbName = "afriprize.db";
   static const String authToken = "token";
@@ -17,6 +23,7 @@ class LocalStorageDir {
   static const String raffle = "raffle";
   static const String winners = "winners";
   static const String pastDraws = "pastDraws";
+  static const String soldOut = "soldOut";
   static const String sellingFast = "sellingFast";
   static const String notification = "notification";
 
