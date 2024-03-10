@@ -521,11 +521,15 @@ class DrawsView extends StatelessWidget {
                   itemBuilder: (context, index) {
                     // Replace with your WinnerCard Widget
                     Winner winner = viewModel.winners.elementAt(index);
-                    return DrawsCard(
-                      raffle: winner.raffle!,
-                      viewModel: viewModel,
-                      index: index, isWinner: true,
-                      winner: winner,
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0), // Adjust the padding value as needed
+                      child: DrawsCard(
+                        raffle: winner.raffle!,
+                        viewModel: viewModel,
+                        index: index,
+                        isWinner: true,
+                        winner: winner,
+                      ),
                     );
                   },
                 ),

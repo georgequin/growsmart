@@ -140,6 +140,39 @@ class CombinedTicket {
   }
 }
 
+class SingleTicket {
+  String? id;
+  String? ticketTracking;
+  bool? status;
+  String? created;
+  String? updated;
+
+  SingleTicket(
+      {this.id,
+        this.ticketTracking,
+        this.status,
+        this.created,
+        this.updated,});
+
+  SingleTicket.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    ticketTracking = json['ticket_tracking'];
+    status = json['status'];
+    created = json['created'];
+    updated = json['updated'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['raffle_number'] = ticketTracking;
+    data['status'] = status;
+    data['created'] = created;
+    data['updated'] = updated;
+    return data;
+  }
+}
+
 class Participants {
   String? id;
   String? raffleNumber;
@@ -178,7 +211,7 @@ class Winner {
    DateTime? updated;
    User? user;
    Raffle? raffle;
-   List<RaffleTicket>? tickets;
+   List<SingleTicket>? tickets;
 
   Winner(
       {this.id,
@@ -193,15 +226,16 @@ class Winner {
 
    Winner.fromJson(Map<String, dynamic> json) {
       id = json['id'];
-      status = json['status'];
-      entry = json['entry'];
-      // winner = json['winner'];
-      winner = json['winner'];
+      status = json['status'] is bool ? json['status'] : null;
+      entry = json['entry'] is int ? json['entry'] : null;
+      // // entry = json['entry'];
+      // // winner = json['winner'];
+      winner = json['winner'] is bool ? json['winner'] : null;
       created = DateTime.parse(json['created']);
       updated = DateTime.parse(json['updated']);
       user =  User.fromJson(json['user']);
       raffle = Raffle.fromJson(json['raffledraw']);
-      tickets = List<RaffleTicket>.from(json['ticket'].map((x) => RaffleTicket.fromJson(x)));
+      tickets = List<SingleTicket>.from(json['ticket'].map((x) => SingleTicket.fromJson(x)));
   }
 
   Map<String, dynamic> toJson() {
@@ -210,8 +244,10 @@ class Winner {
     // data['status'] = status;
     // data['entry'] = entry;
     // data['winner'] = winner;
-    data['created'] = created;
-    data['updated'] = updated;
+    // data['created'] = created;
+    // data['updated'] = updated;
+    data['created'] = created?.toIso8601String();
+    data['updated'] = updated?.toIso8601String();
 
     if (user != null) {
       data['user'] = user!.toJson();
