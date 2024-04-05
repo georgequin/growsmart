@@ -3,11 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 const double _tinySize = 5.0;
@@ -27,8 +26,8 @@ const Widget verticalSpaceMedium = SizedBox(height: _mediumSize);
 const Widget verticalSpaceLarge = SizedBox(height: _largeSize);
 const Widget verticalSpaceMassive = SizedBox(height: _massiveSize);
 
-Widget spacedDivider = Column(
-  children: const <Widget>[
+Widget spacedDivider = const Column(
+  children: <Widget>[
     verticalSpaceMedium,
     Divider(color: Colors.blueGrey, height: 5.0),
     verticalSpaceMedium,

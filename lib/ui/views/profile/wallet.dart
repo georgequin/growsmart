@@ -4,9 +4,7 @@ import 'package:afriprize/core/data/models/profile.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
-import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:afriprize/ui/views/profile/deposit.dart';
 import 'package:flutter/material.dart';
 import 'package:afriprize/core/data/models/profile.dart' as pro;
 import 'package:flutter_svg/svg.dart';
@@ -126,7 +124,7 @@ class _WalletState extends State<Wallet> {
 
                       Container(
                         margin: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 0.0),
-                        child: Image(image: AssetImage('assets/images/wallet_home.png'), height: 210),
+                        child: const Image(image: AssetImage('assets/images/wallet_home.png'), height: 210),
                         // SvgPicture.asset(
                         //   'assets/images/wallet_home.png',
                         //   height: 210,
@@ -141,9 +139,9 @@ class _WalletState extends State<Wallet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Afriprize Card Balance',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: kcPrimaryColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11
@@ -151,7 +149,7 @@ class _WalletState extends State<Wallet> {
                           ),
                           Text(
                             '\$${wallet.balance ?? 0}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 34, // Size for the dollar amount
                               fontWeight: FontWeight.w900,
                               color: kcPrimaryColor,
@@ -224,7 +222,7 @@ class _WalletState extends State<Wallet> {
                                 child: ListTile(
                                   minLeadingWidth: 10, // Reduced to align with the design
                                   leading: Container(
-                                    margin: EdgeInsets.only(right: 8), // Adjust spacing if needed
+                                    margin: const EdgeInsets.only(right: 8), // Adjust spacing if needed
                                     child: transaction.type == 1 ?  SvgPicture.asset(
                                       'assets/icons/shop_out.svg',
                                       height: 28, // Icon size
@@ -235,7 +233,7 @@ class _WalletState extends State<Wallet> {
                                       'assets/icons/ticket_out.svg',
                                       height: 28, // Icon size
                                     ) :
-                                    Icon(
+                                    const Icon(
                                        Icons.monetization_on, // Adjusted to + for credit, - for debit
                                       color: kcPrimaryColor,
                                     ),

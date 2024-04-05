@@ -10,11 +10,10 @@ import '../../../utils/money_util.dart';
 import 'cart_viewmodel.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class ShopCartView extends StackedView<CartViewModel> {
@@ -27,9 +26,9 @@ class ShopCartView extends StackedView<CartViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF3DB),
+      backgroundColor: const Color(0xFFFFF3DB),
       appBar: AppBar(
-        backgroundColor: Color(0xFFFFF3DB),
+        backgroundColor: const Color(0xFFFFF3DB),
         centerTitle: false,
         title: const Text(
           "My Carts",
@@ -75,7 +74,7 @@ class ShopCartView extends StackedView<CartViewModel> {
                           margin: const EdgeInsets.symmetric(vertical: 10),
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: uiMode.value == AppUiModes.light ? Color(0xFFFFFAF0) : kcBlackColor,
+                            color: uiMode.value == AppUiModes.light ? const Color(0xFFFFFAF0) : kcBlackColor,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(

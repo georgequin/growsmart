@@ -20,11 +20,10 @@ import 'checkout.dart';
 import 'custom_reciept.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 
@@ -44,7 +43,7 @@ class CartViewModel extends BaseViewModel {
 
   PaymentMethod get selectedMethod => selectedPaymentMethod.value;
 
-  bool _isDisposed = false;
+  final bool _isDisposed = false;
 
   @override
   void dispose() {
@@ -219,7 +218,7 @@ class CartViewModel extends BaseViewModel {
       if (res.statusCode == 200) {
         if (paymentMethod == PaymentMethod.binancePay) {
           Map<String, dynamic> binanceData = res.data['binance']['data'];
-          await Future.delayed(Duration(seconds: 1));
+          await Future.delayed(const Duration(seconds: 1));
           showBinancePayModal(context,binanceData, orderIds, module);
         }
         else {

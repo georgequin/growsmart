@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
@@ -398,7 +397,7 @@ class _OrderListState extends State<OrderList> {
                                                 if (res.statusCode == 200) {
                                                   if (selectedOrderPaymentMethod.value == PaymentMethod.binancePay) {
                                                     Map<String, dynamic> binanceData = res.data['binance']['data'];
-                                                    await Future.delayed(Duration(seconds: 1));
+                                                    await Future.delayed(const Duration(seconds: 1));
                                                     showBinancePayModal(context,binanceData, orderIds, AppModules.raffle);
                                                   }else{
                                                     Navigator.pop(context);
@@ -535,7 +534,7 @@ class _OrderListState extends State<OrderList> {
                                                   .spaceEvenly,
                                               children: <Widget>[
                                                 Container(
-                                                  padding: EdgeInsets.all(5),
+                                                  padding: const EdgeInsets.all(5),
                                                   decoration: BoxDecoration(
                                                     border: Border.all(
                                                       color: kcPrimaryColor,

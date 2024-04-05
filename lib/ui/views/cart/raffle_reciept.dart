@@ -1,4 +1,3 @@
-import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/utils/date_time_utils.dart';
@@ -13,18 +12,16 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
-import '../../../core/data/models/raffle_ticket.dart';
 import '../../../utils/cart_utill.dart';
 import '../../../widget/custom_clipper.dart';
 import '../../common/app_colors.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 
@@ -50,8 +47,7 @@ class RaffleReceiptPage extends StatelessWidget {
                     createAndSharePdf();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.grey.shade300,
-                    onPrimary: Colors.black,
+                    foregroundColor: Colors.black, backgroundColor: Colors.grey.shade300,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -88,8 +84,7 @@ class RaffleReceiptPage extends StatelessWidget {
                                     createAndSharePdf();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    primary: Colors.white, // Use the appropriate color for your app
-                                    onPrimary: Colors.black,
+                                    foregroundColor: Colors.black, backgroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -206,7 +201,7 @@ class RaffleReceiptPage extends StatelessWidget {
                   locator<NavigationService>().clearStackAndShow(Routes.homeView);
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: kcSecondaryColor, // Use the appropriate color for your app
+                  backgroundColor: kcSecondaryColor, // Use the appropriate color for your app
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -275,7 +270,7 @@ class RaffleReceiptPage extends StatelessWidget {
                 ],
               ),
               pw.Container(
-                margin:  pw.EdgeInsets.symmetric(vertical: 16.0),
+                margin:  const pw.EdgeInsets.symmetric(vertical: 16.0),
 
                 decoration: pw.BoxDecoration(
                   borderRadius: pw.BorderRadius.circular(10.0),
@@ -376,8 +371,8 @@ class RaffleReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.raffle!.ticketName!, style: pw.TextStyle(fontSize: 10.61)),
-                pw.Text('${cartItem.quantity}', style: pw.TextStyle(fontSize: 10.61)),
+                pw.Text(cartItem.raffle!.ticketName!, style: const pw.TextStyle(fontSize: 10.61)),
+                pw.Text('${cartItem.quantity}', style: const pw.TextStyle(fontSize: 10.61)),
               ],
             ),
           ),

@@ -3,7 +3,6 @@ import 'package:afriprize/core/utils/config.dart';
 import 'package:afriprize/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterwave_standard/flutterwave.dart';
-import 'package:uuid/uuid.dart';
 
 class FlutterwavePaymentService {
   Future<ChargeResponse> makePayment({
@@ -15,14 +14,14 @@ class FlutterwavePaymentService {
     bool isTestMode = true,
   }) async {
     final Customer customer = Customer(
-      name: "Afriprize NG",
+      name: '${profile.value.firstname} ${profile.value.lastname}' ?? "Afriprize NG",
       phoneNumber: profile.value.phone ?? "07045007400",
       email: profile.value.email ?? 'dev@afriprize.com',
     );
 
     final Flutterwave flutterwave = Flutterwave(
       context: context,
-      publicKey: AppConfig.flutterWaveLiveKey,
+      publicKey: AppConfig.flutterWaveTestKey,
       currency: "NGN",
       amount: amount,
       txRef: getReference(),

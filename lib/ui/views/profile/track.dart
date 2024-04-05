@@ -71,7 +71,7 @@ class _TrackState extends State<Track> {
                               : DecorationImage(
                                   fit: BoxFit.cover,
                                   image: NetworkImage(widget
-                                      .item.product!.pictures![0].location!!),
+                                      .item.product!.pictures![0].location!),
                                 ),
                         ),
                       ),

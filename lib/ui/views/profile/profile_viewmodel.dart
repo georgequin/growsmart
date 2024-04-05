@@ -48,7 +48,7 @@ class ProfileViewModel extends BaseViewModel {
 
     try {
       ApiResponse res = await locator<Repository>().updateProfilePicture({
-        "picture": await MultipartFile.fromFile(File(result!.path).path),
+        "picture": await MultipartFile.fromFile(File(result.path).path),
       });
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: res.data["message"]);

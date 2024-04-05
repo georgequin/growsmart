@@ -1,25 +1,20 @@
-import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
-import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked/stacked.dart';
 import '../../../utils/money_util.dart';
 import '../../../utils/paymentModal.dart';
 import 'cart_viewmodel.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class CartView extends StackedView<CartViewModel> {
@@ -35,7 +30,7 @@ class CartView extends StackedView<CartViewModel> {
       appBar: AppBar(
         centerTitle: false,
         title: const Text(
-          "My Carts", style: const TextStyle(
+          "My Carts", style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
             fontFamily: "Panchang"
@@ -304,7 +299,7 @@ class CartView extends StackedView<CartViewModel> {
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: kcSecondaryColor, borderRadius: BorderRadius.circular(5),// Adjust the color to match the design
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 4,
@@ -325,7 +320,7 @@ class CartView extends StackedView<CartViewModel> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   "Total Amount",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -378,19 +373,18 @@ class CartView extends StackedView<CartViewModel> {
           _showPaymentModal(context, viewModel);
       },
       style: ElevatedButton.styleFrom(
-        primary: kcSecondaryColor, // Adjust button color to match design
-        onPrimary: kcPrimaryColor, // Text color
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        foregroundColor: kcPrimaryColor, backgroundColor: kcSecondaryColor, // Text color
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8), // Button corner radius
         ),
         elevation: 0, // Remove elevation
-        textStyle: TextStyle(
+        textStyle: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16, // Adjust the font size as needed
         ),
       ),
-      child: Column(
+      child: const Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -2,8 +2,6 @@ import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/product.dart';
-import 'package:afriprize/core/data/repositories/repository.dart';
-import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
@@ -84,7 +82,7 @@ class _ShopDetailState extends State<ShopDetail> {
         },
         builder: (context, viewModel, child) {
           return Scaffold(
-            backgroundColor: Color(0xFFFFF3DB),
+            backgroundColor: const Color(0xFFFFF3DB),
             body: CustomScrollView(
               slivers: [
                 SliverList(
@@ -168,13 +166,13 @@ class _ShopDetailState extends State<ShopDetail> {
                                         'Buy ${widget.product.productName!}',
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2, // Adjust max lines as needed
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 8), // Space between the name and the price
+                                    const SizedBox(width: 8), // Space between the name and the price
                                     Text(
                                       " ${MoneyUtils().formatAmount(widget.product.productPrice!)}",
                                       style: TextStyle(
@@ -194,15 +192,15 @@ class _ShopDetailState extends State<ShopDetail> {
                       ),
                       verticalSpaceSmall,
                       Container(
-                        margin:  EdgeInsets.symmetric(horizontal: 20),
+                        margin:  const EdgeInsets.symmetric(horizontal: 20),
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
                         decoration: BoxDecoration(
-                          color: Color(0xFFecdcb7),
+                          color: const Color(0xFFecdcb7),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.info,
                               color: Color(0xFFCC9933),
                             ),
@@ -365,7 +363,7 @@ class _ShopDetailState extends State<ShopDetail> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 20),
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFFFF3DB).withOpacity(0.9),
+                                      color: const Color(0xFFFFF3DB).withOpacity(0.9),
                                       borderRadius:
                                       BorderRadius.circular(9)),
                                   child: Row(

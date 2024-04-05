@@ -20,11 +20,10 @@ import 'package:video_player/video_player.dart';
 import '../../../core/data/models/product.dart';
 import 'dashboard_viewmodel.dart';
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 class DashboardView extends StackedView<DashboardViewModel> {
   DashboardView({Key? key}) : super(key: key);
@@ -133,7 +132,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: CachedNetworkImage(
-                              placeholder: (context, url) => Center(
+                              placeholder: (context, url) => const Center(
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2.0, // Make the loader thinner
                                   valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
@@ -228,7 +227,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                         )
                                             : ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            primary: kcPrimaryColor, // Button background color
+                                            backgroundColor: kcPrimaryColor, // Button background color
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(5),
                                             ),
@@ -407,7 +406,7 @@ class RaffleRow extends StatelessWidget {
     if (viewModel.raffleList.isEmpty || index >= viewModel.raffleList.length) {
       return Container();
     }
-    CountdownTimerController controller = CountdownTimerController(endTime: 0);;
+    CountdownTimerController controller = CountdownTimerController(endTime: 0);
     int remainingStock = 0;
     int remainingDays = 0;
     int endTime = 0;
@@ -464,7 +463,7 @@ class RaffleRow extends StatelessWidget {
                     Radius.circular(12),
                   ),
                   child: CachedNetworkImage(
-                    placeholder: (context, url) => Center(
+                    placeholder: (context, url) => const Center(
                       child: CircularProgressIndicator(
                         strokeWidth: 2.0, // Make the loader thinner
                         valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color

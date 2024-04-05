@@ -27,7 +27,7 @@ class PaymentModalWidget extends StatelessWidget {
     // Define your modal UI here
     return Container(
       padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: kcSecondaryColor,
         borderRadius: BorderRadius.only(topRight: Radius.circular(25.0), topLeft: Radius.circular(25.0)),
       ),
@@ -35,7 +35,7 @@ class PaymentModalWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Your modal content goes here
-          Text(
+          const Text(
             "Choose Payment Method",
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -44,7 +44,7 @@ class PaymentModalWidget extends StatelessWidget {
               fontFamily: "Panchang",
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Wrap(
             spacing: 0.0, // Space between the chips
             runSpacing: 2.0, // Space between the rows
@@ -68,15 +68,15 @@ class PaymentModalWidget extends StatelessWidget {
             ],
           ),
           verticalSpaceMedium,
-          Divider(color: Colors.white54),
+          const Divider(color: Colors.white54),
           _buildTotalSection(totalAmount),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           isPaymentProcessing ? const CircularProgressIndicator() :
           ElevatedButton(
           onPressed: onProceedWithPayment,
           style: ElevatedButton.styleFrom(
-            primary: kcPrimaryColor, // Button color
-            minimumSize: Size.fromHeight(50), // Button height
+            backgroundColor: kcPrimaryColor, // Button color
+            minimumSize: const Size.fromHeight(50), // Button height
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +88,7 @@ class PaymentModalWidget extends StatelessWidget {
               horizontalSpaceSmall,
               Text(
                 "Pay   \$${totalAmount.toStringAsFixed(2)}", // Adjust text format as needed
-                style: TextStyle(fontSize: 18,
+                style: const TextStyle(fontSize: 18,
                     fontWeight: FontWeight.bold,
                     fontFamily: "Panchang"
                 ),
@@ -116,7 +116,7 @@ class PaymentModalWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
           border: Border.all(
             color: isSelected ? kcPrimaryColor : Colors.transparent,
@@ -159,11 +159,11 @@ class PaymentModalWidget extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: const TextStyle(color: Colors.white, fontSize: 16),
           ),
           Text(
             amount,
-            style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold),
+            style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold),
           ),
         ],
       ),

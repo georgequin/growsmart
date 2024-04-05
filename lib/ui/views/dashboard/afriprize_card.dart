@@ -13,7 +13,7 @@ class PrizeCard extends StatelessWidget {
 
         // Card with a title, SVG icon, and a price
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             color: Colors.blue, // Assuming the card background is blue
             borderRadius: BorderRadius.circular(10),
@@ -25,8 +25,8 @@ class PrizeCard extends StatelessWidget {
                 color: Colors.white, // Icon color
                 height: 24, // Icon size
               ),
-              SizedBox(width: 8), // Spacing between icon and text
-              Text(
+              const SizedBox(width: 8), // Spacing between icon and text
+              const Text(
                 'Afriprize Card',
                 style: TextStyle(
                   color: Colors.white,
@@ -34,8 +34,8 @@ class PrizeCard extends StatelessWidget {
                   // Other text style properties
                 ),
               ),
-              SizedBox(width: 8), // Spacing between text and price
-              Text(
+              const SizedBox(width: 8), // Spacing between text and price
+              const Text(
                 '\$5.00',
                 style: TextStyle(
                   color: Colors.white,

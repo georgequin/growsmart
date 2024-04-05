@@ -16,11 +16,10 @@ import 'api_response.dart';
 import 'api_service.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 final nav = locator<NavigationService>();
@@ -36,7 +35,7 @@ final logInterceptor = PrettyDioLogger(
 );
 
 int refreshTokenRetryCount = 0;
-final int maxRetryCount = 3;
+const int maxRetryCount = 3;
 final repo = locator<Repository>();
 final apiService = locator<ApiService>();
 bool isDialogBeingDisplayed = false;

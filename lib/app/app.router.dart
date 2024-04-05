@@ -13,7 +13,7 @@ import 'package:afriprize/ui/components/payment_success_page.dart';
 import 'package:afriprize/ui/views/auth/auth_view.dart' as _i5;
 import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:afriprize/ui/views/cart/add_shipping.dart';
-import 'package:afriprize/ui/views/cart/cart_view.dart' as _i8;
+import 'package:afriprize/ui/views/cart/raffle_cart_view.dart' as _i8;
 import 'package:afriprize/ui/views/cart/checkout.dart' as _i11;
 import 'package:afriprize/ui/views/cart/add_shipping.dart' as _i13;
 import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
@@ -46,11 +46,10 @@ import '../core/data/models/raffle_ticket.dart';
 import '../ui/views/profile/order_list.dart';
 import '../ui/views/profile/ticket_list.dart' as _i28;
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 class Routes {
   static const homeView = '/home-view';
@@ -299,7 +298,7 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i7.DrawsView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) =>  _i7.DrawsView(),
+        builder: (context) =>  const _i7.DrawsView(),
         settings: data,
       );
     },
@@ -359,7 +358,7 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i14.Wallet: (data) {
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => _i14.Wallet(),
+        builder: (context) => const _i14.Wallet(),
         settings: data,
       );
     },

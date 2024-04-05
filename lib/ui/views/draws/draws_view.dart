@@ -423,12 +423,12 @@ class DrawsView extends StatelessWidget {
           appBar: AppBar(
             title: const Text("Draws"),
             bottom:  PreferredSize(
-                  preferredSize: Size.fromHeight(30),
+                  preferredSize: const Size.fromHeight(30),
                   child: Align(
                     alignment: Alignment.center,
                     child: Container(
-                      margin: EdgeInsets.all(10),
-                      padding: EdgeInsets.all(4),
+                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: Colors.grey[300]?.withOpacity(0.9), // Tab bar background color
                         borderRadius: BorderRadius.circular(
@@ -444,8 +444,8 @@ class DrawsView extends StatelessWidget {
                         ),
                         labelColor: Colors.black, // Selected tab label color
                         unselectedLabelColor: Colors.black26,
-                        labelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),// Unselected tab label color
-                        tabs: [
+                        labelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),// Unselected tab label color
+                        tabs: const [
                           Tab(text: "SoldOut Draws"),
                           Tab(text: "Winners"),
                         ],
@@ -590,7 +590,7 @@ class DrawsCard extends StatelessWidget {
                     child: Column(
                       children: [
                         CachedNetworkImage(
-                          placeholder: (context, url) => Center(
+                          placeholder: (context, url) => const Center(
                             child: CircularProgressIndicator(
                               strokeWidth: 2.0, // Make the loader thinner
                               valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
@@ -611,17 +611,17 @@ class DrawsCard extends StatelessWidget {
                           padding: const EdgeInsets.all(7.0),
                           child: Marquee(
                             text: !isWinner ?  'SOLD OUT SOLD OUT SOLD OUT' : 'WINNER WINNER WINNER WINNER', // Your text here
-                            style: TextStyle(fontWeight: FontWeight.bold,
+                            style: const TextStyle(fontWeight: FontWeight.bold,
                             fontSize: 19, fontFamily: "Panchang"),
                             scrollAxis: Axis.horizontal,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             blankSpace: 20.0,
                             velocity: 100.0,
-                            pauseAfterRound: Duration(milliseconds: 50),
+                            pauseAfterRound: const Duration(milliseconds: 50),
                             startPadding: 10.0,
-                            accelerationDuration: Duration(seconds: 2),
+                            accelerationDuration: const Duration(seconds: 2),
                             accelerationCurve: Curves.linear,
-                            decelerationDuration: Duration(milliseconds: 500),
+                            decelerationDuration: const Duration(milliseconds: 500),
                             decelerationCurve: Curves.easeOut,
 
                           ),
@@ -762,7 +762,7 @@ class DrawsCard extends StatelessWidget {
                       ),
                       verticalSpaceSmall,
                       if(!isWinner)
-                        Text('Raffle dates subject to change. Follow us on s'
+                        const Text('Raffle dates subject to change. Follow us on s'
                             'ocial media for updates and live draw events. '
                             'Your big win awaits!',
                           style: TextStyle(fontSize: 10),

@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class EmptyState extends StatelessWidget {

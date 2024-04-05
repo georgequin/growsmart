@@ -24,11 +24,10 @@ import 'custom_reciept.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class Checkout extends StatefulWidget {
@@ -66,9 +65,9 @@ class _CheckoutState extends State<Checkout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF3DB),
+      backgroundColor: const Color(0xFFFFF3DB),
       appBar: AppBar(
-        backgroundColor: Color(0xFFFFF3DB),
+        backgroundColor: const Color(0xFFFFF3DB),
         centerTitle: true,
         title: const Text(
           "Checkout",
@@ -83,7 +82,7 @@ class _CheckoutState extends State<Checkout> {
           Card(
             child: ExpansionTile(
               initiallyExpanded: true,
-              backgroundColor: Color(0xFFFFFAF0),
+              backgroundColor: const Color(0xFFFFFAF0),
               title: const Text(
                 "Order review",
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -102,7 +101,7 @@ class _CheckoutState extends State<Checkout> {
                     // height: 100,
                     decoration: BoxDecoration(
                       color: uiMode.value == AppUiModes.light
-                          ? Color(0xFFFFFAF0)
+                          ? const Color(0xFFFFFAF0)
                           : kcBlackColor,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
@@ -159,7 +158,7 @@ class _CheckoutState extends State<Checkout> {
           Card(
             child: ExpansionTile(
               initiallyExpanded: true,
-              backgroundColor: Color(0xFFFFFAF0),
+              backgroundColor: const Color(0xFFFFFAF0),
               childrenPadding: const EdgeInsets.symmetric(horizontal: 20),
               title: const Text(
                 "Billing summary",
@@ -229,7 +228,7 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMedium,
           Card(
             child: ExpansionTile(
-              backgroundColor: Color(0xFFFFFAF0),
+              backgroundColor: const Color(0xFFFFFAF0),
               initiallyExpanded: true,
               childrenPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -853,7 +852,7 @@ class _CheckoutState extends State<Checkout> {
                     },
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 if (!isLoading)
                   InkWell(
@@ -903,7 +902,7 @@ class _CheckoutState extends State<Checkout> {
     final Uri uri = Uri.parse(url);
     await canLaunchUrl(uri)
         ? await launchUrl(uri)
-        : locator<SnackbarService>().showSnackbar(message: "No app found, please install binance app to continue ${url}");
+        : locator<SnackbarService>().showSnackbar(message: "No app found, please install binance app to continue $url");
 
   }
 
@@ -1007,7 +1006,7 @@ class _CheckoutState extends State<Checkout> {
   }
 
   checkPaymentStatus(List<String> orderIds) async {
-    print('order ids are${orderIds}');
+    print('order ids are$orderIds');
     try {
       print('ordeer id is: ${orderIds.length}');
       var payload = {

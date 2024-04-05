@@ -1,7 +1,4 @@
-import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
-import 'package:afriprize/core/data/repositories/repository.dart';
-import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
@@ -9,8 +6,6 @@ import 'package:afriprize/ui/views/profile/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_paystack/flutter_paystack.dart';
-import 'package:stacked_services/stacked_services.dart';
-import '../../../state.dart';
 import '../../../utils/money_util.dart';
 import '../../components/payment_success_page.dart';
 

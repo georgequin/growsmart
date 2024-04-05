@@ -1,27 +1,20 @@
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
-import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/models/raffle_cart_item.dart';
-import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
-import 'package:afriprize/ui/views/dashboard/reviews.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:slidable_button/slidable_button.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../core/network/interceptors.dart';
-import '../../../utils/money_util.dart';
-import '../../components/submit_button.dart';
 import 'dashboard_viewmodel.dart';
 
 class RaffleDetail extends StatefulWidget {
@@ -120,9 +113,9 @@ class _RaffleDetailState extends State<RaffleDetail> {
                         children: [
                           Container(
                             margin: const EdgeInsets.fromLTRB(14.0, 14.0, 14.0, 0.0),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                             color: kcPrimaryColor,
-                              borderRadius: const BorderRadius.only( topLeft:
+                              borderRadius: BorderRadius.only( topLeft:
                               Radius.circular(12), topRight:  Radius.circular(12)
                               ),
                             ),
@@ -133,7 +126,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                               child: Column(
                                 children: [
                                   CachedNetworkImage(
-                                    placeholder: (context, url) => Center(
+                                    placeholder: (context, url) => const Center(
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2.0, // Make the loader thinner
                                         valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
@@ -201,7 +194,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+                                      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[300]?.withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(8),
@@ -216,7 +209,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                       ),
                                     ),
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                       decoration: BoxDecoration(
                                         color: uiMode.value == AppUiModes.light ? kcPrimaryColor : kcSecondaryColor,
                                         borderRadius: BorderRadius.circular(8),
@@ -313,7 +306,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                     ),
                                     verticalSpaceSmall,
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[300]?.withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(4),
@@ -347,7 +340,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                   color: Colors.grey.withOpacity(0.1), // Shadow color
                                   spreadRadius: 1, // Spread radius
                                   blurRadius: 5, // Blur radius
-                                  offset: Offset(0, 3), // changes position of shadow
+                                  offset: const Offset(0, 3), // changes position of shadow
                                 ),
                               ],
                             ),
@@ -374,7 +367,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 16),
+                                const SizedBox(height: 16),
                                 HorizontalSlidableButton(
                                   width: MediaQuery.of(context).size.width / 2,
                                   buttonWidth: 110.0,
@@ -384,7 +377,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                   dismissible: false,
                                   label: Center(child: Row(children: [
                                     horizontalSpaceTiny,
-                                    Text('Go to Shop', style: TextStyle(color: kcWhiteColor),),
+                                    const Text('Go to Shop', style: TextStyle(color: kcWhiteColor),),
                                     SvgPicture.asset(
                                       'assets/icons/arrow-circle-right.svg',
                                       height: 20, // Icon size
@@ -392,8 +385,8 @@ class _RaffleDetailState extends State<RaffleDetail> {
 
                                    ],)
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [

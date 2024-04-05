@@ -7,11 +7,10 @@ import 'package:stacked_services/stacked_services.dart';
 import 'notice_sheet_model.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class NoticeSheet extends StackedView<NoticeSheetModel> {
@@ -31,6 +30,13 @@ class NoticeSheet extends StackedView<NoticeSheetModel> {
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -48,13 +54,6 @@ class NoticeSheet extends StackedView<NoticeSheetModel> {
           ),
           verticalSpaceLarge,
         ],
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
       ),
     );
   }

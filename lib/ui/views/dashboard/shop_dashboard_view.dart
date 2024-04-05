@@ -1,22 +1,12 @@
 import 'dart:async';
-import 'dart:ui';
-import 'package:afriprize/app/app.locator.dart';
-import 'package:afriprize/app/app.router.dart';
-import 'package:afriprize/core/data/models/cart_item.dart';
-import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
-import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
 import 'package:afriprize/ui/views/dashboard/shop_details.dart';
 import 'package:afriprize/utils/money_util.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../core/data/models/product.dart';
@@ -35,7 +25,7 @@ class ShopDashboardView extends StackedView<DashboardViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF3DB),
+      backgroundColor: const Color(0xFFFFF3DB),
       body: RefreshIndicator(
         onRefresh: () async {
           viewModel.refreshData();

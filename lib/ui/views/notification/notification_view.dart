@@ -1,6 +1,4 @@
-import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/core/data/models/app_notification.dart';
-import 'package:afriprize/core/data/repositories/repository.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';

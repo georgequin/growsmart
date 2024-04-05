@@ -17,7 +17,7 @@ import 'package:afriprize/ui/views/onboarding/onboarding_view.dart';
 import 'package:afriprize/ui/views/auth/auth_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
 import 'package:afriprize/ui/views/draws/draws_view.dart';
-import 'package:afriprize/ui/views/cart/cart_view.dart';
+import 'package:afriprize/ui/views/cart/raffle_cart_view.dart';
 import 'package:afriprize/ui/views/notification/notification_view.dart';
 import 'package:afriprize/ui/views/profile/profile_view.dart';
 
@@ -28,11 +28,10 @@ import 'package:afriprize/ui/views/enter_email/enter_email_view.dart';
 import 'package:afriprize/ui/views/delete_account/delete_account_view.dart';
 import 'package:afriprize/ui/views/withdraw/withdraw_view.dart';
 // @stacked-import
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 @StackedApp(
   logger: StackedLogger(),

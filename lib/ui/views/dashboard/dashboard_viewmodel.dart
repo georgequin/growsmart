@@ -8,9 +8,6 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
-import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
@@ -19,7 +16,7 @@ import '../../../core/data/models/app_notification.dart';
 
 class DashboardViewModel extends BaseViewModel {
   final repo = locator<Repository>();
-  bool _isDataLoaded = false;
+  final bool _isDataLoaded = false;
   int selectedIndex = 0;
   final log = getLogger("DashboardViewModel");
   List<Product> productList = [];

@@ -13,7 +13,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
-import '../../../core/data/models/raffle_ticket.dart';
 import '../../../utils/cart_utill.dart';
 import '../../../widget/custom_clipper.dart';
 import '../../common/app_colors.dart';
@@ -21,15 +20,13 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
 import '../home/home_view.dart';
-import '../profile/order_list.dart';
 import '../profile/ticket_list.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class ReceiptPage extends StatelessWidget {
@@ -40,7 +37,7 @@ class ReceiptPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF3DB),
+      backgroundColor: const Color(0xFFFFF3DB),
       body: Stack(
         children: [
           Padding(
@@ -54,8 +51,7 @@ class ReceiptPage extends StatelessWidget {
                     createAndSharePdf();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.grey.shade300, // Use the appropriate color for your app
-                    onPrimary: Colors.black,
+                    foregroundColor: Colors.black, backgroundColor: Colors.grey.shade300,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -74,7 +70,7 @@ class ReceiptPage extends StatelessWidget {
             child: ClipPath(
                   clipper: MyClipper(),
                   child: Card(
-                    color: Color(0xFFFFFAF0),
+                    color: const Color(0xFFFFFAF0),
                     elevation: 4.0,
                     margin: const EdgeInsets.all(8.0),
                     child: Padding(
@@ -93,8 +89,7 @@ class ReceiptPage extends StatelessWidget {
                                     createAndSharePdf();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    primary: Colors.white, // Use the appropriate color for your app
-                                    onPrimary: Colors.black,
+                                    foregroundColor: Colors.black, backgroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -215,7 +210,7 @@ class ReceiptPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Color(0xFFFFF3DB),
+        color: const Color(0xFFFFF3DB),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           child: Row(
@@ -265,7 +260,7 @@ class ReceiptPage extends StatelessWidget {
                     color: Colors.black,
                   ),
                   horizontalSpaceTiny,
-                  Text('Back to Home', style: TextStyle(fontSize: 15, color: Colors.grey)),
+                  const Text('Back to Home', style: TextStyle(fontSize: 15, color: Colors.grey)),
                 ],),
               ),
             ],
@@ -308,7 +303,7 @@ class ReceiptPage extends StatelessWidget {
                 ],
               ),
               pw.Container(
-                margin:  pw.EdgeInsets.symmetric(vertical: 16.0),
+                margin:  const pw.EdgeInsets.symmetric(vertical: 16.0),
 
                 decoration: pw.BoxDecoration(
                   borderRadius: pw.BorderRadius.circular(10.0),
@@ -422,8 +417,8 @@ class ReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.product!.productName!, style: pw.TextStyle(fontSize: 10.61)),
-                pw.Text('${cartItem.quantity}', style: pw.TextStyle(fontSize: 10.61)),
+                pw.Text(cartItem.product!.productName!, style: const pw.TextStyle(fontSize: 10.61)),
+                pw.Text('${cartItem.quantity}', style: const pw.TextStyle(fontSize: 10.61)),
               ],
             ),
           ),
@@ -456,10 +451,10 @@ class ReceiptPage extends StatelessWidget {
 
   void navigateToTicketsWithHomeBelow(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => HomeView()), // Push HomeView
+      MaterialPageRoute(builder: (context) => const HomeView()), // Push HomeView
           (Route<dynamic> route) => false, // Remove all routes beneath
     ).then((_) =>
-        Future.delayed(Duration(milliseconds: 500), () { // Delay to ensure the stack is updated
+        Future.delayed(const Duration(milliseconds: 500), () { // Delay to ensure the stack is updated
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const TicketList()), // Push TicketsPage
           );

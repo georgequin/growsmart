@@ -2,7 +2,6 @@
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
-import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -12,22 +11,18 @@ import 'package:afriprize/app/app.dialogs.dart';
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:update_available/update_available.dart';
 import 'firebase_options.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final _messageStreamController = BehaviorSubject<RemoteMessage>();
@@ -98,7 +93,7 @@ void initializeNotifications() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
   AndroidInitializationSettings('@mipmap/launcher_icon');
 
-  final InitializationSettings initializationSettings =
+  const InitializationSettings initializationSettings =
   InitializationSettings(android: initializationSettingsAndroid, );
 
   await flutterLocalNotificationsPlugin.initialize(
@@ -286,7 +281,7 @@ class _MyAppState extends State<MyApp> {
                         Navigator.pop(context); // Close the dialog
                         // Add logic to navigate to the store or perform the update
                       },
-                      child: Text('Update Now'),
+                      child: const Text('Update Now'),
                     ),
                     // TextButton(
                     //   onPressed: () {

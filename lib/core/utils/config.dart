@@ -1,15 +1,14 @@
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 class AppConfig {
   // static const String baseUrl = "https://api.afriprize.com/api/v1/";
   // static const String baseUrl = "https://staging-server.afriprize.com/api/v1/";
-  static const String baseUrl = "https://production-server.afriprize.com/api/v1/";
+  // static const String baseUrl = "https://production-server.afriprize.com/api/v1/";
 
-  // static const String baseUrl = "http://192.168.1.23:3001/api/v1/";
+  static const String baseUrl = "http://192.168.0.179:3001/api/v1/";
 
 
   static const String flutterWaveBaseUrl = 'https://api.flutterwave.com/v3';
@@ -18,7 +17,7 @@ class AppConfig {
   static const String flutterWaveLiveKey = 'FLWPUBK-937bf78a41d4f812355e1a44e3362c39-X';
   static const String youtubeOfficial = 'https://www.youtube.com/@Afriprize/featured';
   static const String instagramOfficial = 'https://www.instagram.com/afriprize/?hl=en';
-  static const bool isTestMode = false;
+  static const bool isTestMode = true;
   static const String APPLESTOREURL = 'https://apps.apple.com/ng/app/afriprize-mobile/id6474942596';
   static const String GOOGLESTOREURL = 'https://play.google.com/store/apps/details?id=com.afriprize.afriprize&pcampaignid=web_share';
 

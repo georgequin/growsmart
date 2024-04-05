@@ -44,11 +44,11 @@ class _OrderListState extends State<TicketList> {
         //     .toList();
 
 
-        (res.data["participant"] as List).forEach((participant) {
+        for (var participant in (res.data["participant"] as List)) {
           // Access the raffle draw information once since it's the same for all tickets of this participant
           var raffleDraw = participant['raffledraw'];
 
-          (participant['ticket'] as List).forEach((ticket) {
+          for (var ticket in (participant['ticket'] as List)) {
             // Combine ticket information with the raffle draw information
             var combinedInfo = CombinedTicket(
               raffleId: raffleDraw['id'],
@@ -65,8 +65,8 @@ class _OrderListState extends State<TicketList> {
             setState(() {
               combinedTicket.add(combinedInfo);
             });
-          });
-        });
+          }
+        }
 
 
         setState(() {

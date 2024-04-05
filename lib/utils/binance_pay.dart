@@ -3,16 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../app/app.dialogs.dart';
 import '../app/app.locator.dart';
 import '../core/data/models/cart_item.dart';
-import '../core/data/models/raffle_ticket.dart';
 import '../core/data/repositories/repository.dart';
 import '../core/network/api_response.dart';
 import '../core/utils/local_store_dir.dart';
 import '../core/utils/local_stotage.dart';
 import '../state.dart';
-import '../ui/common/app_colors.dart';
 import '../ui/components/empty_state.dart';
 import '../ui/views/cart/raffle_reciept.dart';
 
@@ -59,7 +56,7 @@ class _BinancePayModalState extends State<BinancePayModal> {
                 label: "paying...",
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),

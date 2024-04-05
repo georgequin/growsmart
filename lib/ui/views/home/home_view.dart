@@ -8,11 +8,10 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'home_viewmodel.dart';
 import 'module_switch.dart';
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class HomeView extends StackedView<HomeViewModel> {
@@ -33,10 +32,10 @@ class HomeView extends StackedView<HomeViewModel> {
             ? viewModel.selectedRafflesTab == 0
             : viewModel.selectedShopTab == 0;
         return Scaffold(
-          backgroundColor: currentModuleNotifier.value == AppModules.shop ? Color(0xFFFFF3DB) : null,
+          backgroundColor: currentModuleNotifier.value == AppModules.shop ? const Color(0xFFFFF3DB) : null,
           appBar: AppBar(
             backgroundColor: currentModule == AppModules.shop && uiMode.value == AppUiModes.light
-                ? Color(0xFFFFF3DB)
+                ? const Color(0xFFFFF3DB)
                 : uiMode.value == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
             title: showModuleSwitch ? ModuleSwitch(
               isRafflesSelected: currentModule == AppModules.raffle,
@@ -100,7 +99,7 @@ class BottomNavBar extends StatelessWidget {
             return BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               backgroundColor: currentModule == AppModules.shop && mode == AppUiModes.light
-                  ? Color(0xFFFFF3DB)
+                  ? const Color(0xFFFFF3DB)
                   : mode == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
               selectedLabelStyle: TextStyle(color: selectedColor),
               selectedItemColor: selectedColor,

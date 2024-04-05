@@ -1,8 +1,7 @@
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 const String ksHomeBottomSheetTitle = 'Build Great Apps!';
 const String ksHomeBottomSheetDescription =

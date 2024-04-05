@@ -12,11 +12,10 @@ import '../../../utils/country_picker_utils.dart';
 import '../../common/ui_helpers.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class Register extends StatefulWidget {

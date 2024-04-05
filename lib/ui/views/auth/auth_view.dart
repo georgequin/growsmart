@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'login.dart';
 
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 
 class AuthView extends StatefulWidget {
@@ -49,7 +48,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               background: Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 60.0), // Adjust the padding to move the image down
+                  padding: const EdgeInsets.only(top: 60.0), // Adjust the padding to move the image down
                   child: Image.asset(
                     "assets/images/img.png",
                     height: 80, // Adjust the height to make the image smaller

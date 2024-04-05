@@ -8,7 +8,7 @@ import 'package:afriprize/core/utils/config.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/app_strings.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:afriprize/ui/views/cart/cart_view.dart';
+import 'package:afriprize/ui/views/cart/raffle_cart_view.dart';
 import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
 import 'package:afriprize/ui/views/dashboard/shop_dashboard_view.dart';
@@ -25,18 +25,17 @@ import '../../../state.dart';
 import '../../common/ui_helpers.dart';
 import '../draws/draws_view.dart';
 
-/**
- * @author George David
- * email: georgequin19@gmail.com
- * Feb, 2024
- **/
+/// @author George David
+/// email: georgequin19@gmail.com
+/// Feb, 2024
+///
 
 class HomeViewModel extends BaseViewModel {
   final _dialogService = locator<DialogService>();
   final _bottomSheetService = locator<BottomSheetService>();
   List<Widget> pages = [
      DashboardView(),
-     DrawsView(),
+     const DrawsView(),
     const CartView(),
     const NotificationView(),
     const ProfileView()
@@ -55,7 +54,7 @@ class HomeViewModel extends BaseViewModel {
   // Pages for the Raffles dashboard
   List<Widget> rafflesPages = [
     DashboardView(),
-     DrawsView(),
+     const DrawsView(),
     const CartView(),
     const NotificationView(),
     const ProfileView()
@@ -64,7 +63,7 @@ class HomeViewModel extends BaseViewModel {
   // Pages for the Shop dashboard
   List<Widget> shopPages = [
     ShopDashboardView(),
-     DrawsView(),
+     const DrawsView(),
     const ShopCartView(),
     const NotificationView(),
     const ProfileView()

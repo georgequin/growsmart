@@ -128,8 +128,8 @@ class MoneyUtils extends TextInputFormatter {
     // Handle flutterwave payment
     if (paymentMethod == PaymentMethod.flutterWave) {
       // Assuming amount, currency, and customer email are passed as parameters
-      final FlutterwavePaymentService _paymentService = FlutterwavePaymentService();
-      ChargeResponse response = await _paymentService.makePayment(
+      final FlutterwavePaymentService paymentService = FlutterwavePaymentService();
+      ChargeResponse response = await paymentService.makePayment(
         context: context,
         amount: convertAmount,
         isTestMode: AppConfig.isTestMode,

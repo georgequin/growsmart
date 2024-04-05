@@ -6,7 +6,7 @@ class ModuleSwitch extends StatefulWidget {
   final bool isRafflesSelected;
   final Function(bool) onToggle;
 
-  ModuleSwitch({
+  const ModuleSwitch({super.key, 
     required this.isRafflesSelected,
     required this.onToggle,
   });
@@ -62,7 +62,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         decoration: BoxDecoration(
           color: Colors.transparent, // Interior color remains transparent
           borderRadius: BorderRadius.circular(13.0),
@@ -79,10 +79,10 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
               height: 20,
             ),
             // Icon(icon, color: isSelected ? kcSecondaryColor : kcPrimaryColor),
-            SizedBox(width: 8.0),
+            const SizedBox(width: 8.0),
             Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 color: kcPrimaryColor,
                   fontWeight: FontWeight.bold,
                   fontFamily: "Panchang",
