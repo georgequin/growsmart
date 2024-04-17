@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import '../../../utils/money_util.dart';
 import '../../../utils/paymentModal.dart';
+import '../../components/text_field_widget.dart';
 import 'cart_viewmodel.dart';
 
 
@@ -282,7 +283,12 @@ class CartView extends StackedView<CartViewModel> {
                     },
                   ),
                 ),
-
+                //Refferal input field
+                verticalSpaceMedium,
+                TextFieldWidget(
+                  hint: "Enter referral code",
+                  controller: viewModel.refferalCode,
+                ),
               ],
             ),
           ),
@@ -405,82 +411,6 @@ class CartView extends StackedView<CartViewModel> {
     );
   }
 
-  // void _showPaymentModal(BuildContext context, CartViewModel viewModel) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (BuildContext context) {
-  //       return Container(
-  //         // height: MediaQuery.of(context).size.height, // Adjust the height as needed
-  //         decoration: BoxDecoration(
-  //           color: kcSecondaryColor,
-  //           borderRadius: BorderRadius.only(
-  //             topLeft: Radius.circular(25),
-  //             topRight: Radius.circular(25),
-  //           ),
-  //           border: Border.all(
-  //         color: kcPrimaryColor),
-  //         ),
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(16.0),
-  //           child: Column(
-  //             children: [
-  //               Text(
-  //                 "Choose Payment Method",
-  //                 style: TextStyle(
-  //                   fontWeight: FontWeight.bold,
-  //                   fontSize: 16,
-  //                   color: kcPrimaryColor,
-  //                   fontFamily: "Panchang"
-  //                 ),
-  //               ),
-  //               SizedBox(height: 20),
-  //               Wrap(
-  //                 spacing: 0.0, // Space between the chips
-  //                 runSpacing: 1.0, //s
-  //                 children: [
-  //                   _buildPaymentMethodOption(
-  //                     context,
-  //                     paymentMethodIcon: "binance_pay",
-  //                     method: PaymentMethod.binancePay,
-  //                     selectedMethod: viewModel.selectedMethod,
-  //                     onTap: () => viewModel.selectMethod(PaymentMethod.binancePay),
-  //                   ),
-  //                   _buildPaymentMethodOption(
-  //                     context,
-  //                     paymentMethodIcon: "flutter_wave",
-  //                     method: PaymentMethod.payStack,
-  //                     selectedMethod: viewModel.selectedMethod,
-  //                     onTap: () => viewModel.selectMethod(PaymentMethod.payStack),
-  //                   ),
-  //                   _buildPaymentMethodOption(
-  //                     context,
-  //                     paymentMethodIcon: "flutter_wave",
-  //                     method: PaymentMethod.flutterWave,
-  //                     selectedMethod: viewModel.selectedMethod,
-  //                     onTap: () => viewModel.selectMethod(PaymentMethod.flutterWave),
-  //                   ),
-  //                 ],
-  //               ),
-  //               verticalSpaceMedium,
-  //               Divider(color: Colors.white54),
-  //               _buildTotalSection(viewModel),
-  //               SizedBox(height: 20),
-  //               _buildPayButton(
-  //                 context: context,
-  //                 amount: viewModel.raffleSubTotal, // Replace with total amount
-  //                 onPressed: () {
-  //                   // Handle payment logic
-  //                 },
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   void _showPaymentModal(BuildContext context, CartViewModel viewModel) {
     showModalBottomSheet(

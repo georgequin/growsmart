@@ -36,6 +36,7 @@ class CartViewModel extends BaseViewModel {
   int shopSubTotal = 0;
   int raffleSubTotal = 0;
   int deliveryFee = 0;
+  final refferalCode = TextEditingController();
 
   ValueNotifier<PaymentMethod> selectedPaymentMethod = ValueNotifier(PaymentMethod.binancePay);
   ValueNotifier<bool> isPaymentProcessing = ValueNotifier(false);
@@ -189,7 +190,8 @@ class CartViewModel extends BaseViewModel {
         "items": raffleCart.value
             .map((e) => {"id": e.raffle!.id, "quantity": e.quantity})
             .toList(),
-        "type": 2
+        "type": 2,
+        "referral_code": refferalCode.text
       });
       if (res.statusCode == 200) {
         List<OrderInfo> list = (res.data["orderDetails"] as List)
