@@ -164,6 +164,19 @@ class ProfileView extends StatelessWidget{
               ),
               ListTile(
                 onTap: () {
+                  // locator<NavigationService>().navigateToTrack();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+                    return const Referral();
+                  }));
+                },
+                leading: const Icon(
+                  Icons.card_giftcard_outlined,
+                  color: kcSecondaryColor,
+                ),
+                title: const Text("Referrals"),
+              ),
+              ListTile(
+                onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(builder: (c) {
                     return const Support();
                   }));
