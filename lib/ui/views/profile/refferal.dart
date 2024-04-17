@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -166,16 +163,18 @@ class _ReferralState extends State<Referral> {
   }
 
   void getDiscount() async {
-    try {
-      ApiResponse res = await repo.getDiscount(profile.value.id!);
-      if (res.statusCode == 200 && res.data != null) {
-        setState(() {
-          Map<String, dynamic> discountData = res.data['discount'];
-          discount = Discount.fromJson(discountData);
-        });
-      }
-    } catch (e) {
-      throw Exception(e);
-    }
+      discount = profile.value.discount;
   }
+  //   try {
+  //     ApiResponse res = await repo.getDiscount(profile.value.id!);
+  //     if (res.statusCode == 200 && res.data != null) {
+  //       setState(() {
+  //         Map<String, dynamic> discountData = res.data['discount'];
+  //         discount = Discount.fromJson(discountData);
+  //       });
+  //     }
+  //   } catch (e) {
+  //     throw Exception(e);
+  //   }
+  // }
 }

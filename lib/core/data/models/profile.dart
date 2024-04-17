@@ -1,4 +1,5 @@
 import 'package:afriprize/core/data/models/country.dart';
+import 'package:afriprize/core/data/models/discount.dart';
 import 'package:afriprize/core/data/models/product.dart';
 
 class Profile {
@@ -16,6 +17,7 @@ class Profile {
   String? created;
   String? updated;
   Wallet? wallet;
+  Discount? discount;
   List<Pictures>? pictures;
 
   Profile(
@@ -32,7 +34,8 @@ class Profile {
       this.updated,
       this.wallet,
       this.shipping,
-      this.pictures});
+      this.pictures,
+      this.discount});
 
   Profile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -43,6 +46,7 @@ class Profile {
     country = json['country'] != null ? Country.fromJson(json['country']) : null;
     verified = json['verified'];
     status = json['status'];
+    discount = json['referral'];
     // role = json['role'];
     if (json['picture'] != null) {
       pictures = <Pictures>[];
@@ -79,6 +83,7 @@ class Profile {
     // data['role'] = role;
     data['created'] = created;
     data['updated'] = updated;
+    data['referral'] = discount;
     if (wallet != null) {
       data['wallet'] = wallet!.toJson();
     }
