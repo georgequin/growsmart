@@ -24,8 +24,10 @@ class DashboardViewModel extends BaseViewModel {
   List<Product> sellingFast = [];
   List<Raffle> featuredRaffle = [];
 
+
   void changeSelected(int i) {
     selectedIndex = i;
+    notifyListeners(); // Notify the UI of changes
     rebuildUi();
   }
 

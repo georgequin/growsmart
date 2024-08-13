@@ -1,12 +1,10 @@
 import 'package:growsmart/state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:growsmart/ui/common/app_colors.dart';
 
 import 'home_viewmodel.dart';
-import 'module_switch.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -51,13 +49,13 @@ class HomeView extends StackedView<HomeViewModel> {
                 label: "Services",
               ),
               BottomNavigationBarItem(
-                icon: _navBarItemIcon(Icons.notifications, "Notification", viewModel.selectedTab == 2, iconColor),
-                label: "Notification",
+                icon: _navBarItemIcon(Icons.wallet, "Notification", viewModel.selectedTab == 2, iconColor),
+                label: "wallet",
               ),
 
               BottomNavigationBarItem(
                 icon: _navBarItemIcon(Icons.person_outline, "Account", viewModel.selectedTab == 3, iconColor),
-                label: "Account",
+                label: "Profile",
               ),
             ],
           );

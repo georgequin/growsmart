@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:growsmart/app/app.locator.dart';
 import 'package:growsmart/app/app.router.dart';
 import 'package:growsmart/ui/common/app_colors.dart';
@@ -39,39 +40,31 @@ class _LoginState extends State<Login> {
           viewModelBuilder: () => AuthViewModel(),
           builder: (context, model, child) => ListView(
             children: [
-              const Text(
-                "Login Account",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Panchang"
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Login Account",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: kcPrimaryColor,
+                      ),
+                    ),
+                    verticalSpaceTiny,
+                    Text(
+                      "Welcome back you’ve been missed!",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              verticalSpaceTiny,
-          Row(
-            children:  [
-                const Text(
-                  "Don't have an account? ",
-                  style: TextStyle(
-                      fontSize: 12,
-                      ),
-                ),
-              GestureDetector(
-                onTap: () {
-                  gotoRegister();
 
-                },
-                child: const Text(
-                  "Create Account",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: kcSecondaryColor,
-                  ),
-                ),
-              )
-
-            ]
-          ),
+          verticalSpaceTiny,
 
               verticalSpaceMedium,
               TextFieldWidget(
@@ -93,42 +86,42 @@ class _LoginState extends State<Login> {
               ),
               verticalSpaceTiny,
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  InkWell(
-                    onTap: model.toggleRemember,
-                    child: Row(
-                      children: [
-                        Container(
-                            height: 20,
-                            width: 20,
-                            decoration: BoxDecoration(
-                                color: model.remember
-                                    ? kcSecondaryColor
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                    color: model.remember
-                                        ? Colors.transparent
-                                        : kcSecondaryColor)),
-                            child: model.remember
-                                ? const Center(
-                              child: Icon(
-                                Icons.check,
-                                color: kcWhiteColor,
-                                size: 14,
-                              ),
-                            )
-                                : const SizedBox()),
-                        horizontalSpaceSmall,
-                        const Text(
-                          "Remember Me",
-                          style: TextStyle(
-                              fontSize: 14, decoration: TextDecoration.underline),
-                        )
-                      ],
-                    ),
-                  ),
+                  // InkWell(
+                  //   onTap: model.toggleRemember,
+                  //   child: Row(
+                  //     children: [
+                  //       Container(
+                  //           height: 20,
+                  //           width: 20,
+                  //           decoration: BoxDecoration(
+                  //               color: model.remember
+                  //                   ? kcSecondaryColor
+                  //                   : Colors.transparent,
+                  //               borderRadius: BorderRadius.circular(5),
+                  //               border: Border.all(
+                  //                   color: model.remember
+                  //                       ? Colors.transparent
+                  //                       : kcSecondaryColor)),
+                  //           child: model.remember
+                  //               ? const Center(
+                  //             child: Icon(
+                  //               Icons.check,
+                  //               color: kcWhiteColor,
+                  //               size: 14,
+                  //             ),
+                  //           )
+                  //               : const SizedBox()),
+                  //       horizontalSpaceSmall,
+                  //       const Text(
+                  //         "Remember Me",
+                  //         style: TextStyle(
+                  //             fontSize: 14, decoration: TextDecoration.underline),
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
                   InkWell(
                     onTap: () {
                       locator<NavigationService>()
@@ -200,7 +193,33 @@ class _LoginState extends State<Login> {
               //   color: Colors.grey,
               // ),
 
-              verticalSpaceLarge,
+              verticalSpaceMedium,
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                  children:  [
+                    const Text(
+                      "Don't have an account? ",
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        gotoRegister();
+
+                      },
+                      child: const Text(
+                        "Create Account",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: kcSecondaryColor,
+                        ),
+                      ),
+                    )
+
+                  ]
+              ),
             ],
           ),
         ),

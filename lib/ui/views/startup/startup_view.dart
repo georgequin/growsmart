@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../common/app_colors.dart';
 import 'startup_viewmodel.dart';
 
 /// @author George David
@@ -20,17 +21,28 @@ class StartupView extends StackedView<StartupViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      body: Positioned(
-        left: 0,
-        right: 0,
-        bottom: 0,
-        top: 0 ,
-        child: Padding(
-          padding: const EdgeInsets.all(50.0),
-          child: Image.asset(
-            "assets/images/logo_splash.png",
+      body: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: ClipPath(
+              clipper: CurvedClipper(),
+              child: Container(
+                height: 600,
+                color: kcMediumGrey,
+              ),
+            ),
           ),
-        ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(50.0),
+              child: Image.asset(
+                "assets/images/easyLogo.png",
+              ),
+            ),
+          ),
+        ],
+
       )
     );
   }
@@ -44,4 +56,28 @@ class StartupView extends StackedView<StartupViewModel> {
   @override
   void onViewModelReady(StartupViewModel viewModel) => SchedulerBinding.instance
       .addPostFrameCallback((timeStamp) => viewModel.runStartupLogic());
+}
+class CurvedClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final Path path = Path();
+    // Start from top-left corner
+    path.lineTo(0, size.height - 300);
+    // Create a quadratic bezier curve
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 0,
+    );
+    // Line to the top-right corner
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
 }

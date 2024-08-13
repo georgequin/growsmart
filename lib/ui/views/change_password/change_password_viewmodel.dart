@@ -14,7 +14,7 @@ class ChangePasswordViewModel extends BaseViewModel {
   final newPassword = TextEditingController();
   final oldPassword = TextEditingController();
   final snackBar = locator<SnackbarService>();
-  bool emailVerified = false;
+  bool emailVerified = true;
   bool obscure = true;
 
   void toggleObscure() {
