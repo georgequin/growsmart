@@ -16,6 +16,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:update_available/update_available.dart';
+import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
 import 'package:rxdart/rxdart.dart';
 

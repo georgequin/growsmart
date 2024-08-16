@@ -286,7 +286,8 @@ class CartView extends StackedView<CartViewModel> {
                 //Refferal input field
                 verticalSpaceMedium,
                 TextFieldWidget(
-                  hint: "Enter referral code",
+                  label: "referral code",
+                  hint: "referral code (optional)",
                   controller: viewModel.refferalCode,
                 ),
               ],

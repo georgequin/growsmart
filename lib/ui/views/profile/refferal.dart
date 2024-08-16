@@ -2,6 +2,7 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/data/models/discount.dart';
 import '../../../core/network/api_response.dart';
@@ -47,7 +48,7 @@ class _ReferralState extends State<Referral> {
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Image.asset(
-                "assets/images/referral.png",
+                "assets/images/ref_new.png",
                 fit: BoxFit.cover,
               ),
             ),
@@ -67,7 +68,7 @@ class _ReferralState extends State<Referral> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text(
-                        'Discount Code',
+                        'Referral Code',
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 10,
@@ -81,20 +82,38 @@ class _ReferralState extends State<Referral> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Clipboard.setData( ClipboardData(text: discount!.referralCode ?? ''));
-                          // Optionally, show a snackbar or a toast message
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Tap to Copy', style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),),
-                            SizedBox(width: 8),
-                            Icon(Icons.copy, color: kcSecondaryColor, size: 14), // Icon for copy action
-                          ],
-                        ),
-                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Clipboard.setData( ClipboardData(text: discount!.referralCode ?? ''));
+                              // Optionally, show a snackbar or a toast message
+                            },
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('Tap to Copy', style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),),
+                                SizedBox(width: 8),
+                                Icon(Icons.copy, color: kcSecondaryColor, size: 14), // Icon for copy action
+                              ],
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              shareReferralCode();
+                            },
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('Share Code', style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),),
+                                SizedBox(width: 8),
+                                Icon(Icons.share, color: kcSecondaryColor, size: 14),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -109,7 +128,7 @@ class _ReferralState extends State<Referral> {
                     children: [
                       const SizedBox(height: 20),
                       Text(
-                        'If your friend uses your Discount Code, you earn 10% on the purchase and your friend gets a 10% discount.',
+                        'If your friend / family uses your referral Code during checkout, you get 1 free Ticket on any of the available raffles.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
@@ -120,8 +139,8 @@ class _ReferralState extends State<Referral> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildInfoCard('Your Earnings', 'NGN ${discount!.referrerBonus ?? '0.0'}'),
-                          _buildInfoCard('Purchases', '${discount!.usageCount ?? '0'}'),
+                          // _buildInfoCard('Your Earnings', 'NGN ${discount!.referrerBonus ?? '0.0'}'),
+                          _buildInfoCard('Referral Count', '${discount!.usageCount ?? '0'}'),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -163,18 +182,20 @@ class _ReferralState extends State<Referral> {
   }
 
   void getDiscount() async {
-      discount = profile.value.discount;
+      discount = profile.value.discounts?.first;
   }
-  //   try {
-  //     ApiResponse res = await repo.getDiscount(profile.value.id!);
-  //     if (res.statusCode == 200 && res.data != null) {
-  //       setState(() {
-  //         Map<String, dynamic> discountData = res.data['discount'];
-  //         discount = Discount.fromJson(discountData);
-  //       });
-  //     }
-  //   } catch (e) {
-  //     throw Exception(e);
-  //   }
-  // }
+
+  void shareReferralCode() {
+    final String referralCode = discount!.referralCode ?? '';
+    // final String profileName = profile.value.firstname ?? 'Your friend'; // Make sure you have a profile name
+    // final String shareText = "Hello! $profileName has shared you their Afriprize referral code $referralCode, buy a ticket with their code to give them a chance at a free ticket.";
+    final String shareText =
+        "Sharing is caring, but winning is better! Use my code $referralCode"
+        " when you sign up for AfriPrize and get a head start on winning!"
+        " #AfriPrize #FriendsWhoRaffleTogether. https://staging.afriprize.com";
+
+
+    Share.share(shareText, subject: 'AfriPrize: where losing is (almost) impossible!');
+  }
+
 }

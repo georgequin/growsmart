@@ -118,10 +118,7 @@ class DrawsViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.getRaffleResult();
       if (res.statusCode == 200) {
-        print('log res just before updating: ${res.data['winners']}');
-        // print('entry raw value ${res.data['winners'].json('entry')}');
         winners = (res.data['winners'] as List).map((json) => Winner.fromJson(json)).toList();
-        print('log res just after updating: ${res.data['winners']}');
         List<Map<String, dynamic>> storedWinner = winners.map((e) => e.toJson()).toList();
         locator<LocalStorage>().save(LocalStorageDir.winners, storedWinner);
         rebuildUi();

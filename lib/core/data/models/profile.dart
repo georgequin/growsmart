@@ -17,7 +17,7 @@ class Profile {
   String? created;
   String? updated;
   Wallet? wallet;
-  Discount? discount;
+  List<Discount>? discounts;
   List<Pictures>? pictures;
 
   Profile(
@@ -35,7 +35,7 @@ class Profile {
       this.wallet,
       this.shipping,
       this.pictures,
-      this.discount});
+      this.discounts});
 
   Profile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -46,7 +46,12 @@ class Profile {
     country = json['country'] != null ? Country.fromJson(json['country']) : null;
     verified = json['verified'];
     status = json['status'];
-    discount = json['referral'];
+    if (json['referral'] != null) {
+      discounts = <Discount>[];
+      json['referral'].forEach((v) {
+        discounts!.add(Discount.fromJson(v));
+      });
+    }
     // role = json['role'];
     if (json['picture'] != null) {
       pictures = <Pictures>[];
@@ -83,9 +88,11 @@ class Profile {
     // data['role'] = role;
     data['created'] = created;
     data['updated'] = updated;
-    data['referral'] = discount;
     if (wallet != null) {
       data['wallet'] = wallet!.toJson();
+    }
+    if (discounts != null) {
+      data['referral'] = discounts!.map((v) => v.toJson()).toList();
     }
     if (pictures != null) {
       data['picture'] = pictures!.map((v) => v.toJson()).toList();

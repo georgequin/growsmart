@@ -11,7 +11,7 @@ class FlutterwavePaymentService {
     String? publicKey,
     String? encryptionKey,
     String? phoneNumber,
-    bool isTestMode = true,
+    bool isTestMode = false,
   }) async {
     final Customer customer = Customer(
       name: '${profile.value.firstname} ${profile.value.lastname}' ?? "Afriprize NG",
@@ -21,7 +21,7 @@ class FlutterwavePaymentService {
 
     final Flutterwave flutterwave = Flutterwave(
       context: context,
-      publicKey: AppConfig.flutterWaveTestKey,
+      publicKey: AppConfig.flutterWaveLiveKey,
       currency: "NGN",
       amount: amount,
       txRef: getReference(),

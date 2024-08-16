@@ -4,6 +4,10 @@ import '../state.dart';
 import '../ui/common/app_colors.dart';
 import '../ui/common/ui_helpers.dart';
 import 'money_util.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pay/pay.dart';
+import 'inAppPayConfig.dart' as payment_configurations;
+
 
 
 class PaymentModalWidget extends StatelessWidget {
@@ -22,9 +26,17 @@ class PaymentModalWidget extends StatelessWidget {
     required this.isPaymentProcessing,
   }) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     // Define your modal UI here
+    final List<PaymentItem> _paymentItems = [
+      PaymentItem(
+        label: 'Total',
+        amount: totalAmount.toString(),
+        status: PaymentItemStatus.final_price,
+      ),
+    ];
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: const BoxDecoration(
@@ -65,6 +77,7 @@ class PaymentModalWidget extends StatelessWidget {
                 onTap: () =>
                     onPaymentMethodSelected(PaymentMethod.flutterWave),
               ),
+              _buildApplePayOption(context, _paymentItems),
             ],
           ),
           verticalSpaceMedium,
@@ -131,6 +144,26 @@ class PaymentModalWidget extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildApplePayOption(BuildContext context, List<PaymentItem> _paymentItems ) {
+    return ApplePayButton(
+      paymentConfiguration: PaymentConfiguration.fromJsonString(
+          payment_configurations.defaultApplePay),
+      paymentItems: _paymentItems,
+      style: ApplePayButtonStyle.black,
+      type: ApplePayButtonType.buy,
+      margin: const EdgeInsets.only(top: 15.0),
+      onPaymentResult: onApplePayResult,
+      loadingIndicator: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  void onApplePayResult(paymentResult) {
+    // Send the resulting Apple Pay token to your server / PSP
+  }
+
 
   Widget _buildTotalSection(int totalAmount) {
     return Column(
