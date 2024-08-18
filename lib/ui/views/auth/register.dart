@@ -4,6 +4,9 @@ import 'package:growsmart/ui/components/text_field_widget.dart';
 import 'package:growsmart/ui/views/auth/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
+import '../../../app/app.locator.dart';
+import '../../../app/app.router.dart';
 import '../../common/ui_helpers.dart';
 import '../dashboard/dashboard_view.dart';
 import 'login.dart';
@@ -273,11 +276,9 @@ class _RegisterState extends State<Register> {
                     // if (_formKey.currentState!.validate()) {
                     //   model.register();
                     // }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DashboardView()),
-                    );
+                    locator<NavigationService>().clearStackAndShow(Routes.registerView);
+
+
                   },
                   color: kcPrimaryColor,
                   boldText: true,

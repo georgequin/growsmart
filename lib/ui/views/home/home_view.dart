@@ -45,12 +45,12 @@ class HomeView extends StackedView<HomeViewModel> {
                 label: "Home",
               ),
               BottomNavigationBarItem(
-                icon: _navBarItemIcon(Icons.miscellaneous_services, "Services", viewModel.selectedTab == 1, iconColor),
-                label: "Services",
+                icon: _navBarItemIcon(Icons.shopping_cart_outlined, "Services", viewModel.selectedTab == 1, iconColor),
+                label: "Shop",
               ),
               BottomNavigationBarItem(
-                icon: _navBarItemIcon(Icons.wallet, "Notification", viewModel.selectedTab == 2, iconColor),
-                label: "wallet",
+                icon: _navBarItemIcon(Icons.miscellaneous_services_outlined, "Notification", viewModel.selectedTab == 2, iconColor),
+                label: "Services",
               ),
 
               BottomNavigationBarItem(

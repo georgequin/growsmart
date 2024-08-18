@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import '../../common/app_colors.dart';
 import 'login.dart';
 
-
 /// @author George David
 /// email: georgequin19@gmail.com
 /// Feb, 2024
 ///
-
 
 class AuthView extends StatefulWidget {
   const AuthView({Key? key}) : super(key: key);
@@ -22,6 +20,7 @@ class AuthView extends StatefulWidget {
 class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   late TabController tabController;
   bool isLogin = true;
+  bool isOtpView = false;
 
   @override
   void initState() {
@@ -52,7 +51,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               ),
             ),
           ),
-         CustomScrollView(
+          CustomScrollView(
             slivers: [
               // SliverAppBar(
               //   expandedHeight: 150,
@@ -72,28 +71,29 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               //   ),
               // ),
 
-
               SliverList(
                 delegate: SliverChildListDelegate(
                   [
-
                     Container(
                       padding: const EdgeInsets.all(25),
-                      height: MediaQuery.of(context).size.height,  // Set a specific height constraint
+                      height: MediaQuery.of(context)
+                          .size
+                          .height, // Set a specific height constraint
                       child: Column(
-                        children:  [
+                        children: [
                           Flexible(
                             child: SingleChildScrollView(
-                              child: isLogin ? Login(updateIsLogin: (value) {
-                                setState(() {
-                                  isLogin = value;
-                                });
-                              })
+                              child: isLogin
+                                  ? Login(updateIsLogin: (value) {
+                                      setState(() {
+                                        isLogin = value;
+                                      });
+                                    })
                                   : Register(updateIsLogin: (value) {
-                                setState(() {
-                                  isLogin = value;
-                                });
-                              }),
+                                      setState(() {
+                                        isLogin = value;
+                                      });
+                                    }),
                             ),
                           ),
                         ],
@@ -105,7 +105,6 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
             ],
           ),
         ],
-
       ),
     );
   }

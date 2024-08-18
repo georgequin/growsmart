@@ -20,7 +20,6 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
   Widget build(BuildContext context) {
     return Container(
       // padding: EdgeInsets.symmetric(horizontal: 4.0),
-      padding: const EdgeInsets.only(left: 20, right: 20,bottom: 20, top: 20),
       decoration: BoxDecoration(
         color: Colors.white12,
         borderRadius: BorderRadius.circular(13.0),
@@ -33,7 +32,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
           // Raffles Button
           _buildOption(
             context: context,
-            text: 'Raffles',
+            text: 'Solar Energy',
             icon: 'ticket_star.svg',
             isSelected: widget.isRafflesSelected,
             onTap: () => widget.onToggle(!widget.isRafflesSelected),
@@ -42,11 +41,20 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
           // AfriShop Button
           _buildOption(
             context: context,
-            text: 'AfriShop',
+            text: 'Electronics',
             icon: 'bag.svg',
             isSelected: !widget.isRafflesSelected,
             onTap: () => widget.onToggle(false),
           ),
+          // AfriShop Button
+          _buildOption(
+            context: context,
+            text: 'Services',
+            icon: 'bag.svg',
+            isSelected: !widget.isRafflesSelected,
+            onTap: () => widget.onToggle(false),
+          ),
+
         ],
       ),
     );
@@ -67,15 +75,15 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
           color: Colors.transparent, // Interior color remains transparent
           borderRadius: BorderRadius.circular(13.0),
           border: Border.all(
-            color: isSelected ? kcSecondaryColor : Colors.transparent,
+            color: isSelected ? kcPrimaryColor : Colors.transparent,
             width: 2.0, // Set the width as needed
           ),
         ),
-        child: Row(
+        child: Column(
           children: [
             SvgPicture.asset(
               'assets/icons/$icon',
-                color: isSelected ? kcSecondaryColor : kcPrimaryColor,
+                color: isSelected ? kcPrimaryColor : kcBlackColor,
               height: 20,
             ),
             // Icon(icon, color: isSelected ? kcSecondaryColor : kcPrimaryColor),
@@ -83,9 +91,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
             Text(
               text,
               style: const TextStyle(
-                color: kcPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Panchang",
+                color: kcBlackColor,
                   fontSize: 13
               ),
             ),

@@ -10,6 +10,7 @@ import 'package:growsmart/ui/views/dashboard/dashboard_view.dart';
 import 'package:growsmart/ui/views/notification/notification_view.dart';
 import 'package:growsmart/ui/views/profile/profile_details.dart';
 import 'package:flutter/material.dart';
+import 'package:growsmart/ui/views/shop/shop_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -27,7 +28,7 @@ class HomeViewModel extends BaseViewModel {
 
   List<Widget> pages = [
     DashboardView(),
-    DashboardView(),
+    ShopView(),
     NotificationView(),
     ProfileScreen(),
     // const CartView(),
@@ -51,35 +52,35 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void changeSelected(int i) {
-    if (i != 0 && !userLoggedIn.value) {
-      showModalBottomSheet(
-          context: StackedService.navigatorKey!.currentState!.context,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20), topLeft: Radius.circular(20))),
-          builder: (ctx) {
-            return Container(
-              padding: const EdgeInsets.all(30),
-              height: 200,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("You need to login to continue"),
-                  verticalSpaceMedium,
-                  SubmitButton(
-                    isLoading: false,
-                    label: "Login",
-                    submit: () {
-
-                    },
-                    color: kcPrimaryColor,
-                  )
-                ],
-              ),
-            );
-          });
-      return;
-    }
+    // if (i != 0 && !userLoggedIn.value) {
+    //   showModalBottomSheet(
+    //       context: StackedService.navigatorKey!.currentState!.context,
+    //       shape: const RoundedRectangleBorder(
+    //           borderRadius: BorderRadius.only(
+    //               topRight: Radius.circular(20),topLeft: Radius.circular(20))),
+    //       builder: (ctx) {
+    //         return Container(
+    //           padding: const EdgeInsets.all(30),
+    //           height: 200,
+    //           child: Column(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               const Text("You need to login to continue"),
+    //               verticalSpaceMedium,
+    //               SubmitButton(
+    //                 isLoading: false,
+    //                 label: "Login",
+    //                 submit: () {
+    //
+    //                 },
+    //                 color: kcPrimaryColor,
+    //               )
+    //             ],
+    //           ),
+    //         );
+    //       });
+    //   return;
+    // }
     selectedTab = i;
     rebuildUi();
   }

@@ -10,6 +10,7 @@ import 'package:growsmart/core/utils/local_stotage.dart';
 import 'package:growsmart/state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:growsmart/ui/views/auth/register.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:stacked/stacked.dart';
@@ -43,6 +44,14 @@ class AuthViewModel extends BaseViewModel {
   bool obscure = true;
   bool terms = false;
   bool remember = false;
+
+  final initialEmail = TextEditingController();
+  final otp = TextEditingController();
+
+
+  bool isOtpRequested = false;
+  bool isLoading = false;
+
 
   init() async {
 
@@ -199,4 +208,69 @@ class AuthViewModel extends BaseViewModel {
     }
 
   }
+
+  Future<void> SubmitOtp() async {
+    setBusy(true);
+
+    try {
+      ApiResponse res = await repo.submitOtp({
+        "userId": profile.value.id,
+        "verificationCode": otp.text,
+      });
+      isLoading =false;
+      if (res.statusCode == 200) {
+        snackBar.showSnackbar(message: 'OTP verify successfully', duration: Duration(seconds: 5));
+        // print(res);
+        // isOtpRequested = true;
+        // notifyListeners();
+        // isLoading =false;
+        locator<NavigationService>().clearStackAndShow(Routes.registerView);
+
+      }
+      else {
+        isLoading =false;
+        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
+        setBusy(false);
+      }
+    } catch (e) {
+      log.i(e);
+      setBusy(false);
+      isLoading =false;
+
+    }
+
+    setBusy(false);
+  }
+
+
+  void requestOtp() async {
+    setBusy(true);
+
+    try {
+      ApiResponse res = await repo.requestOtp({
+
+        "email": email.text,
+      });
+      if (res.statusCode == 200) {
+        snackBar.showSnackbar(message: 'OTP successfully sent', duration: Duration(seconds: 5));
+        print(res);
+        print(res.data['data']["userId"]);
+
+        profile.value.id = res.data['data']["userId"];
+        isOtpRequested = true;
+        notifyListeners();
+      }else {
+        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
+        setBusy(false);
+      }
+    } catch (e) {
+      log.i(e);
+      setBusy(false);
+
+    }
+
+    setBusy(false);
+  }
+
+
 }

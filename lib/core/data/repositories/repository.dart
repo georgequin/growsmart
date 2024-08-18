@@ -19,6 +19,28 @@ class Repository extends IRepository {
   }
 
   @override
+  Future<ApiResponse> requestOtp(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/initial-signup",
+      reqBody: req,
+    );
+
+    return response;
+  }
+  @override
+  Future<ApiResponse> submitOtp(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/verifySignupCode",
+      reqBody: req,
+    );
+
+
+    return response;
+  }
+
+  @override
   Future<ApiResponse> logOut() async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,

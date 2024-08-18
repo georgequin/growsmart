@@ -61,13 +61,14 @@ class _OnboardingViewState extends State<OnboardingView2> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Expanded(
-                    child: SvgPicture.asset(
-                      'assets/images/lightpic.svg', // Replace with your asset path
-                      height: 400,
-                    ),
+                  child: SvgPicture.asset(
+                    'assets/images/lightpic.svg',
+                    height: 400,
                   ),
                 ),
+
+
+
                 verticalSpaceMassive,
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),

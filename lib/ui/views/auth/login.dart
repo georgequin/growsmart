@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import 'SignUp.dart';
+
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -143,6 +145,7 @@ class _LoginState extends State<Login> {
                 boldText: true,
                 label: "Login",
                 submit: () {
+                  //locator<NavigationService>().clearStackAndShow(Routes.homeView);
                   model.login();
                 },
                 color: kcPrimaryColor,
@@ -206,7 +209,12 @@ class _LoginState extends State<Login> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        gotoRegister();
+
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                                  return SignUp();
+                                }));
+                        //gotoRegister();
 
                       },
                       child: const Text(

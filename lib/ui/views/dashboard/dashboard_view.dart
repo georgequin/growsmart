@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:growsmart/ui/common/app_colors.dart';
+import 'package:growsmart/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../components/submit_button.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
@@ -19,10 +21,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
     int rating = 4;
 
     final List<String> names = [
-      'Grid-Tied Solar ',
-      'Off-Grid Solar ',
-      'Hybrid Solar ',
-      'Hybrid Solar ',
+      'All ',
+      'Iron',
+      'Refrigirator ',
+      'Solar Panel ',
       'Hybrid Solar '
     ];
 
@@ -31,26 +33,31 @@ class DashboardView extends StackedView<DashboardViewModel> {
         'image': 'assets/images/solarpallete.png',
         'title': 'MG Solar Panel',
         'subtitle': 'OVS',
-        'price': '30\$',
+        'price': '\$30',
         'rating': 4,
       },
       {
         'image': 'assets/images/solarpallete.png',
         'title': 'Total Inverter',
         'subtitle': 'Mango Boy',
-        'price': '10\$',
+        'price': '\$10',
         'rating': 5,
       },
       {
         'image': 'assets/images/solarpallete.png',
         'title': ' Solar Panel',
         'subtitle': 'Mango Boy',
-        'price': '44\$',
+        'price': '\$44',
         'rating': 3,
       },
-      // Add more items as needed
+      {
+        'image': 'assets/images/solarpallete.png',
+        'title': ' Solar Panel',
+        'subtitle': 'Mango Boy',
+        'price': '\$33',
+        'rating': 3,
+      },
     ];
-
 
     return Scaffold(
       body: RefreshIndicator(
@@ -60,44 +67,220 @@ class DashboardView extends StackedView<DashboardViewModel> {
         child: ListView(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Search on Easy Power',
-                                border: InputBorder.none,
-                              ),
+                  Text(
+                    'Discover',
+                    style: TextStyle(
+                      fontSize: 22,
+                    ),
+                    softWrap: true,
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        horizontalSpaceSmall,
+                        GestureDetector(
+                          onTap: () {
+                            // Define the action when the avatar is tapped
+                          },
+                          child: Container(
+
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),  // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              child: Icon(Icons.shopping_cart_outlined,
+                                  size: 25, color: Colors.black),
+                              radius: 18,
+                              backgroundColor: kcWhiteColor,
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.search),
-                            onPressed: () {
-                              // Handle search button press
-                            },
+                        ),
+                        horizontalSpaceSmall,
+                        GestureDetector(
+                          onTap: () {
+                            // Define the action when the avatar is tapped
+                          },
+                          child: CircleAvatar(
+                            child: Icon(Icons.person_2_outlined,
+                                size: 25, color: Colors.black),
+                            radius: 25,
+                            backgroundColor: Colors.grey.shade200,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      size: 40,
+
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () {
+                          // Handle search button press
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Content Card
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Card(
+                  color: kcPrimaryColor,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width:
+                                  150, // Set the width to control text wrapping
+                              child: const Text(
+                                'Best Full Solar Installation',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: kcWhiteColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                softWrap: true,
+                              ),
+                            ),
+                            Container(
+                              width:
+                                  200, // Set the width to control text wrapping
+                              child: Text(
+                                'Light out your world',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: kcWhiteColor,
+                                ),
+                                softWrap: true,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: kcBlackColor,
+                                  backgroundColor: kcWhiteColor,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 12.0, horizontal: 24.0),
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                child: Text("Check now"),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15),
+                            ),
+                            image: DecorationImage(
+                              image: AssetImage(
+                                  "assets/images/Mercury-10KVA-Solar-System-1 2.png"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          height: 150,
+                          width: 130,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IndicatorDot(isActive: true),
+                    const SizedBox(width: 8),
+                    IndicatorDot(isActive: false),
+                  ],
+                ),
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Categories',
+                    style: TextStyle(
+                      fontSize: 16,
                     ),
-                    onPressed: () {
-                    },
+                  ),
+                  Text(
+                    'See all',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: kcPrimaryColor,
+                    ),
                   ),
                 ],
               ),
@@ -111,23 +294,22 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     return GestureDetector(
                       onTap: () {
                         viewModel.selectedIndex = index;
-
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 16.0),
                         margin: EdgeInsets.symmetric(horizontal: 4.0),
                         decoration: BoxDecoration(
-                          color:  viewModel.selectedIndex == index
+                          color: viewModel.selectedIndex == index
                               ? primaryColor
-                              : Colors.grey,
+                              : kcWhiteColor,
                           border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(18.0),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: Text(
                           names[index],
                           style: TextStyle(
-                            color: viewModel.selectedIndex== index
+                            color: viewModel.selectedIndex == index
                                 ? Colors.white
                                 : Colors.black,
                             fontWeight: FontWeight.bold,
@@ -139,161 +321,122 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 ),
               ),
             ),
-
-            // Content Card
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Card(
-                  color: kcPrimaryColor,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Row(
-                    // Use Row instead of Column for horizontal scrolling
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Best Full Solar Installation',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: kcWhiteColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'Light out your world',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: kcWhiteColor,
-                              ),
-                            ),
-                          ],
-                        ),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,  // Number of columns in the grid
+                crossAxisSpacing: 10.0,
+                mainAxisSpacing: 0.0,
+                childAspectRatio: 0.9,  // Adjusts the height of the items relative to their width
+              ),
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Card containing image and rating
+                    Container(
+                      margin: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),  // changes position of shadow
+                          ),
+                        ],
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15),
+                      child: Stack(
+                        children: [
+                          // Product image
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            child: Image.asset(
+                              item['image'],
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                          image: DecorationImage(
-                            image: AssetImage(
-                                "assets/images/Mercury-10KVA-Solar-System-1 2.png"),
-                            fit: BoxFit.cover,
+                          // Rating badge at the top right corner
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8.0),
+                              decoration: BoxDecoration(
+                                color: kcDarkGreyColor.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    color: kcStarColor,
+                                    size: 16,
+                                  ),
+                                  Text(
+                                    item['rating'].toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                        height: 150,
-                        width: 150,
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'You’ve never seen it before!',
-                    style: TextStyle(
-                      fontSize: 14,
                     ),
-                  ),
-                  Text(
-                    'View all',
-                    style: TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(items.length, (index) {
-                  final item = items[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Card(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(15),
-                                    topRight: Radius.circular(15),
-                                  ),
-                                  image: DecorationImage(
-                                    image: AssetImage(item['image']),
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                height: 150,
-                                width: 150,
-                              ),
-                            ],
-                          ),
+                    // Title
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      child: Text(
+                        item['title'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(5, (starIndex) {
-                                return Icon(
-                                  starIndex < item['rating']
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  color: Colors.amber,
-                                  size: 16.0,
-                                );
-                              }),
-                            ),
-                            Text(
-                              item['subtitle'],
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: kcMediumGrey,
-                              ),
-                            ),
-                            Text(
-                              item['title'],
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              item['price'],
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  );
-                }),
-              ),
+                    // Price
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            item['price'],
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: kcPrimaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.shopping_cart_outlined,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             )
+
+
 
           ],
         ),
@@ -309,4 +452,20 @@ class DashboardView extends StackedView<DashboardViewModel> {
   @override
   DashboardViewModel viewModelBuilder(BuildContext context) =>
       DashboardViewModel();
+}
+
+class IndicatorDot extends StatelessWidget {
+  final bool isActive;
+  const IndicatorDot({super.key, required this.isActive});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 12,
+      height: 12,
+      decoration: BoxDecoration(
+        color: isActive ? Colors.orange : Colors.grey.shade400,
+        borderRadius: BorderRadius.circular(6),
+      ),
+    );
+  }
 }

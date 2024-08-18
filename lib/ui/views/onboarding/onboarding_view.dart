@@ -60,11 +60,9 @@ class _OnboardingViewState extends State<OnboardingView> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Expanded(
-                    child: SvgPicture.asset(
-                      'assets/images/welcome.svg', // Replace with your asset path
-                      height: 400,
-                    ),
+                  child: SvgPicture.asset(
+                    'assets/images/welcome.svg', // Replace with your asset path
+                    height: 400,
                   ),
                 ),
                 verticalSpaceMassive,
