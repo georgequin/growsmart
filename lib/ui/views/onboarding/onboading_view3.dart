@@ -110,7 +110,7 @@ class _OnboardingViewState extends State<OnboardingView3> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => AuthView()),
+                            builder: (context) => const AuthView()),
                       );
 
                     },

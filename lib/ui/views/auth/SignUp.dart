@@ -11,6 +11,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/utils/code_input.dart';
+import 'auth_view.dart';
 
 
 /// @author George David
@@ -18,16 +19,17 @@ import '../../../core/utils/code_input.dart';
 /// Feb, 2024
 ///
 
+
+
 class SignUp extends StatefulWidget {
-  const SignUp({Key? key}) : super(key: key);
-
-
+  final Function(PresentPage) updatePage; // Ensure this is defined
+  const SignUp({Key? key, required this.updatePage}) : super(key: key);
 
   @override
-  State<SignUp> createState() => _LoginState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _LoginState extends State<SignUp> {
+class _SignUpState extends State<SignUp> {
   bool terms = false;
 
 
@@ -93,7 +95,10 @@ class _LoginState extends State<SignUp> {
                   child: CodeInputWidget(
                     codeController: model.otp,
                     onCompleted: (String value) {
-                      model.SubmitOtp();
+                      model.submitOtp();
+                      if (model.isOtpRequested) {
+                        widget.updatePage(PresentPage.register);
+                      }
                     },
                   ),
                 ),
@@ -105,7 +110,10 @@ class _LoginState extends State<SignUp> {
                   boldText: true,
                   label: model.isOtpRequested ? 'Verify OTP' : 'Get OTP',
                   submit: () {
-                    model.requestOtp();
+                    model.isOtpRequested ? model.submitOtp() : model.requestOtp();
+                    if (model.isOtpRequested) {
+                      widget.updatePage(PresentPage.register);
+                    }
                   },
                   color: kcPrimaryColor,
                 ),
