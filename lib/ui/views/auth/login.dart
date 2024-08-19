@@ -11,6 +11,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import 'SignUp.dart';
+import 'auth_view.dart';
 
 
 /// @author George David
@@ -20,7 +21,7 @@ import 'SignUp.dart';
 
 
 class Login extends StatefulWidget {
-  final Function(bool) updateIsLogin;
+  final Function(PresentPage) updateIsLogin;
   const Login({Key? key, required this.updateIsLogin}) : super(key: key);
 
   @override
@@ -210,10 +211,7 @@ class _LoginState extends State<Login> {
                     GestureDetector(
                       onTap: () {
 
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                                  return SignUp();
-                                }));
+                        widget.updateIsLogin(PresentPage.signup);
                         //gotoRegister();
 
                       },
@@ -235,7 +233,4 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void gotoRegister() {
-    widget.updateIsLogin(false);
-  }
 }
