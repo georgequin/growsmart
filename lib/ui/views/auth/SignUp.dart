@@ -50,7 +50,7 @@ class _LoginState extends State<SignUp> {
                   children: [
                     verticalSpaceMassive,
                     Text(
-                      "Login Account",
+                      "Input OTP",
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -59,7 +59,7 @@ class _LoginState extends State<SignUp> {
                     ),
                     verticalSpaceTiny,
                     Text(
-                      "Welcome back you’ve been missed!",
+                      "Please enter the code sent to your email ma*****@gmail.com",
                       style: TextStyle(
                         fontSize: 16,
                       ),
@@ -114,7 +114,7 @@ class _LoginState extends State<SignUp> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:  [
                     const Text(
-                      "Don't have an account? ",
+                      "Resend OTP  ",
                       style: TextStyle(
                         fontSize: 12,
                       ),
@@ -125,7 +125,7 @@ class _LoginState extends State<SignUp> {
 
                       },
                       child: const Text(
-                        "Create Account",
+                        "(00:30)",
                         style: TextStyle(
                           fontSize: 12,
                           color: kcSecondaryColor,
