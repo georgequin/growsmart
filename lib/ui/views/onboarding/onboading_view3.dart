@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:growsmart/core/utils/local_stotage.dart';
 import 'package:growsmart/ui/views/auth/auth_view.dart';
 import 'package:growsmart/ui/views/onboarding/onboading_view2.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
+import '../../../core/utils/local_store_dir.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import '../../components/submit_button.dart';
@@ -19,6 +21,7 @@ class OnboardingView3 extends StatefulWidget {
 }
 
 bool isloading = false;
+late final LocalStorage _localStorage;
 
 class _OnboardingViewState extends State<OnboardingView3> {
   @override
@@ -106,12 +109,16 @@ class _OnboardingViewState extends State<OnboardingView3> {
                     isLoading: false,
                     boldText: true,
                     label: "GET STARTED",
-                    submit: () {
+                    submit: () async {
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const AuthView()),
                       );
+
+                      await _localStorage.save(LocalStorageDir.onboarded, true);
+
 
                     },
                     color: kcPrimaryColor,

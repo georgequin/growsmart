@@ -41,8 +41,7 @@ class _RegisterState extends State<Register> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Stack(
           children: [
-
-           Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -50,6 +49,7 @@ class _RegisterState extends State<Register> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    verticalSpaceMedium,
                     Text(
                       "Create Account",
                       style: TextStyle(
@@ -68,147 +68,105 @@ class _RegisterState extends State<Register> {
                   ],
                 ),
                 verticalSpaceMedium,
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFieldWidget(
-                        hint: "Full name",
-                        controller: model.firstname,
-                        inputType: TextInputType.name,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'required';
-                          }
-                          return null; // Return null to indicate no validation error
-                        },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: TextFieldWidget(
+                          hint: "First name",
+                          controller: model.firstname,
+                          inputType: TextInputType.name,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'required';
+                            }
+                            return null; // Return null to indicate no validation error
+                          },
+                        ),
                       ),
-                    ),
-                    verticalSpaceMedium,
-                  ],
+                      horizontalSpaceTiny,
+                      Expanded(
+                        child: TextFieldWidget(
+                          hint: "Last name",
+                          controller: model.lastname,
+                          inputType: TextInputType.name,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'required';
+                            }
+                            return null; // Return null to indicate no validation error
+                          },
+                        ),
+                      ),
+                      verticalSpaceMedium,
+                    ],
+                  ),
+                verticalSpaceMedium,
+                TextFieldWidget(
+                  inputType: TextInputType.visiblePassword,
+                  hint: "Password",
+                  controller: model.password,
+                  obscureText: model.obscure,
+                  suffix: InkWell(
+                    onTap: () {
+                      model.toggleObscure();
+                    },
+                    child:
+                        Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
+                  ),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Password is required';
+                    }
+                    if (value.length < 8) {
+                      return 'Password must be at least 8 characters long';
+                    }
+                    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                      return 'Password must contain at least one uppercase letter';
+                    }
+                    if (!RegExp(r'[a-z]').hasMatch(value)) {
+                      return 'Password must contain at least one lowercase letter';
+                    }
+                    if (!RegExp(r'[0-9]').hasMatch(value)) {
+                      return 'Password must contain at least one digit';
+                    }
+                    if (!RegExp(r'[!@#$%^&*]').hasMatch(value)) {
+                      return 'Password must contain at least one special character';
+                    }
+                    return null; // Return null to indicate no validation error
+                  },
+                ),
+                verticalSpaceSmall,
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text( style: TextStyle(
+                    fontSize: 11,
+                  ),
+                      "Must be at least 8 characters with a combination of letters and numbers"),
                 ),
                 verticalSpaceMedium,
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFieldWidget(
-                        hint: "Email address",
-                        controller: model.email,
-                        inputType: TextInputType.name,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'required';
-                          }
-                          return null; // Return null to indicate no validation error
-                        },
-                      ),
-                    ),
-                  ],
+                TextFieldWidget(
+                  hint: "Confirm password",
+                  controller: model.cPassword,
+                  obscureText: model.obscure,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Password confirmation is required';
+                    }
+                    if (value != model.password.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null; // Return null to indicate no validation error
+                  },
+                  suffix: InkWell(
+                    onTap: () {
+                      model.toggleObscure();
+                    },
+                    child:
+                        Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
+                  ),
                 ),
                 verticalSpaceMedium,
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFieldWidget(
-                        hint: "Password",
-                        controller: model.password,
-                        inputType: TextInputType.name,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'required';
-                          }
-                          return null; // Return null to indicate no validation error
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                verticalSpaceMedium,
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFieldWidget(
-                        hint: "Confirm password",
-                        controller: model.email,
-                        inputType: TextInputType.name,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'required';
-                          }
-                          return null; // Return null to indicate no validation error
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                verticalSpaceMedium,
-
-                // TextFieldWidget(
-                //   inputType: TextInputType.visiblePassword,
-                //   hint: "Password",
-                //   controller: model.password,
-                //   obscureText: model.obscure,
-                //   suffix: InkWell(
-                //     onTap: () {
-                //       model.toggleObscure();
-                //     },
-                //     child:
-                //         Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
-                //   ),
-                //   validator: (value) {
-                //     if (value.isEmpty) {
-                //       return 'Password is required';
-                //     }
-                //     if (value.length < 8) {
-                //       return 'Password must be at least 8 characters long';
-                //     }
-                //     if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                //       return 'Password must contain at least one uppercase letter';
-                //     }
-                //     if (!RegExp(r'[a-z]').hasMatch(value)) {
-                //       return 'Password must contain at least one lowercase letter';
-                //     }
-                //     if (!RegExp(r'[0-9]').hasMatch(value)) {
-                //       return 'Password must contain at least one digit';
-                //     }
-                //     if (!RegExp(r'[!@#$%^&*]').hasMatch(value)) {
-                //       return 'Password must contain at least one special character';
-                //     }
-                //     return null; // Return null to indicate no validation error
-                //   },
-                // ),
-                // verticalSpaceSmall,
-                // const Padding(
-                //   padding: EdgeInsets.symmetric(horizontal: 8.0),
-                //   child: Text( style: TextStyle(
-                //     fontSize: 11,
-                //   ),
-                //       "Must be at least 8 characters with a combination of letters and numbers"),
-                // ),
-                // verticalSpaceMedium,
-                // TextFieldWidget(
-                //   hint: "Confirm password",
-                //   controller: model.cPassword,
-                //   obscureText: model.obscure,
-                //   validator: (value) {
-                //     if (value.isEmpty) {
-                //       return 'Password confirmation is required';
-                //     }
-                //     if (value != model.password.text) {
-                //       return 'Passwords do not match';
-                //     }
-                //     return null; // Return null to indicate no validation error
-                //   },
-                //   suffix: InkWell(
-                //     onTap: () {
-                //       model.toggleObscure();
-                //     },
-                //     child:
-                //         Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
-                //   ),
-                // ),
-                // verticalSpace(60),
                 // InkWell(
                 //   onTap: model.toggleTerms,
                 //   child: Row(
@@ -273,12 +231,9 @@ class _RegisterState extends State<Register> {
                   isLoading: false,
                   label: "Sign up",
                   submit: () {
-                    // if (_formKey.currentState!.validate()) {
-                    //   model.register();
-                    // }
-                    locator<NavigationService>().clearStackAndShow(Routes.registerView);
-
-
+                    if (_formKey.currentState!.validate()) {
+                      model.register();
+                    }
                   },
                   color: kcPrimaryColor,
                   boldText: true,
@@ -297,7 +252,9 @@ class _RegisterState extends State<Register> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Login(updateIsLogin: (bool ) {  },)),
+                            builder: (context) => Login(
+                                  updateIsLogin: (bool) {},
+                                )),
                       );
                     },
                     child: const Text(
@@ -363,7 +320,6 @@ class _RegisterState extends State<Register> {
               ],
             ),
           ],
-
         ),
       ),
     );
@@ -373,5 +329,3 @@ class _RegisterState extends State<Register> {
     widget.updateIsLogin(true);
   }
 }
-
-

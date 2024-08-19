@@ -154,33 +154,33 @@ class AuthViewModel extends BaseViewModel {
 
   Future<RegistrationResult> register() async {
 
-    if (!terms) {
-      snackBar.showSnackbar(message: "Accept terms to continue");
-      return RegistrationResult.failure;
-    }
+
+    // if (!terms) {
+    //   snackBar.showSnackbar(message: "Accept terms to continue");
+    //   return RegistrationResult.failure;
+    // }
     setBusy(true);
 
     try {
       ApiResponse res = await repo.register({
         "firstname": firstname.text,
         "lastname": lastname.text,
-        "email": email.text,
-        "phone": phoneNumber.completeNumber,
-        "country": countryId,
+        "userId":  profile.value.id,
         "password": password.text,
-        "gender": selectedGender
 
       });
       if (res.statusCode == 200) {
-        snackBar.showSnackbar(message: res.data["message"]);
 
-        locator<NavigationService>().replaceWithOtpView(email: email.text);
-        firstname.text = "";
-        lastname.text = "";
-        email.text = "";
-        phone.text = "";
-        password.text = "";
-        terms = false;
+        userLoggedIn.value = true;
+        profile.value =
+            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+        locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refresh_token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
+
+
+        snackBar.showSnackbar(message: res.data["message"]);
+        locator<NavigationService>().clearStackAndShow(Routes.homeView);
         setBusy(false);
         return RegistrationResult.success;
       } else {

@@ -63,9 +63,12 @@ class Repository extends IRepository {
   Future<ApiResponse> register(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "auth/signup",
+      endpoint: "auth/finalSignup",
       reqBody: req,
     );
+
+
+
 
     return response;
   }
