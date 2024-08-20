@@ -37,103 +37,105 @@ class _OnboardingViewState extends State<OnboardingView2> {
               ),
             ),
             // Main content
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Skip button
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0, top: 16.0),
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: TextButton(
-                      onPressed: () {
-                        // Handle skip
-                      },
-                      child: const Text(
-                        "Skip",
-                        style: TextStyle(
-                          color: kcDarkGreyColor,
-                          fontSize: 16,
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Skip button
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0, top: 16.0),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: TextButton(
+                        onPressed: () {
+                          // Handle skip
+                        },
+                        child: const Text(
+                          "Skip",
+                          style: TextStyle(
+                            color: kcDarkGreyColor,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: SvgPicture.asset(
-                    'assets/images/lightpic.svg',
-                    height: 400,
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: SvgPicture.asset(
+                      'assets/images/lightpic.svg',
+                      height: 400,
+                    ),
                   ),
-                ),
-
-
-
-                verticalSpaceMassive,
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        Text(
-                          "Explore Our Extensive Catalog",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+              
+              
+              
+                  verticalSpaceMassive,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Text(
+                            "Explore Our Extensive Catalog",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          "With a wide range of high-quality products, you can easily find and purchase the best power solutions for your needs—all in one place.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
+                          SizedBox(height: 10),
+                          Text(
+                            "With a wide range of high-quality products, you can easily find and purchase the best power solutions for your needs—all in one place.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  verticalSpaceMedium,
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // Page indicators
+                        // Next button
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OnboardingView3()),
+                            );
+                          },
+                          child: Row(
+                            children: const [
+                              Text(
+                                "Next",
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward,
+                                color: Colors.orange,
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                verticalSpaceMedium,
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      // Page indicators
-                      // Next button
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OnboardingView3()),
-                          );
-                        },
-                        child: Row(
-                          children: const [
-                            Text(
-                              "Next",
-                              style: TextStyle(
-                                color: Colors.orange,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Colors.orange,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(36.0),

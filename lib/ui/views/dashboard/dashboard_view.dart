@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
     Widget? child,
   ) {
     final Color primaryColor = kcPrimaryColor;
-    int rating = 4;
 
     final List<String> names = [
       'All ',
@@ -28,36 +28,36 @@ class DashboardView extends StackedView<DashboardViewModel> {
       'Hybrid Solar '
     ];
 
-    final List<Map<String, dynamic>> items = [
-      {
-        'image': 'assets/images/solarpallete.png',
-        'title': 'MG Solar Panel',
-        'subtitle': 'OVS',
-        'price': '\$30',
-        'rating': 4,
-      },
-      {
-        'image': 'assets/images/solarpallete.png',
-        'title': 'Total Inverter',
-        'subtitle': 'Mango Boy',
-        'price': '\$10',
-        'rating': 5,
-      },
-      {
-        'image': 'assets/images/solarpallete.png',
-        'title': ' Solar Panel',
-        'subtitle': 'Mango Boy',
-        'price': '\$44',
-        'rating': 3,
-      },
-      {
-        'image': 'assets/images/solarpallete.png',
-        'title': ' Solar Panel',
-        'subtitle': 'Mango Boy',
-        'price': '\$33',
-        'rating': 3,
-      },
-    ];
+    // final List<Map<String, dynamic>> items = [
+    //   {
+    //     'image': 'assets/images/solarpallete.png',
+    //     'title': 'MG Solar Panel',
+    //     'subtitle': 'OVS',
+    //     'price': '\$30',
+    //     'rating': 4,
+    //   },
+    //   {
+    //     'image': 'assets/images/solarpallete.png',
+    //     'title': 'Total Inverter',
+    //     'subtitle': 'Mango Boy',
+    //     'price': '\$10',
+    //     'rating': 5,
+    //   },
+    //   {
+    //     'image': 'assets/images/solarpallete.png',
+    //     'title': ' Solar Panel',
+    //     'subtitle': 'Mango Boy',
+    //     'price': '\$44',
+    //     'rating': 3,
+    //   },
+    //   {
+    //     'image': 'assets/images/solarpallete.png',
+    //     'title': ' Solar Panel',
+    //     'subtitle': 'Mango Boy',
+    //     'price': '\$33',
+    //     'rating': 3,
+    //   },
+    // ];
 
     return Scaffold(
       body: RefreshIndicator(
@@ -78,7 +78,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     ),
                     softWrap: true,
                   ),
-
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -90,14 +89,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             // Define the action when the avatar is tapped
                           },
                           child: Container(
-
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.5),
                                   blurRadius: 7,
-                                  offset: Offset(0, 3),  // changes position of shadow
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
                                 ),
                               ],
                             ),
@@ -124,37 +123,34 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       ],
                     ),
                   ),
-
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Expanded(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Search',
-                            border: InputBorder.none,
-                          ),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Search',
+                          border: InputBorder.none,
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: () {
-                          // Handle search button press
-                        },
-                      ),
-                    ],
-                  ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        // Handle search button press
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -325,14 +321,15 @@ class DashboardView extends StackedView<DashboardViewModel> {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,  // Number of columns in the grid
+                crossAxisCount: 2, // Number of columns in the grid
                 crossAxisSpacing: 10.0,
                 mainAxisSpacing: 0.0,
-                childAspectRatio: 0.9,  // Adjusts the height of the items relative to their width
+                childAspectRatio:
+                    0.9, // Adjusts the height of the items relative to their width
               ),
-              itemCount: items.length,
+              itemCount: viewModel.productList.length,
               itemBuilder: (context, index) {
-                final item = items[index];
+                final item = viewModel.productList[index];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -347,7 +344,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 2,
                             blurRadius: 5,
-                            offset: Offset(0, 3),  // changes position of shadow
+                            offset: Offset(0, 3), // changes position of shadow
                           ),
                         ],
                       ),
@@ -359,11 +356,28 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
                             ),
-                            child: Image.asset(
-                              item['image'],
+                            // child: Image.asset(
+                            //   item.images!.first,
+                            //   width: double.infinity,
+                            //   fit: BoxFit.cover,
+                            // ),
+
+                            child:CachedNetworkImage(
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0, // Make the loader thinner
+                                  valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
+                                ),
+                              ),
+                              imageUrl:item.images?.first ?? 'https://via.placeholder.com/120',
+                              height: 140,
                               width: double.infinity,
                               fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                              fadeInDuration: const Duration(milliseconds: 500),
+                              fadeOutDuration: const Duration(milliseconds: 300),
                             ),
+
                           ),
                           // Rating badge at the top right corner
                           Positioned(
@@ -384,7 +398,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     size: 16,
                                   ),
                                   Text(
-                                    item['rating'].toString(),
+                                    item.rating.toString(),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
@@ -399,9 +413,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     ),
                     // Title
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
                       child: Text(
-                        item['title'],
+                        item.productName ?? 'Product name',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -417,7 +432,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            item['price'],
+                             'N${item.price}' ?? "N0",
                             style: const TextStyle(
                               fontSize: 14,
                               color: kcPrimaryColor,
@@ -435,9 +450,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 );
               },
             )
-
-
-
           ],
         ),
       ),
@@ -447,6 +459,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
   @override
   void onDispose(DashboardViewModel viewModel) {
     viewModel.dispose();
+  }
+
+  @override
+  void onViewModelReady(DashboardViewModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
   }
 
   @override

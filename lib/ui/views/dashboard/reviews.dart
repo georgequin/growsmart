@@ -24,7 +24,7 @@ class _ReviewsState extends State<Reviews> {
           itemCount: widget.product.reviews!.length,
           itemBuilder: (context, index) {
             Map<String, dynamic> review =
-                Map<String, dynamic>.from(widget.product.reviews![index]);
+                Map<String, dynamic>.from(widget.product.reviews![index] as Map);
             return Card(
               child: ListTile(
                 title: Text(review['comment']),

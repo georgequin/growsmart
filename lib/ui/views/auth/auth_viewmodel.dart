@@ -171,12 +171,14 @@ class AuthViewModel extends BaseViewModel {
       });
       if (res.statusCode == 200) {
 
+        print('response is ${res.data}');
+
         userLoggedIn.value = true;
         profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+            Profile.fromJson(Map<String, dynamic>.from(res.data["User"]));
         locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
         locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refresh_token"]);
-        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
+        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["User"]));
 
 
         snackBar.showSnackbar(message: res.data["message"]);

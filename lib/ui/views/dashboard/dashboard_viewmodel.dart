@@ -8,6 +8,7 @@ import 'package:growsmart/core/network/api_response.dart';
 import 'package:growsmart/core/utils/local_store_dir.dart';
 import 'package:growsmart/core/utils/local_stotage.dart';
 import 'package:growsmart/state.dart';
+import 'package:http/http.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
@@ -23,6 +24,8 @@ class DashboardViewModel extends BaseViewModel {
   List<Raffle> raffleList = [];
   List<Product> sellingFast = [];
   List<Raffle> featuredRaffle = [];
+
+  final snackBar = locator<SnackbarService>();
 
 
   void changeSelected(int i) {
@@ -52,8 +55,40 @@ class DashboardViewModel extends BaseViewModel {
 
   Future<void> init() async {
 
+   getProducts();
+
     await loadNotifications();
     notifyListeners();
+  }
+
+  void getProducts() async {
+    setBusy(true);
+
+    try {
+      ApiResponse res = await repo.getProducts();
+
+      if (res.statusCode == 200) {
+
+        productList = (res.data["products"] as List)
+            .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+
+        print("${res.data}");
+
+        notifyListeners();
+      }else {
+        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
+        setBusy(false);
+      }
+    } catch (e) {
+      log.i(e);
+      setBusy(false);
+
+    }
+
+    setBusy(false);
+    notifyListeners();
+
   }
 
 
@@ -76,7 +111,7 @@ class DashboardViewModel extends BaseViewModel {
   }
 
   void getResourceList(){
-
+getProducts();
     if (userLoggedIn.value == true) {
       getNotifications();
     }

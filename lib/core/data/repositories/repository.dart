@@ -88,7 +88,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getProducts() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "products/list",
+      endpoint: "products",
     );
 
     return response;

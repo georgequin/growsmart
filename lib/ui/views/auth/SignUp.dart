@@ -45,14 +45,14 @@ class _SignUpState extends State<SignUp> {
           viewModelBuilder: () => AuthViewModel(),
           builder: (context, model, child) => ListView(
             children: [
-              const Padding(
+               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     verticalSpaceMassive,
                     Text(
-                      "Input OTP",
+                      model.isOtpRequested ?"Input OTP": "Create account",
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -61,7 +61,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                     verticalSpaceTiny,
                     Text(
-                      "Please enter the code sent to your email ma*****@gmail.com",
+                     model.isOtpRequested? "Please enter the code sent to your email ma*****@gmail.com" :"Create an account so you can explore our high-quality products,",
                       style: TextStyle(
                         fontSize: 16,
                       ),
@@ -102,7 +102,7 @@ class _SignUpState extends State<SignUp> {
                     },
                   ),
                 ),
-              verticalSpaceMedium,
+              verticalSpaceSmall,
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SubmitButton(
