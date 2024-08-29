@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:growsmart/ui/common/app_colors.dart';
 import 'package:growsmart/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
-
-import '../../components/submit_button.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
@@ -27,38 +25,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
       'Solar Panel ',
       'Hybrid Solar '
     ];
-
-    // final List<Map<String, dynamic>> items = [
-    //   {
-    //     'image': 'assets/images/solarpallete.png',
-    //     'title': 'MG Solar Panel',
-    //     'subtitle': 'OVS',
-    //     'price': '\$30',
-    //     'rating': 4,
-    //   },
-    //   {
-    //     'image': 'assets/images/solarpallete.png',
-    //     'title': 'Total Inverter',
-    //     'subtitle': 'Mango Boy',
-    //     'price': '\$10',
-    //     'rating': 5,
-    //   },
-    //   {
-    //     'image': 'assets/images/solarpallete.png',
-    //     'title': ' Solar Panel',
-    //     'subtitle': 'Mango Boy',
-    //     'price': '\$44',
-    //     'rating': 3,
-    //   },
-    //   {
-    //     'image': 'assets/images/solarpallete.png',
-    //     'title': ' Solar Panel',
-    //     'subtitle': 'Mango Boy',
-    //     'price': '\$33',
-    //     'rating': 3,
-    //   },
-    // ];
-
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
@@ -71,7 +37,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Discover',
                     style: TextStyle(
                       fontSize: 22,
@@ -205,9 +171,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: kcBlackColor,
                                   backgroundColor: kcWhiteColor,
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                       vertical: 12.0, horizontal: 24.0),
-                                  textStyle: TextStyle(
+                                  textStyle: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),

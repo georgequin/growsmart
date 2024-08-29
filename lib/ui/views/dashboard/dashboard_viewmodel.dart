@@ -83,9 +83,7 @@ class DashboardViewModel extends BaseViewModel {
     } catch (e) {
       log.i(e);
       setBusy(false);
-
     }
-
     setBusy(false);
     notifyListeners();
 
