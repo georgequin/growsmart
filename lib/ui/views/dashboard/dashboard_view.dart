@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:growsmart/ui/common/app_colors.dart';
 import 'package:growsmart/ui/common/ui_helpers.dart';
+import 'package:growsmart/ui/views/dashboard/productcard.dart';
 import 'package:stacked/stacked.dart';
 import 'dashboard_viewmodel.dart';
 
@@ -405,10 +406,27 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const Icon(
-                            Icons.shopping_cart_outlined,
-                            size: 16,
-                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProductCard(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0), // Add some padding if needed
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.shopping_cart_outlined,
+                                size: 16,
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),
