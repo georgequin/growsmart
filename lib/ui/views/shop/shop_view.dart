@@ -490,12 +490,17 @@ import '../home/module_switch.dart';
 import '../profile/profile_viewmodel.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 
+
+
+
 class ShopView extends StatefulWidget {
   const ShopView({Key? key}) : super(key: key);
 
   @override
   _ShopViewState createState() => _ShopViewState();
 }
+bool isSelected = false;
+enum categories {solarEnergy, electronics, services}
 
 List<Product> productList = [];
 String _topModalData = "";
@@ -535,17 +540,6 @@ class _ShopViewState extends State<ShopView>
     },
   ];
 
-  final _tabs = const [
-    Tab(
-      child: FittedBox(child: Text('Solar Energy System')),
-    ),
-    Tab(
-      child: FittedBox(child: Text('Lighting Electronics')),
-    ),
-    Tab(
-      child: FittedBox(child: Text('Services')),
-    ),
-  ];
 
   @override
   void initState() {
@@ -574,7 +568,7 @@ class _ShopViewState extends State<ShopView>
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: buildBottomSheet(context, _tabController, _tabs),
+                child: buildBottomSheet(context, _tabController),
               ),
               MaterialButton(
                 color: Colors.white,
@@ -703,11 +697,11 @@ void _showDummyModal(BuildContext context) async {
 }
 
 
-Widget buildBottomSheet(BuildContext context, TabController tabController, List<Tab> tabs) {
+Widget buildBottomSheet(BuildContext context, TabController tabController) {
   return AnimatedContainer(
     duration: const Duration(milliseconds: 500),
     curve: Curves.easeInOut,
-    height: 200,
+    height: 120,
     padding: const EdgeInsets.all(20),
     decoration: const BoxDecoration(
       color: Colors.white,
@@ -724,31 +718,16 @@ Widget buildBottomSheet(BuildContext context, TabController tabController, List<
       children: [
         verticalSpaceSmall,
         ModuleSwitch(
-          isRafflesSelected: true,
+          isRafflesSelected: isSelected,
           onToggle: (isSelected) {
-            // Call the function to show the modal
+            isSelected = true;
+
+            print('call topbotton $isSelected');
+
             if (isSelected) {
               _showDummyModal(context);
             }
           },
-        ),
-        TabBar(
-          controller: tabController,
-          tabs: tabs,
-          indicatorColor: kcPrimaryColor,
-          labelColor: kcPrimaryColor,
-          unselectedLabelColor: const Color(0xff5f6368),
-
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: tabController,
-            children: const [
-              DummyModal(),
-              DummyModal(),
-              DummyModal(),
-            ],
-          ),
         ),
       ],
     ),
