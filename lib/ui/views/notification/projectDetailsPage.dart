@@ -389,6 +389,7 @@ class ProjectDetailsPage extends StatelessWidget {
                 ),
               ),
               // Custom layout for comment container with rounded background
+
               Stack(
                 children: [
                   // Container(
