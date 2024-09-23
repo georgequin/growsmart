@@ -34,19 +34,19 @@ class DashboardViewModel extends BaseViewModel {
     rebuildUi();
   }
 
-  late VideoPlayerController controller;
+    VideoPlayerController? controller;
 
   @override
   void dispose() {
-    controller.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
   void initialise() {
     controller = VideoPlayerController.asset('assets/videos/dashboard.mp4')
       ..initialize().then((_) {
-        controller.setLooping(true);
-        controller.play();
+        controller?.setLooping(true);
+        controller?.play();
         notifyListeners();
       }).onError((error, stackTrace) {
         // Handle the error here

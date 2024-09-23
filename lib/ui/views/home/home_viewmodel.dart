@@ -16,6 +16,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../../state.dart';
 import '../../common/ui_helpers.dart';
+import '../profile/profile_view.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -30,10 +31,10 @@ class HomeViewModel extends BaseViewModel {
     DashboardView(),
     ShopView(),
     NotificationView(),
-    ProfileScreen(),
+    // ProfileScreen(),
     // const CartView(),
-    // const NotificationView(),
-    // const ProfileView()
+     //const NotificationView(),
+     const ProfileView()
   ];
 
   String get counterLabel => 'Counter is: $_counter';

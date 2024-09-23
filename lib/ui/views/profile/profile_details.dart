@@ -164,25 +164,25 @@ class _ProfileScreen extends State<ProfileScreen> {
                       updateProfilePicture();
                     },
                     // This stack is just for the profile picture and the edit icon
-                    child: Stack(
-                      alignment: Alignment.bottomCenter, // Align the icon to the bottom right of the profile picture
-                      children: [
-                        ProfilePicture(
-                          size: 80,
-                          url: profile.value.pictures!.isEmpty
-                              ? null
-                              : profile.value.pictures?[0].location,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0), // Padding to position the edit icon correctly
-                          child: Text(
-                            'change', style: TextStyle(
-                            color: uiMode.value == AppUiModes.light ?  Colors.black : Colors.white,
-                          ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // child: Stack(
+                    //   alignment: Alignment.bottomCenter, // Align the icon to the bottom right of the profile picture
+                    //   children: [
+                    //     ProfilePicture(
+                    //       size: 80,
+                    //       url: profile.value.pictures!.isEmpty
+                    //           ? null
+                    //           : profile.value.pictures?[0].location,
+                    //     ),
+                    //     Padding(
+                    //       padding: const EdgeInsets.all(8.0), // Padding to position the edit icon correctly
+                    //       child: Text(
+                    //         'change', style: TextStyle(
+                    //         color: uiMode.value == AppUiModes.light ?  Colors.black : Colors.white,
+                    //       ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ),
                 ],
               ),

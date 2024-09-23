@@ -24,7 +24,7 @@ class ProfileView extends StatelessWidget{
       viewModelBuilder: () => ProfileViewModel(),
       onModelReady: (viewModel) {
         // Make API call to get profile data when the ViewModel is ready
-        viewModel.getProfile();
+        //viewModel.getProfile();
       },
       builder: (context, viewModel, child) {
         return Scaffold(
@@ -59,7 +59,7 @@ class ProfileView extends StatelessWidget{
                     },
                     child: ProfilePicture(
                       size: 100,
-                      url: profile.value.pictures!.isEmpty
+                      url: (profile.value?.pictures?.isEmpty ?? true)
                           ? null
                           : profile.value.pictures?[0].location,
                     ),
@@ -107,7 +107,7 @@ class ProfileView extends StatelessWidget{
                   verticalSpaceMedium,
                   InkWell(
                     onTap: () {
-                      viewModel.updateProfilePicture();
+                      //viewModel.updateProfilePicture();
                     },
                     child: const Text(
                       "Change Profile Picture",
@@ -124,9 +124,9 @@ class ProfileView extends StatelessWidget{
               verticalSpaceLarge,
               ListTile(
                 onTap: () {
-                  locator<NavigationService>()
-                      .navigateToWallet()
-                      .whenComplete(() => viewModel.getProfile());
+                  // locator<NavigationService>()
+                  //     .navigateToWallet()
+                  //     .whenComplete(() => viewModel.getProfile());
                 },
                 leading: const Icon(
                   Icons.wallet,
