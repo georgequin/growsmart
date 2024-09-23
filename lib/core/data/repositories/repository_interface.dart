@@ -11,6 +11,8 @@ abstract class IRepository {
 
   Future<ApiResponse> verify(Map<String, dynamic> req);
 
+  Future<ApiResponse> sendOtp(Map<String, dynamic> req);
+
   Future<ApiResponse> getProducts();
 
   Future<ApiResponse> getRaffle();
@@ -19,7 +21,9 @@ abstract class IRepository {
 
   Future<ApiResponse> getRaffleResult();
 
-  Future<ApiResponse> getSellingFast();
+  Future<ApiResponse> getProjects();
+
+  Future<ApiResponse> getProjectComments(String projectId);
 
   Future<ApiResponse> getProfile();
 
@@ -64,6 +68,8 @@ abstract class IRepository {
   Future<ApiResponse> getResourceList();
 
   Future<ApiResponse> getNotifications(String userId);
+
+  Future<ApiResponse> getDonationsCategories();
 
   Future<ApiResponse> updateNotification(String eventId);
 

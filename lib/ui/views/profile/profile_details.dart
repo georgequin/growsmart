@@ -282,163 +282,163 @@ class _ProfileScreen extends State<ProfileScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 3.0),
                       child: Column(
                         children: [
-                          ...List.generate(
-                            profile.value.shipping!.length,
-                                (index) {
-                              Shipping shipping =
-                              profile.value.shipping![index];
-                              return Container(
-                                padding: const EdgeInsets.all(10),
-                                margin: const EdgeInsets.only(bottom: 10),
-                                child: Card(
-                                  shadowColor: Colors.grey,
-                                  child: Padding(
-                                  padding: const EdgeInsets.all(6.0), // This adds horizontal padding
-                                  child: Column(
-                                      mainAxisAlignment:MainAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            const Icon(
-                                              Icons.location_on_outlined,
-                                              size: 20,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                '${shipping.shippingAddress} ${shipping.shippingCity} ${shipping.shippingState}' ?? "",
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 3,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        verticalSpaceSmall,
-                                        Row(
-                                          mainAxisAlignment:MainAxisAlignment.start,
-                                          children: [
-                                            const Icon(
-                                              Icons.phone,
-                                              size: 20,
-                                            ),
-                                            Text('${shipping.shippingPhone}' ?? ""),
-
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:MainAxisAlignment.start,
-                                          children: [
-                                            horizontalSpaceSmall,
-                                            const Text('Set as default', style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.normal
-                                            ),),
-                                            horizontalSpaceTiny,
-                                            SizedBox(
-                                              height: 20.0,
-                                              child: Switch(
-                                                // This bool value toggles the switch.
-                                                value: shipping.isDefault!,
-                                                overlayColor: overlayColor,
-                                                trackColor: trackColor,
-                                                thumbColor: const MaterialStatePropertyAll<Color>(Colors.black),
-                                                onChanged: (bool value) {
-                                                  // This is called when the user toggles the switch.
-                                                  setState(() async {
-                                                    if(value){
-                                                      setState(() {
-                                                        shippingId = shipping.id!;
-                                                        makingDefault = value;
-                                                      });
-
-                                                      try {
-                                                        ApiResponse res =
-                                                            await locator<
-                                                            Repository>()
-                                                            .setDefaultShipping(
-                                                            {},
-                                                            shipping.id!);
-                                                        if (res.statusCode == 200) {
-                                                          ApiResponse pRes =
-                                                              await locator<
-                                                              Repository>()
-                                                              .getProfile();
-                                                          if (pRes.statusCode ==
-                                                              200) {
-                                                            profile.value = Profile
-                                                                .fromJson(Map<
-                                                                String,
-                                                                dynamic>.from(
-                                                                pRes.data[
-                                                                "user"]));
-
-                                                            profile
-                                                                .notifyListeners();
-                                                          }
-                                                        }
-                                                      } catch (e) {
-                                                        throw Exception(e);
-                                                      }
-
-                                                      setState(() {
-                                                        shippingId = "";
-                                                        makingDefault = value;
-                                                      });
-
-                                                    }
-                                                  });
-                                                },
-                                              )
-                                            ),
-                                            horizontalSpaceTiny,
-                                            InkWell(
-                                              onTap: () async {
-
-                                                  if (shipping.isDefault!) {
-                                                  Fluttertoast.showToast(msg: 'Can\'t delete default address.');
-                                                  } else {
-                                                    try {
-                                                      final res = await locator<DialogService>()
-                                                          .showConfirmationDialog(
-                                                          title: "Are you sure?",
-                                                          cancelTitle: "No",
-                                                          confirmationTitle: "Yes");
-
-                                                      if (res!.confirmed) {
-                                                        ApiResponse res = await locator<Repository>().deleteDefaultShipping(
-                                                            shipping.id!);
-                                                        if (res.statusCode == 200) {
-                                                          ApiResponse pRes = await locator<Repository>().getProfile();
-                                                          if (pRes.statusCode == 200) {
-                                                            setState(() {
-                                                              // Update your state here
-                                                              profile.value = Profile.fromJson(
-                                                                  Map<String, dynamic>.from(pRes.data["user"]));
-                                                              profile.notifyListeners();
-                                                            });
-                                                          }
-                                                        }
-                                                      }
-                                                    } catch (e) {
-                                                      Fluttertoast.showToast(msg: 'can\'t delete..');
-                                                    }
-                                                  }
-                                              },
-                                              child: const Icon(Icons.delete),
-                                            ),
-
-
-                                          ],
-                                        ),
-                                      ]
-                                  )
-                                  )
-
-                                )
-
-                              );
-                            },
-                          ),
+                          // ...List.generate(
+                          //   profile.value.shipping!.length,
+                          //       (index) {
+                          //     Shipping shipping =
+                          //     profile.value.shipping![index];
+                          //     return Container(
+                          //       padding: const EdgeInsets.all(10),
+                          //       margin: const EdgeInsets.only(bottom: 10),
+                          //       child: Card(
+                          //         shadowColor: Colors.grey,
+                          //         child: Padding(
+                          //         padding: const EdgeInsets.all(6.0), // This adds horizontal padding
+                          //         child: Column(
+                          //             mainAxisAlignment:MainAxisAlignment.start,
+                          //             children: [
+                          //               Row(
+                          //                 mainAxisAlignment: MainAxisAlignment.start,
+                          //                 children: [
+                          //                   const Icon(
+                          //                     Icons.location_on_outlined,
+                          //                     size: 20,
+                          //                   ),
+                          //                   Expanded(
+                          //                     child: Text(
+                          //                       '${shipping.shippingAddress} ${shipping.shippingCity} ${shipping.shippingState}' ?? "",
+                          //                       overflow: TextOverflow.ellipsis,
+                          //                       maxLines: 3,
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               verticalSpaceSmall,
+                          //               Row(
+                          //                 mainAxisAlignment:MainAxisAlignment.start,
+                          //                 children: [
+                          //                   const Icon(
+                          //                     Icons.phone,
+                          //                     size: 20,
+                          //                   ),
+                          //                   Text('${shipping.shippingPhone}' ?? ""),
+                          //
+                          //                 ],
+                          //               ),
+                          //               Row(
+                          //                 mainAxisAlignment:MainAxisAlignment.start,
+                          //                 children: [
+                          //                   horizontalSpaceSmall,
+                          //                   const Text('Set as default', style: TextStyle(
+                          //                       fontSize: 10,
+                          //                       fontWeight: FontWeight.normal
+                          //                   ),),
+                          //                   horizontalSpaceTiny,
+                          //                   SizedBox(
+                          //                     height: 20.0,
+                          //                     child: Switch(
+                          //                       // This bool value toggles the switch.
+                          //                       value: shipping.isDefault!,
+                          //                       overlayColor: overlayColor,
+                          //                       trackColor: trackColor,
+                          //                       thumbColor: const MaterialStatePropertyAll<Color>(Colors.black),
+                          //                       onChanged: (bool value) {
+                          //                         // This is called when the user toggles the switch.
+                          //                         setState(() async {
+                          //                           if(value){
+                          //                             setState(() {
+                          //                               shippingId = shipping.id!;
+                          //                               makingDefault = value;
+                          //                             });
+                          //
+                          //                             try {
+                          //                               ApiResponse res =
+                          //                                   await locator<
+                          //                                   Repository>()
+                          //                                   .setDefaultShipping(
+                          //                                   {},
+                          //                                   shipping.id!);
+                          //                               if (res.statusCode == 200) {
+                          //                                 ApiResponse pRes =
+                          //                                     await locator<
+                          //                                     Repository>()
+                          //                                     .getProfile();
+                          //                                 if (pRes.statusCode ==
+                          //                                     200) {
+                          //                                   profile.value = Profile
+                          //                                       .fromJson(Map<
+                          //                                       String,
+                          //                                       dynamic>.from(
+                          //                                       pRes.data[
+                          //                                       "user"]));
+                          //
+                          //                                   profile
+                          //                                       .notifyListeners();
+                          //                                 }
+                          //                               }
+                          //                             } catch (e) {
+                          //                               throw Exception(e);
+                          //                             }
+                          //
+                          //                             setState(() {
+                          //                               shippingId = "";
+                          //                               makingDefault = value;
+                          //                             });
+                          //
+                          //                           }
+                          //                         });
+                          //                       },
+                          //                     )
+                          //                   ),
+                          //                   horizontalSpaceTiny,
+                          //                   InkWell(
+                          //                     onTap: () async {
+                          //
+                          //                         if (shipping.isDefault!) {
+                          //                         Fluttertoast.showToast(msg: 'Can\'t delete default address.');
+                          //                         } else {
+                          //                           try {
+                          //                             final res = await locator<DialogService>()
+                          //                                 .showConfirmationDialog(
+                          //                                 title: "Are you sure?",
+                          //                                 cancelTitle: "No",
+                          //                                 confirmationTitle: "Yes");
+                          //
+                          //                             if (res!.confirmed) {
+                          //                               ApiResponse res = await locator<Repository>().deleteDefaultShipping(
+                          //                                   shipping.id!);
+                          //                               if (res.statusCode == 200) {
+                          //                                 ApiResponse pRes = await locator<Repository>().getProfile();
+                          //                                 if (pRes.statusCode == 200) {
+                          //                                   setState(() {
+                          //                                     // Update your state here
+                          //                                     profile.value = Profile.fromJson(
+                          //                                         Map<String, dynamic>.from(pRes.data["user"]));
+                          //                                     profile.notifyListeners();
+                          //                                   });
+                          //                                 }
+                          //                               }
+                          //                             }
+                          //                           } catch (e) {
+                          //                             Fluttertoast.showToast(msg: 'can\'t delete..');
+                          //                           }
+                          //                         }
+                          //                     },
+                          //                     child: const Icon(Icons.delete),
+                          //                   ),
+                          //
+                          //
+                          //                 ],
+                          //               ),
+                          //             ]
+                          //         )
+                          //         )
+                          //
+                          //       )
+                          //
+                          //     );
+                          //   },
+                          // ),
 
                         ],
                       ),

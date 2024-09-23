@@ -114,7 +114,7 @@ class CartView extends StackedView<CartViewModel> {
                                         borderRadius: BorderRadius.circular(8),
                                         image:DecorationImage(
                                           image: CachedNetworkImageProvider(
-                                            item.raffle?.pictures?[0].location ?? 'https://via.placeholder.com/120',
+                                            item.raffle?.media?[0].location ?? 'https://via.placeholder.com/120',
                                           ),
                                           fit: BoxFit.cover,
                                         ),
@@ -141,7 +141,7 @@ class CartView extends StackedView<CartViewModel> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
-                                            item.raffle?.ticketName ?? 'Product Name',
+                                            item.raffle?.name ?? 'Product Name',
                                             style: const TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -155,7 +155,7 @@ class CartView extends StackedView<CartViewModel> {
                                           Row(
                                             children: [
                                               Text(
-                                                MoneyUtils().formatAmountToDollars(item.raffle?.rafflePrice ?? 0 * item.quantity!),
+                                                MoneyUtils().formatAmountToDollars(item.raffle?.ticketPrice ?? 0 * item.quantity!),
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,

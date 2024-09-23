@@ -93,22 +93,29 @@ class User {
   int? role;
   String? created;
   String? updated;
+  String? username;  // Present value
+  String? accountType;  // Present value
+  String? accountPointsLocal;  // Present value
 
-  User(
-      {this.id,
-      this.firstname,
-      this.lastname,
-      this.email,
-      this.phone,
-      this.country,
-      this.verified,
-      this.status,
-      this.role,
-      this.created,
-      this.updated});
+  User({
+    this.id,
+    this.firstname,
+    this.lastname,
+    this.email,
+    this.phone,
+    this.country,
+    this.verified,
+    this.status,
+    this.role,
+    this.created,
+    this.updated,
+    this.username,  // Present value
+    this.accountType,  // Present value
+    this.accountPointsLocal,  // Present value
+  });
 
   User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id'] ?? json['_id'];
     firstname = json['firstname'];
     lastname = json['lastname'];
     email = json['email'];
@@ -119,6 +126,9 @@ class User {
     role = json['role'];
     created = json['created'];
     updated = json['updated'];
+    username = json['username'];  // Added for existing value
+    accountType = json['account_type'];  // Added for existing value
+    accountPointsLocal = json['account_points_local'];  // Added for existing value
   }
 
   Map<String, dynamic> toJson() {
@@ -134,6 +144,9 @@ class User {
     data['role'] = role;
     data['created'] = created;
     data['updated'] = updated;
+    data['username'] = username;  // Added for existing value
+    data['account_type'] = accountType;  // Added for existing value
+    data['account_points_local'] = accountPointsLocal;  // Added for existing value
     return data;
   }
 }

@@ -23,8 +23,9 @@ class StartupViewModel extends BaseViewModel {
     String? token = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
     String? user = await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
     bool? onboarded = await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
+    print('value of onboarded is: $onboarded');
     if (onboarded == null || onboarded == false) {
-      _navigationService.replaceWithOnboardingView();
+      _navigationService.replaceWithOnboardingView2();
     } else {
       if (token != null && user != null) {
         userLoggedIn.value = true;

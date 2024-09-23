@@ -114,10 +114,10 @@ class CartViewModel extends BaseViewModel {
 
   void getRaffleSubTotal() {
     int total = 0;
-    for (var element in raffleCart.value) {
-      final raffle = element.raffle;
-      total += (raffle?.rafflePrice ?? 0) * element.quantity!;
-    }
+    // for (var element in raffleCart.value) {
+    //   final raffle = element.raffle;
+    //   total += (raffle?.rafflePrice ?? 0) * element.quantity!;
+    // }
 
     raffleSubTotal = total;
     rebuildUi();
@@ -139,18 +139,18 @@ class CartViewModel extends BaseViewModel {
       return null;
     }
 
-    if(profile.value.shipping == null || profile.value.shipping!.isEmpty){
-
-      final shippingDialogResponse = await locator<DialogService>().showCustomDialog(
-          variant: DialogType.infoAlert,
-          title: "No Shipping Address",
-          showIconInMainButton: true,
-          description: "Shipping address is required for checkout",
-          mainButtonTitle: "Add Address");
-      if (shippingDialogResponse!.confirmed) {
-        return locator<NavigationService>().navigateToAddShippingView();
-      }
-    }
+    // if(profile.value.shipping == null || profile.value.shipping!.isEmpty){
+    //
+    //   final shippingDialogResponse = await locator<DialogService>().showCustomDialog(
+    //       variant: DialogType.infoAlert,
+    //       title: "No Shipping Address",
+    //       showIconInMainButton: true,
+    //       description: "Shipping address is required for checkout",
+    //       mainButtonTitle: "Add Address");
+    //   if (shippingDialogResponse!.confirmed) {
+    //     return locator<NavigationService>().navigateToAddShippingView();
+    //   }
+    // }
 
     setBusy(true);
     try {

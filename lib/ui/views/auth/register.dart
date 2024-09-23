@@ -35,7 +35,7 @@ class _RegisterState extends State<Register> {
   List<Country> countries = [];
   final List<String> genderOptions = ['Male', 'Female'];
 
-  bool? loadingCountries = true;
+  bool? loadingCountries = false;
 
   @override
   void initState() {
@@ -176,45 +176,57 @@ class _RegisterState extends State<Register> {
                     return null; // Return null to indicate no validation error
                   },
                   initialCountryCode: 'NG',
-                  countries: countries.map((country) => CountryPickerUtils.getCountryByIsoCode(country.code!)).toList(),
+                  countries: countries.isNotEmpty
+                      ? countries.map((country) => CountryPickerUtils.getCountryByIsoCode(country.code!)).toList()
+                      : [],
                   controller: model.phone,
                   onChanged: (phone) {
                       model.phoneNumber = phone;
-                      model.countryId = countries.firstWhere((country) => country.code == phone.countryISOCode).id!;
+                      try {
+                        // Attempt to find the country where the code matches phone.countryISOCode
+                        print('phone code is: ${phone.countryISOCode}');
+                        print('country code is: ${countries.first.code}');
+                        model.countryId = countries.firstWhere((country) => country.code == phone.countryISOCode).id2!;
+                      } catch (e) {
+                        // Handle the case where no matching country is found
+                        print('No matching country found for ISO code: ${phone.countryISOCode}');
+                        model.countryId = ''; // or handle appropriately
+                      }
+                      // model.countryId = countries.firstWhere((country) => country.code == phone.countryISOCode).id!;
                   },
                 ),
                 //
                 verticalSpaceSmall,
-                DropdownButtonFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Gender',
-                    labelStyle: const TextStyle(color: Colors.black,fontSize: 13),
-                    floatingLabelStyle: const TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Color(0xFFCC9933)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Color(0xFFCC9933)),
-                    ),
-                  ),
-                  value: model.selectedGender, // You should add selectedGender to your model
-                  onSaved: (String? newValue) {
-                    model.selectedGender = newValue!;
-                  },
-                  onChanged: (String? newValue) {
-                    model.selectedGender = newValue!;
-                  },
-                  items: genderOptions.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  validator: (value) => value == null ? 'Please select a gender' : null,
-                ),
-                verticalSpaceSmall,
+                // DropdownButtonFormField(
+                //   decoration: InputDecoration(
+                //     labelText: 'Gender',
+                //     labelStyle: const TextStyle(color: Colors.black,fontSize: 13),
+                //     floatingLabelStyle: const TextStyle(color: Colors.black),
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(10.0),
+                //       borderSide: const BorderSide(color: Color(0xFFCC9933)),
+                //     ),
+                //     focusedBorder: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(10.0),
+                //       borderSide: const BorderSide(color: Color(0xFFCC9933)),
+                //     ),
+                //   ),
+                //   value: model.selectedGender, // You should add selectedGender to your model
+                //   onSaved: (String? newValue) {
+                //     model.selectedGender = newValue!;
+                //   },
+                //   onChanged: (String? newValue) {
+                //     model.selectedGender = newValue!;
+                //   },
+                //   items: genderOptions.map<DropdownMenuItem<String>>((String value) {
+                //     return DropdownMenuItem<String>(
+                //       value: value,
+                //       child: Text(value),
+                //     );
+                //   }).toList(),
+                //   validator: (value) => value == null ? 'Please select a gender' : null,
+                // ),
+                // verticalSpaceSmall,
                 TextFieldWidget(
                   inputType: TextInputType.visiblePassword,
                   hint: "Password",
@@ -279,65 +291,65 @@ class _RegisterState extends State<Register> {
                         Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
                   ),
                 ),
-                verticalSpace(60),
-                InkWell(
-                  onTap: model.toggleTerms,
-                  child: Row(
-                    children: [
-                      Container(
-                          height: 20,
-                          width: 20,
-                          decoration: BoxDecoration(
-                              color:
-                                  model.terms ? kcSecondaryColor : Colors.transparent,
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                  color: model.terms
-                                      ? Colors.transparent
-                                      : kcSecondaryColor)),
-                          child: model.terms
-                              ? const Center(
-                                  child: Icon(
-                                    Icons.check,
-                                    color: kcWhiteColor,
-                                    size: 14,
-                                  ),
-                                )
-                              : const SizedBox()),
-                      horizontalSpaceSmall,
-                      const Text(
-                        "I ACCEPT TERMS & CONDITIONS",
-                        style: TextStyle(
-                            fontSize: 12, decoration: TextDecoration.underline),
-                      )
-                    ],
-                  ),
-                ),
-                verticalSpaceSmall,
-                InkWell(
-                  onTap: () async {
-                    final Uri toLaunch =
-                    Uri(scheme: 'https', host: 'www.afriprize.com', path: '/legal/privacy-policy');
-
-                    if (!await launchUrl(toLaunch, mode: LaunchMode.inAppBrowserView)) {
-                      throw Exception('Could not launch www.afriprize.com/legal/privacy-policy');
-                    }
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "View our Privacy Policy",
-                        style: TextStyle(
-                          fontSize: 15,
-                          decoration: TextDecoration.underline,
-                          color: kcSecondaryColor, // Feel free to change the color
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                verticalSpaceSmall,
+                verticalSpace(30),
+                // InkWell(
+                //   onTap: model.toggleTerms,
+                //   child: Row(
+                //     children: [
+                //       Container(
+                //           height: 20,
+                //           width: 20,
+                //           decoration: BoxDecoration(
+                //               color:
+                //                   model.terms ? kcSecondaryColor : Colors.transparent,
+                //               borderRadius: BorderRadius.circular(5),
+                //               border: Border.all(
+                //                   color: model.terms
+                //                       ? Colors.transparent
+                //                       : kcSecondaryColor)),
+                //           child: model.terms
+                //               ? const Center(
+                //                   child: Icon(
+                //                     Icons.check,
+                //                     color: kcWhiteColor,
+                //                     size: 14,
+                //                   ),
+                //                 )
+                //               : const SizedBox()),
+                //       horizontalSpaceSmall,
+                //       const Text(
+                //         "I ACCEPT TERMS & CONDITIONS",
+                //         style: TextStyle(
+                //             fontSize: 12, decoration: TextDecoration.underline),
+                //       )
+                //     ],
+                //   ),
+                // ),
+                // verticalSpaceSmall,
+                // InkWell(
+                //   onTap: () async {
+                //     final Uri toLaunch =
+                //     Uri(scheme: 'https', host: 'www.afriprize.com', path: '/legal/privacy-policy');
+                //
+                //     if (!await launchUrl(toLaunch, mode: LaunchMode.inAppBrowserView)) {
+                //       throw Exception('Could not launch www.afriprize.com/legal/privacy-policy');
+                //     }
+                //   },
+                //   child: const Row(
+                //     mainAxisAlignment: MainAxisAlignment.start,
+                //     children: [
+                //       Text(
+                //         "View our Privacy Policy",
+                //         style: TextStyle(
+                //           fontSize: 15,
+                //           decoration: TextDecoration.underline,
+                //           color: kcSecondaryColor, // Feel free to change the color
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // verticalSpaceSmall,
                 const Text('Apple/Google is not a sponsor nor is involved in any way with our raffles/contest or sweepstakes.'),
                 verticalSpaceMedium,
                 SubmitButton(

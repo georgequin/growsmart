@@ -3,6 +3,7 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/components/text_field_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../components/background.dart';
@@ -35,18 +36,8 @@ class OtpView extends StackedView<OtpViewModel> {
                 color: kcWhiteColor,
               ),
             ),
-            expandedHeight: 200,
-            flexibleSpace: Background(
-              children: [
-                Positioned(
-                  top: 30,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Image.asset("assets/images/logo.png"),
-                )
-              ],
-            ),
+            expandedHeight: 100,
+            // flexibleSpace:
           ),
           SliverList(
               delegate: SliverChildListDelegate(
@@ -56,11 +47,17 @@ class OtpView extends StackedView<OtpViewModel> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Center(
+                      child: SvgPicture.asset(
+                        'assets/images/otp_lock.svg',
+                        height: 94,
+                      ),
+                    ),
                     verticalSpaceLarge,
                     const Text(
                       "OTP Verification",
                       style: TextStyle(
-                          fontSize: 25,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Panchang"
                       ),
@@ -69,7 +66,7 @@ class OtpView extends StackedView<OtpViewModel> {
                       "We have sent a code to your Email Address",
                       style: TextStyle(fontSize: 14),
                     ),
-                    verticalSpaceMedium,
+                    verticalSpaceLarge,
                     TextFieldWidget(
                         hint: "Enter Code", controller: viewModel.otp),
                     Row(
@@ -82,7 +79,7 @@ class OtpView extends StackedView<OtpViewModel> {
                           ),
                           GestureDetector(
                             onTap: () {
-
+                              viewModel.resendOtp(email, context);
                             },
                             child: const Text(
                               "Click here to resend",

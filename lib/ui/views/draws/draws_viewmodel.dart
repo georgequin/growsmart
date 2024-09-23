@@ -9,10 +9,17 @@ import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 
 class DrawsViewModel extends BaseViewModel {
+
+  bool isDrawSelected = true;
   // Example data lists
-  List<Raffle> pastDraws = [];
-  List<Raffle> soldOutDraws = [];
-  List<Winner> winners = [];
+  List<Raffle> raffleList = [];
+  List<Raffle> filteredRaffle = [];
+  String searchQuery = '';
+
+  void togglePage(bool isDraw) {
+    isDrawSelected = isDraw;
+    notifyListeners(); // This ensures the UI rebuilds
+  }
 
 
   Future<void> refreshData() async {
@@ -22,112 +29,72 @@ class DrawsViewModel extends BaseViewModel {
   }
 
   void getResourceList(){
-    getSoldOuts();
-    getWinners();
-    getPastDraws();
+    getRaffles();
   }
 
   Future<void> init() async {
-    await loadSoldOuts();
-    await loadWinners();
-    await loadPastDraws();
+    await loadRaffles();
     notifyListeners();
   }
 
-  Future<void> loadSoldOuts() async {
-    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.soldOut);
+
+
+  Future<void> loadRaffles() async {
+    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.raffle);
     if (storedRaffle != null) {
-      soldOutDraws = List<Map<String, dynamic>>.from(storedRaffle)
+      raffleList = List<Map<String, dynamic>>.from(storedRaffle)
           .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e)))
           .toList();
+      filteredRaffle = raffleList;
       notifyListeners();
     } else {
-      getSoldOuts();
+      getRaffles();
       notifyListeners();
     }
   }
 
-  Future<void> loadWinners() async {
-    dynamic storedWinner = await locator<LocalStorage>().fetch(LocalStorageDir.winners);
-    if (storedWinner != null) {
-      winners = List<Map<String, dynamic>>.from(storedWinner)
-          .map((e) => Winner.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-      notifyListeners();
-    } else {
-      getWinners();
-      notifyListeners();
-    }
-  }
-
-  Future<void> loadPastDraws() async {
-    dynamic storedPastDraws = await locator<LocalStorage>().fetch(LocalStorageDir.pastDraws);
-    if (storedPastDraws != null) {
-      pastDraws = List<Map<String, dynamic>>.from(storedPastDraws)
-          .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-      notifyListeners();
-    } else {
-      getPastDraws();
-      notifyListeners();
-    }
-  }
-
-  void getSoldOuts() async {
-    setBusyForObject(soldOutDraws, true);
+  void getRaffles() async {
+    setBusyForObject(raffleList, true);
     try {
-      ApiResponse res = await repo.getSoldOutRaffle();
+      ApiResponse res = await repo.getRaffle();
       if (res.statusCode == 200) {
-        soldOutDraws = (res.data["raffle"] as List).map((e) => Raffle.fromJson(Map<String, dynamic>.from(e))).toList();
-        List<Map<String, dynamic>> storedRaffles = soldOutDraws.map((e) => e.toJson()).toList();
-        locator<LocalStorage>().save(LocalStorageDir.soldOut, storedRaffles);
+        // Check if 'items' exists and is not null
+        print('res.data: ${res.data}');
+        print('res.data: ${res.data["data"]}');
+        print('res.data: ${res.data["data"]["items"]}');
+        if (res.data != null && res.data["data"]["items"] != null) {
+          // Extract raffles from 'items'
+          raffleList = (res.data["data"]["items"] as List)
+              .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e['raffle'])))
+              .toList();
+          List<Map<String, dynamic>> storedRaffles = raffleList.map((e) => e.toJson()).toList();
+          locator<LocalStorage>().save(LocalStorageDir.raffle, storedRaffles);
+          filteredRaffle = raffleList;
+        } else {
+          // Handle empty or null 'items' response here, e.g., set raffleList to empty
+          raffleList = [];
+        }
         rebuildUi();
       }
     } catch (e) {
       print(e);
     }
-    setBusyForObject(soldOutDraws, false);
+    setBusyForObject(raffleList, false);
   }
 
-  void getPastDraws() async {
-    setBusyForObject(pastDraws, true);
-    try {
-      ApiResponse res = await repo.getSoldOutRaffle();
-      if (res.statusCode == 200) {
-        var allDraws = (res.data["raffle"] as List).map((e) => Raffle.fromJson(Map<String, dynamic>.from(e))).toList();
-
-        // Filter draws to include only those with end-date after today's date
-        pastDraws = allDraws.where((draw) {
-          DateTime endDate = DateTime.parse(draw.endDate!);
-          return endDate.isAfter(DateTime.now());
-        }).toList();
-
-        List<Map<String, dynamic>> pastRaffles = pastDraws.map((e) => e.toJson()).toList();
-        locator<LocalStorage>().save(LocalStorageDir.pastDraws, pastRaffles);
-        rebuildUi();
-      }
-    } catch (e) {
-      print(e);
+  void updateSearchQuery(String query) {
+    searchQuery = query;
+    if (searchQuery.isEmpty) {
+      filteredRaffle = raffleList;
+    } else {
+      filteredRaffle = raffleList.where((service) {
+        return service.name!.toLowerCase().contains(searchQuery.toLowerCase()) ||
+            service.description!.toLowerCase().contains(searchQuery.toLowerCase())
+            ||
+            service.formattedTicketPrice!.toLowerCase().contains(searchQuery.toLowerCase());
+      }).toList();
     }
-    setBusyForObject(pastDraws, false);
-  }
-
-  void getWinners() async {
-    setBusyForObject(winners, true);
-
-    try {
-      ApiResponse res = await repo.getRaffleResult();
-      if (res.statusCode == 200) {
-        winners = (res.data['winners'] as List).map((json) => Winner.fromJson(json)).toList();
-        List<Map<String, dynamic>> storedWinner = winners.map((e) => e.toJson()).toList();
-        locator<LocalStorage>().save(LocalStorageDir.winners, storedWinner);
-        rebuildUi();
-
-      }
-    } catch (e) {
-      print(e);
-    }
-    setBusyForObject(winners, false);
+    notifyListeners();
   }
 
 }

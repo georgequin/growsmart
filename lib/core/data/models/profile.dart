@@ -7,52 +7,65 @@ class Profile {
   String? firstname;
   String? lastname;
   String? email;
+  String? username; // New field
   String? phone;
   Country? country;
-  int? verified;
-  int? status;
-
-  // dynamic role;
-  List<Shipping>? shipping;
-  String? created;
-  String? updated;
+  bool? isUserVerified; // Changed from int to bool
+  String? status; // Changed from int to String
+  String? accountType; // New field
+  int? accountPoints; // New field
+  String? accountPointsLocal; // New field
+  String? createdAt; // Changed field name
+  String? updatedAt; // Changed field name
   Wallet? wallet;
   List<Discount>? discounts;
   List<Pictures>? pictures;
 
-  Profile(
-      {this.id,
-      this.firstname,
-      this.lastname,
-      this.email,
-      this.phone,
-      this.country,
-      this.verified,
-      this.status,
-      // this.role,
-      this.created,
-      this.updated,
-      this.wallet,
-      this.shipping,
-      this.pictures,
-      this.discounts});
+  Profile({
+    this.id,
+    this.firstname,
+    this.lastname,
+    this.email,
+    this.username,
+    this.phone,
+    this.country,
+    this.isUserVerified,
+    this.status,
+    this.accountType,
+    this.accountPoints,
+    this.accountPointsLocal,
+    this.createdAt,
+    this.updatedAt,
+    this.wallet,
+    this.discounts,
+    this.pictures,
+  });
 
   Profile.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['_id']; // Changed from 'id' to '_id'
     firstname = json['firstname'];
     lastname = json['lastname'];
     email = json['email'];
+    username = json['username']; // New field
     phone = json['phone'];
     country = json['country'] != null ? Country.fromJson(json['country']) : null;
-    verified = json['verified'];
-    status = json['status'];
+    isUserVerified = json['is_user_verified']; // Changed from 'verified' to 'is_user_verified'
+    status = json['status']; // Changed from int to String
+    accountType = json['account_type']; // New field
+    accountPoints = json['account_points']; // New field
+    accountPointsLocal = json['account_points_local']; // New field
+    createdAt = json['createdAt']; // Changed field name
+    updatedAt = json['updatedAt']; // Changed field name
+    // Assuming wallet and discounts are not present in the current JSON
+    if (json['wallet'] != null) {
+      wallet = Wallet.fromJson(json['wallet']);
+    }
     if (json['referral'] != null) {
       discounts = <Discount>[];
       json['referral'].forEach((v) {
         discounts!.add(Discount.fromJson(v));
       });
     }
-    // role = json['role'];
     if (json['picture'] != null) {
       pictures = <Pictures>[];
       if (json['picture'].isNotEmpty) {
@@ -61,33 +74,26 @@ class Profile {
         });
       }
     }
-
-    if (json['shipping'] != null) {
-      shipping = <Shipping>[];
-      if (json['shipping'].isNotEmpty) {
-        json['shipping'].forEach((v) {
-          shipping!.add(Shipping.fromJson(v));
-        });
-      }
-    }
-    created = json['created'];
-    updated = json['updated'];
-    wallet = json['wallet'] != null ? Wallet.fromJson(json['wallet']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['_id'] = id; // Changed from 'id' to '_id'
     data['firstname'] = firstname;
     data['lastname'] = lastname;
     data['email'] = email;
+    data['username'] = username; // New field
     data['phone'] = phone;
-    data['country'] = country;
-    data['verified'] = verified;
-    data['status'] = status;
-    // data['role'] = role;
-    data['created'] = created;
-    data['updated'] = updated;
+    if (country != null) {
+      data['country'] = country!.toJson();
+    }
+    data['is_user_verified'] = isUserVerified; // Changed from 'verified' to 'is_user_verified'
+    data['status'] = status; // Changed from int to String
+    data['account_type'] = accountType; // New field
+    data['account_points'] = accountPoints; // New field
+    data['account_points_local'] = accountPointsLocal; // New field
+    data['createdAt'] = createdAt; // Changed field name
+    data['updatedAt'] = updatedAt; // Changed field name
     if (wallet != null) {
       data['wallet'] = wallet!.toJson();
     }
@@ -96,9 +102,6 @@ class Profile {
     }
     if (pictures != null) {
       data['picture'] = pictures!.map((v) => v.toJson()).toList();
-    }
-    if (shipping != null) {
-      data['shipping'] = shipping!.map((v) => v.toJson()).toList();
     }
     return data;
   }

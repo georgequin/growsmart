@@ -6,6 +6,9 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/components/text_field_widget.dart';
 import 'package:afriprize/ui/views/auth/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -144,15 +147,15 @@ class _LoginState extends State<Login> {
                   )
                 ],
               ),
-              verticalSpaceMedium,
+              verticalSpaceLarge,
               SubmitButton(
                 isLoading: model.isBusy,
                 boldText: true,
-                label: "Login",
+                label: "Login Account",
                 submit: () {
                   model.login();
                 },
-                color: kcPrimaryColor,
+                color: kcSecondaryColor,
               ),
               // verticalSpaceMedium,
               // Row(
@@ -182,7 +185,7 @@ class _LoginState extends State<Login> {
               //     ),
               //   ],
               // ),
-
+              //
               // verticalSpaceMedium,
               //
               // SubmitButton(
@@ -197,7 +200,7 @@ class _LoginState extends State<Login> {
               //         toastLength: Toast.LENGTH_LONG
               //     );
               //   },
-              //   color: Colors.grey,
+              //   color: kcLightGrey,
               // ),
 
               verticalSpaceLarge,

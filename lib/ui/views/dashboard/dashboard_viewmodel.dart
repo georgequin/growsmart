@@ -13,6 +13,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../core/data/models/app_notification.dart';
+import '../../../core/data/models/project.dart';
 
 class DashboardViewModel extends BaseViewModel {
   final repo = locator<Repository>();
@@ -21,8 +22,11 @@ class DashboardViewModel extends BaseViewModel {
   final log = getLogger("DashboardViewModel");
   List<Product> productList = [];
   List<Raffle> raffleList = [];
-  List<Product> sellingFast = [];
+  List<Project> projects = [];
+  List<ProjectResource> projectResources = [];
   List<Raffle> featuredRaffle = [];
+
+  bool showDialog = true; // Add this flag
 
   void changeSelected(int i) {
     selectedIndex = i;
@@ -49,11 +53,10 @@ class DashboardViewModel extends BaseViewModel {
   }
 
   Future<void> init() async {
-    await loadFeaturedRaffles();
+    // await loadFeaturedRaffles();
     await loadRaffles();
-    await loadProducts();
-
-    await loadSellingFast();
+    // await loadProducts();
+     await loadProjects();
     await loadNotifications();
     notifyListeners();
   }
@@ -98,14 +101,15 @@ class DashboardViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> loadSellingFast() async {
-    dynamic storedSellingFast = await locator<LocalStorage>().fetch(LocalStorageDir.sellingFast);
-    if (storedSellingFast != null) {
-      sellingFast = List<Map<String, dynamic>>.from(storedSellingFast)
-          .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+  Future<void> loadProjects() async {
+    dynamic storedSellingFast = await locator<LocalStorage>().fetch(LocalStorageDir.projects);
+    dynamic storedProjectResources = await locator<LocalStorage>().fetch(LocalStorageDir.projectResource);
+    if (storedProjectResources != null) {
+      projectResources = List<Map<String, dynamic>>.from(storedProjectResources)
+          .map((e) => ProjectResource.fromJson(Map<String, dynamic>.from(e)))
           .toList();
     } else {
-       getSellingFast();
+       getProjects();
     }
     notifyListeners();
   }
@@ -130,9 +134,10 @@ class DashboardViewModel extends BaseViewModel {
 
   void getResourceList(){
     getRaffles();
-    getFeaturedRaffles();
-    getProducts();
-    getSellingFast();
+    getProjects();
+    // getFeaturedRaffles();
+    // getProducts();
+    // getSellingFast();
     if (userLoggedIn.value == true) {
       initCart();
       getNotifications();
@@ -180,38 +185,61 @@ class DashboardViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.getRaffle();
       if (res.statusCode == 200) {
-        raffleList = (res.data["raffle"] as List).map((e) => Raffle.fromJson(Map<String, dynamic>.from(e))).toList();
-        List<Map<String, dynamic>> storedRaffles = raffleList.map((e) => e.toJson()).toList();
-        locator<LocalStorage>().save(LocalStorageDir.raffle, storedRaffles);
+        // Check if 'items' exists and is not null
+        print('res.data: ${res.data}');
+        print('res.data: ${res.data["data"]}');
+        print('res.data: ${res.data["data"]["items"]}');
+        if (res.data != null && res.data["data"]["items"] != null) {
+          // Extract raffles from 'items'
+          raffleList = (res.data["data"]["items"] as List)
+              .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e['raffle'])))
+              .toList();
+          List<Map<String, dynamic>> storedRaffles = raffleList.map((e) => e.toJson()).toList();
+          locator<LocalStorage>().save(LocalStorageDir.raffle, storedRaffles);
+        } else {
+          // Handle empty or null 'items' response here, e.g., set raffleList to empty
+          raffleList = [];
+        }
         rebuildUi();
       }
     } catch (e) {
       log.e(e);
     }
+    print('raffle list is: $raffleList');
     setBusyForObject(raffleList, false);
   }
 
-  void getSellingFast() async {
-    setBusyForObject(sellingFast, true);
+  void getProjects() async {
+    setBusyForObject(projects, true);
 
     try {
-      ApiResponse res = await repo.getSellingFast();
-      // ApiResponse res = await repo.getProducts();
+      ApiResponse res = await repo.getProjects();
 
       if (res.statusCode == 200) {
-        print('value of selling fast is: ${res.data}');
-        sellingFast = (res.data["products"] as List)
-            .map((e) => Product.fromJson(Map<String, dynamic>.from(e))).toList();
 
-        List<Map<String, dynamic>> storedAds = sellingFast.map((e) => e.toJson()).toList();
-        locator<LocalStorage>().save(LocalStorageDir.sellingFast, storedAds);
+        if (res.data != null && res.data["data"]["items"] != null) {
+
+
+          projectResources = (res.data["data"]["items"] as List)
+              .map((e) => ProjectResource.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+
+
+          projects = projectResources.map((resource) => resource.project!).toList();
+          List<Map<String, dynamic>> storedProjects = projects.map((e) => e.toJson()).toList();
+          List<Map<String, dynamic>> storedProjectResources = projectResources.map((resource) => resource.toJson()).toList();
+
+          locator<LocalStorage>().save(LocalStorageDir.projectResource, storedProjectResources);
+          locator<LocalStorage>().save(LocalStorageDir.projects, storedProjects);
+        } else {
+          projects = [];
+        }
         rebuildUi();
-
       }
     } catch (e) {
       log.e(e);
     }
-    setBusyForObject(sellingFast, false);
+    setBusyForObject(projects, false);
   }
 
   void getNotifications() async {

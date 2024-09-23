@@ -15,9 +15,9 @@ int getShopSubTotal(List<CartItem> cart) {
 int getRaffleSubTotal(List<RaffleCartItem> cart) {
   int total = 0;
 
-  for (var element in cart) {
-    total = total + (element.raffle!.rafflePrice! * element.quantity!);
-  }
+  // for (var element in cart) {
+  //   total = total + (element.raffle!.rafflePrice! * element.quantity!);
+  // }
 
   return total;
 }

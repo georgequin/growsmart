@@ -1,5 +1,6 @@
 import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'login.dart';
 
 
@@ -49,9 +50,9 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 60.0), // Adjust the padding to move the image down
-                  child: Image.asset(
-                    "assets/images/img.png",
-                    height: 80, // Adjust the height to make the image smaller
+                  child: SvgPicture.asset(
+                    "assets/images/logo_login.svg",
+                    height: 60, // Adjust the height to make the image smaller
                     fit: BoxFit.fitHeight,
                   ),
                 ),

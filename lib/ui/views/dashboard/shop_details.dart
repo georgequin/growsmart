@@ -530,24 +530,24 @@ class RecommendedRow extends StatelessWidget {
         children: [
           Stack(
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12)),
-                child: (product.raffle == null ||
-                            product.raffle?[0].pictures == null) ||
-                        product.raffle![0].pictures!.isEmpty
-                    ? SizedBox(
-                        height: 179,
-                        width: MediaQuery.of(context).size.width,
-                      )
-                    : Image.network(
-                        product.raffle![0].pictures![0].location!,
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        height: 179,
-                      ),
-              ),
+              // ClipRRect(
+              //   borderRadius: const BorderRadius.only(
+              //       topLeft: Radius.circular(12),
+              //       topRight: Radius.circular(12)),
+              //   child: (product.raffle == null ||
+              //               product.raffle?[0].pictures == null) ||
+              //           product.raffle![0].pictures!.isEmpty
+              //       ? SizedBox(
+              //           height: 179,
+              //           width: MediaQuery.of(context).size.width,
+              //         )
+              //       : Image.network(
+              //           product.raffle![0].pictures![0].location!,
+              //           fit: BoxFit.cover,
+              //           width: MediaQuery.of(context).size.width,
+              //           height: 179,
+              //         ),
+              // ),
               Positioned(
                 top: 20,
                 left: 20,
@@ -599,73 +599,73 @@ class RecommendedRow extends StatelessWidget {
               )
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product.raffle?[0].ticketName ?? "",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                                text: " ${product.productName}",
-                                style: GoogleFonts.inter(
-                                    color: kcBlackColor, fontSize: 12)),
-                            TextSpan(
-                                text: " ${MoneyUtils().formatAmount(product.productPrice!)}",
-                                style: TextStyle(color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                                  fontFamily: "satoshi",),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "0 sold out of ${product.stock}",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    verticalSpaceTiny,
-                    SizedBox(
-                      width: 100,
-                      child: LinearProgressIndicator(
-                        value: 0.4,
-                        backgroundColor: kcSecondaryColor.withOpacity(0.3),
-                        valueColor:
-                            const AlwaysStoppedAnimation(kcSecondaryColor),
-                      ),
-                    ),
-                    verticalSpaceSmall,
-                    Text(
-                      "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].created ?? DateTime.now().toIso8601String()))}",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Expanded(
+          //         child: Column(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: [
+          //             Text(
+          //               product.raffle?[0].ticketName ?? "",
+          //               style: const TextStyle(
+          //                   fontWeight: FontWeight.bold, fontSize: 16),
+          //             ),
+          //             RichText(
+          //               text: TextSpan(
+          //                 children: [
+          //                   TextSpan(
+          //                       text: " ${product.productName}",
+          //                       style: GoogleFonts.inter(
+          //                           color: kcBlackColor, fontSize: 12)),
+          //                   TextSpan(
+          //                       text: " ${MoneyUtils().formatAmount(product.productPrice!)}",
+          //                       style: TextStyle(color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+          //                         fontFamily: "satoshi",),
+          //                   )
+          //                 ],
+          //               ),
+          //             )
+          //           ],
+          //         ),
+          //       ),
+          //       Column(
+          //         children: [
+          //           Text(
+          //             "0 sold out of ${product.stock}",
+          //             overflow: TextOverflow.ellipsis,
+          //             maxLines: 3,
+          //             style: const TextStyle(
+          //               fontSize: 12,
+          //             ),
+          //           ),
+          //           verticalSpaceTiny,
+          //           SizedBox(
+          //             width: 100,
+          //             child: LinearProgressIndicator(
+          //               value: 0.4,
+          //               backgroundColor: kcSecondaryColor.withOpacity(0.3),
+          //               valueColor:
+          //                   const AlwaysStoppedAnimation(kcSecondaryColor),
+          //             ),
+          //           ),
+          //           verticalSpaceSmall,
+          //           Text(
+          //             "Draw date: ${DateFormat("d MMM").format(DateTime.parse(product.raffle?[0].created ?? DateTime.now().toIso8601String()))}",
+          //             overflow: TextOverflow.ellipsis,
+          //             maxLines: 3,
+          //             style: const TextStyle(
+          //               fontSize: 12,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );

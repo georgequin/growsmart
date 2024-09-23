@@ -132,10 +132,10 @@ class RaffleReceiptPage extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                           ),
                           ...cart.map((cartItem) =>  ListTile(
-                            leading: Image.network(cartItem.raffle!.pictures!.first.location ?? '', height: 44, width: 48), // Replace with your image URL field
-                            title: Text(cartItem.raffle!.ticketName!, style: const TextStyle(fontSize: 10.61)),
+                            leading: Image.network(cartItem.raffle!.media!.first.location ?? '', height: 44, width: 48), // Replace with your image URL field
+                            title: Text(cartItem.raffle!.name!, style: const TextStyle(fontSize: 10.61)),
                             subtitle: Text('${cartItem.quantity}', style: const TextStyle(fontSize: 10.61)),
-                            trailing: Text(MoneyUtils().formatAmount(cartItem.raffle!.rafflePrice!),style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
+                            trailing: Text(MoneyUtils().formatAmount(cartItem.raffle!.ticketPrice!),style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
                               color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
                               fontFamily: "satoshi",)),
                           )),
@@ -177,10 +177,10 @@ class RaffleReceiptPage extends StatelessWidget {
                             'DELIVERY ADDRESS',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black54),
                           ),
-                          Text(
-                            profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
-                            style: const TextStyle(color: kcSecondaryColor),
-                          ),
+                          // Text(
+                          //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
+                          //   style: const TextStyle(color: kcSecondaryColor),
+                          // ),
                         ],
                       ),
                     ),
@@ -323,9 +323,9 @@ class RaffleReceiptPage extends StatelessWidget {
                 'DELIVERY ADDRESS',
                 style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16,),
               ),
-              pw.Text(
-                profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
-              ),
+              // pw.Text(
+              //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
+              // ),
             ],
           );
         },
@@ -343,7 +343,7 @@ class RaffleReceiptPage extends StatelessWidget {
 
   Future<pw.Widget> createCartItemWidget(RaffleCartItem cartItem) async {
     // Attempt to load the image from the network
-    final response = await http.get(Uri.parse(cartItem.raffle!.pictures!.first.location!));
+    final response = await http.get(Uri.parse(cartItem.raffle!.media!.first.location!));
 
     pw.Widget imageWidget;
     if (response.statusCode == 200) {
@@ -371,12 +371,12 @@ class RaffleReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.raffle!.ticketName!, style: const pw.TextStyle(fontSize: 10.61)),
+                pw.Text(cartItem.raffle!.name!, style: const pw.TextStyle(fontSize: 10.61)),
                 pw.Text('${cartItem.quantity}', style: const pw.TextStyle(fontSize: 10.61)),
               ],
             ),
           ),
-          pw.Text('₦${MoneyUtils().formatAmount(cartItem.raffle!.rafflePrice!)}',
+          pw.Text('₦${MoneyUtils().formatAmount(cartItem.raffle!.ticketPrice!)}',
             style: pw.TextStyle(fontSize: 10.61, fontWeight: pw.FontWeight.bold),
           ),
         ],

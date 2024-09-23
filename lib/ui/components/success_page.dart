@@ -1,15 +1,12 @@
-
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/background.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/svg.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
 /// Feb, 2024
-///
-
 
 class SuccessPage extends StatefulWidget {
   final String title;
@@ -31,22 +28,34 @@ class _SuccessPageState extends State<SuccessPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Background(
-        children: [
-          Positioned(
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
+      body: Positioned.fill(
+        child: Column(
+          children: [
+            // Image at the top center
+            Padding(
+              padding: const EdgeInsets.only(top: 100.0), // Adjust padding as needed
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/images/success_logo.svg', // Replace with your image path
+                  width: 150,
+                  height: 150,
+                ),
+              ),
+            ),
+            Spacer(), // Pushes the text and button to the bottom
+            // Text and button at the bottom
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
                     widget.title,
                     style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: kcSecondaryColor),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: kcSecondaryColor,
+                    ),
                   ),
                   verticalSpaceSmall,
                   Text(
@@ -55,26 +64,36 @@ class _SuccessPageState extends State<SuccessPage> {
                       fontSize: 14,
                       color: kcWhiteColor,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   verticalSpaceMedium,
-                  TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(kcWhiteColor)),
-                    onPressed: () {
-                      widget.callback();
-                    },
-                    child: const Text(
-                      "Continue",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: kcPrimaryColor,
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(kcWhiteColor),
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(vertical: 15),
+                        ),
+                      ),
+                      onPressed: () {
+                        widget.callback();
+                      },
+                      child: const Text(
+                        "Continue",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: kcPrimaryColor,
+                        ),
                       ),
                     ),
-                  )
+                  ),
+                  verticalSpaceMedium, // Add some space at the bottom
                 ],
-              ))
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

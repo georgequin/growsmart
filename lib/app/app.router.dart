@@ -30,6 +30,7 @@ import 'package:afriprize/ui/views/enter_email/enter_email_view.dart' as _i18;
 import 'package:afriprize/ui/views/home/home_view.dart' as _i2;
 import 'package:afriprize/ui/views/notification/notification_view.dart' as _i9;
 import 'package:afriprize/ui/views/onboarding/onboarding_view.dart' as _i4;
+import 'package:afriprize/ui/views/onboarding/onboarding_view2.dart' as _i31;
 import 'package:afriprize/ui/views/otp/otp_view.dart' as _i16;
 import 'package:afriprize/ui/views/profile/profile_view.dart' as _i10;
 import 'package:afriprize/ui/views/profile/track.dart' as _i15;
@@ -57,6 +58,8 @@ class Routes {
   static const startupView = '/startup-view';
 
   static const onboardingView = '/onboarding-view';
+
+  static const onboardingView2 = '/onboarding-view2';
 
   static const authView = '/auth-view';
 
@@ -109,6 +112,7 @@ class Routes {
     homeView,
     startupView,
     onboardingView,
+    onboardingView2,
     authView,
     dashboardView,
     shopDashboardView,
@@ -156,6 +160,10 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.onboardingView,
       page: _i4.OnboardingView,
+    ),
+    _i1.RouteDef(
+      Routes.onboardingView2,
+      page: _i31.OnboardingView2,
     ),
     _i1.RouteDef(
       Routes.authView,
@@ -275,6 +283,12 @@ class StackedRouter extends _i1.RouterBase {
     _i4.OnboardingView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => const _i4.OnboardingView(),
+        settings: data,
+      );
+    },
+    _i31.OnboardingView2: (data) {
+      return _i21.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i31.OnboardingView2(),
         settings: data,
       );
     },
@@ -679,6 +693,20 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToOnboardingView2([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.onboardingView2,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> navigateToAuthView([
     int? routerId,
     bool preventDuplicates = true,
@@ -1035,6 +1063,20 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   ]) async {
     return replaceWith<dynamic>(Routes.onboardingView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithOnboardingView2([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.onboardingView2,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

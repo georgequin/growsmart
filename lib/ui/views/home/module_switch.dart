@@ -31,7 +31,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Raffles Button
-          _buildOption(
+          buildOption(
             context: context,
             text: 'Raffles',
             icon: 'ticket_star.svg',
@@ -40,7 +40,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
           ),
 
           // AfriShop Button
-          _buildOption(
+          buildOption(
             context: context,
             text: 'AfriShop',
             icon: 'bag.svg',
@@ -52,7 +52,7 @@ class _ModuleSwitchState extends State<ModuleSwitch> {
     );
   }
 
-  Widget _buildOption({
+  Widget buildOption({
     required BuildContext context,
     required String text,
     required String icon,

@@ -118,6 +118,7 @@ class Product {
 
 class Category {
   String? id;
+  String? id2;
   String? name;
   String? description;
   bool? status;
@@ -126,6 +127,7 @@ class Category {
 
   Category({
     this.id,
+    this.id2,
     this.name,
     this.description,
     this.status,
@@ -135,6 +137,7 @@ class Category {
 
   Category.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    id2 = json['_id'];
     name = json['name'];
     description = json['description'];
     status = (json['status'].runtimeType == int)
@@ -150,6 +153,7 @@ class Category {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
+    data['_id'] = id2;
     data['name'] = name;
     data['description'] = description;
     data['status'] = status;
@@ -206,93 +210,149 @@ class Pictures {
 
 class Raffle {
   String? id;
-  String? ticketName;
-  String? ticketDescription;
-  String? ticketTracking;
-  bool? featured;
-  int? status;
+  String? name;
+  String? description;
+  int? availableTickets;
+  List<Media>? media;
   String? startDate;
   String? endDate;
-  String? created;
-  String? updated;
-  Category? category;
-  List<Pictures>? pictures;
-  Product? product;
-  int? rafflePrice;
-  int? verifiedSales;
-  int? stockTotal;
-  Raffle(
-      {this.id,
-      this.ticketName,
-      this.ticketDescription,
-      this.ticketTracking,
-      this.featured,
-      this.status,
-      this.startDate,
-      this.endDate,
-      this.created,
-      this.updated,
-      this.category,
-      this.pictures,
-      this.product,
-      this.rafflePrice,
-      this.verifiedSales,
-      this.stockTotal,
-      });
+  int? ticketPrice;
+  String? status;
+  String? winningTicket;
+  String? createdAt;
+  String? updatedAt;
+  String? formattedTicketPrice;
+  List<Participant>? participants;
+
+  Raffle({
+    this.id,
+    this.name,
+    this.description,
+    this.availableTickets,
+    this.media,
+    this.startDate,
+    this.endDate,
+    this.ticketPrice,
+    this.status,
+    this.winningTicket,
+    this.createdAt,
+    this.updatedAt,
+    this.formattedTicketPrice,
+    this.participants,
+  });
 
   Raffle.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    ticketName = json['ticket_name'];
-    ticketDescription = json['ticket_description'];
-    ticketTracking = json['ticket_tracking'];
-    featured = json['featured'];
-    rafflePrice = json['raffle_price'];
-    status = json['status'];
-    startDate = json['start_date'];
-    endDate = json['end_date'];
-    created = json['created'];
-    updated = json['updated'];
-    verifiedSales = json['verified_sales'];
-    stockTotal = json['stock_total'];
-    category =
-        json['category'] != null ? Category.fromJson(json['category']) : null;
-    if (json['pictures'] != null) {
-      pictures = <Pictures>[];
-      json['pictures'].forEach((v) {
-        pictures!.add(Pictures.fromJson(v));
+    id = json['id'] ?? json['_id'];
+    name = json['name'];
+    description = json['description'];
+    availableTickets = json['available_tickets'];
+    if (json['media'] != null) {
+      media = <Media>[];
+      json['media'].forEach((v) {
+        media!.add(Media.fromJson(v));
       });
     }
-    product =
-        json['product'] != null ? Product.fromJson(json['product']) : null;
+    startDate = json['start_date'];
+    endDate = json['end_date'];
+    ticketPrice = json['ticket_price'];
+    status = json['status'];
+    winningTicket = json['winning_ticket'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    formattedTicketPrice = json['formatted_ticket_price'];
+    if (json['participants'] != null) {
+      participants = <Participant>[];
+      json['participants'].forEach((v) {
+        participants!.add(Participant.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['ticket_name'] = ticketName;
-    data['ticket_description'] = ticketDescription;
-    data['ticket_tracking'] = ticketTracking;
-    data['featured'] = featured;
-    data['raffle_price'] = rafflePrice;
-    data['status'] = status;
+    data['name'] = name;
+    data['description'] = description;
+    data['available_tickets'] = availableTickets;
+    if (media != null) {
+      data['media'] = media!.map((v) => v.toJson()).toList();
+    }
     data['start_date'] = startDate;
     data['end_date'] = endDate;
-    data['created'] = created;
-    data['updated'] = updated;
-    data['verified_sales'] = verifiedSales;
-    data['stock_total'] = stockTotal;
-    if (category != null) {
-      data['category'] = category!.toJson();
-    }
-    if (pictures != null) {
-      data['pictures'] = pictures!.map((v) => v.toJson()).toList();
-    }
-    if (product != null) {
-      data['product'] = product!.toJson();
+    data['ticket_price'] = ticketPrice;
+    data['status'] = status;
+    data['winning_ticket'] = winningTicket;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['formatted_ticket_price'] = formattedTicketPrice;
+    if (participants != null) {
+      data['participants'] = participants!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
+
+class Media {
+  String? id;
+  String? uploadKey;
+  String? location;
+  String? url;
+  String? mimetype;
+  String? createdAt;
+  String? updatedAt;
+
+  Media({
+    this.id,
+    this.uploadKey,
+    this.location,
+    this.url,
+    this.mimetype,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  Media.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    uploadKey = json['upload_key'];
+    location = json['location'];
+    url = json['url'];
+    mimetype = json['mimetype'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = id;
+    data['upload_key'] = uploadKey;
+    data['location'] = location;
+    data['url'] = url;
+    data['mimetype'] = mimetype;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    return data;
+  }
+}
+
+class Participant {
+  String? firstname;
+  String? lastname;
+
+  Participant({this.firstname, this.lastname});
+
+  Participant.fromJson(Map<String, dynamic> json) {
+    firstname = json['firstname'];
+    lastname = json['lastname'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['firstname'] = firstname;
+    data['lastname'] = lastname;
+    return data;
+  }
+}
+
 
 class Review {
   String? id;

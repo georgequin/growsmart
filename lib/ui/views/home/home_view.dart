@@ -33,25 +33,26 @@ class HomeView extends StackedView<HomeViewModel> {
             : viewModel.selectedShopTab == 0;
         return Scaffold(
           backgroundColor: currentModuleNotifier.value == AppModules.shop ? const Color(0xFFFFF3DB) : null,
-          appBar: AppBar(
-            backgroundColor: currentModule == AppModules.shop && uiMode.value == AppUiModes.light
-                ? const Color(0xFFFFF3DB)
-                : uiMode.value == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
-            title: showModuleSwitch ? ModuleSwitch(
-              isRafflesSelected: currentModule == AppModules.raffle,
-              onToggle: (isRafflesSelected) {
-                viewModel.toggleModule(isRafflesSelected);
-              },
-            ) : Text(currentModule == AppModules.raffle ? 'Raffles' : 'Shop'),
-            actions: const [
-              // IconButton(
-              //   icon: Icon(Icons.swap_horiz),
-              //   onPressed: () {
-              //     viewModel.toggleModule();
-              //   },
-              // ),
-            ],
-          ),
+          // appBar:
+          // AppBar(
+          //   backgroundColor: currentModule == AppModules.shop && uiMode.value == AppUiModes.light
+          //       ? const Color(0xFFFFF3DB)
+          //       : uiMode.value == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
+          //   title: showModuleSwitch ? ModuleSwitch(
+          //     isRafflesSelected: currentModule == AppModules.raffle,
+          //     onToggle: (isRafflesSelected) {
+          //       viewModel.toggleModule(isRafflesSelected);
+          //     },
+          //   ) : Text(currentModule == AppModules.raffle ? 'Raffles' : 'Shop'),
+          //   actions: const [
+          //     // IconButton(
+          //     //   icon: Icon(Icons.swap_horiz),
+          //     //   onPressed: () {
+          //     //     viewModel.toggleModule();
+          //     //   },
+          //     // ),
+          //   ],
+          // ),
           body: viewModel.currentPage, // Assuming you have separate getters for pages in your viewModel
           bottomNavigationBar: BottomNavBar(viewModel: viewModel),
         );
@@ -130,8 +131,8 @@ class BottomNavBar extends StatelessWidget {
       ),
       //TODO : MAKE SURE TO CHECK WHY THE VALUE ISNT CORRECT
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter('notification.svg', viewModel.selectedRafflesTab == 3, filteredNotifications, iconColor),
-        label: "Notifications",
+        icon: _navBarItemWithCounter('heart.svg', viewModel.selectedRafflesTab == 3, filteredNotifications, iconColor),
+        label: "Donate",
       ),
       BottomNavigationBarItem(
         icon: _navBarItemIcon('menu.svg', viewModel.selectedRafflesTab == 4, iconColor),

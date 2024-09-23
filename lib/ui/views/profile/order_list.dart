@@ -97,9 +97,9 @@ class _OrderListState extends State<OrderList> {
 
     int amount = order.product!.productPrice! * order.quantity!;
 
-    if (profile.value.country != null && profile.value.country!.shippingFee != null) {
-      amount += profile.value.country!.shippingFee!;
-    }
+    // if (profile.value.country != null && profile.value.country!.shippingFee != null) {
+    //   amount += profile.value.country!.shippingFee!;
+    // }
     List<String> orderIds = [order.id!];
 
     ApiResponse res = await MoneyUtils().chargeCardUtil(paymentMethod, orderIds, context, amount);
@@ -273,7 +273,7 @@ class _OrderListState extends State<OrderList> {
                             color: kcVeryLightGrey,
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(isRaffle ? order.raffle?.pictures![0].location ?? 'https://via.placeholder.com/120' : order.product?.pictures![0].location ?? 'https://via.placeholder.com/120'),
+                              image: NetworkImage(isRaffle ? order.raffle?.media![0].location ?? 'https://via.placeholder.com/120' : order.product?.pictures![0].location ?? 'https://via.placeholder.com/120'),
                             ),
                           ),
                         ),
@@ -282,7 +282,7 @@ class _OrderListState extends State<OrderList> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("${isRaffle ? order.raffle?.ticketName :  order.product?.productName}",
+                              Text("${isRaffle ? order.raffle?.name :  order.product?.productName}",
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               verticalSpaceTiny,
@@ -392,7 +392,7 @@ class _OrderListState extends State<OrderList> {
 
                                                 isOrderPaymentProcessing.value = true;
                                                 List<String> orderIds = [order.id!];
-                                                ApiResponse res = await MoneyUtils().chargeCardUtil(selectedOrderPaymentMethod.value, orderIds, context, order.raffle!.rafflePrice! * order.quantity!);
+                                                ApiResponse res = await MoneyUtils().chargeCardUtil(selectedOrderPaymentMethod.value, orderIds, context, order.raffle!.ticketPrice! * order.quantity!);
 
                                                 if (res.statusCode == 200) {
                                                   if (selectedOrderPaymentMethod.value == PaymentMethod.binancePay) {
@@ -421,7 +421,7 @@ class _OrderListState extends State<OrderList> {
                                                 isOrderPaymentProcessing.value = false;
 
                                               },
-                                              totalAmount: (order.raffle!.rafflePrice! * order.quantity!),
+                                              totalAmount: (order.raffle!.ticketPrice! * order.quantity!),
                                               selectedPaymentMethod: selectedOrderPaymentMethod.value,
                                               isPaymentProcessing: isProcessing,
                                             );

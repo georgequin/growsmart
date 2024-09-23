@@ -5,8 +5,7 @@
 
 class AppConfig {
   // static const String baseUrl = "https://api.afriprize.com/api/v1/";
-  // static const String baseUrl = "https://staging-server.afriprize.com/api/v1/";
-  static const String baseUrl = "https://production-server.afriprize.com/api/v1/";
+  static const String baseUrl = "https://staging-server.afriprize.com/api/v1/";
 
   // static const String baseUrl = "http://192.168.0.179:3001/api/v1/";
 

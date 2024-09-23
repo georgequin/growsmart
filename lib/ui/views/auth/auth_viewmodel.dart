@@ -114,8 +114,10 @@ class AuthViewModel extends BaseViewModel {
       ApiResponse res = await repo.login({
         "email": email.text,
         "password": password.text,
+        "account_type": "CUSTOMER"
       });
       if (res.statusCode == 200) {
+        print('login response: $res');
         userLoggedIn.value = true;
         profile.value =
             Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
@@ -145,10 +147,10 @@ class AuthViewModel extends BaseViewModel {
 
   Future<RegistrationResult> register() async {
 
-    if (!terms) {
-      snackBar.showSnackbar(message: "Accept terms to continue");
-      return RegistrationResult.failure;
-    }
+    // if (!terms) {
+    //   snackBar.showSnackbar(message: "Accept terms to continue");
+    //   return RegistrationResult.failure;
+    // }
     setBusy(true);
 
     try {
@@ -159,10 +161,10 @@ class AuthViewModel extends BaseViewModel {
         "phone": phoneNumber.completeNumber,
         "country": countryId,
         "password": password.text,
-        "gender": selectedGender
+        "confirm_password": password.text
 
       });
-      if (res.statusCode == 200) {
+      if (res.statusCode == 201) {
         snackBar.showSnackbar(message: res.data["message"]);
 
         locator<NavigationService>().replaceWithOtpView(email: email.text);

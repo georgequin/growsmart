@@ -264,278 +264,521 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/raffle_ticket.dart';
 import '../../../state.dart';
+import '../dashboard/raffle_detail.dart';
+import '../home/module_switch.dart';
 import 'draws_viewmodel.dart';
 import 'empty_tab_content.dart';
 
 class DrawsView extends StatelessWidget {
   const DrawsView({super.key});
 
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return ViewModelBuilder<DrawsViewModel>.reactive(
-  //     viewModelBuilder: () => DrawsViewModel(),
-  //     onModelReady: (viewModel) => viewModel.init(),
-  //     builder: (context, viewModel, child) => DefaultTabController(
-  //       length: 2,
-  //       child: Scaffold(
-  //         appBar: AppBar(
-  //           title: Text("Draws"),
-  //         ),
-  //         body: RefreshIndicator(
-  //           onRefresh: () async {
-  //             await viewModel.refreshData();
-  //           },
-  //           child: Column(
-  //           children: [
-  //             // Live Draws Section
-  //             // viewModel.isBusy
-  //             //     ? CircularProgressIndicator()
-  //             //     : viewModel.pastDraws.isEmpty
-  //             //     ? SizedBox()
-  //             //     : Container(
-  //             //   height: 100, // Adjust as necessary
-  //             //   child: ListView.builder(
-  //             //     scrollDirection: Axis.horizontal,
-  //             //     itemCount: viewModel.pastDraws.length,
-  //             //     itemBuilder: (context, index) {
-  //             //       // Replace with your LiveDrawCard Widget
-  //             //       return Card(
-  //             //         child: Center(
-  //             //           child: Text(viewModel.pastDraws[index].ticketName ?? 'ticket-name'),
-  //             //         ),
-  //             //       );
-  //             //     },
-  //             //   ),
-  //             // ),
-  //             // Tabs Section
-  //             PreferredSize(
-  //               preferredSize: Size.fromHeight(30),
-  //               child: Align(
-  //                 alignment: Alignment.center,
-  //                 child: Container(
-  //                   margin: EdgeInsets.all(10),
-  //                   padding: EdgeInsets.all(4),
-  //                   decoration: BoxDecoration(
-  //                     color: Colors.grey[300]?.withOpacity(0.9), // Tab bar background color
-  //                     borderRadius: BorderRadius.circular(
-  //                       10.0, // Rounded corners
-  //                     ),
-  //                   ),
-  //                   child: TabBar(
-  //                     indicator: BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(
-  //                         10.0, // Rounded corners
-  //                       ),
-  //                       color: kcSecondaryColor, // Tab indicator color
-  //                     ),
-  //                     labelColor: Colors.black, // Selected tab label color
-  //                     unselectedLabelColor: Colors.black26,
-  //                     labelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),// Unselected tab label color
-  //                     tabs: [
-  //                       Tab(text: "SoldOut Draws"),
-  //                       Tab(text: "Winners"),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //             Expanded(
-  //               child: TabBarView(
-  //                 children: [
-  //                   // SoldOut Draws Page
-  //                   viewModel.isBusy
-  //                       ? CircularProgressIndicator()
-  //                       : viewModel.soldOutDraws.isEmpty
-  //                       ? const EmptyTabContent(
-  //                     title: 'No raffles are sold out at the moment.',
-  //                     description: '',
-  //                     rules: [
-  //                       'Entry Eligibility: Secure your spot in the draw with an Afriprize card purchase of \$5. Each card is your ticket to potential victory.',
-  //                       'Draw Participation: Keep your ticket handy and mark your calendar for the draw date. Join us on Instagram Live to witness the winning moment.',
-  //                       'Bonus Credit: Enjoy a \$5 Afriprize credit with every card purchase, redeemable for a variety of items on our AfriShop.',
-  //                       'Shop and Win: Experience the best of both worlds at Afriprize — where each draw brings you closer to unbelievable wins, and our shop offers an array of amazing products.',
-  //                       'Apple is not a sponsor or involved in any way with the draws.'
-  //                     ],
-  //                   )
-  //                       : ListView.builder(
-  //                     itemCount: viewModel.soldOutDraws.length,
-  //                     itemBuilder: (context, index) {
-  //                       Raffle raffle = viewModel.soldOutDraws.elementAt(index);
-  //                       return Padding(
-  //                         padding: const EdgeInsets.symmetric(vertical: 8.0),
-  //                         child: DrawsCard(
-  //                           raffle: raffle,
-  //                           viewModel: viewModel,
-  //                           index: index,
-  //                           isWinner: false,
-  //                         ),
-  //                       );
-  //                     },
-  //                   ),
-  //                   // Winners Page
-  //                   viewModel.isBusy
-  //                       ? CircularProgressIndicator()
-  //                       : viewModel.winners.isEmpty
-  //                       ? const EmptyTabContent(
-  //                     title: 'No raffles are sold out at the moment.',
-  //                     description: '',
-  //                     rules: [
-  //                       'Entry Eligibility: Secure your spot in the draw with an Afriprize card purchase of \$5. Each card is your ticket to potential victory.',
-  //                       'Draw Participation: Keep your ticket handy and mark your calendar for the draw date. Join us on Instagram Live to witness the winning moment.',
-  //                       'Bonus Credit: Enjoy a \$5 Afriprize credit with every card purchase, redeemable for a variety of items on our AfriShop.',
-  //                       'Shop and Win: Experience the best of both worlds at Afriprize — where each draw brings you closer to unbelievable wins, and our shop offers an array of amazing products.',
-  //                       'Apple is not a sponsor or involved in any way with the draws.'
-  //                     ],
-  //                   )
-  //                       : ListView.builder(
-  //                     itemCount: viewModel.winners.length,
-  //                     itemBuilder: (context, index) {
-  //                       // Replace with your WinnerCard Widget
-  //                       Winner winner = viewModel.winners.elementAt(index);
-  //                       return DrawsCard(
-  //                         raffle: winner.raffle,
-  //                         viewModel: viewModel,
-  //                         index: index, isWinner: true,
-  //                         winner: winner,
-  //                       );
-  //                     },
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<DrawsViewModel>.reactive(
-      viewModelBuilder: () => DrawsViewModel(),
-      onModelReady: (viewModel) => viewModel.init(),
-      builder: (context, viewModel, child) => DefaultTabController(
-        length: 2,
-        child: Scaffold(
+
+    return DefaultTabController(
+      length: 2,
+      child: ViewModelBuilder<DrawsViewModel>.reactive(
+        viewModelBuilder: () => DrawsViewModel(),
+        onModelReady: (viewModel) {
+          viewModel.init();
+        },
+        builder: (context, viewModel, child) => Scaffold(
+          backgroundColor: kcSecondaryColor,
           appBar: AppBar(
-            title: const Text("Draws"),
-            bottom:  PreferredSize(
-                  preferredSize: const Size.fromHeight(30),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      margin: const EdgeInsets.all(10),
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300]?.withOpacity(0.9), // Tab bar background color
-                        borderRadius: BorderRadius.circular(
-                          10.0, // Rounded corners
+            backgroundColor: kcSecondaryColor,
+            // shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.only(
+            //         topLeft: Radius.circular(25.0),
+            //         topRight: Radius.circular(25.0),
+            //         bottomLeft: Radius.circular(25.0),
+            //         bottomRight: Radius.circular(25.0)
+            //     )
+            // ),
+            toolbarHeight: 100.0,
+            title: Center(
+              child: Container(
+                padding: const EdgeInsets.only(left: 7, right: 7, bottom: 7, top: 7),
+                decoration: BoxDecoration(
+                  color: kcWhiteColor.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: kcSecondaryColor, width: 0),
+                ),
+                child: Builder(
+                  builder: (context) {
+                    final TabController tabController = DefaultTabController.of(context);
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Draws Button
+                        buildOption(
+                          context: context,
+                          text: 'Draws',
+                          icon: 'ticket_star.svg',
+                          isSelected: tabController.index == 0, // Selected if on the first tab
+                          onTap: () {
+                            viewModel.togglePage(true); // Updates the view model state
+                            tabController.animateTo(0); // Switch to the first tab
+                            viewModel.notifyListeners(); // Rebuild on tap
+                          },
                         ),
-                      ),
-                      child: TabBar(
-                        indicator: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            10.0, // Rounded corners
-                          ),
-                          color: kcSecondaryColor, // Tab indicator color
+                        // Winners Button
+                        buildOption(
+                          context: context,
+                          text: 'Winners',
+                          icon: 'star.svg',
+                          isSelected: tabController.index == 1, // Selected if on the second tab
+                          onTap: () {
+                            tabController.animateTo(1); // Switch to the second tab
+                            viewModel.notifyListeners(); // Rebuild on tap
+                          },
                         ),
-                        labelColor: Colors.black, // Selected tab label color
-                        unselectedLabelColor: Colors.black26,
-                        labelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),// Unselected tab label color
-                        tabs: const [
-                          Tab(text: "SoldOut Draws"),
-                          Tab(text: "Winners"),
-                        ],
-                      ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          body: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25.0),
+                topRight: Radius.circular(25.0),
+              ),
+              color: kcWhiteColor, // Set your desired background color
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25.0),
+                topRight: Radius.circular(25.0),
+              ),
+              child: TabBarView(
+                children: [
+                  // First Tab: Draws
+                  RefreshIndicator(
+                    onRefresh: () async {
+                      await viewModel.refreshData();
+                    },
+                    child: viewModel.isBusy
+                        ? const Center(child: CircularProgressIndicator())
+                        : viewModel.raffleList.isEmpty
+                        ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: const [
+                        EmptyTabContent(
+                          title: 'No raffles are sold out at the moment.',
+                          description: '',
+                          rules: [
+                            'Entry Eligibility: Secure your spot in the draw with an Afriprize card purchase of \$5...',
+                          ],
+                        )
+                      ],
+                    )
+                        : Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16.0), // Added horizontal margin
+                        child:Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: TextField(
+                                onChanged: viewModel.updateSearchQuery,
+                                decoration: InputDecoration(
+                                  hintText: 'Search',
+                                  prefixIcon: const Icon(Icons.search),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            verticalSpaceSmall,
+                            Expanded(
+                              child: GridView.builder(
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.8,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                ),
+                                itemCount: viewModel.filteredRaffle.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return InkWell(
+                                    onTap: (){
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+                                        ),
+                                        // barrierColor: Colors.black.withAlpha(50),
+                                        // backgroundColor: Colors.transparent,
+                                        backgroundColor: Colors.black.withOpacity(0.7),
+                                        builder: (BuildContext context) {
+                                          return FractionallySizedBox(
+                                            heightFactor: 0.9, // 70% of the screen's height
+                                            child: RaffleDetail(raffle: viewModel.filteredRaffle[index]),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          const BoxShadow(
+                                            color: Colors.black12,
+                                            blurRadius: 6.0,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          // Image covering the entire card
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: Image.network(
+                                              viewModel.filteredRaffle[index].media?.first.url ?? 'https://via.placeholder.com/150',
+                                              height: double.infinity,
+                                              width: double.infinity,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          // Tint overlay for better readability
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: Container(
+                                              color: Colors.black.withOpacity(0.6), // Dark semi-transparent overlay
+                                              height: double.infinity,
+                                              width: double.infinity,
+                                            ),
+                                          ),
+                                          // Raffle details positioned on top of the image
+                                          Positioned(
+                                            top: 8,
+                                            right: 8,
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: kcWhiteColor,
+                                                borderRadius: BorderRadius.circular(4),
+                                              ),
+                                              child: Text(
+                                                viewModel.filteredRaffle[index].formattedTicketPrice ?? '',
+                                                style: const TextStyle(
+                                                  color: kcPrimaryColor,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 33,
+                                            right: 8,
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: kcSecondaryColor,
+                                                borderRadius: BorderRadius.circular(4),
+                                              ),
+                                              child: const Text(
+                                                'Ticket Price',
+                                                style: TextStyle(
+                                                  fontSize: 7,
+                                                  color: kcPrimaryColor,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            bottom: 10,
+                                            left: 10,
+                                            right: 10,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        'WIN Prize in ${DateFormat('yyyy-MM-dd')
+                                                            .format(DateTime.parse(viewModel.filteredRaffle[index].endDate ?? ''))}',
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 10,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Text(
+                                                  viewModel.filteredRaffle[index].name ?? '',
+                                                  style: const TextStyle(
+                                                    color: kcSecondaryColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 17,
+                                                  ),
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Row(
+                                                  children: [
+
+                                                    Image.asset("assets/images/partcipant_icon.png", width: 35,),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      '${viewModel.filteredRaffle[index].participants?.length ?? 0} Participants',
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 10,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        )
                     ),
                   ),
-                ),
-          ),
-          body: TabBarView(
-            children: [
-              RefreshIndicator(
-                onRefresh: () async {
-                  await viewModel.refreshData();
-                },
-                child: viewModel.isBusy
-                    ? const Center(child: CircularProgressIndicator())
-                    : viewModel.soldOutDraws.isEmpty
-                    ? ListView(
-                  physics: const AlwaysScrollableScrollPhysics(), // Ensure the ListView is always scrollable
-                  children: const [
-                    EmptyTabContent(
-                  title: 'No raffles are sold out at the moment.',
-                  description: '',
-                  rules: [
-                    'Entry Eligibility: Secure your spot in the draw with an Afriprize card purchase of \$5. Each card is your ticket to potential victory.',
-                    'Draw Participation: Keep your ticket handy and mark your calendar for the draw date. Join us on Instagram Live to witness the winning moment.',
-                    'Bonus Credit: Enjoy a \$5 Afriprize credit with every card purchase, redeemable for a variety of items on our AfriShop.',
-                    'Shop and Win: Experience the best of both worlds at Afriprize — where each draw brings you closer to unbelievable wins, and our shop offers an array of amazing products.',
-                    'Apple is not a sponsor or involved in any way with the draws.'
-                  ],
-                )
-                      ]) : ListView.builder(
-                  itemCount: viewModel.soldOutDraws.length,
-                  itemBuilder: (context, index) {
-                    Raffle raffle = viewModel.soldOutDraws.elementAt(index);
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: DrawsCard(
-                        raffle: raffle,
-                        viewModel: viewModel,
-                        index: index,
-                        isWinner: false,
-                      ),
-                    );
-                  },
-                ),
+                  // Second Tab: Winners
+                  RefreshIndicator(
+                    onRefresh: () async {
+                      await viewModel.refreshData();
+                    },
+                    child: viewModel.isBusy
+                        ? const Center(child: CircularProgressIndicator())
+                        : ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: const [
+                        EmptyTabContent(
+                          title: 'No winners at the moment.',
+                          description: '',
+                          rules: [
+                            'Entry Eligibility: Secure your spot in the draw...',
+                          ],
+                        ),
+                      ],
+                    )
+                    //     : ListView.builder(
+                    //   itemCount: viewModel.winners.length,
+                    //   itemBuilder: (context, index) {
+                    //     Winner winner = viewModel.winners.elementAt(index);
+                    //     return Padding(
+                    //       padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    //       child: DrawsCard(
+                    //         raffle: winner.raffle!,
+                    //         viewModel: viewModel,
+                    //         index: index,
+                    //         isWinner: true,
+                    //         winner: winner,
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
+                  ),
+                ],
               ),
-              // Second Tab: Winners
-              RefreshIndicator(
-                onRefresh: () async {
-                  await viewModel.refreshData();
-                },
-                child: viewModel.isBusy
-                    ? const Center(child: CircularProgressIndicator())
-                    : viewModel.winners.isEmpty
-                    ? ListView(
-                        physics: const AlwaysScrollableScrollPhysics(), // Ensure the ListView is always scrollable
-                        children: const [
-                           EmptyTabContent(
-                  title: 'No raffles are sold out at the moment.',
-                  description: '',
-                  rules: [
-                    'Entry Eligibility: Secure your spot in the draw with an Afriprize card purchase of \$5. Each card is your ticket to potential victory.',
-                    'Draw Participation: Keep your ticket handy and mark your calendar for the draw date. Join us on Instagram Live to witness the winning moment.',
-                    'Bonus Credit: Enjoy a \$5 Afriprize credit with every card purchase, redeemable for a variety of items on our AfriShop.',
-                    'Shop and Win: Experience the best of both worlds at Afriprize — where each draw brings you closer to unbelievable wins, and our shop offers an array of amazing products.',
-                    'Apple is not a sponsor or involved in any way with the draws.'
-                  ],
-                )
-                        ])
-                    : ListView.builder(
-                  itemCount: viewModel.winners.length,
-                  itemBuilder: (context, index) {
-                    // Replace with your WinnerCard Widget
-                    Winner winner = viewModel.winners.elementAt(index);
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0), // Adjust the padding value as needed
-                      child: DrawsCard(
-                        raffle: winner.raffle!,
-                        viewModel: viewModel,
-                        index: index,
-                        isWinner: true,
-                        winner: winner,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+            ),
           ),
+        ),
+      ),
+    );
+
+
+
+    // return ViewModelBuilder<DrawsViewModel>.reactive(
+    //   viewModelBuilder: () => DrawsViewModel(),
+    //   onModelReady: (viewModel) => viewModel.init(),
+    //   builder: (context, viewModel, child) => DefaultTabController(
+    //     length: 2,
+    //     child: Scaffold(
+    //       appBar: AppBar(
+    //         backgroundColor: kcSecondaryColor,
+    //         toolbarHeight: 100.0,
+    //         title: Center(
+    //           child: Container(
+    //             // padding: EdgeInsets.symmetric(horizontal: 4.0),
+    //             padding: const EdgeInsets.only(left: 7, right: 7,bottom: 7, top: 7),
+    //             decoration: BoxDecoration(
+    //               color: kcWhiteColor.withOpacity(0.9),
+    //               borderRadius: BorderRadius.circular(10),
+    //               border: Border.all(color: kcSecondaryColor, width: 0),
+    //             ),
+    //             child: Row(
+    //                mainAxisSize: MainAxisSize.min,
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: [
+    //                 // Raffles Button
+    //                 buildOption(
+    //                   context: context,
+    //                   text: 'Draws',
+    //                   icon: 'ticket_star.svg',
+    //                   isSelected: viewModel.isDrawSelected,
+    //                   onTap: () => viewModel.togglePage(true),
+    //                 ),
+    //                 buildOption(
+    //                   context: context,
+    //                   text: 'Winners',
+    //                   icon: 'bag.svg',
+    //                   isSelected: !viewModel.isDrawSelected,
+    //                   onTap: () => viewModel.togglePage(false)
+    //                 )
+    //               ],
+    //             ),
+    //           ),
+    //         ),
+    //         actions: const [
+    //           // IconButton(
+    //           //   icon: Icon(Icons.swap_horiz),
+    //           //   onPressed: () {
+    //           //     viewModel.toggleModule();
+    //           //   },
+    //           // ),
+    //         ],
+    //       ),
+    //       body: TabBarView(
+    //         children: [
+    //           RefreshIndicator(
+    //             onRefresh: () async {
+    //               await viewModel.refreshData();
+    //             },
+    //             child: viewModel.isBusy
+    //                 ? const Center(child: CircularProgressIndicator())
+    //                 : viewModel.soldOutDraws.isEmpty
+    //                 ? ListView(
+    //               physics: const AlwaysScrollableScrollPhysics(), // Ensure the ListView is always scrollable
+    //               children: const [
+    //                 EmptyTabContent(
+    //               title: 'No raffles are sold out at the moment.',
+    //               description: '',
+    //               rules: [
+    //                 'Entry Eligibility: Secure your spot in the draw with an Afriprize card purchase of \$5. Each card is your ticket to potential victory.',
+    //                 'Draw Participation: Keep your ticket handy and mark your calendar for the draw date. Join us on Instagram Live to witness the winning moment.',
+    //                 'Bonus Credit: Enjoy a \$5 Afriprize credit with every card purchase, redeemable for a variety of items on our AfriShop.',
+    //                 'Shop and Win: Experience the best of both worlds at Afriprize — where each draw brings you closer to unbelievable wins, and our shop offers an array of amazing products.',
+    //                 'Apple is not a sponsor or involved in any way with the draws.'
+    //               ],
+    //             )
+    //                   ]) : ListView.builder(
+    //               itemCount: viewModel.soldOutDraws.length,
+    //               itemBuilder: (context, index) {
+    //                 Raffle raffle = viewModel.soldOutDraws.elementAt(index);
+    //                 return Padding(
+    //                   padding: const EdgeInsets.symmetric(vertical: 8.0),
+    //                   child: DrawsCard(
+    //                     raffle: raffle,
+    //                     viewModel: viewModel,
+    //                     index: index,
+    //                     isWinner: false,
+    //                   ),
+    //                 );
+    //               },
+    //             ),
+    //           ),
+    //           // Second Tab: Winners
+    //           RefreshIndicator(
+    //             onRefresh: () async {
+    //               await viewModel.refreshData();
+    //             },
+    //             child: viewModel.isBusy
+    //                 ? const Center(child: CircularProgressIndicator())
+    //                 : viewModel.winners.isEmpty
+    //                 ? ListView(
+    //                     physics: const AlwaysScrollableScrollPhysics(), // Ensure the ListView is always scrollable
+    //                     children: const [
+    //                        EmptyTabContent(
+    //               title: 'No raffles are sold out at the moment.',
+    //               description: '',
+    //               rules: [
+    //                 'Entry Eligibility: Secure your spot in the draw with an Afriprize card purchase of \$5. Each card is your ticket to potential victory.',
+    //                 'Draw Participation: Keep your ticket handy and mark your calendar for the draw date. Join us on Instagram Live to witness the winning moment.',
+    //                 'Bonus Credit: Enjoy a \$5 Afriprize credit with every card purchase, redeemable for a variety of items on our AfriShop.',
+    //                 'Shop and Win: Experience the best of both worlds at Afriprize — where each draw brings you closer to unbelievable wins, and our shop offers an array of amazing products.',
+    //                 'Apple is not a sponsor or involved in any way with the draws.'
+    //               ],
+    //             )
+    //                     ])
+    //                 : ListView.builder(
+    //               itemCount: viewModel.winners.length,
+    //               itemBuilder: (context, index) {
+    //                 // Replace with your WinnerCard Widget
+    //                 Winner winner = viewModel.winners.elementAt(index);
+    //                 return Padding(
+    //                   padding: const EdgeInsets.symmetric(vertical: 8.0), // Adjust the padding value as needed
+    //                   child: DrawsCard(
+    //                     raffle: winner.raffle!,
+    //                     viewModel: viewModel,
+    //                     index: index,
+    //                     isWinner: true,
+    //                     winner: winner,
+    //                   ),
+    //                 );
+    //               },
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    // );
+  }
+
+  Widget buildOption({
+    required BuildContext context,
+    required String text,
+    required String icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        decoration: BoxDecoration(
+          color: Colors.transparent, // Interior color remains transparent
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(
+            color: isSelected ? kcSecondaryColor : Colors.transparent,
+            width: 2.0, // Set the width as needed
+          ),
+        ),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              'assets/icons/$icon',
+              color: isSelected ? kcSecondaryColor : kcLightGrey,
+              height: 20,
+            ),
+            // Icon(icon, color: isSelected ? kcSecondaryColor : kcPrimaryColor),
+            const SizedBox(width: 8.0),
+            Text(
+              text,
+              style: TextStyle(
+                  color: isSelected ?  kcPrimaryColor : kcLightGrey,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Panchang",
+                  fontSize: 13
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -565,7 +808,7 @@ class DrawsCard extends StatelessWidget {
         // height: 400,
         decoration: BoxDecoration(
           color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: kcSecondaryColor),
           boxShadow: [
             BoxShadow(
@@ -585,7 +828,7 @@ class DrawsCard extends StatelessWidget {
                   margin: const EdgeInsets.fromLTRB(14.0, 14.0, 14.0, 0.0),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.all(
-                      Radius.circular(12),
+                      Radius.circular(10),
                     ),
                     child: Column(
                       children: [
@@ -596,7 +839,7 @@ class DrawsCard extends StatelessWidget {
                               valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor), // Change the loader color
                             ),
                           ),
-                          imageUrl: raffle.pictures?.first.location ?? 'https://via.placeholder.com/150',
+                          imageUrl: raffle.media?.first.location ?? 'https://via.placeholder.com/150',
                           fit: BoxFit.cover,
                           height: 182,
                           width: double.infinity,
@@ -651,7 +894,7 @@ class DrawsCard extends StatelessWidget {
                       ),
                       if(!isWinner)
                         Text(
-                        raffle.ticketName ?? 'Product Name',
+                        raffle.name ?? 'Product Name',
                         style:  TextStyle(
                             fontSize: 20,
                             color: uiMode.value == AppUiModes.light ? kcPrimaryColor : kcSecondaryColor,

@@ -41,7 +41,7 @@ class Repository extends IRepository {
   Future<ApiResponse> register(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "auth/signup",
+      endpoint: "auth/create_account",
       reqBody: req,
     );
 
@@ -52,7 +52,18 @@ class Repository extends IRepository {
   Future<ApiResponse> verify(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "auth/verification",
+      endpoint: "auth/verify_otp",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> sendOtp(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/send_otp",
       reqBody: req,
     );
 
@@ -70,10 +81,20 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> getSellingFast() async {
+  Future<ApiResponse> getProjects() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "products/featured",
+      endpoint: "projects/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getProjectComments(String projectId) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "projects/$projectId/comments/list",
     );
 
     return response;
@@ -330,7 +351,7 @@ class Repository extends IRepository {
   Future<ApiResponse> supportCountries() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "resources/country/list",
+      endpoint: "system/country_list",
     );
     return response;
   }
@@ -354,6 +375,15 @@ class Repository extends IRepository {
       reqBody: req,
     );
 
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getDonationsCategories() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "projects/category/list",
+    );
     return response;
   }
 

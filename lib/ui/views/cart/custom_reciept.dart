@@ -197,10 +197,10 @@ class ReceiptPage extends StatelessWidget {
                             'DELIVERY ADDRESS',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black54),
                           ),
-                          Text(
-                            profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
-                            style: const TextStyle(color: kcSecondaryColor),
-                          ),
+                          // Text(
+                          //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
+                          //   style: const TextStyle(color: kcSecondaryColor),
+                          // ),
                         ],
                       ),
                     ),
@@ -369,9 +369,9 @@ class ReceiptPage extends StatelessWidget {
                 'DELIVERY ADDRESS',
                 style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16,),
               ),
-              pw.Text(
-                profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
-              ),
+              // pw.Text(
+              //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
+              // ),
             ],
           );
         },

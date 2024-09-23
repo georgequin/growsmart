@@ -237,144 +237,144 @@ class _CheckoutState extends State<Checkout> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               children: [
-                loadingProfile == true ? const CircularProgressIndicator() :
-                (profile.value.shipping == null ||
-                        profile.value.shipping!.isEmpty)
-                    ? Column(
-                        children: [
-                          const Text("No Shipping address found"),
-                          TextButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(kcPrimaryColor)),
-                            child: const Text(
-                              "Add new shipping address",
-                              style: TextStyle(color: kcWhiteColor),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const AddShipping(),
-                                    ),
-                                  )
-                                  .whenComplete(() => setState(() {}));
-                            },
-                          ),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          ...List.generate(
-                            profile.value.shipping!.length,
-                            (index) {
-                              Shipping shipping = profile.value.shipping![index];
-                              return Container(
-                                padding: const EdgeInsets.all(10),
-                                margin: const EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: kcBlackColor, width: 0.5)),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(child:Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(shipping.shippingAddress ?? "", overflow: TextOverflow
-                                            .ellipsis,
-                                          maxLines: 3,),
-                                        Text(shipping.shippingCity ?? ""),
-                                        Text(shipping.shippingState ?? "")
-                                      ],
-                                    ) ),
-                                    (shipping.isDefault ?? false)
-                                        ? const Text("Default")
-                                        : (shippingId == shipping.id &&
-                                                makingDefault)
-                                            ? const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              )
-                                            : TextButton(
-                                                style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all(
-                                                                kcPrimaryColor)),
-                                                onPressed: () async {
-                                                  setState(() {
-                                                    shippingId = shipping.id!;
-                                                    makingDefault = true;
-                                                  });
-
-                                                  try {
-                                                    ApiResponse res =
-                                                        await locator<
-                                                                Repository>()
-                                                            .setDefaultShipping(
-                                                                {},
-                                                                shipping.id!);
-                                                    if (res.statusCode == 200) {
-                                                      ApiResponse pRes =
-                                                          await locator<
-                                                                  Repository>()
-                                                              .getProfile();
-                                                      if (pRes.statusCode ==
-                                                          200) {
-                                                        profile.value = Profile
-                                                            .fromJson(Map<
-                                                                    String,
-                                                                    dynamic>.from(
-                                                                pRes.data[
-                                                                    "user"]));
-
-                                                        profile
-                                                            .notifyListeners();
-                                                      }
-                                                    }
-                                                  } catch (e) {
-                                                    print(e);
-                                                  }
-
-                                                  setState(() {
-                                                    shippingId = "";
-                                                    makingDefault = false;
-                                                  });
-                                                },
-                                                child: const Text(
-                                                  "Make default",
-                                                  style: TextStyle(
-                                                      color: kcWhiteColor),
-                                                ),
-                                              )
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                          TextButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(kcPrimaryColor)),
-                            child: const Text(
-                              "Add new shipping address",
-                              style: TextStyle(color: kcWhiteColor),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const AddShipping(),
-                                    ),
-                                  )
-                                  .whenComplete(() => setState(() {}));
-                            },
-                          ),
-                        ],
-                      )
+                // loadingProfile == true ? const CircularProgressIndicator() :
+                // (profile.value.shipping == null ||
+                //         profile.value.shipping!.isEmpty)
+                //     ? Column(
+                //         children: [
+                //           const Text("No Shipping address found"),
+                //           TextButton(
+                //             style: ButtonStyle(
+                //                 backgroundColor:
+                //                     MaterialStateProperty.all(kcPrimaryColor)),
+                //             child: const Text(
+                //               "Add new shipping address",
+                //               style: TextStyle(color: kcWhiteColor),
+                //             ),
+                //             onPressed: () {
+                //               Navigator.of(context)
+                //                   .push(
+                //                     MaterialPageRoute(
+                //                       builder: (context) => const AddShipping(),
+                //                     ),
+                //                   )
+                //                   .whenComplete(() => setState(() {}));
+                //             },
+                //           ),
+                //         ],
+                //       )
+                //     : Column(
+                //         children: [
+                //           ...List.generate(
+                //             profile.value.shipping!.length,
+                //             (index) {
+                //               Shipping shipping = profile.value.shipping![index];
+                //               return Container(
+                //                 padding: const EdgeInsets.all(10),
+                //                 margin: const EdgeInsets.only(bottom: 10),
+                //                 decoration: BoxDecoration(
+                //                     border: Border.all(
+                //                         color: kcBlackColor, width: 0.5)),
+                //                 child: Row(
+                //                   mainAxisAlignment:
+                //                       MainAxisAlignment.spaceBetween,
+                //                   children: [
+                //                     Expanded(child:Column(
+                //                       crossAxisAlignment:
+                //                       CrossAxisAlignment.start,
+                //                       children: [
+                //                         Text(shipping.shippingAddress ?? "", overflow: TextOverflow
+                //                             .ellipsis,
+                //                           maxLines: 3,),
+                //                         Text(shipping.shippingCity ?? ""),
+                //                         Text(shipping.shippingState ?? "")
+                //                       ],
+                //                     ) ),
+                //                     (shipping.isDefault ?? false)
+                //                         ? const Text("Default")
+                //                         : (shippingId == shipping.id &&
+                //                                 makingDefault)
+                //                             ? const Center(
+                //                                 child:
+                //                                     CircularProgressIndicator(),
+                //                               )
+                //                             : TextButton(
+                //                                 style: ButtonStyle(
+                //                                     backgroundColor:
+                //                                         MaterialStateProperty
+                //                                             .all(
+                //                                                 kcPrimaryColor)),
+                //                                 onPressed: () async {
+                //                                   setState(() {
+                //                                     shippingId = shipping.id!;
+                //                                     makingDefault = true;
+                //                                   });
+                //
+                //                                   try {
+                //                                     ApiResponse res =
+                //                                         await locator<
+                //                                                 Repository>()
+                //                                             .setDefaultShipping(
+                //                                                 {},
+                //                                                 shipping.id!);
+                //                                     if (res.statusCode == 200) {
+                //                                       ApiResponse pRes =
+                //                                           await locator<
+                //                                                   Repository>()
+                //                                               .getProfile();
+                //                                       if (pRes.statusCode ==
+                //                                           200) {
+                //                                         profile.value = Profile
+                //                                             .fromJson(Map<
+                //                                                     String,
+                //                                                     dynamic>.from(
+                //                                                 pRes.data[
+                //                                                     "user"]));
+                //
+                //                                         profile
+                //                                             .notifyListeners();
+                //                                       }
+                //                                     }
+                //                                   } catch (e) {
+                //                                     print(e);
+                //                                   }
+                //
+                //                                   setState(() {
+                //                                     shippingId = "";
+                //                                     makingDefault = false;
+                //                                   });
+                //                                 },
+                //                                 child: const Text(
+                //                                   "Make default",
+                //                                   style: TextStyle(
+                //                                       color: kcWhiteColor),
+                //                                 ),
+                //                               )
+                //                   ],
+                //                 ),
+                //               );
+                //             },
+                //           ),
+                //           TextButton(
+                //             style: ButtonStyle(
+                //                 backgroundColor:
+                //                     MaterialStateProperty.all(kcPrimaryColor)),
+                //             child: const Text(
+                //               "Add new shipping address",
+                //               style: TextStyle(color: kcWhiteColor),
+                //             ),
+                //             onPressed: () {
+                //               Navigator.of(context)
+                //                   .push(
+                //                     MaterialPageRoute(
+                //                       builder: (context) => const AddShipping(),
+                //                     ),
+                //                   )
+                //                   .whenComplete(() => setState(() {}));
+                //             },
+                //           ),
+                //         ],
+                //       )
               ],
             ),
           ),
