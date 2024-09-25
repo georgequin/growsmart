@@ -147,11 +147,6 @@ class ProfileView extends StatelessWidget{
                 ),
 
                 ListTile(
-                  leading: const Icon(
-                    Icons.location_on,
-                    color: kcSecondaryColor,
-                  ),
-                  title: const Text("Shipping Addresses"),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -160,6 +155,11 @@ class ProfileView extends StatelessWidget{
                       ),
                     );
                   },
+                  leading: const Icon(
+                    Icons.location_on,
+                    color: kcSecondaryColor,
+                  ),
+                  title: const Text("Shipping Addresses"),
                 ),
 
 
