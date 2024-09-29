@@ -116,14 +116,14 @@ class AuthViewModel extends BaseViewModel {
         "password": password.text,
         "account_type": "CUSTOMER"
       });
-      if (res.statusCode == 200) {
-        print('login response: $res');
+      if (res.statusCode == 201) {
+        print('login response: ${res.data["data"]}');
         userLoggedIn.value = true;
         profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
-        locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
-        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refresh_token"]);
-        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
+            Profile.fromJson(Map<String, dynamic>.from(res.data['data']["user"]));
+        locator<LocalStorage>().save(LocalStorageDir.authToken, res.data['data']["accessToken"]);
+        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data['data']["refreshToken"]);
+        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data['data']["user"]));
         locator<LocalStorage>().save(LocalStorageDir.remember, remember);
 
 

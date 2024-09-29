@@ -7,18 +7,18 @@ class Profile {
   String? firstname;
   String? lastname;
   String? email;
-  String? username; // New field
+  String? username;
   String? phone;
   Country? country;
-  bool? isUserVerified; // Changed from int to bool
-  String? status; // Changed from int to String
-  String? accountType; // New field
-  int? accountPoints; // New field
-  String? accountPointsLocal; // New field
-  String? createdAt; // Changed field name
-  String? updatedAt; // Changed field name
-  Wallet? wallet;
-  List<Discount>? discounts;
+  bool? isUserVerified;
+  String? status;
+  String? accountType;
+  int? accountPoints;
+  String? accountPointsLocal;
+  String? createdAt;
+  String? updatedAt;
+  Wallet? wallet; // Assuming this exists
+  List<Discount>? discounts; // Assuming this exists
   List<Pictures>? pictures;
 
   Profile({
@@ -42,70 +42,94 @@ class Profile {
   });
 
   Profile.fromJson(Map<String, dynamic> json) {
-    id = json['_id']; // Changed from 'id' to '_id'
+    id = json['_id']; // Match API response key for id
     firstname = json['firstname'];
     lastname = json['lastname'];
     email = json['email'];
-    username = json['username']; // New field
+    username = json['username'];
     phone = json['phone'];
+
+    // Checking if 'country' object is not null and assigning it
     country = json['country'] != null ? Country.fromJson(json['country']) : null;
-    isUserVerified = json['is_user_verified']; // Changed from 'verified' to 'is_user_verified'
-    status = json['status']; // Changed from int to String
-    accountType = json['account_type']; // New field
-    accountPoints = json['account_points']; // New field
-    accountPointsLocal = json['account_points_local']; // New field
-    createdAt = json['createdAt']; // Changed field name
-    updatedAt = json['updatedAt']; // Changed field name
-    // Assuming wallet and discounts are not present in the current JSON
+
+    // Boolean field directly from the API
+    isUserVerified = json['is_user_verified'];
+
+    // Status field changed to String in API response
+    status = json['status'];
+
+    // New fields from API
+    accountType = json['account_type'];
+    accountPoints = json['account_points'];
+    accountPointsLocal = json['account_points_local'];
+
+    // Timestamp fields
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+
+    // Handle 'wallet' field if present in the response
     if (json['wallet'] != null) {
       wallet = Wallet.fromJson(json['wallet']);
     }
+
+    // Handle 'referral' as discounts
     if (json['referral'] != null) {
       discounts = <Discount>[];
       json['referral'].forEach((v) {
         discounts!.add(Discount.fromJson(v));
       });
     }
+
+    // Handle 'picture' as pictures list
     if (json['picture'] != null) {
       pictures = <Pictures>[];
-      if (json['picture'].isNotEmpty) {
-        json['picture'].forEach((v) {
-          pictures!.add(Pictures.fromJson(v));
-        });
-      }
+      json['picture'].forEach((v) {
+        pictures!.add(Pictures.fromJson(v));
+      });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = id; // Changed from 'id' to '_id'
+    data['_id'] = id;
     data['firstname'] = firstname;
     data['lastname'] = lastname;
     data['email'] = email;
-    data['username'] = username; // New field
+    data['username'] = username;
     data['phone'] = phone;
+
+    // Handle country serialization
     if (country != null) {
       data['country'] = country!.toJson();
     }
-    data['is_user_verified'] = isUserVerified; // Changed from 'verified' to 'is_user_verified'
-    data['status'] = status; // Changed from int to String
-    data['account_type'] = accountType; // New field
-    data['account_points'] = accountPoints; // New field
-    data['account_points_local'] = accountPointsLocal; // New field
-    data['createdAt'] = createdAt; // Changed field name
-    data['updatedAt'] = updatedAt; // Changed field name
+
+    data['is_user_verified'] = isUserVerified;
+    data['status'] = status;
+    data['account_type'] = accountType;
+    data['account_points'] = accountPoints;
+    data['account_points_local'] = accountPointsLocal;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+
+    // Handle wallet serialization
     if (wallet != null) {
       data['wallet'] = wallet!.toJson();
     }
+
+    // Serialize referral as discounts
     if (discounts != null) {
       data['referral'] = discounts!.map((v) => v.toJson()).toList();
     }
+
+    // Serialize pictures list
     if (pictures != null) {
       data['picture'] = pictures!.map((v) => v.toJson()).toList();
     }
+
     return data;
   }
 }
+
 
 class Wallet {
   String? id;

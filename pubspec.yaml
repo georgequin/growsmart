@@ -82,6 +82,9 @@ dependencies:
   dotted_border: ^2.1.0
   workmanager: ^0.5.2
   pay: ^2.0.0
+  showcaseview: ^3.0.0
+
+
 #  background_fetch: '^1.1.3'
 
 
@@ -126,7 +129,12 @@ flutter:
         - asset: assets/fonts/Panchang-Semibold.ttf
         - asset: assets/fonts/Panchang-Variable.ttf
           style: italic
-#    - family: Satoshi  # Add this section for Satoshi
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+
+
+        #    - family: Satoshi  # Add this section for Satoshi
 #      fonts:
 #        - asset: assets/fonts/satoshi/Satoshi-Variable.ttf  # Replace with your actual font file paths
 #        - asset: assets/fonts/satoshi/Satoshi-VariableItalic.ttf

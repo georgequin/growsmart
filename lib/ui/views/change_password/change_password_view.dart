@@ -25,7 +25,8 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-           title: const Text('Change password', style: TextStyle(color: Colors.black)),
+            title: const Text('Change password',
+                style: TextStyle(color: Colors.black)),
             leading: InkWell(
               onTap: () {
                 Navigator.of(context).pop();
@@ -59,68 +60,61 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    verticalSpaceMedium,
+                    Column(
+                      children: [
+                        verticalSpaceMedium,
+                        TextFieldWidget(
+                          obscureText: viewModel.obscure,
+                          hint: " current Password",
+                          controller: viewModel.oldPassword,
+                          suffix: InkWell(
+                            onTap: () {
+                              viewModel.toggleObscure();
+                            },
+                            child: Icon(viewModel.obscure
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                          ),
+                        ),
+                      ],
+                    ),
                     verticalSpaceMedium,
                     TextFieldWidget(
-                        hint: "Enter Email", controller: viewModel.email),
+                      obscureText: viewModel.obscure,
+                      hint: " New Password",
+                      controller: viewModel.newPassword,
+                      suffix: InkWell(
+                        onTap: () {
+                          viewModel.toggleObscure();
+                        },
+                        child: Icon(viewModel.obscure
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                      ),
+                    ),
                     verticalSpaceMedium,
-                    viewModel.emailVerified
-                        ? Column(
-                            children: [
-                              TextFieldWidget(
-                                hint: "Enter Code",
-                                controller: viewModel.code,
-                              ),
-                              isResetPassword
-                                  ? const SizedBox()
-                                  : Column(
-                                      children: [
-                                        verticalSpaceMedium,
-                                        TextFieldWidget(
-                                          obscureText: viewModel.obscure,
-                                          hint: "Enter Old Password",
-                                          controller: viewModel.oldPassword,
-                                          suffix: InkWell(
-                                            onTap: () {
-                                              viewModel.toggleObscure();
-                                            },
-                                            child: Icon(viewModel.obscure
-                                                ? Icons.visibility_off
-                                                : Icons.visibility),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                              verticalSpaceMedium,
-                              TextFieldWidget(
-                                obscureText: viewModel.obscure,
-                                hint: "Enter New Password",
-                                controller: viewModel.newPassword,
-                                suffix: InkWell(
-                                  onTap: () {
-                                    viewModel.toggleObscure();
-                                  },
-                                  child: Icon(viewModel.obscure
-                                      ? Icons.visibility_off
-                                      : Icons.visibility),
-                                ),
-                              ),
-                              verticalSpaceMedium,
-                            ],
-                          )
-                        : const SizedBox(),
+                    TextFieldWidget(
+                      obscureText: viewModel.obscure,
+                      hint: " Confirm Password",
+                      controller: viewModel.confirmPassword,
+                      suffix: InkWell(
+                        onTap: () {
+                          viewModel.toggleObscure();
+                        },
+                        child: Icon(viewModel.obscure
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                      ),
+                    ),
+                    verticalSpaceMedium,
                     SubmitButton(
                       isLoading: viewModel.isBusy,
-                      label: viewModel.emailVerified ? "Submit" : "Continue",
+                      label: "Update Password",
                       submit: () {
-                        if (viewModel.emailVerified == false) {
-                          viewModel.sendCode();
-                        } else {
-                          viewModel.changePassword(context,isResetPassword);
-                        }
+                        viewModel.changePassword(context, isResetPassword);
                       },
                       boldText: true,
-                      color: kcPrimaryColor,
+                      color: kcSecondaryColor,
                     ),
                   ],
                 ),

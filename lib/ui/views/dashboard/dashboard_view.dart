@@ -21,6 +21,7 @@ import '../../../core/data/models/product.dart';
 import '../../../core/data/models/project.dart';
 import '../../../widget/AdventureDialog.dart';
 import 'dashboard_viewmodel.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -31,15 +32,15 @@ class DashboardView extends StackedView<DashboardViewModel> {
   DashboardView({Key? key}) : super(key: key);
 
   final PageController _pageController = PageController();
-
-
+  final GlobalKey walletShowcaseKey = GlobalKey(); // Global key for the showcase
+  bool isShowcaseStarted = false; // Track whether the showcase has been started
 
   @override
   Widget builder(
-    BuildContext context,
-    DashboardViewModel viewModel,
-    Widget? child,
-  ) {
+      BuildContext context,
+      DashboardViewModel viewModel,
+      Widget? child,
+      ) {
     if (viewModel.showDialog) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
@@ -53,91 +54,156 @@ class DashboardView extends StackedView<DashboardViewModel> {
       });
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: ValueListenableBuilder(
-          valueListenable: uiMode,
-          builder: (context, AppUiModes mode, child) {
-            return SvgPicture.asset(
-              "assets/images/dashboard_logo.svg",
-              width: 150,
-              height: 40,
-            );
-          },
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/images/dashboard_otification.svg",
+    // Trigger the showcase after the first frame build, and ensure it's not called multiple times.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!isShowcaseStarted) {
+        ShowCaseWidget.of(context).startShowCase([walletShowcaseKey]);
+        isShowcaseStarted = true; // Avoid calling it again
+      }
+    });
+
+    return ShowCaseWidget(
+      builder: (context) { // Correct function signature here
+        return Scaffold(
+          appBar: AppBar(
+            title: ValueListenableBuilder(
+              valueListenable: uiMode,
+              builder: (context, AppUiModes mode, child) {
+                return SvgPicture.asset(
+                  "assets/images/dashboard_logo.svg",
                   width: 150,
-                  height: 25,
+                  height: 40,
+                );
+              },
+            ),
+            actions: [
+              Showcase.withWidget(
+                key: walletShowcaseKey,
+                container: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: kcWhiteColor, // Background color for the showcase popup
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7, // Example: 90% of the screen width
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Manage Your Wallet Balance',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: kcSecondaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Donate your points to charitable causes or shop for exciting products in our eCommerce store. Maximize your rewards and make a difference today!',
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  ShowCaseWidget.of(context).dismiss(); // Exit the showcase
+                                },
+                                child: const Text('Skip'),
+                                style: ElevatedButton.styleFrom(),
+                              ),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: () {
+                                  ShowCaseWidget.of(context).next(); // Move to the next showcase
+                                },
+                                child: const Text('Next'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: kcSecondaryColor, // Background color of the button
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                // Login Button
-                const SizedBox(width: 8),
-                Container(
-                  margin: const EdgeInsets.only(right: 0.0),
+                disposeOnTap: false, // Dismiss showcase on tap
+                onTargetClick: () {
+                  // Handle the action when the target is clicked
+                  ShowCaseWidget.of(context).dismiss(); // Dismiss the showcase
+                },
+                height: 500,
+                width: 350,
+                child: Container(
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     color: kcPrimaryColor.withOpacity(0.1),
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(5.0), // Set the radius value you prefer
+                      topLeft: Radius.circular(5.0),
                       bottomLeft: Radius.circular(5.0),
                     ),
                   ),
-                  child: const Text("#0.00",
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Panchang")),
+                  child: Text(
+                    profile.value.wallet?.balance.toString() ?? '₦0.00',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Panchang",
+                    ),
+                  ),
                 ),
-                SvgPicture.asset(
-                  "assets/images/dashboard_wallet.svg",
-                  width: 150,
-                  height: 40,
+              ),
+              SvgPicture.asset(
+                "assets/images/dashboard_wallet.svg",
+                width: 150,
+                height: 40,
+              ),
+            ],
+          ),
+          body: RefreshIndicator(
+            onRefresh: () async {
+              await viewModel.refreshData();
+            },
+            child: ListView(
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
+              children: [
+                Container(
+                  height: 200, // Set a fixed height for the video player
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20), // Apply rounded corners to the container
+                  ),
+                  clipBehavior: Clip.antiAlias, // This will clip the video player to the border radius
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9, // You can adjust the aspect ratio to the desired value
+                    child: VideoPlayer(viewModel.controller),
+                  ),
                 ),
+                verticalSpaceSmall,
+                quickActions(context),
+                verticalSpaceMedium,
+                doMoreOnAfriprize(context),
+                verticalSpaceMedium,
+                popularDrawsSlider(context, viewModel.raffleList),
+                verticalSpaceMedium,
+                donationsSlider(context, viewModel.projectResources),
               ],
             ),
-          )
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await viewModel.refreshData();
-        },
-        child: ListView(
-          padding:
-              const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
-          children: [
-            Container(
-              height: 200, // Set a fixed height for the video player
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                    20), // Apply rounded corners to the container
-              ),
-              clipBehavior: Clip
-                  .antiAlias, // This will clip the video player to the border radius
-              child: AspectRatio(
-                aspectRatio: 16 /
-                    9, // You can adjust the aspect ratio to the desired value
-                child: VideoPlayer(viewModel.controller),
-              ),
-            ),
-            verticalSpaceSmall,
-            quickActions(context),
-            verticalSpaceMedium,
-            doMoreOnAfriprize(context),
-            verticalSpaceMedium,
-            popularDrawsSlider(context, viewModel.raffleList),
-            verticalSpaceMedium,
-            donationsSlider(context, viewModel.projectResources),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
+
+
+
 
   Widget quickActions(BuildContext context) {
     return Column(
@@ -299,7 +365,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     ),
                     // Added padding around the content of the container
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 8.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -312,7 +379,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(width: 8), // Space between the circle and the text
+                          const SizedBox(
+                              width:
+                                  8), // Space between the circle and the text
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -325,7 +394,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   color: Colors.black87,
                                 ),
                               ),
-                              SizedBox(height: 4), // Adjust space between title and description
+                              SizedBox(
+                                  height:
+                                      4), // Adjust space between title and description
                               Text(
                                 'Value equal to the ticket\'s value!',
                                 style: TextStyle(
@@ -365,7 +436,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     ),
                     // Added padding around the content of the container
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 8.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -378,7 +450,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(width: 8), // Space between the circle and the text
+                          const SizedBox(
+                              width:
+                                  8), // Space between the circle and the text
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -391,7 +465,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                   color: Colors.black87,
                                 ),
                               ),
-                              SizedBox(height: 4), // Adjust space between title and description
+                              SizedBox(
+                                  height:
+                                      4), // Adjust space between title and description
                               Text(
                                 'Supported by our partners',
                                 style: TextStyle(
@@ -437,10 +513,13 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 print('Explore tapped');
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: kcSecondaryColor.withOpacity(0.2), // Capsule background color
-                  borderRadius: BorderRadius.circular(20), // Rounded capsule shape
+                  color: kcSecondaryColor
+                      .withOpacity(0.2), // Capsule background color
+                  borderRadius:
+                      BorderRadius.circular(20), // Rounded capsule shape
                 ),
                 child: const Row(
                   children: [
@@ -479,12 +558,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   .format(DateTime.parse(raffle.endDate ?? ''));
 
               return InkWell(
-                onTap: (){
+                onTap: () {
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25.0),
+                          topRight: Radius.circular(25.0)),
                     ),
                     // barrierColor: Colors.black.withAlpha(50),
                     // backgroundColor: Colors.transparent,
@@ -527,7 +608,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
-                            color: Colors.black.withOpacity(0.6), // Dark semi-transparent overlay
+                            color: Colors.black.withOpacity(
+                                0.6), // Dark semi-transparent overlay
                             height: double.infinity,
                             width: double.infinity,
                           ),
@@ -537,7 +619,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           top: 8,
                           right: 8,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: kcWhiteColor,
                               borderRadius: BorderRadius.circular(4),
@@ -556,7 +639,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           top: 33,
                           right: 8,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: kcSecondaryColor,
                               borderRadius: BorderRadius.circular(4),
@@ -579,7 +663,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'WIN Prize in $formattedEndDate',
@@ -603,8 +688,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-
-                                  Image.asset("assets/images/partcipant_icon.png", width: 40,),
+                                  Image.asset(
+                                    "assets/images/partcipant_icon.png",
+                                    width: 40,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     '${raffle.participants?.length ?? 0} Participants',
@@ -657,8 +744,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   ),
                 )
               ],
-            )
-            ,
+            ),
             // Explore Capsule
             InkWell(
               onTap: () {
@@ -666,10 +752,13 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 print('Explore tapped');
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: kcSecondaryColor.withOpacity(0.2), // Capsule background color
-                  borderRadius: BorderRadius.circular(20), // Rounded capsule shape
+                  color: kcSecondaryColor
+                      .withOpacity(0.2), // Capsule background color
+                  borderRadius:
+                      BorderRadius.circular(20), // Rounded capsule shape
                 ),
                 child: const Row(
                   children: [
@@ -722,9 +811,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     //     );
                     //   },
                     // );
-
                   },
-                  child:Container(
+                  child: Container(
                     width: 222,
                     decoration: BoxDecoration(
                       color: kcWhiteColor,
@@ -742,60 +830,69 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child:   Column(
+                      child: Column(
                         children: [
                           Container(
                             decoration: const BoxDecoration(
                               // color: kcPrimaryColor,
-                              borderRadius: BorderRadius.all( Radius.circular(12)
-                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12)),
                             ),
                             child: ClipRRect(
-                              borderRadius: const BorderRadius.all( Radius.circular(12)
-                              ),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Image.network(
                                     imageUrl!,
-                                    width: double.infinity, // or specify a width
+                                    width:
+                                        double.infinity, // or specify a width
                                     height: 124, // or specify a height
                                     fit: BoxFit.cover,
                                   ),
-                                  Padding( // Add padding to the row
-                                    padding: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0,0), // Adjust padding as needed
+                                  Padding(
+                                    // Add padding to the row
+                                    padding: const EdgeInsets.fromLTRB(5.0, 5.0,
+                                        5.0, 0), // Adjust padding as needed
                                     child: Text(
                                       project?.projectTitle ?? 'service title',
                                       style: const TextStyle(
-                                          fontSize: 16,
-                                          color: kcBlackColor,
-                                          fontWeight: FontWeight.w600,
-                                          // fontFamily: "Panchang"
+                                        fontSize: 16,
+                                        color: kcBlackColor,
+                                        fontWeight: FontWeight.w600,
+                                        // fontFamily: "Panchang"
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  Padding( // Add padding to the row
-                                    padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0,8.0), // Adjust padding as needed
-                                    child:Text(
+                                  Padding(
+                                    // Add padding to the row
+                                    padding: const EdgeInsets.fromLTRB(8.0, 0,
+                                        8.0, 8.0), // Adjust padding as needed
+                                    child: Text(
                                       project?.projectDescription ?? '',
-                                      style:  const TextStyle(
-                                          fontSize: 10,
-                                          color: kcBlackColor,
-                                          // fontFamily: "Panchang"
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: kcBlackColor,
+                                        // fontFamily: "Panchang"
                                       ),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
                                     child: Row(
                                       children: [
-
-                                        Image.asset("assets/images/partcipant_icon.png", width: 40,),
+                                        Image.asset(
+                                          "assets/images/partcipant_icon.png",
+                                          width: 40,
+                                        ),
                                         const SizedBox(width: 4),
                                         Text(
                                           '${members?.length ?? 0} Participants',
@@ -812,9 +909,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             ),
                           ),
                         ],
-                      ),),
+                      ),
+                    ),
                   ),
-
                 ),
               );
             },
@@ -823,7 +920,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
       ],
     );
   }
-
 
   @override
   void onViewModelReady(DashboardViewModel viewModel) {
@@ -1342,4 +1438,6 @@ class RaffleRow extends StatelessWidget {
     // Decide text color based on luminance
     return luminance < 0.1 ? Colors.white : Colors.black;
   }
+
+
 }

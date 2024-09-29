@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,29 +30,29 @@ class _SupportState extends State<Support> {
         padding: const EdgeInsets.all(20),
         children: [
           SupportOption(
-            icon: Icons.email,
+            icon: Icons.email_outlined,
             title: "Email Us",
-            subtitle: "support@afriprize.com",
+            //subtitle: "support@afriprize.com",
             onTap: () async {
               sendEmail("support@afriprize.com", context);
             },
           ),
-          SupportOption(
-            icon: Icons.call_end_outlined,
-            title: "Call us",
-            subtitle: "+2347045007400",
-            onTap: () {
-              _makePhoneCall("+23487045007400");
-            },
-          ),
-          SupportOption(
-            icon: Icons.chat,
-            title: "WhatsApp",
-            subtitle: "Chat with us on whatsApp", // Replace with your WhatsApp number
-            onTap: () {
-              chatOnWhatsApp("+2347045007400"); // Replace with your WhatsApp number
-            },
-          ),
+          // SupportOption(
+          //   icon: Icons.call_end_outlined,
+          //   title: "Call us",
+          //   subtitle: "+2347045007400",
+          //   onTap: () {
+          //     _makePhoneCall("+23487045007400");
+          //   },
+          // ),
+          // SupportOption(
+          //   icon: Icons.chat,
+          //   title: "WhatsApp",
+          //   subtitle: "Chat with us on whatsApp", // Replace with your WhatsApp number
+          //   onTap: () {
+          //     chatOnWhatsApp("+2347045007400"); // Replace with your WhatsApp number
+          //   },
+          // ),
           SupportOption(
             icon: Icons.help_outline,
             title: "FAQs",
@@ -112,13 +113,13 @@ void showNoMailAppsDialog(BuildContext context) {
   );
 }
 
-Future<void> _makePhoneCall(String phoneNumber) async {
-  final Uri launchUri = Uri(
-    scheme: 'tel',
-    path: phoneNumber,
-  );
-  await launchUrl(launchUri);
-}
+// Future<void> _makePhoneCall(String phoneNumber) async {
+//   final Uri launchUri = Uri(
+//     scheme: 'tel',
+//     path: phoneNumber,
+//   );
+//   await launchUrl(launchUri);
+// }
 
 Future<void> goToFaqs(String url) async {
   final Uri toLaunch =
@@ -129,15 +130,15 @@ Future<void> goToFaqs(String url) async {
   }
 }
 
-Future<void> chatOnWhatsApp(String phoneNumber) async {
-  // Format the phone number for WhatsApp URL
-  String formattedPhoneNumber = phoneNumber.replaceAll('+', '').replaceAll(' ', '');
-  final Uri whatsappUri = Uri.parse("https://wa.me/$formattedPhoneNumber");
-
-  if (!await launchUrl(whatsappUri, mode: LaunchMode.inAppBrowserView)) {
-    locator<SnackbarService>().showSnackbar(message: "WhatsApp not installed");
-  }
-}
+// Future<void> chatOnWhatsApp(String phoneNumber) async {
+//   // Format the phone number for WhatsApp URL
+//   String formattedPhoneNumber = phoneNumber.replaceAll('+', '').replaceAll(' ', '');
+//   final Uri whatsappUri = Uri.parse("https://wa.me/$formattedPhoneNumber");
+//
+//   if (!await launchUrl(whatsappUri, mode: LaunchMode.inAppBrowserView)) {
+//     locator<SnackbarService>().showSnackbar(message: "WhatsApp not installed");
+//   }
+// }
 
 Future<void> _launch(Uri url) async {
   await canLaunchUrl(url)
@@ -207,8 +208,10 @@ class SupportOption extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: Colors.grey), // Replace with your color
-          ],
+            SvgPicture.asset(
+              'assets/images/Arrow - Right.svg',
+              height: 28, // Icon size
+            )          ],
         ),
       ),
     );

@@ -13,6 +13,7 @@ class ChangePasswordViewModel extends BaseViewModel {
   final code = TextEditingController();
   final newPassword = TextEditingController();
   final oldPassword = TextEditingController();
+  final confirmPassword = TextEditingController();
   final snackBar = locator<SnackbarService>();
   bool emailVerified = false;
   bool obscure = true;
@@ -43,22 +44,15 @@ class ChangePasswordViewModel extends BaseViewModel {
     setBusy(true);
 
     try {
-      ApiResponse res = isResetPassword
-          ? await repo.resetPassword(
+      ApiResponse res =
+          await repo.resetPassword(
               {
-                "code": int.parse(code.text.toString()),
-                "password": newPassword.text,
+                "old_password": oldPassword.text,
+                "new_password": newPassword.text,
+                "confirm_password":  confirmPassword.text,
               },
-              email.text,
-            )
-          : await repo.updatePassword(
-              {
-                // "code": int.parse(code.text.toString()),
-                "oldpassword": oldPassword.text,
-                "newpassword": newPassword.text,
-              },
-              email.text,
             );
+
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: "Updated");
         Navigator.pop(context);

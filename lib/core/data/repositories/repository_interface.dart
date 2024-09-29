@@ -41,7 +41,7 @@ abstract class IRepository {
 
   Future<ApiResponse> updatePassword(Map<String, dynamic> req, String email);
 
-  Future<ApiResponse> resetPassword(Map<String, dynamic> req, String email);
+  Future<ApiResponse> resetPassword(Map<String, dynamic> req);
 
   Future<ApiResponse> requestDelete(Map<String, dynamic> req);
 

@@ -32,7 +32,7 @@ class Repository extends IRepository {
   Future<ApiResponse> refresh() async {
     ApiResponse response = await api.call(
         method: HttpMethod.postRefresh,
-        endpoint: "auth/refresh_token"
+        endpoint: "auth/refresh_tokens"
     );
     return response;
   }
@@ -104,7 +104,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getProfile() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "user/profile",
+      endpoint: "users/me",
     );
 
     return response;
@@ -334,7 +334,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getTransactions() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "transaction/user/list",
+      endpoint: "payments/list",
     );
     return response;
   }
@@ -368,10 +368,10 @@ class Repository extends IRepository {
 
   @override
   Future<ApiResponse> resetPassword(
-      Map<String, dynamic> req, String email) async {
+      Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.put,
-      endpoint: "auth/resetpassword/$email",
+      endpoint: "users/me/password_change",
       reqBody: req,
     );
 

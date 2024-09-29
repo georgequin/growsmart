@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 
+
 import 'home_viewmodel.dart';
 import 'module_switch.dart';
 
@@ -69,7 +70,7 @@ class HomeView extends StackedView<HomeViewModel> {
 }
 
 class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({
+   BottomNavBar({
     Key? key,
     required this.viewModel,
   }) : super(key: key);
@@ -115,13 +116,17 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 
+  final GlobalKey drawsShowCaseKey = GlobalKey();
+
   List<BottomNavigationBarItem> _rafflesItems(Color iconColor, Color selectedColor, ValueListenable<List<dynamic>> filteredNotifications) {
     return [
       BottomNavigationBarItem(
         icon: _navBarItemIcon('home.svg', viewModel.selectedRafflesTab == 0, iconColor),
         label: "Home",
       ),
+
       BottomNavigationBarItem(
+        key: drawsShowCaseKey,
         icon: _navBarItemIcon('home_ticket.svg',  viewModel.selectedRafflesTab == 1, iconColor),
         label: "Draws",
       ),

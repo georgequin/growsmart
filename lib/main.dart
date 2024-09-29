@@ -35,56 +35,56 @@ void main() async{
   setupDialogUi();
   setupBottomSheetUi();
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  initializeNotifications();
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+  // initializeNotifications();
 
   // PaystackService().initialize(AppConfig.paystackApiKey);
 
 
-  final messaging = FirebaseMessaging.instance;
+  //final messaging = FirebaseMessaging.instance;
 
-  final settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
-
-  messaging.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true);
-
-  if (kDebugMode) {
-    print('Permission granted: ${settings.authorizationStatus}');
-  }
-
-  String? token = await messaging.getToken();
-  print('firebase device token is: $token');
-
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    if (kDebugMode) {
-      print('Handling a foreground message: ${message.messageId}');
-      print('Message data: ${message.data}');
-      print('Message notification: ${message.notification?.title}');
-      print('Message notification: ${message.notification?.body}');
-    }
+  // final settings = await messaging.requestPermission(
+  //   alert: true,
+  //   announcement: false,
+  //   badge: true,
+  //   carPlay: false,
+  //   criticalAlert: false,
+  //   provisional: false,
+  //   sound: true,
+  // );
+  //
+  // messaging.setForegroundNotificationPresentationOptions(
+  //     alert: true,
+  //     badge: true,
+  //     sound: true);
+  //
+  // if (kDebugMode) {
+  //   print('Permission granted: ${settings.authorizationStatus}');
+  // }
+  //
+  // String? token = await messaging.getToken();
+  // print('firebase device token is: $token');
+  //
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   if (kDebugMode) {
+  //     print('Handling a foreground message: ${message.messageId}');
+  //     print('Message data: ${message.data}');
+  //     print('Message notification: ${message.notification?.title}');
+  //     print('Message notification: ${message.notification?.body}');
+  //   }
     // String messageType = message.data['type'] ?? '';
     //
     // if (messageType == 'text') {
-      displayTextNotification(message.notification?.title ?? '', message.notification?.body ?? '');
+    //  displayTextNotification(message.notification?.title ?? '', message.notification?.body ?? '');
     // } else if (messageType == 'image') {
     //   displayImageNotification(message.data);
     // }
 
-    _messageStreamController.sink.add(message);
-  });
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  //   _messageStreamController.sink.add(message);
+  // });
+ // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(const MyApp());
 

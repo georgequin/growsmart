@@ -26,7 +26,15 @@ class DashboardViewModel extends BaseViewModel {
   List<ProjectResource> projectResources = [];
   List<Raffle> featuredRaffle = [];
 
-  bool showDialog = true; // Add this flag
+  bool showDialog = true;
+  bool shouldShowShowcase = true;  // Controls when to show showcase
+
+
+  bool showcaseShown = false; // Track whether the showcase has been shown
+  void setShowcaseShown(bool value) {
+    showcaseShown = value;
+    notifyListeners();
+  }
 
   void changeSelected(int i) {
     selectedIndex = i;
@@ -129,7 +137,8 @@ class DashboardViewModel extends BaseViewModel {
   Future<void> refreshData() async {
     setBusy(true); // Use this to show loading indicator
     getResourceList();
-    setBusy(false); // Reset loading indicator after data is refreshed
+    setBusy(false);
+    notifyListeners();
   }
 
   void getResourceList(){
