@@ -4,6 +4,7 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
+import 'package:afriprize/widget/showcaseWidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
@@ -15,13 +16,14 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
+import 'package:showcaseview/showcaseview.dart';
+
 
 import '../../../app/app.locator.dart';
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/project.dart';
 import '../../../widget/AdventureDialog.dart';
 import 'dashboard_viewmodel.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -32,8 +34,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
   DashboardView({Key? key}) : super(key: key);
 
   final PageController _pageController = PageController();
-  final GlobalKey walletShowcaseKey = GlobalKey(); // Global key for the showcase
-  bool isShowcaseStarted = false; // Track whether the showcase has been started
+
+
 
   @override
   Widget builder(
@@ -54,157 +56,91 @@ class DashboardView extends StackedView<DashboardViewModel> {
       });
     }
 
-    // Trigger the showcase after the first frame build, and ensure it's not called multiple times.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!isShowcaseStarted) {
-        ShowCaseWidget.of(context).startShowCase([walletShowcaseKey]);
-        isShowcaseStarted = true; // Avoid calling it again
-      }
-    });
-
-    return ShowCaseWidget(
-      builder: (context) { // Correct function signature here
-        return Scaffold(
-          appBar: AppBar(
-            title: ValueListenableBuilder(
-              valueListenable: uiMode,
-              builder: (context, AppUiModes mode, child) {
-                return SvgPicture.asset(
-                  "assets/images/dashboard_logo.svg",
+    return Scaffold(
+      appBar: AppBar(
+        title: ValueListenableBuilder(
+          valueListenable: uiMode,
+          builder: (context, AppUiModes mode, child) {
+            return SvgPicture.asset(
+              "assets/images/dashboard_logo.svg",
+              width: 150,
+              height: 40,
+            );
+          },
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  "assets/images/dashboard_otification.svg",
                   width: 150,
-                  height: 40,
-                );
-              },
-            ),
-            actions: [
-              Showcase.withWidget(
-                key: walletShowcaseKey,
-                container: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: kcWhiteColor, // Background color for the showcase popup
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.7, // Example: 90% of the screen width
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Manage Your Wallet Balance',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: kcSecondaryColor,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Donate your points to charitable causes or shop for exciting products in our eCommerce store. Maximize your rewards and make a difference today!',
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                          SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  ShowCaseWidget.of(context).dismiss(); // Exit the showcase
-                                },
-                                child: const Text('Skip'),
-                                style: ElevatedButton.styleFrom(),
-                              ),
-                              const SizedBox(width: 8),
-                              ElevatedButton(
-                                onPressed: () {
-                                  ShowCaseWidget.of(context).next(); // Move to the next showcase
-                                },
-                                child: const Text('Next'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: kcSecondaryColor, // Background color of the button
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  height: 25,
                 ),
-                disposeOnTap: false, // Dismiss showcase on tap
-                onTargetClick: () {
-                  // Handle the action when the target is clicked
-                  ShowCaseWidget.of(context).dismiss(); // Dismiss the showcase
-                },
-                height: 500,
-                width: 350,
-                child: Container(
+                // Login Button
+                const SizedBox(width: 8),
+                Container(
+                  margin: const EdgeInsets.only(right: 0.0),
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     color: kcPrimaryColor.withOpacity(0.1),
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(5.0),
+                      topLeft: Radius.circular(5.0), // Set the radius value you prefer
                       bottomLeft: Radius.circular(5.0),
                     ),
                   ),
-                  child: Text(
-                    profile.value.wallet?.balance.toString() ?? '₦0.00',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Panchang",
-                    ),
-                  ),
+                  child: const Text("#0.00",
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Panchang")),
                 ),
-              ),
-              SvgPicture.asset(
-                "assets/images/dashboard_wallet.svg",
-                width: 150,
-                height: 40,
-              ),
-            ],
-          ),
-          body: RefreshIndicator(
-            onRefresh: () async {
-              await viewModel.refreshData();
-            },
-            child: ListView(
-              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
-              children: [
-                Container(
-                  height: 200, // Set a fixed height for the video player
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20), // Apply rounded corners to the container
-                  ),
-                  clipBehavior: Clip.antiAlias, // This will clip the video player to the border radius
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9, // You can adjust the aspect ratio to the desired value
-                    child: VideoPlayer(viewModel.controller),
-                  ),
+                SvgPicture.asset(
+                  "assets/images/dashboard_wallet.svg",
+                  width: 150,
+                  height: 40,
                 ),
-                verticalSpaceSmall,
-                quickActions(context),
-                verticalSpaceMedium,
-                doMoreOnAfriprize(context),
-                verticalSpaceMedium,
-                popularDrawsSlider(context, viewModel.raffleList),
-                verticalSpaceMedium,
-                donationsSlider(context, viewModel.projectResources),
               ],
             ),
-          ),
-        );
-      },
+          )
+        ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await viewModel.refreshData();
+        },
+        child: ListView(
+          padding:
+          const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
+          children: [
+            Container(
+              height: 200, // Set a fixed height for the video player
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                    20), // Apply rounded corners to the container
+              ),
+              clipBehavior: Clip
+                  .antiAlias, // This will clip the video player to the border radius
+              child: AspectRatio(
+                aspectRatio: 16 /
+                    9, // You can adjust the aspect ratio to the desired value
+                child: VideoPlayer(viewModel.controller),
+              ),
+            ),
+            verticalSpaceSmall,
+            quickActions(context),
+            verticalSpaceMedium,
+            doMoreOnAfriprize(context),
+            verticalSpaceMedium,
+            popularDrawsSlider(context, viewModel.raffleList),
+            verticalSpaceMedium,
+            donationsSlider(context, viewModel.projectResources),
+          ],
+        ),
+      ),
     );
   }
-
-
-
-
   Widget quickActions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
