@@ -90,11 +90,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       bottomLeft: Radius.circular(5.0),
                     ),
                   ),
-                  child: const Text("#0.00",
+                  child: Text( profile.value.accountPointsLocal  ?? "#0.00",
                       style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          fontFamily: "Panchang")),
+                        fontFamily: 'Roboto',)),
                 ),
                 SvgPicture.asset(
                   "assets/images/dashboard_wallet.svg",
@@ -161,9 +161,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               // First Container
               GestureDetector(
                 onTap: () {
-                  // Action for the first container
-                  print('Raffle clicked!');
-                  // You can navigate or perform other actions here
+                  locator<NavigationService>().navigateToDrawsView();
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0.0, right: 8.0),
@@ -193,9 +191,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
               // Second Container
               GestureDetector(
                 onTap: () {
-                  // Action for the second container
-                  print('Donate clicked!');
-                  // You can navigate or perform other actions here
+                  print('there is the second click');
+                  locator<NavigationService>().navigateToNotificationView();
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0.0, right: 8.0),
@@ -280,9 +277,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             children: [
               GestureDetector(
                 onTap: () {
-                  // Action for the first container
-                  print('Instant Wallet Credit clicked!');
-                  // You can navigate or perform other actions here
+                  locator<NavigationService>().navigateToWallet();
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0.0, right: 8.0),
@@ -351,9 +346,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               // First Container
               GestureDetector(
                 onTap: () {
-                  // Action for the first container
-                  print('Instant Wallet Credit clicked!');
-                  // You can navigate or perform other actions here
+                  locator<NavigationService>().navigateToNotificationView();
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0.0, right: 8.0),
@@ -445,8 +438,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             // Explore Capsule
             InkWell(
               onTap: () {
-                // Handle Explore tap
-                print('Explore tapped');
+                locator<NavigationService>().navigateToDrawsView();
               },
               child: Container(
                 padding:
@@ -566,6 +558,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               style: const TextStyle(
                                 color: kcPrimaryColor,
                                 fontSize: 16,
+                                fontFamily: 'Roboto',
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -684,8 +677,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             // Explore Capsule
             InkWell(
               onTap: () {
-                // Handle Explore tap
-                print('Explore tapped');
+                locator<NavigationService>().navigateToNotificationView();
               },
               child: Container(
                 padding:

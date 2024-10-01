@@ -35,9 +35,10 @@ const String defaultApplePay = '''{
     "countryCode": "NG",
     "currencyCode": "USD",
     "requiredBillingContactFields": ["emailAddress", "name", "phoneNumber", "postalAddress"],
-    "requiredShippingContactFields": [],
+    "requiredShippingContactFields": []
   }
 }''';
+
 
 /// Sample configuration for Google Pay. Contains the same content as the file
 /// under `assets/default_payment_profile_google_pay.json`.

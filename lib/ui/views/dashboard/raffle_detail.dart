@@ -163,6 +163,7 @@ class _RaffleDetailState extends State<RaffleDetail> {
                                         widget.raffle.formattedTicketPrice ?? '',
                                         style: const TextStyle(
                                           color: kcPrimaryColor,
+                                          fontFamily: 'Roboto',
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -223,14 +224,16 @@ class _RaffleDetailState extends State<RaffleDetail> {
                           verticalSpaceSmall,
                           Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
-                                child: Text(
-                                  widget.raffle.name ?? '',
-                                  style: const TextStyle(
-                                    color: kcBlackColor,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
+                                  child: Text(
+                                    widget.raffle.name ?? '',
+                                    style: const TextStyle(
+                                      color: kcBlackColor,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               )
@@ -238,14 +241,16 @@ class _RaffleDetailState extends State<RaffleDetail> {
                           ),
                           Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
-                                child: Text(
-                                  widget.raffle.description ?? '',
-                                  style: const TextStyle(
-                                    color: kcBlackColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
+                                  child: Text(
+                                    widget.raffle.description ?? '',
+                                    style: const TextStyle(
+                                      color: kcBlackColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                 ),
                               )

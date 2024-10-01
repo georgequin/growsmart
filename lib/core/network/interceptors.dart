@@ -124,7 +124,7 @@ final requestInterceptors = InterceptorsWrapper(
         if (kDebugMode) {
           print('refresh token is null');
         }
-        final res = await showDialog("Session Expired", "Login again to continue", isDialogBeingDisplayed);
+        final res = await showDialogWithResponse("Session Expired", "Login again to continue", isDialogBeingDisplayed);
         if (res!.confirmed) {
           return locator<NavigationService>().clearStackAndShow(Routes.authView);
         }

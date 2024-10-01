@@ -26,7 +26,6 @@ class PaymentModalWidget extends StatelessWidget {
     required this.isPaymentProcessing,
   }) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     // Define your modal UI here
@@ -37,85 +36,92 @@ class PaymentModalWidget extends StatelessWidget {
         status: PaymentItemStatus.final_price,
       ),
     ];
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: const BoxDecoration(
         color: kcSecondaryColor,
-        borderRadius: BorderRadius.only(topRight: Radius.circular(25.0), topLeft: Radius.circular(25.0)),
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(25.0),
+          topLeft: Radius.circular(25.0),
+        ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Your modal content goes here
-          const Text(
-            "Choose Payment Method",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: kcPrimaryColor,
-              fontFamily: "Panchang",
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Allow content to determine height
+          children: [
+            const Text(
+              "Choose Payment Method",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: kcPrimaryColor,
+                fontFamily: "Panchang",
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 0.0, // Space between the chips
-            runSpacing: 2.0, // Space between the rows
-            children: [
-              _buildPaymentMethodOption(
-                context,
-                paymentMethodIcon: "binance_pay",
-                method: PaymentMethod.binancePay,
-                selectedMethod: selectedPaymentMethod,
-                onTap: () =>
-                    onPaymentMethodSelected(PaymentMethod.binancePay),
-              ),
-              _buildPaymentMethodOption(
-                context,
-                paymentMethodIcon: "flutter_wave",
-                method: PaymentMethod.flutterWave,
-                selectedMethod: selectedPaymentMethod,
-                onTap: () =>
-                    onPaymentMethodSelected(PaymentMethod.flutterWave),
-              ),
-              _buildApplePayOption(context, _paymentItems),
-            ],
-          ),
-          verticalSpaceMedium,
-          const Divider(color: Colors.white54),
-          _buildTotalSection(totalAmount),
-          const SizedBox(height: 20),
-          isPaymentProcessing ? const CircularProgressIndicator() :
-          ElevatedButton(
-          onPressed: onProceedWithPayment,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: kcPrimaryColor, // Button color
-            minimumSize: const Size.fromHeight(50), // Button height
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                'assets/icons/pay.svg',
-                height: 20, // Icon size
-              ),
-              horizontalSpaceSmall,
-              Text(
-                "Pay   \$${totalAmount.toStringAsFixed(2)}", // Adjust text format as needed
-                style: const TextStyle(fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Panchang"
+            const SizedBox(height: 20),
+            Wrap(
+              spacing: 0.0, // Space between the chips
+              runSpacing: 2.0, // Space between the rows
+              children: [
+                _buildPaymentMethodOption(
+                  context,
+                  paymentMethodIcon: "paystack",
+                  method: PaymentMethod.paystack,
+                  selectedMethod: selectedPaymentMethod,
+                  onTap: () => onPaymentMethodSelected(PaymentMethod.paystack),
+                ),
+                _buildPaymentMethodOption(
+                  context,
+                  paymentMethodIcon: "flutter_wave",
+                  method: PaymentMethod.flutterwave,
+                  selectedMethod: selectedPaymentMethod,
+                  onTap: () => onPaymentMethodSelected(PaymentMethod.flutterwave),
+                ),
+                _buildApplePayOption(context, _paymentItems),
+              ],
+            ),
+            verticalSpaceMedium,
+            const Divider(color: Colors.white54),
+            _buildTotalSection(totalAmount),
+            verticalSpaceMedium,
+            if (isPaymentProcessing)
+              const CircularProgressIndicator()
+            else
+              ElevatedButton(
+                onPressed: onProceedWithPayment,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kcPrimaryColor, // Button color
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/pay.svg',
+                      height: 20, // Icon size
+                    ),
+                    horizontalSpaceSmall,
+                    Text(
+                      "Pay ₦${totalAmount.toStringAsFixed(2)}", // Adjust text format as needed
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: kcWhiteColor,
+                        fontFamily: "Roboto",
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          )
-
-
-      )
-        ],
+          ],
+        ),
       ),
     );
   }
-
 
   Widget _buildPaymentMethodOption(
       BuildContext context, {
@@ -139,16 +145,17 @@ class PaymentModalWidget extends StatelessWidget {
         ),
         child: SvgPicture.asset(
           'assets/icons/$paymentMethodIcon.svg',
-          height: 44,
+          height: 50,
         ),
       ),
     );
   }
 
-  Widget _buildApplePayOption(BuildContext context, List<PaymentItem> _paymentItems ) {
+  Widget _buildApplePayOption(BuildContext context, List<PaymentItem> _paymentItems) {
     return ApplePayButton(
       paymentConfiguration: PaymentConfiguration.fromJsonString(
-          payment_configurations.defaultApplePay),
+        payment_configurations.defaultApplePay,
+      ),
       paymentItems: _paymentItems,
       style: ApplePayButtonStyle.black,
       type: ApplePayButtonType.buy,
@@ -164,21 +171,12 @@ class PaymentModalWidget extends StatelessWidget {
     // Send the resulting Apple Pay token to your server / PSP
   }
 
-
   Widget _buildTotalSection(int totalAmount) {
     return Column(
       children: [
-        // _buildTotalLineItem(
-        //   label: "Fees",
-        //   amount: "\$0.5 ~ N750", // Replace with the actual fees
-        // ),
-        // _buildTotalLineItem(
-        //   label: "Subtotal",
-        //   amount: "\$50 ~ N75,000", // Replace with the actual subtotal
-        // ),
         _buildTotalLineItem(
           label: "Total Amount",
-          amount: MoneyUtils().formatAmountToDollars(totalAmount), //
+          amount: MoneyUtils().formatAmount(totalAmount),
         ),
       ],
     );
@@ -196,10 +194,16 @@ class PaymentModalWidget extends StatelessWidget {
           ),
           Text(
             amount,
-            style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 19,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Roboto',
+            ),
           ),
         ],
       ),
     );
   }
 }
+

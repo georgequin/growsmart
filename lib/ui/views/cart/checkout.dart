@@ -45,7 +45,7 @@ class Checkout extends StatefulWidget {
 class _CheckoutState extends State<Checkout> {
   bool loading = false;
   bool loadingProfile = true;
-  PaymentMethod paymentMethod = PaymentMethod.payStack;
+  PaymentMethod paymentMethod = PaymentMethod.paystack;
   String shippingId = "";
   bool makingDefault = false;
   // String publicKeyTest = MoneyUtils().payStackPublicKey;

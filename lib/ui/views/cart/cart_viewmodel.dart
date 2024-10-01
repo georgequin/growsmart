@@ -11,6 +11,7 @@ import 'package:afriprize/ui/views/cart/raffle_reciept.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../app/app.dialogs.dart';
 import '../../../app/app.router.dart';
 import '../../../core/data/models/order_info.dart';
@@ -86,17 +87,50 @@ class CartViewModel extends BaseViewModel {
     getShopSubTotal();
   }
 
-  void clearRaffleCart() async{
-    for (var element in itemsToDeleteRaffle) {
-      raffleCart.value.remove(element);
+  // void clearRaffleCart() async{
+  //   for (var element in itemsToDeleteRaffle) {
+  //     raffleCart.value.remove(element);
+  //   }
+  //   itemsToDelete.clear();
+  //   raffleCart.notifyListeners();
+  //   List<Map<String, dynamic>> storedList =
+  //   raffleCart.value.map((e) => e.toJson()).toList();
+  //   await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+  //   rebuildUi();
+  //   getRaffleSubTotal();
+  // }
+
+  void clearRaffleCart() async {
+    setBusy(true);
+    try {
+      // Loop through items to delete
+      for (var element in itemsToDeleteRaffle) {
+        // Remove from the online cart
+        ApiResponse res = await repo.deleteFromCart(element.raffle!.id!);
+        if (res.statusCode == 200) {
+          // Remove from the local cart if successful
+          raffleCart.value.remove(element);
+        } else {
+          snackBar.showSnackbar(message: "Failed to delete item from cart: ${res.data['message']}");
+        }
+      }
+
+      // Clear local list of items to delete
+      itemsToDeleteRaffle.clear();
+
+      // Update local cart storage
+      raffleCart.notifyListeners();
+      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+
+      rebuildUi();
+      getRaffleSubTotal();
+    } catch (e) {
+      log.e(e);
+      snackBar.showSnackbar(message: "An error occurred while clearing the cart: $e");
+    } finally {
+      setBusy(false);
     }
-    itemsToDelete.clear();
-    raffleCart.notifyListeners();
-    List<Map<String, dynamic>> storedList =
-    raffleCart.value.map((e) => e.toJson()).toList();
-    await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
-    rebuildUi();
-    getRaffleSubTotal();
   }
 
   void getShopSubTotal() {
@@ -114,10 +148,10 @@ class CartViewModel extends BaseViewModel {
 
   void getRaffleSubTotal() {
     int total = 0;
-    // for (var element in raffleCart.value) {
-    //   final raffle = element.raffle;
-    //   total += (raffle?.rafflePrice ?? 0) * element.quantity!;
-    // }
+    for (var element in raffleCart.value) {
+      final raffle = element.raffle;
+      total += (raffle?.ticketPrice ?? 0) * element.quantity!;
+    }
 
     raffleSubTotal = total;
     rebuildUi();
@@ -139,18 +173,6 @@ class CartViewModel extends BaseViewModel {
       return null;
     }
 
-    // if(profile.value.shipping == null || profile.value.shipping!.isEmpty){
-    //
-    //   final shippingDialogResponse = await locator<DialogService>().showCustomDialog(
-    //       variant: DialogType.infoAlert,
-    //       title: "No Shipping Address",
-    //       showIconInMainButton: true,
-    //       description: "Shipping address is required for checkout",
-    //       mainButtonTitle: "Add Address");
-    //   if (shippingDialogResponse!.confirmed) {
-    //     return locator<NavigationService>().navigateToAddShippingView();
-    //   }
-    // }
 
     setBusy(true);
     try {
@@ -187,21 +209,23 @@ class CartViewModel extends BaseViewModel {
     setBusy(true);
     try {
       ApiResponse res = await repo.saveOrder({
-        "items": raffleCart.value
-            .map((e) => {"id": e.raffle!.id, "quantity": e.quantity})
-            .toList(),
-        "type": 2,
-        "referral_code": refferalCode.text
+        "payment_method": selectedMethod.name
+        // "referral_code": refferalCode.text
       });
-      if (res.statusCode == 200) {
-        List<OrderInfo> list = (res.data["orderDetails"] as List)
-            .map((e) => OrderInfo.fromJson(Map<String, dynamic>.from(e)))
-            .toList();
+      if (res.statusCode == 201) {
+        String paymentLink = res.data['data']['payment_link'];
 
-        processPayment(list, selectedMethod, context, AppModules.raffle);
+        final Uri toLaunch = Uri.parse(paymentLink);
+
+        if (!await launchUrl(toLaunch, mode: LaunchMode.inAppBrowserView)) {
+          snackBar.showSnackbar(message: "Could not launch payment link");
+          throw Exception('Could not launch $paymentLink');
+        }
+        // processPayment(list, selectedMethod, context, AppModules.raffle);
 
       } else {
         snackBar.showSnackbar(message: res.data["message"]);
+        isPaymentProcessing.value = false;
       }
     } catch (e) {
       log.e(e);
@@ -305,6 +329,37 @@ class CartViewModel extends BaseViewModel {
 
   }
 
+  Future<void> fetchOnlineCart() async {
+    setBusy(true);
+    try {
+      ApiResponse res = await repo.cartList();
+      if (res.statusCode == 200) {
+        // Access the 'items' from the response 'data'
+        List<dynamic> items = res.data["data"]["items"];
+
+        print('online cart is:  $items');
+
+        // Map the items list to List<RaffleCartItem>
+        List<RaffleCartItem> onlineItems = items
+            .map((item) => RaffleCartItem.fromJson(Map<String, dynamic>.from(item)))
+            .toList();
+
+        // Sync online items with the local cart
+        raffleCart.value = onlineItems;
+
+        // Update local storage
+        List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+        await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+      } else {
+        snackBar.showSnackbar(message: res.data["message"]);
+      }
+    } catch (e) {
+      log.e(e);
+      snackBar.showSnackbar(message: "Failed to load cart from server: $e");
+    } finally {
+      setBusy(false);
+    }
+  }
 
 
 }

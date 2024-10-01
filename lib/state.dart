@@ -8,7 +8,7 @@ import 'core/data/models/profile.dart';
 
 enum AppUiModes { dark, light }
 enum AppModules { raffle, shop }
-enum PaymentMethod { wallet, payStack, binancePay, flutterWave, applePay }
+enum PaymentMethod { wallet, paystack, binancePay, flutterwave, applePay }
 
 ValueNotifier<List<Product>> ads = ValueNotifier([]);
 ValueNotifier<List<RaffleCartItem>> raffleCart = ValueNotifier([]);

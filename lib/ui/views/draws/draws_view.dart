@@ -509,8 +509,7 @@ class DrawsView extends StatelessWidget {
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        'WIN Prize in ${DateFormat('yyyy-MM-dd')
-                                                            .format(DateTime.parse(viewModel.filteredRaffle[index].endDate ?? ''))}',
+                                                        'WIN Prize in ${viewModel.filteredRaffle[index].endDate != null && viewModel.filteredRaffle[index].endDate!.isNotEmpty ? DateFormat('yyyy-MM-dd').format(DateTime.tryParse(viewModel.filteredRaffle[index].endDate!) ?? DateTime.now()) : 'Invalid Date'}',
                                                         style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 10,

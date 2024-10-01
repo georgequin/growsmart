@@ -2,6 +2,7 @@ import 'package:afriprize/core/utils/config.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutterwave_standard/models/responses/charge_response.dart';
 import 'package:intl/intl.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -14,6 +15,9 @@ import '../state.dart';
 import 'flutterwave-service.dart';
 
 class MoneyUtils extends TextInputFormatter {
+
+  final plugin = PaystackPlugin();
+
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue,
@@ -38,7 +42,7 @@ class MoneyUtils extends TextInputFormatter {
   String formatAmount(int amount) {
     final formatter = NumberFormat("#,##0", "en_US");
 
-    return "\$${formatter.format(amount)}";
+    return "₦${formatter.format(amount)}";
   }
 
   int getRate(int amount) {
@@ -67,12 +71,7 @@ class MoneyUtils extends TextInputFormatter {
 
   Future<ApiResponse> chargeCardUtil(PaymentMethod paymentMethod, List<String> orderIds, BuildContext context, int amount) async {
 
-    String convertAmount = '';
-    //convert amount
-    var res = await locator<Repository>().convertToNaira(amount.toString());
-    if (res.statusCode == 200) {
-      convertAmount = (res.data['rate']['source']['amount']).toString();
-    }
+
 
     // Prepare common payload
     var payload = {
@@ -126,12 +125,12 @@ class MoneyUtils extends TextInputFormatter {
     // }
 
     // Handle flutterwave payment
-    if (paymentMethod == PaymentMethod.flutterWave) {
+    if (paymentMethod == PaymentMethod.flutterwave) {
       // Assuming amount, currency, and customer email are passed as parameters
       final FlutterwavePaymentService paymentService = FlutterwavePaymentService();
       ChargeResponse response = await paymentService.makePayment(
         context: context,
-        amount: convertAmount,
+        amount: amount.toString(),
         isTestMode: AppConfig.isTestMode,
       );
 
@@ -167,6 +166,32 @@ class MoneyUtils extends TextInputFormatter {
       return res;
     }
 
+    if(paymentMethod == PaymentMethod.paystack){
+      var charge = Charge()
+        ..amount = amount *
+            100 //the money should be in kobo hence the need to multiply the value by 100
+        ..reference = MoneyUtils().getReference()
+        ..email = profile.value.email;
+      CheckoutResponse response = await plugin.checkout(
+        context,
+        method: CheckoutMethod.card,
+        charge: charge,
+      );
+
+      if (response.status == true) {
+        print('paystack payment successful');
+        // ApiResponse res = await locator<Repository>().payForOrder({
+        //   "orderId": widget.infoList.map((e) => e.id).toList(),
+        //   "payment_method": 2,
+        //   "reference": charge.reference,
+        //   "id": profile.value.id
+        // });
+
+        locator<SnackbarService>()
+            .showSnackbar(message: "Order Placed Successfully");
+      }
+    }
+
 
     var defaultResponse = Response(
       requestOptions: RequestOptions(path: ''),
@@ -181,11 +206,11 @@ class MoneyUtils extends TextInputFormatter {
     switch (paymentMethod) {
       case PaymentMethod.wallet:
         return 1;
-      case PaymentMethod.payStack:
+      case PaymentMethod.paystack:
         return 2;
       case PaymentMethod.binancePay:
         return 3;
-      case PaymentMethod.flutterWave:
+      case PaymentMethod.flutterwave:
         return 4;
       default:
         return 0;

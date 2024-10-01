@@ -1,11 +1,15 @@
+import 'dart:ui';
+
+import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
+import 'package:stacked_services/stacked_services.dart';
 
-
+import '../../../app/app.locator.dart';
 import 'home_viewmodel.dart';
 import 'module_switch.dart';
 
@@ -13,7 +17,6 @@ import 'module_switch.dart';
 /// email: georgequin19@gmail.com
 /// Feb, 2024
 ///
-
 
 class HomeView extends StackedView<HomeViewModel> {
   const HomeView({Key? key}) : super(key: key);
@@ -25,118 +28,189 @@ class HomeView extends StackedView<HomeViewModel> {
       Widget? child,
       ) {
     viewModel.checkForUpdates(context);
-    // You can use ValueListenableBuilder to react to changes in currentModuleNotifier
+
     return ValueListenableBuilder<AppModules>(
       valueListenable: currentModuleNotifier, // Your ValueNotifier
       builder: (context, currentModule, child) {
-        bool showModuleSwitch = currentModule == AppModules.raffle
-            ? viewModel.selectedRafflesTab == 0
-            : viewModel.selectedShopTab == 0;
         return Scaffold(
-          backgroundColor: currentModuleNotifier.value == AppModules.shop ? const Color(0xFFFFF3DB) : null,
-          // appBar:
-          // AppBar(
-          //   backgroundColor: currentModule == AppModules.shop && uiMode.value == AppUiModes.light
-          //       ? const Color(0xFFFFF3DB)
-          //       : uiMode.value == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
-          //   title: showModuleSwitch ? ModuleSwitch(
-          //     isRafflesSelected: currentModule == AppModules.raffle,
-          //     onToggle: (isRafflesSelected) {
-          //       viewModel.toggleModule(isRafflesSelected);
-          //     },
-          //   ) : Text(currentModule == AppModules.raffle ? 'Raffles' : 'Shop'),
-          //   actions: const [
-          //     // IconButton(
-          //     //   icon: Icon(Icons.swap_horiz),
-          //     //   onPressed: () {
-          //     //     viewModel.toggleModule();
-          //     //   },
-          //     // ),
-          //   ],
-          // ),
-          body: viewModel.currentPage, // Assuming you have separate getters for pages in your viewModel
+          backgroundColor: currentModuleNotifier.value == AppModules.shop
+              ? const Color(0xFFFFF3DB)
+              : null,
+          body: Stack(
+            children: [
+              viewModel.currentPage, // Assuming you have separate getters for pages in your viewModel
+
+              // Floating Cart Button
+              ValueListenableBuilder<List<dynamic>>(
+                valueListenable: raffleCart, // Replace with your cart notifier
+                builder: (context, cartItems, _) {
+                  if (raffleCart.value.isNotEmpty) {
+
+                    // Calculate total number of tickets and total amount
+                    int totalTickets = raffleCart.value.fold(0, (sum, item) => sum + (item.quantity ?? 0));
+                    int totalAmount = raffleCart.value.fold(0, (sum, item) => sum + ((item.quantity ?? 0) * (item.raffle?.ticketPrice ?? 0)));
+
+                    return Positioned(
+                      bottom: 20, // Adjust the value to control how high above the bottom it should be
+                      left: 20,
+                      right: 20,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Navigate to cart page
+                           locator<NavigationService>().navigateToCartView();
+                        },
+                        child: Container(
+                          margin:const EdgeInsets.symmetric(horizontal: 5),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: kcSecondaryColor,
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/images/Bag.svg', // Replace with your cart icon
+                                    height: 24,
+                                    color: kcBlackColor,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Go to Cart',
+                                        style: const TextStyle(
+                                          color: kcPrimaryColor,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${cartItems.length} Raffle, $totalTickets Tickets.',
+                                        style: const TextStyle(
+                                          color: kcPrimaryColor,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  const Text(
+                                    'Total Amount',
+                                    style: TextStyle(
+                                      color: kcPrimaryColor,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Text(
+                                    '₦$totalAmount',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Roboto',
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
+          ),
           bottomNavigationBar: BottomNavBar(viewModel: viewModel),
         );
       },
     );
   }
 
+  @override
+  HomeViewModel viewModelBuilder(BuildContext context) => HomeViewModel();
 
   @override
-  HomeViewModel viewModelBuilder(
-      BuildContext context,
-      ) =>
-      HomeViewModel();
+  void onViewModelReady(HomeViewModel viewModel) {
+    viewModel.fetchOnlineCart();
+    super.onViewModelReady(viewModel);
+  }
 }
 
 class BottomNavBar extends StatelessWidget {
-   BottomNavBar({
+  final HomeViewModel viewModel;
+
+  BottomNavBar({
     Key? key,
     required this.viewModel,
   }) : super(key: key);
-
-  final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<AppModules>(
       valueListenable: currentModuleNotifier,
       builder: (context, currentModule, _) {
-        return ValueListenableBuilder<AppUiModes>(
-          valueListenable: uiMode,
-          builder: (context, mode, _) {
-            Color iconColor = mode == AppUiModes.dark ? Colors.white : Colors.grey;
-            Color selectedColor = mode == AppUiModes.dark ? Colors.white : kcSecondaryColor;
-            ValueListenable<List<dynamic>> filteredNotifications = ValueNotifier(
-                notifications.value.where((notification) => notification.status != 1).toList());
+        Color iconColor = Colors.grey;
+        Color selectedColor = kcSecondaryColor;
 
-            List<BottomNavigationBarItem> items = (currentModule == AppModules.raffle)
-                ? _rafflesItems(iconColor, selectedColor, filteredNotifications)
-                : _shopItems(iconColor, selectedColor, filteredNotifications);
+        List<BottomNavigationBarItem> items = (currentModule == AppModules.raffle)
+            ? _rafflesItems(iconColor, selectedColor)
+            : _shopItems(iconColor, selectedColor);
 
-            int currentIndex = (currentModule == AppModules.raffle)
-                ? viewModel.selectedRafflesTab
-                : viewModel.selectedShopTab;
+        int currentIndex = (currentModule == AppModules.raffle)
+            ? viewModel.selectedRafflesTab
+            : viewModel.selectedShopTab;
 
-            return BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: currentModule == AppModules.shop && mode == AppUiModes.light
-                  ? const Color(0xFFFFF3DB)
-                  : mode == AppUiModes.dark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
-              selectedLabelStyle: TextStyle(color: selectedColor),
-              selectedItemColor: selectedColor,
-              unselectedItemColor: iconColor,
-              onTap: (index) => viewModel.changeSelected(index, currentModule),
-              currentIndex: currentIndex,
-              items: items,
-            );
-          },
+        return BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: currentModule == AppModules.shop ? const Color(0xFFFFF3DB) : Colors.white,
+          selectedLabelStyle: TextStyle(color: selectedColor),
+          selectedItemColor: selectedColor,
+          unselectedItemColor: iconColor,
+          onTap: (index) => viewModel.changeSelected(index, currentModule),
+          currentIndex: currentIndex,
+          items: items,
         );
       },
     );
   }
 
-  final GlobalKey drawsShowCaseKey = GlobalKey();
-
-  List<BottomNavigationBarItem> _rafflesItems(Color iconColor, Color selectedColor, ValueListenable<List<dynamic>> filteredNotifications) {
+  List<BottomNavigationBarItem> _rafflesItems(Color iconColor, Color selectedColor) {
     return [
       BottomNavigationBarItem(
         icon: _navBarItemIcon('home.svg', viewModel.selectedRafflesTab == 0, iconColor),
         label: "Home",
       ),
-
       BottomNavigationBarItem(
-        key: drawsShowCaseKey,
-        icon: _navBarItemIcon('home_ticket.svg',  viewModel.selectedRafflesTab == 1, iconColor),
+        icon: _navBarItemIcon('home_ticket.svg', viewModel.selectedRafflesTab == 1, iconColor),
         label: "Draws",
       ),
+      // BottomNavigationBarItem(
+      //   icon: _navBarItemWithCounter('buy.svg', viewModel.selectedRafflesTab == 2, raffleCart, iconColor),
+      //   label: "Cart",
+      // ),
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter('buy.svg', viewModel.selectedRafflesTab == 2, raffleCart, iconColor),
-        label: "Cart",
-      ),
-      //TODO : MAKE SURE TO CHECK WHY THE VALUE ISNT CORRECT
-      BottomNavigationBarItem(
-        icon: _navBarItemWithCounter('heart.svg', viewModel.selectedRafflesTab == 3, filteredNotifications, iconColor),
+        icon: _navBarItemIcon('heart.svg', viewModel.selectedRafflesTab == 3, iconColor),
         label: "Donate",
       ),
       BottomNavigationBarItem(
@@ -146,10 +220,10 @@ class BottomNavBar extends StatelessWidget {
     ];
   }
 
-  List<BottomNavigationBarItem> _shopItems(Color iconColor, Color selectedColor, ValueListenable<List<dynamic>> filteredNotifications) {
+  List<BottomNavigationBarItem> _shopItems(Color iconColor, Color selectedColor) {
     return [
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('home.svg',  viewModel.selectedShopTab == 0, iconColor),
+        icon: _navBarItemIcon('home.svg', viewModel.selectedShopTab == 0, iconColor),
         label: "Home",
       ),
       BottomNavigationBarItem(
@@ -157,12 +231,11 @@ class BottomNavBar extends StatelessWidget {
         label: "Draws",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter('buy.svg', currentModuleNotifier.value == AppModules.shop ? viewModel.selectedShopTab == 2 : viewModel.selectedRafflesTab == 2, currentModuleNotifier.value == AppModules.raffle ? raffleCart : shopCart, iconColor),
+        icon: _navBarItemWithCounter('buy.svg', viewModel.selectedShopTab == 2, shopCart, iconColor),
         label: "Cart",
       ),
-      //TODO : MAKE SURE TO CHECK WHY THE VALUE ISNT CORRECT
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter('notification.svg', viewModel.selectedShopTab == 3, filteredNotifications, iconColor),
+        icon: _navBarItemIcon('notification.svg', viewModel.selectedShopTab == 3, iconColor),
         label: "Notifications",
       ),
       BottomNavigationBarItem(
@@ -174,23 +247,17 @@ class BottomNavBar extends StatelessWidget {
 
   Widget _navBarItemIcon(String iconData, bool isSelected, Color iconColor) {
     return Container(
-        width: 30,
-        height: 30,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isSelected ? kcSecondaryColor.withOpacity(0.2) : Colors.transparent,
-        ),
-        child: SvgPicture.asset(
-          'assets/icons/$iconData',
-          height: 16, // Icon size
-          color: isSelected ? kcSecondaryColor : iconColor,
-        ),
-
-
-        // Icon(
-        //   iconData,
-        //   color: isSelected ? kcSecondaryColor : iconColor,
-        // )
+      width: 30,
+      height: 30,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isSelected ? kcSecondaryColor.withOpacity(0.2) : Colors.transparent,
+      ),
+      child: SvgPicture.asset(
+        'assets/icons/$iconData',
+        height: 16, // Icon size
+        color: isSelected ? kcSecondaryColor : iconColor,
+      ),
     );
   }
 
@@ -201,7 +268,7 @@ class BottomNavBar extends StatelessWidget {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            _navBarItemIcon(icon,  isSelected, color),
+            _navBarItemIcon(icon, isSelected, color),
             if (value.isNotEmpty)
               Positioned(
                 right: -6,
@@ -223,7 +290,4 @@ class BottomNavBar extends StatelessWidget {
       },
     );
   }
-
-
 }
-

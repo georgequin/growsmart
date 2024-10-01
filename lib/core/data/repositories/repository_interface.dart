@@ -59,6 +59,12 @@ abstract class IRepository {
 
   Future<ApiResponse> raffleList();
 
+  Future<ApiResponse> cartList();
+
+  Future<ApiResponse> addToCart(Map<String, dynamic> req);
+
+  Future<ApiResponse> deleteFromCart(String raffleId);
+
   Future<ApiResponse> verifyName(Map<String, dynamic> req);
 
   Future<ApiResponse> getTransactions();

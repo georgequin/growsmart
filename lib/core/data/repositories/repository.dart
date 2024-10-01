@@ -122,7 +122,7 @@ class Repository extends IRepository {
   Future<ApiResponse> saveOrder(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "orders/save",
+      endpoint: "orders/create",
       reqBody: req,
     );
 
@@ -280,7 +280,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getOrderList() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "orders/user/list",
+      endpoint: "orders/list",
     );
 
     return response;
@@ -314,6 +314,37 @@ class Repository extends IRepository {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
       endpoint: "raffle/user/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> cartList() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "orders/cart",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> addToCart(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "orders/cart/add",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> deleteFromCart(String raffleId) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.delete,
+      endpoint: "orders/cart/remove/$raffleId",
     );
 
     return response;
