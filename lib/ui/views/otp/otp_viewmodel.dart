@@ -1,9 +1,9 @@
-import 'package:growsmart/app/app.locator.dart';
-import 'package:growsmart/app/app.logger.dart';
-import 'package:growsmart/app/app.router.dart';
-import 'package:growsmart/core/data/repositories/repository.dart';
-import 'package:growsmart/core/network/api_response.dart';
-import 'package:growsmart/ui/components/success_page.dart';
+import 'package:easy_power/app/app.locator.dart';
+import 'package:easy_power/app/app.logger.dart';
+import 'package:easy_power/app/app.router.dart';
+import 'package:easy_power/core/data/repositories/repository.dart';
+import 'package:easy_power/core/network/api_response.dart';
+import 'package:easy_power/ui/components/success_page.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';

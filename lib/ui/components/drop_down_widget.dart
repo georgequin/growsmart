@@ -1,5 +1,5 @@
-import 'package:growsmart/state.dart';
-import 'package:growsmart/ui/common/app_colors.dart';
+import 'package:easy_power/state.dart';
+import 'package:easy_power/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
 

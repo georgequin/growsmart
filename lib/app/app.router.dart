@@ -5,25 +5,25 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:growsmart/core/data/models/order_info.dart' as _i22;
-import 'package:growsmart/core/data/models/order_item.dart' as _i26;
-import 'package:growsmart/core/data/models/product.dart' as _i24;
-import 'package:growsmart/core/data/models/profile.dart' as _i25;
-import 'package:growsmart/ui/views/auth/auth_view.dart' as _i5;
-import 'package:growsmart/ui/views/auth/register.dart';
-import 'package:growsmart/ui/views/change_password/change_password_view.dart'
+import 'package:easy_power/core/data/models/order_info.dart' as _i22;
+import 'package:easy_power/core/data/models/order_item.dart' as _i26;
+import 'package:easy_power/core/data/models/product.dart' as _i24;
+import 'package:easy_power/core/data/models/profile.dart' as _i25;
+import 'package:easy_power/ui/views/auth/auth_view.dart' as _i5;
+import 'package:easy_power/ui/views/auth/register.dart';
+import 'package:easy_power/ui/views/change_password/change_password_view.dart'
     as _i17;
-import 'package:growsmart/ui/views/dashboard/dashboard_view.dart' as _i6;
-import 'package:growsmart/ui/views/delete_account/delete_account_view.dart'
+import 'package:easy_power/ui/views/dashboard/dashboard_view.dart' as _i6;
+import 'package:easy_power/ui/views/delete_account/delete_account_view.dart'
     as _i19;
-import 'package:growsmart/ui/views/enter_email/enter_email_view.dart' as _i18;
-import 'package:growsmart/ui/views/home/home_view.dart' as _i2;
-import 'package:growsmart/ui/views/notification/notification_view.dart' as _i9;
-import 'package:growsmart/ui/views/onboarding/onboarding_view.dart' as _i4;
-import 'package:growsmart/ui/views/otp/otp_view.dart' as _i16;
-import 'package:growsmart/ui/views/profile/profile_view.dart' as _i10;
-import 'package:growsmart/ui/views/startup/startup_view.dart' as _i3;
-import 'package:growsmart/ui/views/withdraw/withdraw_view.dart' as _i20;
+import 'package:easy_power/ui/views/enter_email/enter_email_view.dart' as _i18;
+import 'package:easy_power/ui/views/home/home_view.dart' as _i2;
+import 'package:easy_power/ui/views/notification/notification_view.dart' as _i9;
+import 'package:easy_power/ui/views/onboarding/onboarding_view.dart' as _i4;
+import 'package:easy_power/ui/views/otp/otp_view.dart' as _i16;
+import 'package:easy_power/ui/views/profile/profile_view.dart' as _i10;
+import 'package:easy_power/ui/views/startup/startup_view.dart' as _i3;
+import 'package:easy_power/ui/views/withdraw/withdraw_view.dart' as _i20;
 import 'package:flutter/foundation.dart' as _i23;
 import 'package:flutter/material.dart' as _i21;
 import 'package:flutter/material.dart';

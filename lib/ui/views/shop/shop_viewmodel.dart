@@ -15,11 +15,11 @@ import 'package:video_player/video_player.dart';
 
 import '../../../core/data/models/app_notification.dart';
 
-class DashboardViewModel extends BaseViewModel {
+class ShopViewModel extends BaseViewModel {
   final repo = locator<Repository>();
   final bool _isDataLoaded = false;
   int selectedIndex = 0;
-  final log = getLogger("DashboardViewModel");
+  final log = getLogger("ShopViewModel");
   List<Product> productList = [];
   List<Raffle> raffleList = [];
   List<Product> sellingFast = [];
@@ -27,7 +27,6 @@ class DashboardViewModel extends BaseViewModel {
 
   final snackBar = locator<SnackbarService>();
 
-  bool terms = false;
 
   void changeSelected(int i) {
     selectedIndex = i;
@@ -35,22 +34,14 @@ class DashboardViewModel extends BaseViewModel {
     rebuildUi();
   }
 
-  void toggleTerms() {
-    terms = !terms;
-    rebuildUi();
-  }
-
-  void rebuildUi() {
-    notifyListeners();
-  }
-
-    VideoPlayerController? controller;
+  VideoPlayerController? controller;
 
   @override
   void dispose() {
     controller?.dispose();
     super.dispose();
   }
+
 
   void initialise() {
     controller = VideoPlayerController.asset('assets/videos/dashboard.mp4')
@@ -65,7 +56,7 @@ class DashboardViewModel extends BaseViewModel {
 
   Future<void> init() async {
 
-   getProducts();
+    getProducts();
 
     await loadNotifications();
     notifyListeners();
@@ -107,7 +98,7 @@ class DashboardViewModel extends BaseViewModel {
           .map((e) => AppNotification.fromJson(Map<String, dynamic>.from(e)))
           .toList();
     } else {
-       getNotifications();
+      getNotifications();
     }
     notifyListeners();
   }
@@ -119,7 +110,7 @@ class DashboardViewModel extends BaseViewModel {
   }
 
   void getResourceList(){
-getProducts();
+    getProducts();
     if (userLoggedIn.value == true) {
       getNotifications();
     }

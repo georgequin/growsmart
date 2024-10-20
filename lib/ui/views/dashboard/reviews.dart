@@ -1,4 +1,4 @@
-import 'package:growsmart/core/data/models/product.dart';
+import 'package:easy_power/core/data/models/product.dart';
 import 'package:awesome_rating/awesome_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

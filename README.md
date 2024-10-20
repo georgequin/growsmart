@@ -1,4 +1,4 @@
-# growsmart
+# easy_power
 
 A new Flutter project.
 

@@ -1,4 +1,4 @@
-import 'package:growsmart/core/data/models/order_item.dart';
+import 'package:easy_power/core/data/models/order_item.dart';
 
 class Product {
   String? id;

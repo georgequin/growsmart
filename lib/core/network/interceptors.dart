@@ -1,5 +1,5 @@
 
-import 'package:growsmart/app/app.dialogs.dart';
+import 'package:easy_power/app/app.dialogs.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';

@@ -1,4 +1,4 @@
-import 'package:growsmart/ui/views/auth/register.dart';
+import 'package:easy_power/ui/views/auth/register.dart';
 import 'package:flutter/material.dart';
 import '../../common/app_colors.dart';
 import 'login.dart';

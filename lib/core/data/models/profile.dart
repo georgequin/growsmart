@@ -1,6 +1,6 @@
-import 'package:growsmart/core/data/models/country.dart';
-import 'package:growsmart/core/data/models/discount.dart';
-import 'package:growsmart/core/data/models/product.dart';
+import 'package:easy_power/core/data/models/country.dart';
+import 'package:easy_power/core/data/models/discount.dart';
+import 'package:easy_power/core/data/models/product.dart';
 
 class Profile {
   String? id;

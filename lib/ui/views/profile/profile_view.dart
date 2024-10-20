@@ -1,18 +1,19 @@
-import 'package:growsmart/app/app.locator.dart';
-import 'package:growsmart/app/app.router.dart';
-import 'package:growsmart/core/utils/local_store_dir.dart';
-import 'package:growsmart/core/utils/local_stotage.dart';
-import 'package:growsmart/state.dart';
-import 'package:growsmart/ui/common/app_colors.dart';
-import 'package:growsmart/ui/common/ui_helpers.dart';
-import 'package:growsmart/ui/components/profile_picture.dart';
-import 'package:growsmart/ui/views/profile/profile_details.dart';
-import 'package:growsmart/ui/views/profile/support.dart';
+import 'package:easy_power/app/app.locator.dart';
+import 'package:easy_power/app/app.router.dart';
+import 'package:easy_power/core/utils/local_store_dir.dart';
+import 'package:easy_power/core/utils/local_stotage.dart';
+import 'package:easy_power/state.dart';
+import 'package:easy_power/ui/common/app_colors.dart';
+import 'package:easy_power/ui/common/ui_helpers.dart';
+import 'package:easy_power/ui/components/profile_picture.dart';
+import 'package:easy_power/ui/views/profile/profile_details.dart';
+import 'package:easy_power/ui/views/profile/support.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../core/network/api_response.dart';
 import '../../../core/network/interceptors.dart';
+import 'Shipping_adresses.dart';
 import 'profile_viewmodel.dart';
 
 class ProfileView extends StatelessWidget{
@@ -30,7 +31,7 @@ class ProfileView extends StatelessWidget{
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text("Profile"),
+            title: const Text("My Profile"),
           ),
           body: viewModel.isBusy
               ? const Center(child: CircularProgressIndicator())
@@ -42,20 +43,24 @@ class ProfileView extends StatelessWidget{
                 children: [
                   GestureDetector(
                     onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        // barrierColor: Colors.black.withAlpha(50),
-                        // backgroundColor: Colors.transparent,
-                        backgroundColor: Colors.black.withOpacity(0.7),
-                        builder: (BuildContext context) {
-                          return const FractionallySizedBox(
-                            heightFactor: 1.0, // 70% of the screen's height
-                            child: ProfileScreen(),
-                          );
-                        },
-                      );
+                      // showModalBottomSheet(
+                      //   context: context,
+                      //   isScrollControlled: true,
+                      //   backgroundColor: Colors.black.withOpacity(0.7),
+                      //   builder: (BuildContext context) {
+                      //     return const FractionallySizedBox(
+                      //       heightFactor: 1.0, // 70% of the screen's height
+                      //       child: ProfileScreen(),
+                      //     );
+                      //   },
+                      // );
                       // viewModel.updateProfilePicture();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PersonalInfoPage(),
+                          ),
+                        );
                     },
                     child: ProfilePicture(
                       size: 100,
@@ -75,28 +80,12 @@ class ProfileView extends StatelessWidget{
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(profile.value.country?.name ?? "")
-                    ],
-                  ),
-                  horizontalSpaceLarge,
-                  GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          // barrierColor: Colors.black.withAlpha(50),
-                          // backgroundColor: Colors.transparent,
-                          backgroundColor: Colors.black.withOpacity(0.7),
-                          builder: (BuildContext context) {
-                            return const FractionallySizedBox(
-                              heightFactor: 1.0, // 70% of the screen's height
-                              child: ProfileScreen(),
-                            );
-                          },
-                        );
-                        // viewModel.updateProfilePicture();
-                      },
-                      child: const Icon(Icons.edit, color: kcPrimaryColor,)
+                      Text(
+                        "matildabrown@example.com",
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),                    ],
                   ),
 
                 ],
@@ -122,139 +111,222 @@ class ProfileView extends StatelessWidget{
               )
                   : const SizedBox(),
               verticalSpaceLarge,
-              ListTile(
-                onTap: () {
-                  // locator<NavigationService>()
-                  //     .navigateToWallet()
-                  //     .whenComplete(() => viewModel.getProfile());
-                },
-                leading: const Icon(
-                  Icons.wallet,
-                  color: kcSecondaryColor,
-                ),
-                title: const Text("Wallet"),
-              ),
-              ListTile(
-                onTap: () {
-
-                },
-                leading: const Icon(
-                  Icons.wallet,
-                  color: kcSecondaryColor,
-                ),
-                title: const Text("My orders"),
-              ),
-              ListTile(
-                onTap: () {
-                  // locator<NavigationService>().navigateToTrack();
-
-                },
-                leading: const Icon(
-                  Icons.wallet,
-                  color: kcSecondaryColor,
-                ),
-                title: const Text("My tickets"),
-              ),
-              ListTile(
-                onTap: () {
-                  // locator<NavigationService>().navigateToTrack();
-
-                },
-                leading: const Icon(
-                  Icons.card_giftcard_outlined,
-                  color: kcSecondaryColor,
-                ),
-                title: const Text("Referrals"),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (c) {
-                    return const Support();
-                  }));
-                },
-                leading: const Icon(
-                  Icons.support_agent,
-                  color: kcSecondaryColor,
-                ),
-                title: const Text("Support"),
-              ),
-              ListTile(
-                onTap: () {
-                  locator<NavigationService>().navigateToChangePasswordView();
-                },
-                leading: const Icon(
-                  Icons.lock_outlined,
-                  color: kcSecondaryColor,
-                ),
-                title: const Text("Change password"),
-              ),
-              ListTile(
-                onTap: () {},
-                leading: const Icon(
-                  Icons.color_lens,
-                  color: kcSecondaryColor,
-                ),
-                title: const Text("Dark Theme"),
-                trailing: ValueListenableBuilder<AppUiModes>(
-                  valueListenable: uiMode,
-                  builder: (context, value, child) => Switch(
-                    value: value == AppUiModes.dark ? true : false,
-                    onChanged: (val) async {
-                      if (value == AppUiModes.light) {
-                        uiMode.value = AppUiModes.dark;
-                        await locator<LocalStorage>()
-                            .save(LocalStorageDir.uiMode, "dark");
-                      } else {
-                        uiMode.value = AppUiModes.light;
-                        await locator<LocalStorage>()
-                            .save(LocalStorageDir.uiMode, "light");
-                      }
-                    },
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("My orders"),
+                              SizedBox(height: 6), // Add some space between title and subtitle
+                              Text(
+                                "Already have 12 orders", // Subtitle
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey, // Subtitle color
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios, size: 16,// Next icon
+                      ),
+                    ],
                   ),
-                ),
-              ),
-              ListTile(
-                onTap: () async {
-                  final res = await locator<DialogService>()
-                      .showConfirmationDialog(
-                      title: "Are you sure?",
-                      cancelTitle: "No",
-                      confirmationTitle: "Yes");
-                  if (res!.confirmed) {
-
-
-                    ApiResponse res = await repo.logOut();
-                    if (res.statusCode == 200) {
-                      userLoggedIn.value = false;
-                      await locator<LocalStorage>().delete(LocalStorageDir.authToken);
-                      await locator<LocalStorage>().delete(LocalStorageDir.authUser);
-                      await locator<LocalStorage>().delete(LocalStorageDir.cart);
-                      await locator<LocalStorage>().delete(LocalStorageDir.authRefreshToken);
-                      return locator<NavigationService>().clearStackAndShow(Routes.authView);
-                    }
-
-                  }
-                },
-                leading: const Icon(
-                  Icons.logout,
-                  color: kcSecondaryColor,
-                ),
-                title: const Text("Signout"),
-              ),
-              verticalSpaceLarge,
-              Opacity(
-                opacity: 0.4, // Set the opacity to 0.7 (70% opacity)
-                child: ListTile(
-                  onTap: () async{
-                    locator<NavigationService>().navigateToDeleteAccountView();
-                  },
-                  leading: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
+                  Divider(),
+                  verticalSpaceMedium,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("Wallet"),
+                              SizedBox(height: 6), // Add some space between title and subtitle
+                              Text(
+                                "current Balance \$500 ", // Subtitle
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey, // Subtitle color
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,size: 16, // Next icon
+                      ),
+                    ],
                   ),
-                  title: const Text("delete account"),
-                ),
-              )
+                  Divider(),
+                  verticalSpaceMedium,
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("Shipping addresses"),
+                              SizedBox(height: 6), // Add some space between title and subtitle
+                              Text(
+                                "3 addresses", // Subtitle
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey, // Subtitle color
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddressListPage(),
+                            ),
+                          );
+                        },
+                        child: const Icon(
+                          Icons.arrow_forward_ios, size: 16, // Next icon
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  verticalSpaceMedium,
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("Payment methods"),
+                              SizedBox(height: 6), // Add some space between title and subtitle
+                              Text(
+                                "Visa  **34", // Subtitle
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey, // Subtitle color
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios, size: 16,// Next icon
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  verticalSpaceMedium,
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("Payment methods"),
+                              SizedBox(height: 6), // Add some space between title and subtitle
+                              Text(
+                                "You have special promocodes", // Subtitle
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey, // Subtitle color
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios, size: 16, // Next icon
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  verticalSpaceMedium,
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("My reviews"),
+                              SizedBox(height: 6), // Add some space between title and subtitle
+                              Text(
+                                "Reviews for 4 items", // Subtitle
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey, // Subtitle color
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios, size: 16,// Next icon
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  verticalSpaceSmall,
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("Settings"),
+                              SizedBox(height: 6), // Add some space between title and subtitle
+                              Text(
+                                "Notifications, password", // Subtitle
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey, // Subtitle color
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios, size: 16,// Next icon
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  verticalSpaceMedium,
+
+                ],
+              ),
             ],
           )
         );
@@ -262,12 +334,6 @@ class ProfileView extends StatelessWidget{
     );
   }
 
-
-  // @override
-  // void onViewModelReady(ProfileViewModel viewModel) {
-  //    viewModel.getProfile();
-  //   super.onViewModelReady(viewModel);
-  // }
 
   @override
   ProfileViewModel viewModelBuilder(

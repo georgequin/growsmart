@@ -1,6 +1,6 @@
-import 'package:growsmart/core/data/models/product.dart';
-import 'package:growsmart/core/data/models/profile.dart';
-import 'package:growsmart/core/data/models/raffle_ticket.dart';
+import 'package:easy_power/core/data/models/product.dart';
+import 'package:easy_power/core/data/models/profile.dart';
+import 'package:easy_power/core/data/models/raffle_ticket.dart';
 
 class OrderItem {
   String? id;

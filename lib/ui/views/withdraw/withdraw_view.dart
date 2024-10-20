@@ -1,8 +1,8 @@
-import 'package:growsmart/ui/common/app_colors.dart';
-import 'package:growsmart/ui/common/ui_helpers.dart';
-import 'package:growsmart/ui/components/drop_down_widget.dart';
-import 'package:growsmart/ui/components/submit_button.dart';
-import 'package:growsmart/ui/components/text_field_widget.dart';
+import 'package:easy_power/ui/common/app_colors.dart';
+import 'package:easy_power/ui/common/ui_helpers.dart';
+import 'package:easy_power/ui/components/drop_down_widget.dart';
+import 'package:easy_power/ui/components/submit_button.dart';
+import 'package:easy_power/ui/components/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 

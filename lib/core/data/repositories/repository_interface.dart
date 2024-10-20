@@ -1,4 +1,4 @@
-import 'package:growsmart/core/network/api_response.dart';
+import 'package:easy_power/core/network/api_response.dart';
 
 abstract class IRepository {
   Future<ApiResponse> login(Map<String, dynamic> req);

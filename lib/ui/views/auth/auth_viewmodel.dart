@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:growsmart/app/app.locator.dart';
-import 'package:growsmart/app/app.logger.dart';
-import 'package:growsmart/app/app.router.dart';
-import 'package:growsmart/core/data/repositories/repository.dart';
-import 'package:growsmart/core/network/api_response.dart';
-import 'package:growsmart/core/utils/local_store_dir.dart';
-import 'package:growsmart/core/utils/local_stotage.dart';
-import 'package:growsmart/state.dart';
+import 'package:easy_power/app/app.locator.dart';
+import 'package:easy_power/app/app.logger.dart';
+import 'package:easy_power/app/app.router.dart';
+import 'package:easy_power/core/data/repositories/repository.dart';
+import 'package:easy_power/core/network/api_response.dart';
+import 'package:easy_power/core/utils/local_store_dir.dart';
+import 'package:easy_power/core/utils/local_stotage.dart';
+import 'package:easy_power/state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:growsmart/ui/views/auth/register.dart';
+import 'package:easy_power/ui/views/auth/register.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:stacked/stacked.dart';

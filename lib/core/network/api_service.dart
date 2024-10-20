@@ -1,9 +1,9 @@
-import 'package:growsmart/app/app.locator.dart';
-import 'package:growsmart/app/app.logger.dart';
-import 'package:growsmart/core/network/interceptors.dart';
-import 'package:growsmart/core/utils/config.dart';
-import 'package:growsmart/core/utils/local_store_dir.dart';
-import 'package:growsmart/core/utils/local_stotage.dart';
+import 'package:easy_power/app/app.locator.dart';
+import 'package:easy_power/app/app.logger.dart';
+import 'package:easy_power/core/network/interceptors.dart';
+import 'package:easy_power/core/utils/config.dart';
+import 'package:easy_power/core/utils/local_store_dir.dart';
+import 'package:easy_power/core/utils/local_stotage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 

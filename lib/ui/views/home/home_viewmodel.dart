@@ -1,16 +1,16 @@
 import 'dart:io';
 
-import 'package:growsmart/app/app.bottomsheets.dart';
-import 'package:growsmart/app/app.dialogs.dart';
-import 'package:growsmart/app/app.locator.dart';
-import 'package:growsmart/ui/common/app_colors.dart';
-import 'package:growsmart/ui/common/app_strings.dart';
-import 'package:growsmart/ui/components/submit_button.dart';
-import 'package:growsmart/ui/views/dashboard/dashboard_view.dart';
-import 'package:growsmart/ui/views/notification/notification_view.dart';
-import 'package:growsmart/ui/views/profile/profile_details.dart';
+import 'package:easy_power/app/app.bottomsheets.dart';
+import 'package:easy_power/app/app.dialogs.dart';
+import 'package:easy_power/app/app.locator.dart';
+import 'package:easy_power/ui/common/app_colors.dart';
+import 'package:easy_power/ui/common/app_strings.dart';
+import 'package:easy_power/ui/components/submit_button.dart';
+import 'package:easy_power/ui/views/dashboard/dashboard_view.dart';
+import 'package:easy_power/ui/views/notification/notification_view.dart';
+import 'package:easy_power/ui/views/profile/profile_details.dart';
 import 'package:flutter/material.dart';
-import 'package:growsmart/ui/views/shop/shop_view.dart';
+import 'package:easy_power/ui/views/shop/shop_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 

@@ -3,12 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:growsmart/ui/common/app_colors.dart';
-import 'package:growsmart/ui/common/ui_helpers.dart';
-import 'package:growsmart/ui/components/submit_button.dart';
-import 'dashboard_viewmodel.dart';
+import 'package:easy_power/ui/common/app_colors.dart';
+import 'package:easy_power/ui/common/ui_helpers.dart';
+import 'package:easy_power/ui/components/submit_button.dart';
+import '../dashboard/dashboard_viewmodel.dart';
 import 'package:item_count_number_button/item_count_number_button.dart';
 
+import 'cart.dart';
 
 class ProductCard extends StatefulWidget {
   const ProductCard({Key? key}) : super(key: key);
@@ -17,18 +18,24 @@ class ProductCard extends StatefulWidget {
   _ProductCardState createState() => _ProductCardState();
 }
 
-class _ProductCardState extends State<ProductCard> {
+class _ProductCardState extends State<ProductCard>
+    with SingleTickerProviderStateMixin {
   final DashboardViewModel viewModel = DashboardViewModel();
   String selectedImage = 'assets/images/Mercury-10KVA-Solar-System-1 2.png';
+  late TabController _tabController;
+
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     viewModel.init();
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     viewModel.dispose();
     super.dispose();
   }
@@ -38,8 +45,6 @@ class _ProductCardState extends State<ProductCard> {
       selectedImage = imagePath;
     });
   }
-
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +57,12 @@ class _ProductCardState extends State<ProductCard> {
         },
         child: ListView(
           children: [
+            // Positioned(
+            //   top: 0,
+            //   left: 0,
+            //   right: 0,
+            //   child: buildBottomSheet(context, _tabController),
+            //),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -100,30 +111,24 @@ class _ProductCardState extends State<ProductCard> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () => updateImage(
-                                'assets/images/innverter.png'),
+                            onTap: () =>
+                                updateImage('assets/images/innverter.png'),
                             child: buildImageContainer(
-                                'assets/images/innverter.png',
-                                80,
-                                80),
+                                'assets/images/innverter.png', 80, 80),
                           ),
                           verticalSpaceLarge,
                           GestureDetector(
-                            onTap: () => updateImage(
-                                'assets/images/powerCable.png'),
+                            onTap: () =>
+                                updateImage('assets/images/powerCable.png'),
                             child: buildImageContainer(
-                                'assets/images/powerCable.png',
-                                80,
-                                80),
+                                'assets/images/powerCable.png', 80, 80),
                           ),
                           verticalSpaceLarge,
                           GestureDetector(
-                            onTap: () => updateImage(
-                                'assets/images/solarpanals.png'),
+                            onTap: () =>
+                                updateImage('assets/images/solarpanals.png'),
                             child: buildImageContainer(
-                                'assets/images/solarpanals.png',
-                                80,
-                                80),
+                                'assets/images/solarpanals.png', 80, 80),
                           ),
                         ],
                       ),
@@ -132,7 +137,8 @@ class _ProductCardState extends State<ProductCard> {
                         width: 275,
                         height: 345,
                         decoration: BoxDecoration(
-                          color: Color(0xFFDADADA).withOpacity(0.5), // 50% opacity
+                          color:
+                              Color(0xFFDADADA).withOpacity(0.5), // 50% opacity
                           border: Border.all(
                             color: Colors.grey,
                             width: 1,
@@ -186,8 +192,8 @@ class _ProductCardState extends State<ProductCard> {
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
                                 blurRadius: 7,
-                                offset: Offset(
-                                    0, 3), // changes position of shadow
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
                               ),
                             ],
                           ),
@@ -199,7 +205,6 @@ class _ProductCardState extends State<ProductCard> {
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 ),
@@ -211,7 +216,7 @@ class _ProductCardState extends State<ProductCard> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
-                         // crossAxisAlignment: CrossAxisAlignment.start,
+                          // crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment
@@ -254,8 +259,8 @@ class _ProductCardState extends State<ProductCard> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(
-                          color:
-                              Colors.grey, // Replace kcPrimaryColor with your color
+                          color: Colors
+                              .grey, // Replace kcPrimaryColor with your color
                           width: 2,
                         ),
                         boxShadow: [
@@ -287,19 +292,33 @@ class _ProductCardState extends State<ProductCard> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              builder: (context) =>
+                                                  buildBottomSheetInstallment(
+                                                      context,
+                                                      _tabController,
+                                                      viewModel),
+                                              isScrollControlled:
+                                                  true, // Optional if you want it to be scrollable
+                                            );
+                                          },
                                           style: ElevatedButton.styleFrom(
                                             foregroundColor: kcWhiteColor,
-                                            backgroundColor: Colors.grey, // Text color
+                                            backgroundColor:
+                                                Colors.grey, // Text color
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10), // Rounded corners
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      10), // Rounded corners
                                             ),
                                           ),
-
                                           child: Text(
                                             'Pay Installment',
                                             style: TextStyle(
@@ -313,52 +332,69 @@ class _ProductCardState extends State<ProductCard> {
                                 ),
                               ],
                             ),
-
                             Column(
-                             children: [
-                               SizedBox(
-                                 width: 145, // Set the width
-                                 height: 35,
-                                 child: ElevatedButton(
-                                   onPressed: () {},
-                                   style: ElevatedButton.styleFrom(
-                                     foregroundColor: kcWhiteColor,
-                                     backgroundColor: kcPrimaryColor, // Text color
-                                     shape: RoundedRectangleBorder(
-                                       borderRadius: BorderRadius.circular(10), // Rounded corners
-                                     ),
-                                   ),
-                                   child: Text(
-                                     'Add to cart',
-                                     style: TextStyle(
-                                       fontSize: 14, // Text size
-                                     ),
-                                   ),
-                                 ),
-                               ),
-                               verticalSpaceSmall,
-                               SizedBox(
-                                 width: 145, // Set the width
-                                 height: 35,
-                                 child: ElevatedButton(
-                                   onPressed: () {},
-                                   style: ElevatedButton.styleFrom(
-                                     foregroundColor: kcWhiteColor,
-                                     backgroundColor: kcPrimaryColor, // Text color
-                                     shape: RoundedRectangleBorder(
-                                       borderRadius: BorderRadius.circular(10), // Rounded corners
-                                     ),
-                                   ),
-                                   child: Text(
-                                     'Purchase',
-                                     style: TextStyle(
-                                       fontSize: 14, // Text size
-                                     ),
-                                   ),
-                                 ),
-                               )
-
-                             ],
+                              children: [
+                                SizedBox(
+                                  width: 145, // Set the width
+                                  height: 35,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CartPageView(),
+                                        ),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: kcWhiteColor,
+                                      backgroundColor:
+                                          kcPrimaryColor, // Text color
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            10), // Rounded corners
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Add to cart',
+                                      style: TextStyle(
+                                        fontSize: 14, // Text size
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                verticalSpaceSmall,
+                                SizedBox(
+                                  width: 145, // Set the width
+                                  height: 35,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) => buildBottomSheet(
+                                            context, _tabController),
+                                        isScrollControlled:
+                                            true, // Optional if you want it to be scrollable
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: kcWhiteColor,
+                                      backgroundColor:
+                                          kcPrimaryColor, // Text color
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            10), // Rounded corners
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Purchase',
+                                      style: TextStyle(
+                                        fontSize: 14, // Text size
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             )
                           ],
                         ),
@@ -371,10 +407,25 @@ class _ProductCardState extends State<ProductCard> {
                   children: [
                     ListTile(
                       dense: true,
-                      visualDensity: VisualDensity(vertical: -4), // Reduce vertical space
+                      visualDensity:
+                          VisualDensity(vertical: -4), // Reduce vertical space
+                      title: Text(
+                        "Item details",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        size: 12,
+                      ), // Add a next icon at the end
+                    ),
+                    ListTile(
+                      dense: true,
+                      visualDensity:
+                          VisualDensity(vertical: -4), // Reduce vertical space
                       title: Text(
                         "shipping info",
-                        style: TextStyle(fontSize: 12), // Make the font size smaller
+                        style: TextStyle(
+                            fontSize: 12), // Make the font size smaller
                       ),
                       trailing: Icon(
                         Icons.arrow_forward_ios_outlined,
@@ -383,10 +434,12 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                     ListTile(
                       dense: true, // Make the ListTile compact
-                      visualDensity: VisualDensity(vertical: -4), // Reduce vertical space
+                      visualDensity:
+                          VisualDensity(vertical: -4), // Reduce vertical space
                       title: Text(
                         "support",
-                        style: TextStyle(fontSize: 12), // Make the font size smaller
+                        style: TextStyle(
+                            fontSize: 12), // Make the font size smaller
                       ),
                       trailing: Icon(
                         Icons.arrow_forward_ios_outlined,
@@ -395,7 +448,6 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                   ],
                 ),
-
               ],
             ),
             const Padding(
@@ -567,4 +619,215 @@ class IndicatorDot extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget buildBottomSheet(BuildContext context, TabController tabController) {
+  return Container(
+      height: 420,
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            spreadRadius: 5,
+          ),
+        ],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // Heading
+        const Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Center(
+            child: Text(
+              'Select Recommended Service\nIf you require any of these services',
+              textAlign: TextAlign.center, // Center the text
+              style: const TextStyle(
+                fontSize: 12,
+                color: kcLightGrey,
+              ),
+            ),
+          ),
+        ),
+        // Service List
+        Expanded(
+          child: ListView(
+            children: [
+              // Service 1
+              buildServiceItem(
+                'assets/images/girl.png',
+                'Site Suitability Evaluation',
+                '\$29.99',
+              ),
+              buildServiceItem(
+                'assets/images/girl.png',
+                'Panel Cleaning',
+                '\$19.99',
+              ),
+              buildServiceItem(
+                'assets/images/girl.png',
+                'Inverter Installation',
+                '\$39.99',
+              ),
+            ],
+          ),
+        ),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Enter your promo code',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.arrow_forward, size: 25, color: Colors.black),
+            ),
+          ],
+        ),
+        Center(
+          child: Text(
+            'or',
+            style: TextStyle(
+              fontSize: 12,
+            ),
+          ),
+        ),
+        verticalSpaceMedium,
+        SubmitButton(
+          isLoading: false,
+          boldText: true,
+          label: "CHECK OUT",
+          submit: () {},
+          color: kcPrimaryColor,
+        ),
+      ]));
+}
+
+Widget buildBottomSheetInstallment(BuildContext context,
+    TabController tabController, DashboardViewModel viewModel) {
+  return Container(
+      height: 500,
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            spreadRadius: 5,
+          ),
+        ],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          'Installation Form',
+          style: TextStyle(
+            fontSize: 12,
+          ),
+        ),
+        verticalSpaceMedium,
+        Container(
+          height: 340,
+          color: kcLightGrey,
+        ),
+        verticalSpaceMedium,
+        InkWell(
+          onTap: viewModel.toggleTerms,
+          child: Row(
+            children: [
+              Container(
+                  height: 20,
+                  width: 20,
+                  decoration: BoxDecoration(
+                      color: viewModel.terms
+                          ? kcSecondaryColor
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          color: viewModel.terms
+                              ? Colors.transparent
+                              : kcSecondaryColor)),
+                  child: viewModel.terms
+                      ? const Center(
+                          child: Icon(
+                            Icons.check,
+                            color: kcBlackColor,
+                            size: 14,
+                          ),
+                        )
+                      : const SizedBox()),
+              horizontalSpaceSmall,
+              const Text(
+                "Agree with the Conditions",
+                style: TextStyle(
+                    fontSize: 14,),
+              )
+            ],
+          ),
+        ),
+      ]));
+}
+
+Widget buildServiceItem(String imagePath, String serviceName, String price) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Service Image
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              image: AssetImage(imagePath),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        // Service Name and Price
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  serviceName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  price,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // 3-dots Icon
+        GestureDetector(
+          onTap: () {
+            // Handle more options
+          },
+          child: const Icon(
+            Icons.more_vert,
+            color: Colors.grey,
+          ),
+        ),
+      ],
+    ),
+  );
 }

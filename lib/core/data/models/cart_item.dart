@@ -1,4 +1,4 @@
-import 'package:growsmart/core/data/models/product.dart';
+import 'package:easy_power/core/data/models/product.dart';
 
 class CartItem {
   Product? product;
