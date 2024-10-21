@@ -1,40 +1,44 @@
 class AppNotification {
-  String? id;
-  String? eventName;
-  String? eventDescription;
-  int? type;
-  dynamic status;
-  String? created;
-  String? updated;
+  final String id;
+  final String subject;
+  final String message;
+   bool unread;
+  final String notificationModel;
+  final String notificationRef;
+  final DateTime createdAt;
 
-  AppNotification(
-      {this.id,
-      this.eventName,
-      this.eventDescription,
-      this.type,
-      this.status,
-      this.created,
-      this.updated});
+  AppNotification({
+    required this.id,
+    required this.subject,
+    required this.message,
+    required this.unread,
+    required this.notificationModel,
+    required this.notificationRef,
+    required this.createdAt,
+  });
 
-  AppNotification.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    eventName = json['event_name'];
-    eventDescription = json['event_description'];
-    type = json['type'];
-    status = json['status'];
-    created = json['created'];
-    updated = json['updated'];
+  factory AppNotification.fromJson(Map<String, dynamic> json) {
+    return AppNotification(
+      id: json['_id'],
+      subject: json['subject'],
+      message: json['message'],
+      unread: json['unread'],
+      notificationModel: json['notificationModel'],
+      notificationRef: json['notification_ref'],
+      createdAt: DateTime.parse(json['createdAt']),
+    );
   }
 
-  Map<String, dynamic> toJson() {
+
+Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['event_name'] = eventName;
-    data['event_description'] = eventDescription;
-    data['type'] = type;
-    data['status'] = status;
-    data['created'] = created;
-    data['updated'] = updated;
+    data['_id'] = id;
+    data['subject'] = subject;
+    data['message'] = message;
+    data['unread'] = unread;
+    data['notificationModel'] = notificationModel;
+    data['notification_ref'] = notificationRef;
+    data['createdAt'] = createdAt;
     return data;
   }
 }

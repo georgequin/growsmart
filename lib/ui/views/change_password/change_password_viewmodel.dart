@@ -42,7 +42,6 @@ class ChangePasswordViewModel extends BaseViewModel {
 
   void changePassword(context, bool isResetPassword) async {
     setBusy(true);
-
     try {
       ApiResponse res =
           await repo.resetPassword(
@@ -54,7 +53,7 @@ class ChangePasswordViewModel extends BaseViewModel {
             );
 
       if (res.statusCode == 200) {
-        snackBar.showSnackbar(message: "Updated");
+        snackBar.showSnackbar(message: "Password Updated");
         Navigator.pop(context);
       }
     } catch (e) {

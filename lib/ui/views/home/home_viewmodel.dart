@@ -9,9 +9,7 @@ import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/app_strings.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/cart/raffle_cart_view.dart';
-import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
-import 'package:afriprize/ui/views/dashboard/shop_dashboard_view.dart';
 import 'package:afriprize/ui/views/notification/notification_view.dart';
 import 'package:afriprize/ui/views/profile/profile_view.dart';
 import 'package:flutter/material.dart';
@@ -68,9 +66,8 @@ class HomeViewModel extends BaseViewModel {
 
   // Pages for the Shop dashboard
   List<Widget> shopPages = [
-    ShopDashboardView(),
+    // ShopDashboardView(),
      const DrawsView(),
-    const ShopCartView(),
     const NotificationView(),
     const ProfileView()
   ];
@@ -125,7 +122,7 @@ class HomeViewModel extends BaseViewModel {
                     submit: () {
                       locator<NavigationService>().replaceWithAuthView();
                     },
-                    color: kcPrimaryColor,
+                    color: kcSecondaryColor,
                   )
                 ],
               ),
@@ -133,11 +130,9 @@ class HomeViewModel extends BaseViewModel {
           });
       return;
     }
-    if (module == AppModules.raffle) {
+
       selectedRafflesTab = index;
-    } else {
-      selectedShopTab = index;
-    }
+
     notifyListeners();
   }
 

@@ -8,17 +8,17 @@ import 'core/data/models/profile.dart';
 
 enum AppUiModes { dark, light }
 enum AppModules { raffle, shop }
-enum PaymentMethod { wallet, paystack, binancePay, flutterwave, applePay }
+enum PaymentMethod { wallet, paystack, flutterwave, applePay }
 
-ValueNotifier<List<Product>> ads = ValueNotifier([]);
+
 ValueNotifier<List<RaffleCartItem>> raffleCart = ValueNotifier([]);
-ValueNotifier<List<CartItem>> shopCart = ValueNotifier([]);
 ValueNotifier<Profile> profile = ValueNotifier(Profile());
 ValueNotifier<bool> userLoggedIn = ValueNotifier(false);
 ValueNotifier<bool> isFirstLaunch = ValueNotifier(true);
 ValueNotifier<int> dollarRate = ValueNotifier(1500);
 ValueNotifier<AppUiModes> uiMode = ValueNotifier(AppUiModes.light);
 ValueNotifier<List<AppNotification>> notifications = ValueNotifier([]);
+ValueNotifier<int> unreadCount = ValueNotifier(0);
 ValueNotifier<AppModules> currentModuleNotifier = ValueNotifier(AppModules.raffle);
 
 

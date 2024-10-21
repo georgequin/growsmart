@@ -10,6 +10,7 @@ class Profile {
   String? username;
   String? phone;
   Country? country;
+  Media? profilePic;
   bool? isUserVerified;
   String? status;
   String? accountType;
@@ -17,9 +18,8 @@ class Profile {
   String? accountPointsLocal;
   String? createdAt;
   String? updatedAt;
-  Wallet? wallet; // Assuming this exists
-  List<Discount>? discounts; // Assuming this exists
-  List<Pictures>? pictures;
+  String? lastActivity;
+  NotificationPreferences? notificationPreferences;
 
   Profile({
     this.id,
@@ -29,6 +29,7 @@ class Profile {
     this.username,
     this.phone,
     this.country,
+    this.profilePic,
     this.isUserVerified,
     this.status,
     this.accountType,
@@ -36,57 +37,35 @@ class Profile {
     this.accountPointsLocal,
     this.createdAt,
     this.updatedAt,
-    this.wallet,
-    this.discounts,
-    this.pictures,
+    this.lastActivity,
+    this.notificationPreferences,
   });
 
+  // Updated Profile.fromJson method
   Profile.fromJson(Map<String, dynamic> json) {
-    id = json['_id']; // Match API response key for id
+    id = json['_id'];
     firstname = json['firstname'];
     lastname = json['lastname'];
     email = json['email'];
     username = json['username'];
     phone = json['phone'];
-
-    // Checking if 'country' object is not null and assigning it
+    // Country object handling
     country = json['country'] != null ? Country.fromJson(json['country']) : null;
-
-    // Boolean field directly from the API
+    profilePic = json['profile_pic'] != null ? Media.fromJson(json['profile_pic']) : null; // Handle profile_pic
     isUserVerified = json['is_user_verified'];
-
-    // Status field changed to String in API response
     status = json['status'];
-
-    // New fields from API
     accountType = json['account_type'];
     accountPoints = json['account_points'];
     accountPointsLocal = json['account_points_local'];
 
-    // Timestamp fields
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    lastActivity = json['last_activity']; // New field added
 
-    // Handle 'wallet' field if present in the response
-    if (json['wallet'] != null) {
-      wallet = Wallet.fromJson(json['wallet']);
-    }
-
-    // Handle 'referral' as discounts
-    if (json['referral'] != null) {
-      discounts = <Discount>[];
-      json['referral'].forEach((v) {
-        discounts!.add(Discount.fromJson(v));
-      });
-    }
-
-    // Handle 'picture' as pictures list
-    if (json['picture'] != null) {
-      pictures = <Pictures>[];
-      json['picture'].forEach((v) {
-        pictures!.add(Pictures.fromJson(v));
-      });
-    }
+    // Notification preferences object handling
+    notificationPreferences = json['notification_preferences'] != null
+        ? NotificationPreferences.fromJson(json['notification_preferences'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -98,9 +77,12 @@ class Profile {
     data['username'] = username;
     data['phone'] = phone;
 
-    // Handle country serialization
+    // Country object serialization
     if (country != null) {
       data['country'] = country!.toJson();
+    }
+    if (profilePic != null) {
+      data['profile_pic'] = profilePic!.toJson();
     }
 
     data['is_user_verified'] = isUserVerified;
@@ -110,22 +92,44 @@ class Profile {
     data['account_points_local'] = accountPointsLocal;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
+    data['last_activity'] = lastActivity;
 
-    // Handle wallet serialization
-    if (wallet != null) {
-      data['wallet'] = wallet!.toJson();
+    // Notification preferences serialization
+    if (notificationPreferences != null) {
+      data['notification_preferences'] = notificationPreferences!.toJson();
     }
 
-    // Serialize referral as discounts
-    if (discounts != null) {
-      data['referral'] = discounts!.map((v) => v.toJson()).toList();
-    }
+    return data;
+  }
+}
 
-    // Serialize pictures list
-    if (pictures != null) {
-      data['picture'] = pictures!.map((v) => v.toJson()).toList();
-    }
+// Model for NotificationPreferences
+class NotificationPreferences {
+  bool? platformNotifications;
+  bool? appNotifications;
+  bool? generalNotifications;
+  String? id;
 
+  NotificationPreferences({
+    this.platformNotifications,
+    this.appNotifications,
+    this.generalNotifications,
+    this.id,
+  });
+
+  NotificationPreferences.fromJson(Map<String, dynamic> json) {
+    platformNotifications = json['platform_notifications'];
+    appNotifications = json['app_notifications'];
+    generalNotifications = json['general_notifications'];
+    id = json['_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['platform_notifications'] = platformNotifications;
+    data['app_notifications'] = appNotifications;
+    data['general_notifications'] = generalNotifications;
+    data['_id'] = id;
     return data;
   }
 }

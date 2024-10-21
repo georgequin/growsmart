@@ -34,55 +34,78 @@ class _ProfileScreen extends State<ProfileScreen> {
   final snackBar = locator<SnackbarService>();
 
   void updateProfilePicture() async {
-    // pick photo
     setState(() {
       isUpdating = true;
     });
+
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    if (image == null) return; // Handle null (user didn't pick an image)
-
-    String oldPath = image.path;
-    String newPath = '${path.withoutExtension(oldPath)}.png';
-    File inputFile = File(oldPath);
-    File outputFile = File(newPath);
-
-    XFile? result = await FlutterImageCompress.compressAndGetFile(
-      inputFile.path,
-      outputFile.path,
-      format: CompressFormat.png,
-    );
-
-    if (result == null) return;
-
-    // Check file size
-    final fileSize = await outputFile.length();
-    if (fileSize > 5 * 1024 * 1024) {
-      // 5 MB size limit
-      snackBar.showSnackbar(message: "Please pick an image smaller than 5MB");
+    // Check if an image is selected
+    if (image == null) {
       setState(() {
         isUpdating = false;
       });
+      print('No image selected.');
       return;
     }
 
+    print('Selected image path: ${image.path}');
+    print('Selected image length: ${await File(image.path).length()} bytes');
+
     try {
-      ApiResponse res = await locator<Repository>().updateProfilePicture({
-        "picture": await MultipartFile.fromFile(outputFile.path),
+      // Compress the image and convert to .png
+      final compressedImage = await FlutterImageCompress.compressAndGetFile(
+        image.path, // original file path
+        '${path.withoutExtension(image.path)}.png', // output path
+        format: CompressFormat.png, // compress to PNG format
+        quality: 85, // adjust compression quality (1-100)
+      );
+
+      if (compressedImage == null) {
+        throw Exception('Image compression failed');
+      }
+
+      print('Compressed image path: ${compressedImage.path}');
+      print('Compressed image size: ${await compressedImage.length()} bytes');
+
+      // Now upload the compressed image
+      ApiResponse res = await locator<Repository>().updateMedia({
+        "file": await MultipartFile.fromFile(compressedImage.path),
       });
-      if (res.statusCode == 200) {
-        snackBar.showSnackbar(message: res.data["message"]);
-        getProfile();
+
+      print('Media upload response: ${res.statusCode}');
+
+      if (res.statusCode == 201) {
+        String mediaId = res.data["media_id"];
+        print('Media ID received: $mediaId');
+
+        // Now update the profile picture with the media_id
+        ApiResponse updateProfileRes = await locator<Repository>().updateProfilePicture({
+          "media_id": mediaId,
+        });
+
+        print('Profile update response: ${updateProfileRes.statusCode}');
+
+        if (updateProfileRes.statusCode == 200) {
+          snackBar.showSnackbar(message: "Profile picture updated successfully!");
+          getProfile();
+        } else {
+          snackBar.showSnackbar(message: "Failed to update profile picture.");
+        }
+      } else {
+        snackBar.showSnackbar(message: "Failed to upload media.");
       }
     } catch (e) {
-      throw Exception(e);
+      print('Error during upload or update: $e');
+      snackBar.showSnackbar(message: "An error occurred: $e");
+    } finally {
+      setState(() {
+        isUpdating = false;
+      });
     }
-
-    setState(() {
-      isUpdating = false;
-    });
   }
+
 
   void getProfile() async {
     try {
@@ -135,7 +158,11 @@ class _ProfileScreen extends State<ProfileScreen> {
     );
 
     return Scaffold(
+      backgroundColor: uiMode.value == AppUiModes.dark
+          ? kcDarkGreyColor
+          : kcWhiteColor,
       appBar: AppBar(
+        toolbarHeight: 100.0,
         title: const Text('Profile Details'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -147,6 +174,10 @@ class _ProfileScreen extends State<ProfileScreen> {
       body: ListView(
         children: <Widget>[
           Card(
+            color: uiMode.value == AppUiModes.dark
+                ? kcDarkGreyColor
+                : kcWhiteColor,
+            shadowColor: Colors.transparent,
             margin: const EdgeInsets.all(24.0),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -165,29 +196,11 @@ class _ProfileScreen extends State<ProfileScreen> {
                             children: [
                               ProfilePicture(
                                   size: 100,
-                                  url: 'https://via.placeholder.com/150'
-                                  // url: profile.value.pictures!.isEmpty
-                                  //     ? null
-                                  //     : profile.value.pictures?[0].location,
+                                  url: profile.value.profilePic?.url,
                                   ),
                               GestureDetector(
                                 onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    // barrierColor: Colors.black.withAlpha(50),
-                                    // backgroundColor: Colors.transparent,
-                                    backgroundColor:
-                                        Colors.black.withOpacity(0.7),
-                                    builder: (BuildContext context) {
-                                      return const FractionallySizedBox(
-                                        heightFactor:
-                                            1.0, // 70% of the screen's height
-                                        child: ProfileScreen(),
-                                      );
-                                    },
-                                  );
-                                  // viewModel.updateProfilePicture();
+                                  updateProfilePicture();
                                 },
                                 child: Container(
                                   width: 25, // Width and height of the circle
@@ -219,7 +232,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0), // Add padding inside the card
             child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Card(
@@ -380,184 +393,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 3.0),
                     child: Column(
                       children: [
-                        // ...List.generate(
-                        //   profile.value.shipping!.length,
-                        //       (index) {
-                        //     Shipping shipping =
-                        //     profile.value.shipping![index];
-                        //     return Container(
-                        //       padding: const EdgeInsets.all(10),
-                        //       margin: const EdgeInsets.only(bottom: 10),
-                        //       child: Card(
-                        //         shadowColor: Colors.grey,
-                        //         child: Padding(
-                        //         padding: const EdgeInsets.all(6.0), // This adds horizontal padding
-                        //         child: Column(
-                        //             mainAxisAlignment:MainAxisAlignment.start,
-                        //             children: [
-                        //               Row(
-                        //                 mainAxisAlignment: MainAxisAlignment.start,
-                        //                 children: [
-                        //                   const Icon(
-                        //                     Icons.location_on_outlined,
-                        //                     size: 20,
-                        //                   ),
-                        //                   Expanded(
-                        //                     child: Text(
-                        //                       '${shipping.shippingAddress} ${shipping.shippingCity} ${shipping.shippingState}' ?? "",
-                        //                       overflow: TextOverflow.ellipsis,
-                        //                       maxLines: 3,
-                        //                     ),
-                        //                   ),
-                        //                 ],
-                        //               ),
-                        //               verticalSpaceSmall,
-                        //               Row(
-                        //                 mainAxisAlignment:MainAxisAlignment.start,
-                        //                 children: [
-                        //                   const Icon(
-                        //                     Icons.phone,
-                        //                     size: 20,
-                        //                   ),
-                        //                   Text('${shipping.shippingPhone}' ?? ""),
-                        //
-                        //                 ],
-                        //               ),
-                        //               Row(
-                        //                 mainAxisAlignment:MainAxisAlignment.start,
-                        //                 children: [
-                        //                   horizontalSpaceSmall,
-                        //                   const Text('Set as default', style: TextStyle(
-                        //                       fontSize: 10,
-                        //                       fontWeight: FontWeight.normal
-                        //                   ),),
-                        //                   horizontalSpaceTiny,
-                        //                   SizedBox(
-                        //                     height: 20.0,
-                        //                     child: Switch(
-                        //                       // This bool value toggles the switch.
-                        //                       value: shipping.isDefault!,
-                        //                       overlayColor: overlayColor,
-                        //                       trackColor: trackColor,
-                        //                       thumbColor: const MaterialStatePropertyAll<Color>(Colors.black),
-                        //                       onChanged: (bool value) {
-                        //                         // This is called when the user toggles the switch.
-                        //                         setState(() async {
-                        //                           if(value){
-                        //                             setState(() {
-                        //                               shippingId = shipping.id!;
-                        //                               makingDefault = value;
-                        //                             });
-                        //
-                        //                             try {
-                        //                               ApiResponse res =
-                        //                                   await locator<
-                        //                                   Repository>()
-                        //                                   .setDefaultShipping(
-                        //                                   {},
-                        //                                   shipping.id!);
-                        //                               if (res.statusCode == 200) {
-                        //                                 ApiResponse pRes =
-                        //                                     await locator<
-                        //                                     Repository>()
-                        //                                     .getProfile();
-                        //                                 if (pRes.statusCode ==
-                        //                                     200) {
-                        //                                   profile.value = Profile
-                        //                                       .fromJson(Map<
-                        //                                       String,
-                        //                                       dynamic>.from(
-                        //                                       pRes.data[
-                        //                                       "user"]));
-                        //
-                        //                                   profile
-                        //                                       .notifyListeners();
-                        //                                 }
-                        //                               }
-                        //                             } catch (e) {
-                        //                               throw Exception(e);
-                        //                             }
-                        //
-                        //                             setState(() {
-                        //                               shippingId = "";
-                        //                               makingDefault = value;
-                        //                             });
-                        //
-                        //                           }
-                        //                         });
-                        //                       },
-                        //                     )
-                        //                   ),
-                        //                   horizontalSpaceTiny,
-                        //                   InkWell(
-                        //                     onTap: () async {
-                        //
-                        //                         if (shipping.isDefault!) {
-                        //                         Fluttertoast.showToast(msg: 'Can\'t delete default address.');
-                        //                         } else {
-                        //                           try {
-                        //                             final res = await locator<DialogService>()
-                        //                                 .showConfirmationDialog(
-                        //                                 title: "Are you sure?",
-                        //                                 cancelTitle: "No",
-                        //                                 confirmationTitle: "Yes");
-                        //
-                        //                             if (res!.confirmed) {
-                        //                               ApiResponse res = await locator<Repository>().deleteDefaultShipping(
-                        //                                   shipping.id!);
-                        //                               if (res.statusCode == 200) {
-                        //                                 ApiResponse pRes = await locator<Repository>().getProfile();
-                        //                                 if (pRes.statusCode == 200) {
-                        //                                   setState(() {
-                        //                                     // Update your state here
-                        //                                     profile.value = Profile.fromJson(
-                        //                                         Map<String, dynamic>.from(pRes.data["user"]));
-                        //                                     profile.notifyListeners();
-                        //                                   });
-                        //                                 }
-                        //                               }
-                        //                             }
-                        //                           } catch (e) {
-                        //                             Fluttertoast.showToast(msg: 'can\'t delete..');
-                        //                           }
-                        //                         }
-                        //                     },
-                        //                     child: const Icon(Icons.delete),
-                        //                   ),
-                        //
-                        //
-                        //                 ],
-                        //               ),
-                        //             ]
-                        //         )
-                        //         )
-                        //
-                        //       )
-                        //
-                        //     );
-                        //   },
-                        // ),
+
                       ],
                     ),
                   ),
-                  // TextButton(
-                  //   style: ButtonStyle(
-                  //       backgroundColor:
-                  //           MaterialStateProperty.all(kcPrimaryColor)),
-                  //   child: const Text(
-                  //     "Add new shipping address",
-                  //     style: TextStyle(color: kcWhiteColor),
-                  //   ),
-                  //   onPressed: () {
-                  //     Navigator.of(context)
-                  //         .push(
-                  //           MaterialPageRoute(
-                  //             builder: (context) => const AddShipping(),
-                  //           ),
-                  //         )
-                  //         .whenComplete(() => setState(() {}));
-                  //   },
-                  // ),
                   horizontalSpaceLarge,
                 ]),
           ),

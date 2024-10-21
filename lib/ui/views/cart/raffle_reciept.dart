@@ -2,8 +2,11 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/utils/date_time_utils.dart';
 import 'package:afriprize/utils/money_util.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -18,13 +21,12 @@ import '../../common/app_colors.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
+import '../profile/ticket_list.dart';
+
 /// @author George David
 /// email: georgequin19@gmail.com
 /// Feb, 2024
 ///
-
-
-
 
 class RaffleReceiptPage extends StatelessWidget {
   final List<RaffleCartItem> cart;
@@ -47,145 +49,257 @@ class RaffleReceiptPage extends StatelessWidget {
                     createAndSharePdf();
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black, backgroundColor: Colors.grey.shade300,
+                    foregroundColor: uiMode.value == AppUiModes.dark
+                        ? kcDarkGreyColor
+                        : kcWhiteColor, // Text and icon color based on theme
+                    backgroundColor: uiMode.value == AppUiModes.dark
+                        ? kcDarkGreyColor
+                        : kcWhiteColor, // Background color based on theme
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child:
-                  const Row(children: [
-                    Icon(Icons.share_outlined),
-                    horizontalSpaceTiny,
-                    Text('Share Receipt', style: TextStyle(fontSize: 15)),
-                  ],),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.share_outlined, size: 10.0),
+                      SizedBox(width: 4), // This replaces horizontalSpaceTiny
+                      Text('Share Receipt', style: TextStyle(fontSize: 15)),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          SingleChildScrollView( // Use SingleChildScrollView for a single child scrollable widget
+          SingleChildScrollView(
+            // Use SingleChildScrollView for a single child scrollable widget
             child: ClipPath(
-                  clipper: MyClipper(),
-                  child: Card(
-                    elevation: 4.0,
-                    margin: const EdgeInsets.all(8.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                ElevatedButton(
-                                  onPressed: () {
-                                    createAndSharePdf();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.black, backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  child:
-                                  const Row(children: [
-                                    Icon(Icons.share_outlined),
-                                    horizontalSpaceTiny,
-                                    Text('Share Receipt', style: TextStyle(fontSize: 15)),
-                                  ],),
+              clipper: MyClipper(),
+              child: Card(
+                color: uiMode.value == AppUiModes.dark
+                    ? kcDarkGreyColor
+                    : kcWhiteColor,
+                elevation: 4.0,
+                margin: const EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            ElevatedButton(
+                              onPressed: () {
+                                createAndSharePdf();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: uiMode.value == AppUiModes.dark
+                                    ? kcWhiteColor
+                                    : kcDarkGreyColor,
+                                backgroundColor: uiMode.value == AppUiModes.dark
+                                    ? kcDarkGreyColor
+                                    : kcWhiteColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
+                              ),
+                              child: const Row(
+                                children: [
+                                  Icon(
+                                    Icons.share_outlined,
+                                    size: 20.0,
+                                  ),
+                                  horizontalSpaceTiny,
+                                  Text('Share Receipt',
+                                      style: TextStyle(fontSize: 15)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      verticalSpaceMedium,
+
+                      Card(
+                        margin: const EdgeInsets.all(0.0),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: uiMode.value == AppUiModes.dark
+                                ? kcDarkGreyColor
+                                : kcWhiteColor, // Card's background color
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Ensure this matches the card's border radius
+                            boxShadow: const [
+                              BoxShadow(
+                                color: kcSecondaryColor,
+                                blurRadius: 0,
+                                spreadRadius: 1,
+                                offset: Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              children: <Widget>[
+                                verticalSpaceLarge,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      formatDate(DateTime.now()),
+                                      style:  TextStyle(
+                                          fontSize: 11,
+                                          color: uiMode.value == AppUiModes.dark
+                                              ? kcWhiteColor
+                                              : kcBlackColor,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    const Row(
+                                      children: [
+                                        Icon(Icons.ac_unit,
+                                            size: 15, color: Colors.green),
+                                        Text('Successful',
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                color: Colors.green)),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 16.0),
+                                  decoration: BoxDecoration(
+                                    color: kcPrimaryColor,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Image.asset(
+                                    "assets/images/receipt_header.png",
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                 Row(
+                                  children: [
+                                    Text(
+                                      'TICKET SUMMARY',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        color: uiMode.value == AppUiModes.dark
+                                            ? kcWhiteColor
+                                            : kcBlackColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                verticalSpaceTiny,
+                                ...cart.map((cartItem) => ListTile(
+                                      leading: Image.network(
+                                          cartItem.raffle!.media!.first.url ??
+                                              '',
+                                          height: 44,
+                                          width:
+                                              48), // Replace with your image URL field
+                                      title: Text(cartItem.raffle!.name!,
+                                          style:
+                                              const TextStyle(fontSize: 10.61)),
+                                      subtitle: Text('${cartItem.quantity}',
+                                          style:
+                                              const TextStyle(fontSize: 10.61)),
+                                      trailing: Text(
+                                          MoneyUtils().formatAmount(
+                                              cartItem.raffle!.ticketPrice!),
+                                          style: TextStyle(
+                                            fontSize: 10.61,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                uiMode.value == AppUiModes.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                            fontFamily: "satoshi",
+                                          )),
+                                    )),
+                                const Divider(),
+                                verticalSpaceMedium,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Total Order',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w100),
+                                    ),
+                                    Text(
+                                      MoneyUtils().formatAmount(
+                                          getRaffleSubTotal(cart)),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12,
+                                        color: uiMode.value == AppUiModes.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontFamily: "satoshi",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                verticalSpaceSmall,
+                                const Divider(),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'TOTAL:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w100),
+                                    ),
+                                    Text(
+                                      MoneyUtils().formatAmount(
+                                          getRaffleSubTotal(cart)),
+                                      style: const TextStyle(
+                                          fontFamily: 'roboto',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.3),
+                                    ),
+                                  ],
+                                ),
+                                const Divider(),
+                                verticalSpaceSmall,
+                                SvgPicture.asset(
+                                  uiMode.value == AppUiModes.dark
+                                      ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
+                                      : "assets/images/dashboard_logo.svg",
+                                  width: 150,
+                                  height: 40,
+                                ),
+                                verticalSpaceSmall
                               ],
                             ),
                           ),
-                          verticalSpaceLarge,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                formatDate(DateTime.now()),
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
-                              ),
-                              const Row(
-                                children: [
-                                  Icon(Icons.ac_unit, size: 15, color:Colors.green),
-                                  Text('Successful', style: TextStyle(fontSize: 11, color: Colors.green)),
-                                ],
-                              )
-                            ],
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 16.0),
+                        ),
+                      )
 
-                            decoration: BoxDecoration(
-                              color: kcPrimaryColor,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Image.asset(
-                              "assets/images/receipt_header.png",
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const Text(
-                            'ORDER SUMMARY',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                          ),
-                          ...cart.map((cartItem) =>  ListTile(
-                            leading: Image.network(cartItem.raffle!.media!.first.location ?? '', height: 44, width: 48), // Replace with your image URL field
-                            title: Text(cartItem.raffle!.name!, style: const TextStyle(fontSize: 10.61)),
-                            subtitle: Text('${cartItem.quantity}', style: const TextStyle(fontSize: 10.61)),
-                            trailing: Text(MoneyUtils().formatAmount(cartItem.raffle!.ticketPrice!),style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
-                              color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                              fontFamily: "satoshi",)),
-                          )),
-                          const Divider(),
-                          verticalSpaceMedium,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Total Order',
-                                style: TextStyle(fontWeight: FontWeight.w100),
-                              ),
-                              Text(
-                                MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
-                                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12,
-                                  color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                                  fontFamily: "satoshi",),
-                              ),
-                            ],
-                          ),
-                          verticalSpaceSmall,
-                          const Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'TOTAL:',
-                                style: TextStyle(fontWeight: FontWeight.w100),
-                              ),
-                              Text(
-                                MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.3),
-                              ),
-                            ],
-                          ),
-                          const Divider(),
-                          verticalSpaceSmall,
-                          const Text(
-                            'DELIVERY ADDRESS',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black54),
-                          ),
-                          // Text(
-                          //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
-                          //   style: const TextStyle(color: kcSecondaryColor),
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ),),
-
+                      // Text(
+                      //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
+                      //   style: const TextStyle(color: kcSecondaryColor),
+                      // ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -196,40 +310,71 @@ class RaffleReceiptPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  locator<NavigationService>().clearStackAndShow(Routes.homeView);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kcSecondaryColor, // Use the appropriate color for your app
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              TicketList()), // Assuming TicketPage is the page to navigate to
+                    ).then((_) {
+                      // When coming back from TicketPage, navigate to HomePage
+                      locator<NavigationService>()
+                          .clearStackAndShow(Routes.homeView);
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        kcSecondaryColor, // Use the appropriate color for your app
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.airplane_ticket_outlined),
+                      horizontalSpaceTiny,
+                      Expanded(
+                          child: Text('Tickets',
+                              style: TextStyle(
+                                  color: kcPrimaryColor, fontSize: 15))),
+                    ],
                   ),
                 ),
-                child: const Row(children: [
-                  Icon(Icons.home, color: Colors.black,),
-                  horizontalSpaceTiny,
-                  Text('Back to Home', style: TextStyle(fontSize: 15)),
-                ],),
               ),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     locator<NavigationService>().clearStackAndShow(Routes.ticketView);
-              //   },
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: Colors.grey.shade300, // Use the appropriate color for your app
-              //     foregroundColor: Colors.black,
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(10),
-              //     ),
-              //   ),
-              //   child:
-              //   const Row(children: [
-              //     Icon(Icons.airplane_ticket_outlined),
-              //     horizontalSpaceTiny,
-              //     Text('View Tickets', style: TextStyle(fontSize: 15)),
-              //   ],),
-              // ),
+              horizontalSpaceSmall,
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    locator<NavigationService>()
+                        .clearStackAndShow(Routes.homeView);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: uiMode.value == AppUiModes.dark
+                        ? kcDarkGreyColor
+                        : kcWhiteColor,
+                    foregroundColor: uiMode.value == AppUiModes.dark
+                        ? kcWhiteColor
+                        : kcDarkGreyColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Icon(Icons.home, color: Colors.black,),
+                      // horizontalSpaceTiny,
+                      Expanded(
+                          child: Text('Back Home',
+                              style: TextStyle(fontSize: 15))),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -240,11 +385,13 @@ class RaffleReceiptPage extends StatelessWidget {
   Future<void> createAndSharePdf() async {
     final pdf = pw.Document();
 
-    final imageBytes = await rootBundle.load('assets/images/receipt_header.png');
+    final imageBytes =
+        await rootBundle.load('assets/images/receipt_header.png');
     final image = pw.MemoryImage(
       imageBytes.buffer.asUint8List(),
     );
-    List<Future<pw.Widget>> cartItemFutures = cart.map((cartItem) => createCartItemWidget(cartItem)).toList();
+    List<Future<pw.Widget>> cartItemFutures =
+        cart.map((cartItem) => createCartItemWidget(cartItem)).toList();
 
     List<pw.Widget> cartItemWidgets = await Future.wait(cartItemFutures);
 
@@ -260,26 +407,29 @@ class RaffleReceiptPage extends StatelessWidget {
                 children: [
                   pw.Text(
                     formatDate(DateTime.now()),
-                    style:  pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.normal),
+                    style: pw.TextStyle(
+                        fontSize: 11, fontWeight: pw.FontWeight.normal),
                   ),
-                   pw.Row(
+                  pw.Row(
                     children: [
-                      pw.Text('Successful', style: const pw.TextStyle(fontSize: 11, color: PdfColor(0, 1, 0))),
+                      pw.Text('Successful',
+                          style: const pw.TextStyle(
+                              fontSize: 11, color: PdfColor(0, 1, 0))),
                     ],
                   )
                 ],
               ),
               pw.Container(
-                margin:  const pw.EdgeInsets.symmetric(vertical: 16.0),
-
+                margin: const pw.EdgeInsets.symmetric(vertical: 16.0),
                 decoration: pw.BoxDecoration(
                   borderRadius: pw.BorderRadius.circular(10.0),
                 ),
                 child: pw.Image(image, fit: pw.BoxFit.cover),
               ),
-               pw.Text(
-                'ORDER SUMMARY',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
+              pw.Text(
+                'TICKET SUMMARY',
+                style:
+                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
               ),
 
               pw.Column(
@@ -297,7 +447,9 @@ class RaffleReceiptPage extends StatelessWidget {
                   ),
                   pw.Text(
                     MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 12,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.normal,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -313,16 +465,13 @@ class RaffleReceiptPage extends StatelessWidget {
                   ),
                   pw.Text(
                     MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14.3),
+                    style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold, fontSize: 14.3),
                   ),
                 ],
               ),
               pw.Divider(),
               pw.SizedBox(height: 20),
-              pw.Text(
-                'DELIVERY ADDRESS',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16,),
-              ),
               // pw.Text(
               //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
               // ),
@@ -343,16 +492,19 @@ class RaffleReceiptPage extends StatelessWidget {
 
   Future<pw.Widget> createCartItemWidget(RaffleCartItem cartItem) async {
     // Attempt to load the image from the network
-    final response = await http.get(Uri.parse(cartItem.raffle!.media!.first.location!));
+    final response =
+        await http.get(Uri.parse(cartItem.raffle!.media!.first.url!));
 
     pw.Widget imageWidget;
     if (response.statusCode == 200) {
       final imageBytes = response.bodyBytes;
       final image = pw.MemoryImage(imageBytes);
-      imageWidget = pw.Image(image, width: 44, height: 48); // Use the loaded image
+      imageWidget =
+          pw.Image(image, width: 44, height: 48); // Use the loaded image
     } else {
       print('Failed to load network image.');
-      imageWidget = pw.Text('Image not available'); // Use a placeholder or error widget
+      imageWidget =
+          pw.Text('Image not available'); // Use a placeholder or error widget
     }
 
     // Construct the container with the image widget
@@ -371,13 +523,17 @@ class RaffleReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.raffle!.name!, style: const pw.TextStyle(fontSize: 10.61)),
-                pw.Text('${cartItem.quantity}', style: const pw.TextStyle(fontSize: 10.61)),
+                pw.Text(cartItem.raffle!.name!,
+                    style: const pw.TextStyle(fontSize: 10.61)),
+                pw.Text('${cartItem.quantity}',
+                    style: const pw.TextStyle(fontSize: 10.61)),
               ],
             ),
           ),
-          pw.Text('₦${MoneyUtils().formatAmount(cartItem.raffle!.ticketPrice!)}',
-            style: pw.TextStyle(fontSize: 10.61, fontWeight: pw.FontWeight.bold),
+          pw.Text(
+            '₦${MoneyUtils().formatAmount(cartItem.raffle!.ticketPrice!)}',
+            style:
+                pw.TextStyle(fontSize: 10.61, fontWeight: pw.FontWeight.bold),
           ),
         ],
       ),
@@ -402,9 +558,4 @@ class RaffleReceiptPage extends StatelessWidget {
       return pw.Text('Image load error');
     }
   }
-
 }
-
-
-
-

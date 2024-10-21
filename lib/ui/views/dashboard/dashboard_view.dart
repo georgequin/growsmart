@@ -4,25 +4,28 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
-import 'package:afriprize/widget/showcaseWidget.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:slide_countdown/slide_countdown.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:video_player/video_player.dart';
-import 'package:showcaseview/showcaseview.dart';
-
-
+import 'package:shimmer/shimmer.dart';
+import 'package:top_bottom_sheet_flutter/top_bottom_sheet_flutter.dart';
 import '../../../app/app.locator.dart';
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/project.dart';
+import '../../../core/utils/local_store_dir.dart';
+import '../../../core/utils/local_stotage.dart';
 import '../../../widget/AdventureDialog.dart';
+import '../notification/projectDetailsPage.dart';
 import 'dashboard_viewmodel.dart';
 
 /// @author George David
@@ -35,24 +38,27 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   final PageController _pageController = PageController();
 
-
-
   @override
   Widget builder(
-      BuildContext context,
-      DashboardViewModel viewModel,
-      Widget? child,
-      ) {
-    if (viewModel.showDialog) {
+    BuildContext context,
+    DashboardViewModel viewModel,
+    Widget? child,
+  ) {
+    if (viewModel.onboarded == false && viewModel.showDialog && !viewModel.modalShown) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        viewModel.modalShown = true; // Set this to true to prevent showing the modal again
         showDialog(
           barrierColor: Colors.black.withOpacity(0.9),
           context: context,
           builder: (BuildContext context) {
-            return const AdventureModal(); // Use the separate modal widget
+            return const AdventureModal();
           },
-        );
-        viewModel.showDialog = false; // Ensure the dialog is shown only once
+        ).then((_) {
+          // Once the modal is dismissed, update the onboarded status
+          locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
+          viewModel.showDialog = false;
+          viewModel.modalShown = false; // Reset it in case the user reopens the view later
+        });
       });
     }
 
@@ -62,49 +68,17 @@ class DashboardView extends StackedView<DashboardViewModel> {
           valueListenable: uiMode,
           builder: (context, AppUiModes mode, child) {
             return SvgPicture.asset(
-              "assets/images/dashboard_logo.svg",
+              uiMode.value == AppUiModes.dark
+                  ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
+                  : "assets/images/dashboard_logo.svg",
               width: 150,
               height: 40,
             );
           },
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/images/dashboard_otification.svg",
-                  width: 150,
-                  height: 25,
-                ),
-                // Login Button
-                const SizedBox(width: 8),
-                Container(
-                  margin: const EdgeInsets.only(right: 0.0),
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: kcPrimaryColor.withOpacity(0.1),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(5.0), // Set the radius value you prefer
-                      bottomLeft: Radius.circular(5.0),
-                    ),
-                  ),
-                  child: Text( profile.value.accountPointsLocal  ?? "#0.00",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        fontFamily: 'Roboto',)),
-                ),
-                SvgPicture.asset(
-                  "assets/images/dashboard_wallet.svg",
-                  width: 150,
-                  height: 40,
-                ),
-              ],
-            ),
-          )
-        ],
+        centerTitle: false,
+        actions: _buildAppBarActions(context, viewModel.appBarLoading, viewModel)
+
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -112,45 +86,33 @@ class DashboardView extends StackedView<DashboardViewModel> {
         },
         child: ListView(
           padding:
-          const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
+              const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
           children: [
-            Container(
-              height: 200, // Set a fixed height for the video player
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                    20), // Apply rounded corners to the container
-              ),
-              clipBehavior: Clip
-                  .antiAlias, // This will clip the video player to the border radius
-              child: AspectRatio(
-                aspectRatio: 16 /
-                    9, // You can adjust the aspect ratio to the desired value
-                child: VideoPlayer(viewModel.controller),
-              ),
-            ),
-            verticalSpaceSmall,
-            quickActions(context),
-            verticalSpaceMedium,
-            doMoreOnAfriprize(context),
-            verticalSpaceMedium,
-            popularDrawsSlider(context, viewModel.raffleList),
-            verticalSpaceMedium,
-            donationsSlider(context, viewModel.projectResources),
+            _buildShimmerOrContent(context, viewModel),
           ],
         ),
       ),
     );
   }
+
   Widget quickActions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           "Quick Actions",
-          style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              fontFamily: "Panchang"),
+          style: GoogleFonts.bricolageGrotesque(
+            textStyle:  TextStyle(
+              fontSize: 15, // Custom font size
+              fontWeight: FontWeight.bold, // Custom font weight
+              color: uiMode.value == AppUiModes.dark
+                  ? Colors.white // Dark mode logo
+                  : Colors.black,
+
+
+              // Custom text color (optional)
+            ),
+          ),
         ),
         const SizedBox(height: 10),
         Container(
@@ -262,16 +224,22 @@ class DashboardView extends StackedView<DashboardViewModel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           "Do More On Afriprize",
-          style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              fontFamily: "Panchang"),
+          style: GoogleFonts.bricolageGrotesque(
+            textStyle: TextStyle(
+              fontSize: 15, // Custom font size
+              fontWeight: FontWeight.bold, // Custom font weight
+              color: uiMode.value == AppUiModes.dark
+                  ? Colors.white // Dark mode logo
+                  : Colors.black, // Custom text color (optional)
+            ),
+          ),
         ),
         const SizedBox(height: 10),
+        // Setting a fixed height for the ListView to avoid unbounded height issues
         Container(
-          height: 55, // Adjust height according to your design
+          height: 80, // You can adjust the height as necessary
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
@@ -283,11 +251,15 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   padding: const EdgeInsets.only(left: 0.0, right: 8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: uiMode.value == AppUiModes.dark
+                          ? Color(0xFF2E2E2E)
+                          : Color(0xFFFAFAFA),
                       borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
-                          color: Colors.black12,
+                          color: uiMode.value == AppUiModes.dark
+                              ? Colors.transparent
+                              : kcLightGrey,
                           blurRadius: 5.0,
                           spreadRadius: 1.0,
                           offset: Offset(0, 3),
@@ -310,29 +282,33 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(
-                              width:
-                                  8), // Space between the circle and the text
-                          const Column(
+                          const SizedBox(width: 8), // Space between the circle and the text
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Instant Wallet Credit',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: Colors.black87,
+                                "Instant Wallet Credit",
+                                style: GoogleFonts.redHatDisplay(
+                                  textStyle: TextStyle(
+                                    fontSize: 14, // Custom font size
+                                    fontWeight: FontWeight.bold, // Custom font weight
+                                    color: uiMode.value == AppUiModes.dark
+                                        ? Colors.white
+                                        : Colors.black, // Custom text color
+                                  ),
                                 ),
                               ),
-                              SizedBox(
-                                  height:
-                                      4), // Adjust space between title and description
+                              verticalSpaceTiny,
                               Text(
                                 'Value equal to the ticket\'s value!',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.black54,
+                                style: GoogleFonts.redHatDisplay(
+                                  textStyle: TextStyle(
+                                    fontSize: 10,
+                                    color: uiMode.value == AppUiModes.dark
+                                        ? kcWhiteColor
+                                        : kcBlackColor,
+                                  ),
                                 ),
                               ),
                             ],
@@ -343,7 +319,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   ),
                 ),
               ),
-              // First Container
+              // Second GestureDetector for Donate to Non-profits
               GestureDetector(
                 onTap: () {
                   locator<NavigationService>().navigateToNotificationView();
@@ -352,25 +328,27 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   padding: const EdgeInsets.only(left: 0.0, right: 8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: uiMode.value == AppUiModes.dark
+                          ? Color(0xFF2E2E2E)
+                          : Color(0xFFFAFAFA),
                       borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
-                          color: Colors.black12,
+                          color: uiMode.value == AppUiModes.dark
+                              ? Colors.transparent
+                              : kcLightGrey,
                           blurRadius: 5.0,
                           spreadRadius: 1.0,
                           offset: Offset(0, 3),
                         ),
                       ],
                     ),
-                    // Added padding around the content of the container
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12.0, vertical: 8.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Colored Circle
                           Container(
                             width: 40,
                             height: 40,
@@ -379,29 +357,33 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(
-                              width:
-                                  8), // Space between the circle and the text
-                          const Column(
+                          const SizedBox(width: 8), // Space between the circle and the text
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Donate to Non-profits',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: Colors.black87,
+                                "Donate to Non-profits",
+                                style: GoogleFonts.redHatDisplay(
+                                  textStyle: TextStyle(
+                                    fontSize: 14, // Custom font size
+                                    fontWeight: FontWeight.bold, // Custom font weight
+                                    color: uiMode.value == AppUiModes.dark
+                                        ? kcWhiteColor
+                                        : kcBlackColor,
+                                  ),
                                 ),
                               ),
-                              SizedBox(
-                                  height:
-                                      4), // Adjust space between title and description
+                              verticalSpaceTiny,
                               Text(
                                 'Supported by our partners',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.black54,
+                                style: GoogleFonts.redHatDisplay(
+                                  textStyle: TextStyle(
+                                    fontSize: 10,
+                                    color: uiMode.value == AppUiModes.dark
+                                        ? kcWhiteColor
+                                        : kcBlackColor,
+                                  ),
                                 ),
                               ),
                             ],
@@ -411,13 +393,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
       ],
     );
   }
+
 
   Widget popularDrawsSlider(BuildContext context, List<Raffle> raffles) {
     return Column(
@@ -426,14 +409,32 @@ class DashboardView extends StackedView<DashboardViewModel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Popular Draws Text
-            const Text(
-              "Popular Draws",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Panchang",
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Popular Draws",
+                  style: GoogleFonts.bricolageGrotesque(
+                    textStyle:  TextStyle(
+                      fontSize: 16, // Custom font size
+                      fontWeight: FontWeight.w700, // Custom font weight
+                      color:  uiMode.value == AppUiModes.dark
+                          ? kcWhiteColor : kcBlackColor, // Custom text color (optional)
+                    ),
+                  ),
+                ),
+                Text(
+                  "Explore our most sought-after draws",
+                  style: GoogleFonts.redHatDisplay(
+                    textStyle: TextStyle(
+                      fontSize: 11, // Custom font size
+                      fontWeight: FontWeight.w400, // Custom font weight
+                      color:  uiMode.value == AppUiModes.dark
+                          ? kcWhiteColor : kcWhiteColor, // Custom text color (optional)
+                    ),
+                  ),
+                ),
+              ],
             ),
             // Explore Capsule
             InkWell(
@@ -449,13 +450,16 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   borderRadius:
                       BorderRadius.circular(20), // Rounded capsule shape
                 ),
-                child: const Row(
+                child: Row(
                   children: [
                     Text(
                       "Explore",
-                      style: TextStyle(
-                        color: kcBlackColor,
-                        fontWeight: FontWeight.w500,
+                      style: GoogleFonts.redHatDisplay(
+                        textStyle: TextStyle(
+                          fontSize: 12, // Custom font size
+                          color: kcBlackColor,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     SizedBox(width: 8),
@@ -472,7 +476,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 300, // Adjust height to match the size of your cards
+          height: 300,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: raffles.length,
@@ -485,11 +489,23 @@ class DashboardView extends StackedView<DashboardViewModel> {
               final formattedEndDate = DateFormat('yyyy-MM-dd')
                   .format(DateTime.parse(raffle.endDate ?? ''));
 
+              final endDate = DateTime.parse(raffle.endDate ?? '');
+              final now = DateTime.now();
+              final remainingDuration = endDate.difference(now);
+
+              double cardHeight = 250; // Default height
+              if (index % 3 == 1) {
+                cardHeight = 200; // Shorter card
+              } else if (index % 3 == 2) {
+                cardHeight = 300; // Full-height card
+              }
+
               return InkWell(
                 onTap: () {
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
+                    isDismissible: true,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(25.0),
@@ -499,16 +515,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     // backgroundColor: Colors.transparent,
                     backgroundColor: Colors.black.withOpacity(0.7),
                     builder: (BuildContext context) {
-                      return FractionallySizedBox(
-                        heightFactor: 0.9, // 70% of the screen's height
-                        child: RaffleDetail(raffle: raffle),
-                      );
+                      return RaffleDetail(raffle: raffle);
                     },
                   );
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(right: 10.0),
                   child: Container(
+                    height: cardHeight,
                     width: 250,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -536,8 +550,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
-                            color: Colors.black.withOpacity(
-                                0.6), // Dark semi-transparent overlay
+                            color:  uiMode.value == AppUiModes.dark
+                                ? Colors.black.withOpacity(
+                                0.8) : Colors.black.withOpacity(
+                                0.6),
+                             // Dark semi-transparent overlay
                             height: double.infinity,
                             width: double.infinity,
                           ),
@@ -550,7 +567,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: kcWhiteColor,
+                              color: uiMode.value == AppUiModes.dark
+                                  ? kcVeryLightGrey : kcWhiteColor,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -592,15 +610,31 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                // mainAxisAlignment:
+                                //     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'WIN Prize in $formattedEndDate',
+                                    'WIN Prize in',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 13,
                                     ),
+                                  ),
+                                  SlideCountdown(
+                                    duration: remainingDuration,
+                                    decoration: const BoxDecoration(
+                                      // color: kcPrimaryColor,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                    ),
+                                    separator: ':',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                    onDone: () {
+                                      print('Countdown finished!');
+                                    },
                                   ),
                                 ],
                               ),
@@ -615,6 +649,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
+                              // buildParticipantsAvatars(raffle.participants ?? []),
+
+
                               Row(
                                 children: [
                                   Image.asset(
@@ -646,6 +683,54 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
+  Widget buildParticipantsAvatars(List<Participant> participants) {
+    return SizedBox(
+      height: 25, // Adjust the size to match the avatar size
+      child: Stack(
+        children: participants.asMap().entries.map((entry) {
+          int index = entry.key;
+          Participant participant = entry.value;
+          double overlapOffset = 20.0; // Control the overlap amount
+          return Positioned(
+            left: index * overlapOffset,
+            child: participant.profilePic?.url != null
+                ? ClipOval(
+              child: Image.network(
+                participant.profilePic!.url!,
+                width: 25,
+                height: 25,
+                fit: BoxFit.cover,
+              ),
+            )
+                : _buildInitialsCircle(participant), // Show initials if no image
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildInitialsCircle(Participant participant) {
+    String initials = _getInitials(participant);
+    return CircleAvatar(
+      radius: 12, // Adjust the size if needed
+      backgroundColor: kcSecondaryColor, // Customize background color
+      child: Text(
+        initials,
+        style: const TextStyle(
+          color: Colors.white, // Text color for initials
+          fontSize: 12, // Adjust the font size if needed
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  String _getInitials(Participant participant) {
+    String firstName = participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
+    String lastName = participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
+    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'.toUpperCase();
+  }
+
   Widget donationsSlider(BuildContext context, List<ProjectResource> projects) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -654,24 +739,33 @@ class DashboardView extends StackedView<DashboardViewModel> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // Popular Draws Text
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Donations",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Panchang",
+                  style: GoogleFonts.bricolageGrotesque(
+                    textStyle: TextStyle(
+                      fontSize: 16, // Custom font size
+                      fontWeight: FontWeight.w700, // Custom font weight
+                      color: uiMode.value == AppUiModes.dark
+                          ? Colors.white // Dark mode logo
+                          : Colors.black, // Custom text color (optional)
+                    ),
                   ),
                 ),
                 Text(
                   "Empower Change with Your Points",
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
+                  style: GoogleFonts.redHatDisplay(
+                    textStyle: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      color: uiMode.value == AppUiModes.dark
+                          ? Colors.white // Dark mode logo
+                          : Colors.black,
+                    ),
                   ),
-                )
+                ),
               ],
             ),
             // Explore Capsule
@@ -680,13 +774,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 locator<NavigationService>().navigateToNotificationView();
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: kcSecondaryColor
-                      .withOpacity(0.2), // Capsule background color
-                  borderRadius:
-                      BorderRadius.circular(20), // Rounded capsule shape
+                  color: kcSecondaryColor.withOpacity(0.2), // Capsule background color
+                  borderRadius: BorderRadius.circular(20), // Rounded capsule shape
                 ),
                 child: const Row(
                   children: [
@@ -711,7 +802,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 222, // Adjust height to match the size of your cards
+          height: 250, // Adjust height to match the size of your cards
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: projects.length,
@@ -721,32 +812,29 @@ class DashboardView extends StackedView<DashboardViewModel> {
               final imageUrl = project?.media?.isNotEmpty == true
                   ? project?.media![0].url
                   : 'https://via.placeholder.com/150';
+
               return Padding(
                 padding: const EdgeInsets.only(right: 10.0),
                 child: InkWell(
                   onTap: () {
-                    // showModalBottomSheet(
-                    //   context: context,
-                    //   isScrollControlled: true,
-                    //   shape: const RoundedRectangleBorder(
-                    //     borderRadius: BorderRadius.only(topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
-                    //   ),
-                    //   backgroundColor: Colors.black.withOpacity(0.7),
-                    //   builder: (BuildContext context) {
-                    //     return FractionallySizedBox(
-                    //       heightFactor: 0.8, // 70% of the screen's height
-                    //       child: ServiceDetailsPage(service: service, isModal: true),
-                    //     );
-                    //   },
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProjectDetailsPage(
+                          project: projects[index],
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     width: 222,
                     decoration: BoxDecoration(
-                      color: kcWhiteColor,
+                      color: uiMode.value == AppUiModes.dark
+                          ? Colors.transparent // Dark mode logo
+                          : kcWhiteColor,
                       borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        const BoxShadow(
+                      boxShadow: const [
+                        BoxShadow(
                           color: Colors.transparent,
                           blurRadius: 6.0,
                           offset: Offset(0, 2),
@@ -754,87 +842,76 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       ],
                     ),
                     child: Card(
-                      color: kcWhiteColor,
+                      color: uiMode.value == AppUiModes.dark
+                          ? kcDarkGreyColor // Dark mode logo
+                          : kcWhiteColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                              // color: kcPrimaryColor,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12)),
+                          ClipRRect(
+                            borderRadius: const BorderRadius.all(Radius.circular(12)),
+                            child: Image.network(
+                              imageUrl!,
+                              width: double.infinity, // or specify a width
+                              height: 124, // or specify a height
+                              fit: BoxFit.cover,
                             ),
-                            child: ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(12)),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.network(
-                                    imageUrl!,
-                                    width:
-                                        double.infinity, // or specify a width
-                                    height: 124, // or specify a height
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Padding(
-                                    // Add padding to the row
-                                    padding: const EdgeInsets.fromLTRB(5.0, 5.0,
-                                        5.0, 0), // Adjust padding as needed
-                                    child: Text(
-                                      project?.projectTitle ?? 'service title',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: kcBlackColor,
-                                        fontWeight: FontWeight.w600,
-                                        // fontFamily: "Panchang"
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Padding(
-                                    // Add padding to the row
-                                    padding: const EdgeInsets.fromLTRB(8.0, 0,
-                                        8.0, 8.0), // Adjust padding as needed
-                                    child: Text(
-                                      project?.projectDescription ?? '',
-                                      style: const TextStyle(
-                                        fontSize: 10,
-                                        color: kcBlackColor,
-                                        // fontFamily: "Panchang"
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/partcipant_icon.png",
-                                          width: 40,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '${members?.length ?? 0} Participants',
-                                          style: const TextStyle(
-                                            color: kcDarkGreyColor,
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0),
+                            child: Text(
+                              project?.projectTitle ?? 'service title',
+                              style: GoogleFonts.redHatDisplay(
+                                fontSize: 16,
+                                color: uiMode.value == AppUiModes.dark
+                                    ? kcWhiteColor // Dark mode logo
+                                    : kcBlackColor,
+                                fontWeight: FontWeight.w600,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(5.0, 0, 8.0, 8.0),
+                            child: Text(
+                              project?.projectDescription ?? '',
+                              style: GoogleFonts.redHatDisplay(
+                                fontSize: 12,
+                                color: uiMode.value == AppUiModes.dark
+                                    ? kcWhiteColor // Dark mode logo
+                                    : kcBlackColor,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: buildMembersAvatars(members ?? []),
+                            // Row(
+                            //   children: [
+                            //     Image.asset(
+                            //       "assets/images/partcipant_icon.png",
+                            //       width: 40,
+                            //     ),
+                            //     const SizedBox(width: 4),
+                            //     Text(
+                            //       '${members?.length ?? 0} Participants',
+                            //       style: GoogleFonts.redHatDisplay(
+                            //         fontSize: 10,
+                            //         color: uiMode.value == AppUiModes.dark
+                            //             ? kcWhiteColor // Dark mode logo
+                            //             : kcBlackColor,
+                            //         fontWeight: FontWeight.w400,
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                           ),
                         ],
                       ),
@@ -849,9 +926,469 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
+  Widget buildMembersAvatars(List<Member> participants) {
+    double avatarSize = 20.0;
+    double overlapOffset = 15.0; // Adjust the overlap amount
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        // Constrain the Stack with a specific width
+        SizedBox(
+          height: avatarSize,
+          width: participants.length * overlapOffset + avatarSize, // Ensure a finite width
+          child: Stack(
+            children: participants.asMap().entries.map((entry) {
+              int index = entry.key;
+              Member participant = entry.value;
+
+              return Positioned(
+                left: index * overlapOffset,
+                child: ClipOval(
+                  child: participant.profilePic?.url != null
+                      ? Image.network(
+                    participant.profilePic!.url!,
+                    width: avatarSize,
+                    height: avatarSize,
+                    fit: BoxFit.cover,
+                  )
+                      : _buildMembersInitialsCircle(participant),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+          Text(
+            ' ${participants.length} Participants',
+            style: GoogleFonts.redHatDisplay(
+              fontSize: 10,
+              color: uiMode.value == AppUiModes.dark
+                  ? kcWhiteColor // Dark mode logo
+                  : kcBlackColor,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+      ],
+    );
+  }
+
+
+  Widget _buildMembersInitialsCircle(Member participant) {
+    String initials = _getMemberInitials(participant);
+    return CircleAvatar(
+      radius: 10, // Adjust the size if needed
+      backgroundColor: kcSecondaryColor, // Customize background color
+      child: Text(
+        initials,
+        style: const TextStyle(
+          color: Colors.white, // Text color for initials
+          fontSize: 10, // Adjust the font size if needed
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  String _getMemberInitials(Member participant) {
+    String firstName = participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
+    String lastName = participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
+    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'.toUpperCase();
+  }
+
+  Widget _buildShimmerOrContent(
+      BuildContext context, DashboardViewModel viewModel) {
+    if (viewModel.raffleList.isEmpty && viewModel.isBusy) {
+      return Column(
+        children: [
+          _buildShimmerContainer(), // shimmer for video player placeholder
+          verticalSpaceSmall,
+          _buildShimmerQuickActions(), // shimmer for quick actions
+          verticalSpaceMedium,
+          _buildShimmerQuickActions(), // shimmer for quick actions
+          verticalSpaceMedium,
+          _buildShimmerSlider(), // shimmer for raffle list
+          verticalSpaceMedium,
+          _buildShimmerSlider(), // shimmer for donations
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          _buildAdsSlideshow(viewModel),
+          verticalSpaceSmall,
+          quickActions(context),
+          verticalSpaceMedium,
+          doMoreOnAfriprize(context),
+          verticalSpaceMedium,
+          popularDrawsSlider(context, viewModel.raffleList),
+          verticalSpaceMedium,
+          donationsSlider(context, viewModel.projectResources),
+        ],
+      );
+    }
+  }
+
+  Widget _buildAdsSlideshow(DashboardViewModel viewModel) {
+    if (viewModel.adsList.isEmpty) {
+      return Container(
+        width: double.infinity,
+        height: 150,
+        decoration: BoxDecoration(
+          color: kcSecondaryColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Center(child: SvgPicture.asset(
+          uiMode.value == AppUiModes.dark
+              ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
+              : "assets/images/dashboard_logo.svg",
+          width: 500,
+          height: 200,
+        )),
+      );
+    }
+
+    return CarouselSlider.builder(
+      itemCount: viewModel.adsList.length,
+      itemBuilder: (context, index, realIndex) {
+        final ad = viewModel.adsList[index];
+        return _buildAdItem(ad);
+      },
+      options: CarouselOptions(
+        height: 150,
+        autoPlay: true,
+        enlargeCenterPage: true,
+        viewportFraction: 1,
+        autoPlayInterval: Duration(seconds: 5),
+        onPageChanged: (index, reason) {
+          // Optionally handle page change event
+        },
+      ),
+    );
+  }
+
+  Widget _buildAdItem(Ads ad) {
+    return Container(
+      width: double.infinity,
+      height: 150,
+      decoration: BoxDecoration(
+        color: kcSecondaryColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.network(
+          ad.url ?? '',
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, progress) {
+            if (progress == null) return child;
+            return Center(child: CircularProgressIndicator());
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerContainer() {
+    return Shimmer.fromColors(
+      baseColor: uiMode.value == AppUiModes.dark
+          ? Colors.grey[700]!
+          : Colors.grey[300]!,
+      highlightColor: uiMode.value == AppUiModes.dark
+          ? Colors.grey[300]!
+          : Colors.grey[100]!,
+      child: Container(
+        width: double.infinity,
+        height: 200,
+        decoration: BoxDecoration(
+          color: kcSecondaryColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerQuickActions() {
+    return Shimmer.fromColors(
+      baseColor: uiMode.value == AppUiModes.dark
+          ? Colors.grey[700]!
+          : Colors.grey[300]!,
+      highlightColor: uiMode.value == AppUiModes.dark
+          ? Colors.grey[300]!
+          : Colors.grey[100]!,
+      child: Container(
+        width: double.infinity,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerSlider() {
+    return Shimmer.fromColors(
+      baseColor: uiMode.value == AppUiModes.dark
+          ? Colors.grey[700]!
+          : Colors.grey[300]!,
+      highlightColor: uiMode.value == AppUiModes.dark
+          ? Colors.grey[300]!
+          : Colors.grey[100]!,
+      child: Container(
+        height: 300, // Adjust the height as per your design
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVideContainer() {
+    return Container(
+      width: double.infinity,
+      height: 200,
+      decoration: BoxDecoration(
+        color: kcSecondaryColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+  }
+
+  Widget _notificationIcon(int unreadCount, BuildContext context, DashboardViewModel viewModel) {
+    print('notif count is $unreadCount');
+    return Stack(
+      children: [
+        IconButton(
+          icon: SvgPicture.asset(
+            uiMode.value == AppUiModes.dark
+                ? "assets/images/dashboard_otification_white.svg" // Dark mode logo
+                : "assets/images/dashboard_otification.svg", width: 30, height: 30,),
+          onPressed: (){_showNotificationSheet(context, viewModel);}
+        ),
+        if (unreadCount > 0)
+          Positioned(
+            right: 10,
+            top: 10,
+            child: Container(
+              padding: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              constraints: BoxConstraints(minWidth: 10, minHeight: 10),
+              child: Text(
+                unreadCount.toString(),
+                style: TextStyle(color: Colors.white, fontSize: 6),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _showNotificationSheet(BuildContext context, DashboardViewModel viewModel) {
+    viewModel.markAllNotificationsAsRead();
+
+    TopModalSheet.show(
+        context: context,
+        isShowCloseButton: true,
+        closeButtonRadius: 20.0,
+        closeButtonBackgroundColor: kcSecondaryColor,
+        child: Container(
+          color: kcWhiteColor,
+          padding: const EdgeInsets.all(16),
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: Column(
+            children: [
+              Text("Notifications", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: notifications.value.length,
+                  itemBuilder: (context, index) {
+                    final notification = notifications.value[index];
+                    return ListTile(
+                      minLeadingWidth: 10,
+                      leading: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        child: SvgPicture.asset(
+                          'assets/icons/ticket_out.svg',
+                          height: 28,
+                        ),
+                      ),
+                      title: Text(
+                        notification.subject,
+                        style: GoogleFonts.redHatDisplay(
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      subtitle: Text(
+                        notification.message,
+                        style: GoogleFonts.redHatDisplay(
+                          textStyle: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            color: kcDarkGreyColor,
+                          ),
+                        ),
+                      ),
+                      trailing: notification.unread ? Icon(Icons.circle, color: Colors.red, size: 10) : null,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ));
+  }
+
+
+
+
+  List<Widget> _buildAppBarActions(BuildContext context, bool isLoading, DashboardViewModel viewModel) {
+    if (isLoading) {
+      // Display the shimmer effect while loading
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  width: 25,
+                  height: 25,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(right: 0.0),
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(5.0),
+                          bottomLeft: Radius.circular(5.0),
+                        ),
+                      ),
+                      width: 80,  // Adjust width for the shimmer
+                      height: 20,  // Adjust height for the shimmer
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
+      ];
+    } else {
+      // Normal display when data is loaded
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              if (userLoggedIn.value == true) ...[
+                _notificationIcon(unreadCount.value, context, viewModel),
+                const SizedBox(width: 3),
+                InkWell(
+                  onTap: () {
+                    locator<NavigationService>().navigateTo(Routes.wallet);
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 0.0),
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: kcPrimaryColor.withOpacity(0.1),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(5.0),
+                            bottomLeft: Radius.circular(5.0),
+                          ),
+                        ),
+                        child: Text(
+                          '${profile.value.accountPoints} points',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Roboto',
+                          ),
+                        ),
+                      ),
+                      SvgPicture.asset(
+                        "assets/images/dashboard_wallet.svg",
+                        width: 30,
+                        height: 30,
+                      ),
+                    ],
+                  ),
+                ),
+              ] else ...[
+                InkWell(
+                  onTap: () {
+                    locator<NavigationService>().navigateTo(Routes.authView);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: kcSecondaryColor.withOpacity(0.2), // Capsule background color
+                      borderRadius: BorderRadius.circular(10), // Rounded capsule shape
+                    ),
+                    child: const Row(
+                      children: [
+                        Text(
+                          "Login",
+                          style: TextStyle(
+                            color: kcBlackColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        )
+      ];
+    }
+  }
+
+
+
+
+
   @override
   void onViewModelReady(DashboardViewModel viewModel) {
-    viewModel.init();
+
     super.onViewModelReady(viewModel);
     viewModel.initialise();
     Timer.periodic(const Duration(seconds: 8), (Timer timer) {
@@ -1366,6 +1903,4 @@ class RaffleRow extends StatelessWidget {
     // Decide text color based on luminance
     return luminance < 0.1 ? Colors.white : Colors.black;
   }
-
-
 }

@@ -8,6 +8,8 @@ import 'package:afriprize/app/app.router.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/data/models/profile.dart';
+import '../../../core/network/api_response.dart';
+import '../../../core/network/interceptors.dart';
 import '../../../state.dart';
 
 class StartupViewModel extends BaseViewModel {
@@ -30,9 +32,26 @@ class StartupViewModel extends BaseViewModel {
       if (token != null && user != null) {
         userLoggedIn.value = true;
         profile.value = Profile.fromJson(Map<String, dynamic>.from(jsonDecode(user)));
+        getProfile();
+
       }
       _navigationService.replaceWithHomeView();
       // _navigationService.replaceWithAuthView();
+    }
+  }
+
+  void getProfile() async {
+    try {
+      ApiResponse res = await repo.getProfile();
+      if (res.statusCode == 200) {
+        profile.value =
+            Profile.fromJson(Map<String, dynamic>.from(res.data['data']));
+        await locator<LocalStorage>().save(LocalStorageDir.profileView, res.data["data"]);
+        notifyListeners();
+        print(profile.value.accountPoints);
+      }
+    } catch (e) {
+      throw Exception(e);
     }
   }
 

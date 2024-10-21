@@ -28,7 +28,6 @@ class ProfileView extends StatelessWidget {
     return ViewModelBuilder<ProfileViewModel>.reactive(
       viewModelBuilder: () => ProfileViewModel(),
       onModelReady: (viewModel) {
-        // Make API call to get profile data when the ViewModel is ready
         viewModel.getProfile();
       },
       builder: (context, viewModel, child) {
@@ -69,10 +68,7 @@ class ProfileView extends StatelessWidget {
                                 },
                                 child: ProfilePicture(
                                     size: 100,
-                                    url: 'https://via.placeholder.com/150'
-                                    //   url: profile.value.pictures
-                                    //       ? null
-                                    //       : profile.value.pictures?[0].location,
+                                      url: profile.value.profilePic?.url,
                                     ),
                               ),
                               // horizontalSpaceLarge,
@@ -109,7 +105,7 @@ class ProfileView extends StatelessWidget {
                                     ),
                                   ),
                                   child: const Icon(
-                                    Icons.add,
+                                    Icons.remove_red_eye_outlined,
                                     color: kcWhiteColor, // Icon color
                                     size: 18, // Icon size
                                   ),
@@ -128,7 +124,7 @@ class ProfileView extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(profile.value.country?.name ?? "")
+                              Text(profile.value.username ?? "")
                             ],
                           ),
                         ],

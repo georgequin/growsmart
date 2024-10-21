@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../../app/app.logger.dart';
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/raffle_ticket.dart';
+import '../../../state.dart';
 import '../../common/ui_helpers.dart';
 
 class TicketList extends StatefulWidget {
@@ -19,15 +20,21 @@ class TicketList extends StatefulWidget {
 }
 
 class _OrderListState extends State<TicketList> {
-  List<OrderItem> orders = [];
+
   bool loading = false;
 
 
   final repo = locator<Repository>();
   final log = getLogger("DrawsViewModel");
   List<RaffleTicket> raffle = [];
+  List<RaffleTicket> filteredRaffle = [];
   List<CombinedTicket> combinedTicket = [];
   int selectedIndex = 0;
+  List<String> filteredCategories = ['All', 'Active', 'Winner', 'Invalid' ];
+  static const String allCategoriesId = 'All';
+
+  String selectedId = allCategoriesId;
+  String searchQuery = '';
 
   onPageChanged(int index) {
     selectedIndex = index;
@@ -39,37 +46,14 @@ class _OrderListState extends State<TicketList> {
     try {
       ApiResponse res = await repo.raffleList();
       if (res.statusCode == 200) {
-        // var raffleData = (res.data["participant"] as List)
-        //     .map((e) => RaffleTicket.fromJson(Map<String, dynamic>.from(e['raffledraw'])))
-        //     .toList();
-
-
-        for (var participant in (res.data["participant"] as List)) {
-          // Access the raffle draw information once since it's the same for all tickets of this participant
-          var raffleDraw = participant['raffledraw'];
-
-          for (var ticket in (participant['ticket'] as List)) {
-            // Combine ticket information with the raffle draw information
-            var combinedInfo = CombinedTicket(
-              raffleId: raffleDraw['id'],
-              ticketName: raffleDraw['ticket_name'],
-              ticketDescription: raffleDraw['ticket_description'],
-              ticketTracking: raffleDraw['ticket_tracking'],
-              endDate: raffleDraw['end_date'],
-              ticketStatus: ticket['status'],
-              startDate: raffleDraw['start_date'],
-              ticketId: ticket['id'],
-              raffleNumber: ticket['raffle_number'],
-              pictures: raffleDraw['pictures'].map<Pictures>((pic) => Pictures.fromJson(pic)).toList(),
-            );
-            setState(() {
-              combinedTicket.add(combinedInfo);
-            });
-          }
-        }
+        // Extracting the list of raffle tickets from the response
+        raffle = (res.data['data']['items'] as List)
+            .map((e) => RaffleTicket.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
 
 
         setState(() {
+          filteredRaffle = raffle;
           loading = false;
         });
       } else {
@@ -85,6 +69,78 @@ class _OrderListState extends State<TicketList> {
     }
     //setBusyForObject(raffle, false);
   }
+
+  void updateSearchQuery(String query) {
+    setState(() {
+      searchQuery = query;
+      if (searchQuery.isEmpty) {
+        filteredRaffle = raffle;
+      } else {
+        filteredRaffle = raffle.where((service) {
+          return service.ticketNumber!.toLowerCase().contains(searchQuery.toLowerCase()) ||
+              service.raffle!.name!.toLowerCase().contains(searchQuery.toLowerCase())
+              ||
+              service.raffle!.description!.toLowerCase().contains(searchQuery.toLowerCase());
+        }).toList();
+      }
+    });
+
+  }
+
+  void setSelectedCategory(String id) {
+    setState(() {
+      selectedId = id;
+
+      if (id == allCategoriesId) {
+        filteredRaffle = raffle;
+        print('Full Raffle List:');
+        filteredRaffle.forEach((ticket) {
+          print('Ticket Number: ${ticket.ticketNumber}, Status: ${ticket.status}, Winner: ${ticket.isWinner}');
+        });
+      } else if (id == 'Active') {
+        filteredRaffle = raffle.where((ticket) => ticket.status == 'ACTIVE').toList();
+      } else if (id == 'Winner') {
+        filteredRaffle = raffle.where((ticket) => ticket.isWinner == true && ticket.status == 'WINNING').toList();
+      }
+      else if (id == 'Invalid') {
+        filteredRaffle = raffle.where((ticket) =>
+        ticket.status == 'INVALID' || ticket.status == 'EXPIRED' || ticket.status == 'REVOKED'
+        ).toList();
+      }
+    });
+  }
+
+
+
+  Widget _buildCategoryChip(String category) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: ChoiceChip(
+        label: Text(category),
+        selected: category == selectedId, // Check if this category is selected
+        onSelected: (bool selected) {
+          setSelectedCategory(selected ? category : allCategoriesId); // Update selected category
+        },
+        selectedColor: kcSecondaryColor,
+        backgroundColor: uiMode.value == AppUiModes.dark
+            ? kcMediumGrey
+            : kcWhiteColor,
+        labelStyle: TextStyle(
+          color: category == selectedId ? Colors.white : Colors.black,
+        ),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: uiMode.value == AppUiModes.dark
+                ? kcMediumGrey
+                : kcWhiteColor,  // Set the border color to light grey
+            width: 1.0,                // Set the border width
+          ),
+          borderRadius: BorderRadius.circular(30.0), // Reduce the border radius (adjust this value)
+        ),
+      ),
+    );
+  }
+
 
   @override
   void initState() {
@@ -104,22 +160,56 @@ class _OrderListState extends State<TicketList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title:  const Text(
           "My Tickets",
         ),
         centerTitle: true,
       ),
       body: loading
-          ? const Center(
+          ?  const Center(
         child: CircularProgressIndicator(),
       )
-          : combinedTicket.isEmpty
-          ? const EmptyState(
+          : raffle.isEmpty
+          ?  const EmptyState(
           animation: "empty_order.json", label: "No Tikets Yet")
           :
             Container(
-              color: Colors.white,
-              child:  _buildOrderList(),
+              color: uiMode.value == AppUiModes.dark
+                  ? kcDarkGreyColor
+                  : kcWhiteColor,
+              child:  Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      onChanged: updateSearchQuery,
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        prefixIcon: const Icon(Icons.search),
+                        filled: true,
+                        fillColor: uiMode.value == AppUiModes.dark
+                            ? kcMediumGrey
+                            : kcWhiteColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: filteredCategories.map((category) {
+                        return _buildCategoryChip(category);
+                      }).toList(),
+                    ),
+                  ),
+                  verticalSpaceSmall,
+                  Expanded(child: _buildOrderList()),
+                ],
+              )
+
             ),
 
 
@@ -127,12 +217,12 @@ class _OrderListState extends State<TicketList> {
   }
 
   Widget _buildOrderList() {
-    return combinedTicket.isEmpty ?  const EmptyState(
+    return filteredRaffle.isEmpty ?  const EmptyState(
         animation: "empty_order.json", label: "No Ticket Yet") :
     ListView.builder(
-      itemCount: combinedTicket.length,
+      itemCount: filteredRaffle.length,
       itemBuilder: (context, index) {
-        CombinedTicket ticket = combinedTicket[index];
+        RaffleTicket ticket = filteredRaffle[index];
         return Card(
             margin: const EdgeInsets.all(8.0),
             elevation: 0,
@@ -141,7 +231,9 @@ class _OrderListState extends State<TicketList> {
             ),
             child: Container(
                    decoration: BoxDecoration(
-                                  color: Colors.white, // Card's background color
+                                  color: uiMode.value == AppUiModes.dark
+                                      ? kcMediumGrey
+                                      : kcWhiteColor, // Card's background color
                                   borderRadius: BorderRadius.circular(10.0), // Ensure this matches the card's border radius
                                   boxShadow: const [
                                       BoxShadow(
@@ -163,10 +255,10 @@ class _OrderListState extends State<TicketList> {
                                         height: 74,
                                         width: 74,
                                         decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
+                                          shape: BoxShape.rectangle,
                                           image: DecorationImage(
                                             fit: BoxFit.cover,
-                                            image: NetworkImage(ticket.pictures?[0].location ?? 'https://via.placeholder.com/120'),
+                                            image: NetworkImage(ticket.raffle!.media?[0].url ?? 'https://via.placeholder.com/120'),
                                           ),
                                         ),
                                       ),
@@ -175,37 +267,47 @@ class _OrderListState extends State<TicketList> {
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
                                           children: <Widget>[
-                                            ElevatedButton(
-                                                          onPressed: () {}, // Button tapped functionality goes here
-                                                          style: ElevatedButton.styleFrom(
-                                                            backgroundColor: kcPrimaryColor, // Background color
-                                                          ),
-                                                          child: Text(
-                                                            '${ticket.ticketName}',
-                                                            style: const TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight: FontWeight.bold,
-                                                                fontFamily: "Panchang"
-                                                            ),
-                                                          ),
-                                                        ),
-                                            const SizedBox(height: 4),
+
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: kcPrimaryColor,
+                                                borderRadius: BorderRadius.circular(10.0),
+                                                boxShadow: const [
+                                                  BoxShadow(
+                                                    color: Colors.black12,
+                                                    blurRadius: 5.0,
+                                                    spreadRadius: 1.0,
+                                                    offset: Offset(0, 3),
+                                                  ),
+                                                ],
+                                              ),
+                                              // Added padding around the content of the container
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                                                child: Text(
+                                                  '${ticket.raffle?.name}',
+                                                  style: const TextStyle(
+                                                      color: kcWhiteColor,
+                                                      fontSize: 13,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontFamily: "Panchang"
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                                               children: [
                                                 Text(
-                                                  'Draw Date: ${DateFormat("d MMM").format(DateTime.parse(ticket.endDate!))}',
+                                                  'Draw Date: ${DateFormat("d MMM").format(DateTime.parse(ticket.raffle!.endDate!))}',
                                                   style: const TextStyle(
                                                     fontSize: 14, // Adjust the size as needed
                                                     color: Colors.grey,
                                                   ),
                                                 ),
-                                                Chip(
-                                                  label: Text(ticket.ticketStatus == 1 ? 'Active' : 'Completed',
-                                                      style: const TextStyle(color: Colors.white, fontSize: 12)),
-                                                  backgroundColor: ticket.ticketStatus == 1 ? Colors.green : Colors.grey,
-                                                ),
+                                                Text(ticket.status ?? 'INACTIVE',
+                                                    style:  TextStyle(color: ticket.status == 'ACTIVE' ? Colors.green : Colors.grey, fontSize: 12)),
                                               ],
                                             )
 
@@ -242,7 +344,7 @@ class _OrderListState extends State<TicketList> {
                                             ),
                                           ),
                                           Text(
-                                            ticket.raffleNumber ?? '',
+                                            ticket.ticketNumber ?? '',
                                             style: const TextStyle(
                                               fontSize: 17, // Adjust the size as needed
                                               fontWeight: FontWeight.bold,

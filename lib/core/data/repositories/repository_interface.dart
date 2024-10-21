@@ -17,6 +17,12 @@ abstract class IRepository {
 
   Future<ApiResponse> getRaffle();
 
+  Future<ApiResponse> getAds();
+
+  Future<ApiResponse> getDrawEvents();
+
+  Future<ApiResponse> getRaffleWinners();
+
   Future<ApiResponse> getSoldOutRaffle();
 
   Future<ApiResponse> getRaffleResult();
@@ -29,17 +35,21 @@ abstract class IRepository {
 
   Future<ApiResponse> initTransaction(Map<String, dynamic> req);
 
+  Future<ApiResponse> donateToProject(Map<String, dynamic> req);
+
   Future<ApiResponse> saveOrder(Map<String, dynamic> req);
 
   Future<ApiResponse> verifyTransaction(String ref);
 
   Future<ApiResponse> payForOrder(Map<String, dynamic> req);
 
-  Future<ApiResponse> resetPasswordRequest(String email);
-
   Future<ApiResponse> convertToNaira(String amount);
 
   Future<ApiResponse> updatePassword(Map<String, dynamic> req, String email);
+
+  Future<ApiResponse> forgotPassword(Map<String, dynamic> req);
+
+  Future<ApiResponse> newPassword(Map<String, dynamic> req);
 
   Future<ApiResponse> resetPassword(Map<String, dynamic> req);
 
@@ -47,7 +57,11 @@ abstract class IRepository {
 
   Future<ApiResponse> deleteAccount(Map<String, dynamic> req);
 
+  Future<ApiResponse> makeComment(Map<String, dynamic> req);
+
   Future<ApiResponse> updateProfilePicture(Map<String, dynamic> req);
+
+  Future<ApiResponse> updateMedia(Map<String, dynamic> req);
 
   Future<ApiResponse> getBanks();
 
@@ -61,6 +75,8 @@ abstract class IRepository {
 
   Future<ApiResponse> cartList();
 
+  Future<ApiResponse> clearCart();
+
   Future<ApiResponse> addToCart(Map<String, dynamic> req);
 
   Future<ApiResponse> deleteFromCart(String raffleId);
@@ -73,7 +89,7 @@ abstract class IRepository {
 
   Future<ApiResponse> getResourceList();
 
-  Future<ApiResponse> getNotifications(String userId);
+  Future<ApiResponse> getNotifications();
 
   Future<ApiResponse> getDonationsCategories();
 

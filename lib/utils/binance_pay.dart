@@ -121,13 +121,6 @@ class _BinancePayModalState extends State<BinancePayModal> {
         },
       );
     }
-    else{
-      List<CartItem> receiptCart = List<CartItem>.from(shopCart.value);
-      shopCart.value.clear();
-      shopCart.notifyListeners();
-      List<Map<String, dynamic>> storedList = shopCart.value.map((e) => e.toJson()).toList();
-      locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
-    }
   }
 
 

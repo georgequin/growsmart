@@ -182,7 +182,7 @@ class _ReferralState extends State<Referral> {
   }
 
   void getDiscount() async {
-      discount = profile.value.discounts?.first;
+      // discount = profile.value.discounts?.first;
   }
 
   void shareReferralCode() {

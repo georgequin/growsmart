@@ -1,3 +1,4 @@
+import 'package:afriprize/state.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -25,8 +26,8 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            title: const Text('Change password',
-                style: TextStyle(color: Colors.black)),
+            title:  Text('Change password',
+                style: TextStyle(color: uiMode.value == AppUiModes.dark ? kcWhiteColor : Colors.black)),
             leading: InkWell(
               onTap: () {
                 Navigator.of(context).pop();

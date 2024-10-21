@@ -14,22 +14,17 @@ import 'package:afriprize/ui/views/auth/auth_view.dart' as _i5;
 import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:afriprize/ui/views/cart/add_shipping.dart';
 import 'package:afriprize/ui/views/cart/raffle_cart_view.dart' as _i8;
-import 'package:afriprize/ui/views/cart/checkout.dart' as _i11;
 import 'package:afriprize/ui/views/cart/add_shipping.dart' as _i13;
-import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
 import 'package:afriprize/ui/views/change_password/change_password_view.dart'
     as _i17;
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart' as _i6;
-import 'package:afriprize/ui/views/dashboard/shop_dashboard_view.dart' as _i29;
 import 'package:afriprize/ui/views/dashboard/raffle_detail.dart' as _i12;
-import 'package:afriprize/ui/views/dashboard/shop_details.dart' as _i30;
 import 'package:afriprize/ui/views/delete_account/delete_account_view.dart'
     as _i19;
 import 'package:afriprize/ui/views/draws/draws_view.dart' as _i7;
 import 'package:afriprize/ui/views/enter_email/enter_email_view.dart' as _i18;
 import 'package:afriprize/ui/views/home/home_view.dart' as _i2;
 import 'package:afriprize/ui/views/notification/notification_view.dart' as _i9;
-import 'package:afriprize/ui/views/onboarding/onboarding_view.dart' as _i4;
 import 'package:afriprize/ui/views/onboarding/onboarding_view2.dart' as _i31;
 import 'package:afriprize/ui/views/otp/otp_view.dart' as _i16;
 import 'package:afriprize/ui/views/profile/profile_view.dart' as _i10;
@@ -56,8 +51,6 @@ class Routes {
   static const homeView = '/home-view';
 
   static const startupView = '/startup-view';
-
-  static const onboardingView = '/onboarding-view';
 
   static const onboardingView2 = '/onboarding-view2';
 
@@ -111,7 +104,6 @@ class Routes {
   static const all = <String>{
     homeView,
     startupView,
-    onboardingView,
     onboardingView2,
     authView,
     dashboardView,
@@ -149,17 +141,13 @@ class StackedRouter extends _i1.RouterBase {
       Routes.ticketView,
       page: _i28.TicketList,
     ),
-    _i1.RouteDef(
-      Routes.orderView,
-      page: OrderList,
-    ),
+    // _i1.RouteDef(
+    //   Routes.orderView,
+    //   page: OrderList,
+    // ),
     _i1.RouteDef(
       Routes.startupView,
       page: _i3.StartupView,
-    ),
-    _i1.RouteDef(
-      Routes.onboardingView,
-      page: _i4.OnboardingView,
     ),
     _i1.RouteDef(
       Routes.onboardingView2,
@@ -174,20 +162,12 @@ class StackedRouter extends _i1.RouterBase {
       page: _i6.DashboardView,
     ),
     _i1.RouteDef(
-      Routes.shopDashboardView,
-      page: _i29.ShopDashboardView,
-    ),
-    _i1.RouteDef(
       Routes.drawsView,
       page: _i7.DrawsView,
     ),
     _i1.RouteDef(
       Routes.cartView,
       page: _i8.CartView,
-    ),
-    _i1.RouteDef(
-      Routes.shopCartView,
-      page: ShopCartView,
     ),
     _i1.RouteDef(
       Routes.notificationView,
@@ -198,16 +178,8 @@ class StackedRouter extends _i1.RouterBase {
       page: _i10.ProfileView,
     ),
     _i1.RouteDef(
-      Routes.checkout,
-      page: _i11.Checkout,
-    ),
-    _i1.RouteDef(
       Routes.productDetail,
       page: _i12.RaffleDetail,
-    ),
-    _i1.RouteDef(
-      Routes.shopDetail,
-      page: _i30.ShopDetail,
     ),
     // _i1.RouteDef(
     //   Routes.receipt,
@@ -217,10 +189,10 @@ class StackedRouter extends _i1.RouterBase {
       Routes.wallet,
       page: _i14.Wallet,
     ),
-    _i1.RouteDef(
-      Routes.track,
-      page: _i15.Track,
-    ),
+    // _i1.RouteDef(
+    //   Routes.track,
+    //   page: _i15.Track,
+    // ),
     _i1.RouteDef(
       Routes.otpView,
       page: _i16.OtpView,
@@ -268,21 +240,15 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    OrderList: (data) {
-      return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const OrderList(),
-        settings: data,
-      );
-    },
+    // OrderList: (data) {
+    //   return _i21.MaterialPageRoute<dynamic>(
+    //     builder: (context) => const OrderList(),
+    //     settings: data,
+    //   );
+    // },
     _i3.StartupView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => const _i3.StartupView(),
-        settings: data,
-      );
-    },
-    _i4.OnboardingView: (data) {
-      return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i4.OnboardingView(),
         settings: data,
       );
     },
@@ -304,12 +270,6 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i29.ShopDashboardView: (data) {
-      return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) =>  _i29.ShopDashboardView(),
-        settings: data,
-      );
-    },
     _i7.DrawsView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) =>  const _i7.DrawsView(),
@@ -319,12 +279,6 @@ class StackedRouter extends _i1.RouterBase {
     _i8.CartView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => const _i8.CartView(),
-        settings: data,
-      );
-    },
-    ShopCartView: (data) {
-      return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const ShopCartView(),
         settings: data,
       );
     },
@@ -340,27 +294,11 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i11.Checkout: (data) {
-      final args = data.getArgs<CheckoutArguments>(nullOk: false);
-      return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) =>
-            _i11.Checkout(infoList: args.infoList, key: args.key),
-        settings: data,
-      );
-    },
     _i12.RaffleDetail: (data) {
       final args = data.getArgs<RaffleDetailArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) =>
             _i12.RaffleDetail(raffle: args.raffle, key: args.key),
-        settings: data,
-      );
-    },
-    _i30.ShopDetail: (data) {
-      final args = data.getArgs<ProductDetailArguments>(nullOk: false);
-      return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) =>
-            _i30.ShopDetail(product: args.product, key: args.key),
         settings: data,
       );
     },
@@ -376,13 +314,13 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i15.Track: (data) {
-      final args = data.getArgs<TrackArguments>(nullOk: false);
-      return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => _i15.Track(item: args.item, key: args.key),
-        settings: data,
-      );
-    },
+    // _i15.Track: (data) {
+    //   final args = data.getArgs<TrackArguments>(nullOk: false);
+    //   return _i21.MaterialPageRoute<dynamic>(
+    //     builder: (context) => _i15.Track(item: args.item, key: args.key),
+    //     settings: data,
+    //   );
+    // },
     _i16.OtpView: (data) {
       final args = data.getArgs<OtpViewArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
@@ -459,32 +397,32 @@ class CheckoutArguments {
   }
 }
 
-class ProductDetailArguments {
-  const ProductDetailArguments({
-    required this.product,
-    this.key,
-  });
-
-  final _i24.Product product;
-
-  final _i23.Key? key;
-
-  @override
-  String toString() {
-    return '{"product": "$product", "key": "$key"}';
-  }
-
-  @override
-  bool operator ==(covariant ProductDetailArguments other) {
-    if (identical(this, other)) return true;
-    return other.product == product && other.key == key;
-  }
-
-  @override
-  int get hashCode {
-    return product.hashCode ^ key.hashCode;
-  }
-}
+// class ProductDetailArguments {
+//   const ProductDetailArguments({
+//     required this.product,
+//     this.key,
+//   });
+//
+//   final _i24.Product product;
+//
+//   final _i23.Key? key;
+//
+//   @override
+//   String toString() {
+//     return '{"product": "$product", "key": "$key"}';
+//   }
+//
+//   @override
+//   bool operator ==(covariant ProductDetailArguments other) {
+//     if (identical(this, other)) return true;
+//     return other.product == product && other.key == key;
+//   }
+//
+//   @override
+//   int get hashCode {
+//     return product.hashCode ^ key.hashCode;
+//   }
+// }
 
 class RaffleDetailArguments {
   const RaffleDetailArguments({
@@ -515,32 +453,32 @@ class RaffleDetailArguments {
 
 class ReceiptArguments {
   const ReceiptArguments({
-    required this.cart,
+    // required this.cart,
     required this.raffle,
     this.key,
   });
 
-  final List<CartItem> cart;
+  // final List<CartItem> cart;
   final List<RaffleTicket> raffle;
 
   final _i23.Key? key;
 
   @override
   String toString() {
-    return '{"cart": "$cart", "raffle": "$raffle", "key": "$key"}';
+    return '{"raffle": "$raffle", "key": "$key"}';
   }
 
   @override
   bool operator ==(covariant ReceiptArguments other) {
     if (identical(this, other)) return true;
-    return other.cart == cart &&
+    return
         other.raffle == raffle &&
         other.key == key;
   }
 
   @override
   int get hashCode {
-    return cart.hashCode ^ raffle.hashCode ^ key.hashCode;
+    return  raffle.hashCode ^ key.hashCode;
   }
 }
 
@@ -569,32 +507,32 @@ class WalletArguments {
   }
 }
 
-class TrackArguments {
-  const TrackArguments({
-    required this.item,
-    this.key,
-  });
-
-  final _i26.OrderItem item;
-
-  final _i23.Key? key;
-
-  @override
-  String toString() {
-    return '{"item": "$item", "key": "$key"}';
-  }
-
-  @override
-  bool operator ==(covariant TrackArguments other) {
-    if (identical(this, other)) return true;
-    return other.item == item && other.key == key;
-  }
-
-  @override
-  int get hashCode {
-    return item.hashCode ^ key.hashCode;
-  }
-}
+// class TrackArguments {
+//   const TrackArguments({
+//     required this.item,
+//     this.key,
+//   });
+//
+//   final _i26.OrderItem item;
+//
+//   final _i23.Key? key;
+//
+//   @override
+//   String toString() {
+//     return '{"item": "$item", "key": "$key"}';
+//   }
+//
+//   @override
+//   bool operator ==(covariant TrackArguments other) {
+//     if (identical(this, other)) return true;
+//     return other.item == item && other.key == key;
+//   }
+//
+//   @override
+//   int get hashCode {
+//     return item.hashCode ^ key.hashCode;
+//   }
+// }
 
 class OtpViewArguments {
   const OtpViewArguments({
@@ -679,19 +617,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToOnboardingView([
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return navigateTo<dynamic>(Routes.onboardingView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
-  }
 
   Future<dynamic> navigateToOnboardingView2([
     int? routerId,
@@ -865,7 +790,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> navigateToRaffleDetail({
-    required _i24.Product product,
     _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -873,9 +797,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   }) async {
-    print('product is: ${product.id}');
     return navigateTo<dynamic>(Routes.productDetail,
-        arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -883,7 +805,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> navigateToShopDetail({
-    required _i24.Product product,
     _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -891,9 +812,8 @@ extension NavigatorStateExtension on _i27.NavigationService {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
     transition,
   }) async {
-    print('product is: ${product.id}');
+
     return navigateTo<dynamic>(Routes.shopDetail,
-        arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -901,7 +821,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> navigateToReceipt({
-    required List<CartItem> cart,
     required List<RaffleTicket> raffle,
     _i23.Key? key,
     int? routerId,
@@ -912,7 +831,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.receipt,
         arguments:
-            ReceiptArguments(cart: cart, raffle: raffle, key: key),
+            ReceiptArguments(raffle: raffle, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -933,22 +852,22 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToTrack({
-    required _i26.OrderItem item,
-    _i23.Key? key,
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  }) async {
-    return navigateTo<dynamic>(Routes.track,
-        arguments: TrackArguments(item: item, key: key),
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
-  }
+  // Future<dynamic> navigateToTrack({
+  //   required _i26.OrderItem item,
+  //   _i23.Key? key,
+  //   int? routerId,
+  //   bool preventDuplicates = true,
+  //   Map<String, String>? parameters,
+  //   Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+  //       transition,
+  // }) async {
+  //   return navigateTo<dynamic>(Routes.track,
+  //       arguments: TrackArguments(item: item, key: key),
+  //       id: routerId,
+  //       preventDuplicates: preventDuplicates,
+  //       parameters: parameters,
+  //       transition: transition);
+  // }
 
   Future<dynamic> navigateToOtpView({
     required String email,
@@ -1055,19 +974,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithOnboardingView([
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return replaceWith<dynamic>(Routes.onboardingView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
-  }
 
   Future<dynamic> replaceWithOnboardingView2([
     int? routerId,
@@ -1199,7 +1105,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> replaceWithProductDetail({
-    required _i24.Product product,
+
     _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -1208,7 +1114,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.productDetail,
-        arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1216,7 +1121,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> replaceWithShopDetail({
-    required _i24.Product product,
     _i23.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -1225,7 +1129,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
     transition,
   }) async {
     return replaceWith<dynamic>(Routes.shopDetail,
-        arguments: ProductDetailArguments(product: product, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1233,7 +1136,6 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }
 
   Future<dynamic> replaceWithReceipt({
-    required List<CartItem> cart,
     required List<RaffleTicket> raffle,
 
     _i23.Key? key,
@@ -1245,7 +1147,7 @@ extension NavigatorStateExtension on _i27.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.receipt,
         arguments:
-            ReceiptArguments(cart: cart, raffle: raffle, key: key),
+            ReceiptArguments(raffle: raffle, key: key),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1269,22 +1171,22 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithTrack({
-    required _i26.OrderItem item,
-    _i23.Key? key,
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  }) async {
-    return replaceWith<dynamic>(Routes.track,
-        arguments: TrackArguments(item: item, key: key),
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
-  }
+  // Future<dynamic> replaceWithTrack({
+  //   required _i26.OrderItem item,
+  //   _i23.Key? key,
+  //   int? routerId,
+  //   bool preventDuplicates = true,
+  //   Map<String, String>? parameters,
+  //   Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+  //       transition,
+  // }) async {
+  //   return replaceWith<dynamic>(Routes.track,
+  //       arguments: TrackArguments(item: item, key: key),
+  //       id: routerId,
+  //       preventDuplicates: preventDuplicates,
+  //       parameters: parameters,
+  //       transition: transition);
+  // }
 
   Future<dynamic> replaceWithOtpView({
     required String email,

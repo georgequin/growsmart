@@ -1,3 +1,5 @@
+import 'package:afriprize/state.dart';
+import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:open_mail_app/open_mail_app.dart';
@@ -170,7 +172,7 @@ class SupportOption extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 10),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white, // Replace with your color
+          color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor, // Replace with your color
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
@@ -210,6 +212,7 @@ class SupportOption extends StatelessWidget {
             ),
             SvgPicture.asset(
               'assets/images/Arrow - Right.svg',
+              color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcPrimaryColor,
               height: 28, // Icon size
             )          ],
         ),

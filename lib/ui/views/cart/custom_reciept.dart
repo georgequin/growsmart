@@ -1,4 +1,5 @@
 import 'package:afriprize/core/data/models/cart_item.dart';
+import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/utils/date_time_utils.dart';
@@ -30,7 +31,7 @@ import '../profile/ticket_list.dart';
 
 
 class ReceiptPage extends StatelessWidget {
-  final List<CartItem> cart;
+  final List<RaffleCartItem> cart;
 
   const ReceiptPage({Key? key, required this.cart}) : super(key: key);
 
@@ -58,7 +59,7 @@ class ReceiptPage extends StatelessWidget {
                   ),
                   child:
                   const Row(children: [
-                    Icon(Icons.share_outlined),
+                    Icon(Icons.share_outlined, size: 10.0,),
                     horizontalSpaceTiny,
                     Text('Share Receipt', style: TextStyle(fontSize: 15)),
                   ],),
@@ -105,98 +106,107 @@ class ReceiptPage extends StatelessWidget {
                             ),
                           ),
                           verticalSpaceLarge,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                formatDate(DateTime.now()),
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
-                              ),
-                              const Row(
-                                children: [
-                                  Icon(Icons.ac_unit, size: 15, color:Colors.green),
-                                  Text('Successful', style: TextStyle(fontSize: 11, color: Colors.green)),
-                                ],
-                              )
-                            ],
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 16.0),
 
-                            decoration: BoxDecoration(
-                              color: kcPrimaryColor,
+                          Card(
+                            margin: const EdgeInsets.all(8.0),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: Image.asset(
-                              "assets/images/receipt_header.png",
-                              fit: BoxFit.cover,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white, // Card's background color
+                                borderRadius: BorderRadius.circular(10.0), // Ensure this matches the card's border radius
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: kcSecondaryColor,
+                                    blurRadius: 0,
+                                    spreadRadius: 1,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Padding( padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          formatDate(DateTime.now()),
+                                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
+                                        ),
+                                        const Row(
+                                          children: [
+                                            Icon(Icons.ac_unit, size: 15, color:Colors.green),
+                                            Text('Successful', style: TextStyle(fontSize: 11, color: Colors.green)),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 16.0),
+
+                                      decoration: BoxDecoration(
+                                        color: kcPrimaryColor,
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      child: Image.asset(
+                                        "assets/images/receipt_header.png",
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const Text(
+                                      'Ticket SUMMARY',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                    ),
+                                    ...cart.map((cartItem) =>  ListTile(
+                                      leading: Image.network(cartItem.raffle!.media!.first.location ?? '', height: 44, width: 48), // Replace with your image URL field
+                                      title: Text(cartItem.raffle!.name!, style: const TextStyle(fontSize: 10.61)),
+                                      subtitle: Text('${cartItem.quantity}', style: const TextStyle(fontSize: 10.61)),
+                                      trailing: Text(cartItem.raffle!.formattedTicketPrice!,style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
+                                        color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                                        fontFamily: "roboto",)),
+                                    )),
+                                    const Divider(),
+                                    verticalSpaceMedium,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Total Order',
+                                          style: TextStyle(fontWeight: FontWeight.w100),
+                                        ),
+                                        Text(
+                                          MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
+                                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12,
+                                            color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+                                            fontFamily: "satoshi",),
+                                        ),
+                                      ],
+                                    ),
+                                    verticalSpaceSmall,
+                                    const Divider(),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'TOTAL:',
+                                          style: TextStyle(fontWeight: FontWeight.w100),
+                                        ),
+                                        Text(
+                                          MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.3),
+                                        ),
+                                      ],
+                                    ),
+                                    const Divider(),
+                                    verticalSpaceSmall
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                          const Text(
-                            'ORDER SUMMARY',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                          ),
-                          ...cart.map((cartItem) =>  ListTile(
-                            leading: Image.network(cartItem.product!.pictures!.first.location ?? '', height: 44, width: 48), // Replace with your image URL field
-                            title: Text(cartItem.product!.productName!, style: const TextStyle(fontSize: 10.61)),
-                            subtitle: Text('${cartItem.quantity}', style: const TextStyle(fontSize: 10.61)),
-                            trailing: Text(MoneyUtils().formatAmount(cartItem.product!.productPrice!),style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
-                              color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                              fontFamily: "satoshi",)),
-                          )),
-                          const Divider(),
-                          verticalSpaceMedium,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Total Order',
-                                style: TextStyle(fontWeight: FontWeight.w100),
-                              ),
-                              Text(
-                                MoneyUtils().formatAmount(getShopSubTotal(cart)),
-                                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12,
-                                  color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                                  fontFamily: "satoshi",),
-                              ),
-                            ],
-                          ),
-                          verticalSpaceSmall,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Delivery Charge:',
-                                style: TextStyle(fontWeight: FontWeight.w100),
-                              ),
-                              Text(
-                                getDeliveryFee(cart) == 0 ? 'Free!' : MoneyUtils().formatAmount(getDeliveryFee(cart)),
-                                style:TextStyle(fontWeight: FontWeight.normal, fontSize: 12,
-                                  color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-                                  fontFamily: "satoshi",),
-                              ),
-                            ],
-                          ),
-                          const Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'TOTAL:',
-                                style: TextStyle(fontWeight: FontWeight.w100),
-                              ),
-                              Text(
-                                MoneyUtils().formatAmount(getShopSubTotal(cart) + getDeliveryFee(cart)),
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.3),
-                              ),
-                            ],
-                          ),
-                          const Divider(),
-                          verticalSpaceSmall,
-                          const Text(
-                            'DELIVERY ADDRESS',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black54),
-                          ),
+                          )
                           // Text(
                           //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
                           //   style: const TextStyle(color: kcSecondaryColor),
@@ -329,26 +339,13 @@ class ReceiptPage extends StatelessWidget {
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
                   pw.Text(
-                    MoneyUtils().formatAmount(getShopSubTotal(cart)),
+                    MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 12,
                     ),
                   ),
                 ],
               ),
               pw.SizedBox(height: 30),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text(
-                    'Delivery Charge:',
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-                  ),
-                  pw.Text(
-                    getDeliveryFee(cart) == 0 ? 'Free!' : MoneyUtils().formatAmount(getDeliveryFee(cart)),
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 12),
-                  ),
-                ],
-              ),
               pw.Divider(),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -357,21 +354,13 @@ class ReceiptPage extends StatelessWidget {
                     'TOTAL:',
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
-                  pw.Text(
-                    MoneyUtils().formatAmount(getShopSubTotal(cart) + getDeliveryFee(cart)),
+                  pw.Text(MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14.3),
                   ),
                 ],
               ),
               pw.Divider(),
               pw.SizedBox(height: 20),
-              pw.Text(
-                'DELIVERY ADDRESS',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16,),
-              ),
-              // pw.Text(
-              //   profile.value.shipping?.firstWhere((element) => element.isDefault!).shippingAddress ?? "Default shipping not set",
-              // ),
             ],
           );
         },
@@ -387,9 +376,9 @@ class ReceiptPage extends StatelessWidget {
     Share.shareFiles([file.path], text: 'Your receipt');
   }
 
-  Future<pw.Widget> createCartItemWidget(CartItem cartItem) async {
+  Future<pw.Widget> createCartItemWidget(RaffleCartItem cartItem) async {
     // Attempt to load the image from the network
-    final response = await http.get(Uri.parse(cartItem.product!.pictures!.first.location!));
+    final response = await http.get(Uri.parse(cartItem.raffle!.media!.first.location!));
 
     pw.Widget imageWidget;
     if (response.statusCode == 200) {
@@ -417,12 +406,12 @@ class ReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.product!.productName!, style: const pw.TextStyle(fontSize: 10.61)),
+                pw.Text(cartItem.raffle!.name!, style: const pw.TextStyle(fontSize: 10.61)),
                 pw.Text('${cartItem.quantity}', style: const pw.TextStyle(fontSize: 10.61)),
               ],
             ),
           ),
-          pw.Text('₦${MoneyUtils().formatAmount(cartItem.product!.productPrice!)}',
+          pw.Text(cartItem.raffle!.formattedTicketPrice!,
             style: pw.TextStyle(fontSize: 10.61, fontWeight: pw.FontWeight.bold),
           ),
         ],

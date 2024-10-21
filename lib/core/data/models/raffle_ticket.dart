@@ -1,74 +1,58 @@
 import 'package:afriprize/core/data/models/product.dart';
+import 'package:afriprize/core/data/models/profile.dart';
 
 import 'order_item.dart';
 
 class RaffleTicket {
   String? id;
-  String? ticketName;
-  String? ticketDescription;
-  String? ticketTracking;
-  int? status;
-  String? startDate;
-  String? endDate;
-  String? created;
-  String? updated;
-  List<Participants>? participants;
-  List<Pictures>? pictures;
+  Profile? user;
+  Raffle? raffle;
+  String? order;
+  String? status;
+  String? ticketNumber;
+  bool? isWinner;
+  String? createdAt;
+  String? updatedAt;
 
-  RaffleTicket(
-      {this.id,
-      this.ticketName,
-      this.ticketDescription,
-      this.ticketTracking,
-      this.status,
-      this.startDate,
-      this.endDate,
-      this.pictures,
-      this.created,
-      this.updated,
-      this.participants});
+  RaffleTicket({
+    this.id,
+    this.user,
+    this.raffle,
+    this.order,
+    this.status,
+    this.ticketNumber,
+    this.isWinner,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   RaffleTicket.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    ticketName = json['ticket_name'];
-    ticketDescription = json['ticket_description'];
-    ticketTracking = json['ticket_tracking'];
+    id = json['_id'];
+    user = json['user'] != null ? Profile.fromJson(json['user']) : null;
+    raffle = json['raffle'] != null ? Raffle.fromJson(json['raffle']) : null;
+    order = json['order'];
     status = json['status'];
-    startDate = json['start_date'];
-    endDate = json['end_date'];
-    created = json['created'];
-    updated = json['updated'];
-    if (json['pictures'] != null) {
-      pictures = <Pictures>[];
-      json['pictures'].forEach((v) {
-        pictures!.add(Pictures.fromJson(v));
-      });
-    }
-    if (json['participants'] != null) {
-      participants = <Participants>[];
-      json['participants'].forEach((v) {
-        participants!.add(Participants.fromJson(v));
-      });
-    }
+    ticketNumber = json['ticket_number'];
+    isWinner = json['is_winner'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['ticket_name'] = ticketName;
-    data['ticket_description'] = ticketDescription;
-    data['ticket_tracking'] = ticketTracking;
+    data['_id'] = id;
+    if (user != null) {
+      data['user'] = user!.toJson();
+    }
+    if (raffle != null) {
+      data['raffle'] = raffle!.toJson();
+    }
+    data['order'] = order;
     data['status'] = status;
-    data['start_date'] = startDate;
-    data['end_date'] = endDate;
-    data['created'] = created;
-    data['updated'] = updated;
-    if (pictures != null) {
-      data['pictures'] = pictures!.map((v) => v.toJson()).toList();
-    }
-    if (participants != null) {
-      data['participants'] = participants!.map((v) => v.toJson()).toList();
-    }
+    data['ticket_number'] = ticketNumber;
+    data['is_winner'] = isWinner;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
     return data;
   }
 }
@@ -203,62 +187,59 @@ class Participants {
 }
 
 class Winner {
-   String? id;
-   bool? status;
-   int? entry;
-   bool? winner;
-   DateTime? created;
-   DateTime? updated;
-   User? user;
-   Raffle? raffle;
-   List<SingleTicket>? tickets;
+  String? id;
+  bool? isWinner;
+  String? status;
+  String? ticketNumber;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  Profile? user;
+  Raffle? raffle;
+  String? order;
 
-  Winner(
-      {this.id,
-     this.status,
-     this.entry,
-     this.winner,
-     this.created,
-     this.updated,
-     this.user,
-     this.tickets,
-     this.raffle,});
+  Winner({
+    this.id,
+    this.isWinner,
+    this.status,
+    this.ticketNumber,
+    this.createdAt,
+    this.updatedAt,
+    this.user,
+    this.raffle,
+    this.order,
+  });
 
-   Winner.fromJson(Map<String, dynamic> json) {
-      id = json['id'];
-      status = json['status'] is bool ? json['status'] : null;
-      entry = json['entry'] is int ? json['entry'] : null;
-      // // entry = json['entry'];
-      // // winner = json['winner'];
-      winner = json['winner'] is bool ? json['winner'] : null;
-      created = DateTime.parse(json['created']);
-      updated = DateTime.parse(json['updated']);
-      user =  User.fromJson(json['user']);
-      raffle = Raffle.fromJson(json['raffledraw']);
-      tickets = List<SingleTicket>.from(json['ticket'].map((x) => SingleTicket.fromJson(x)));
+  // Updated fromJson method to match the response structure
+  Winner.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    isWinner = json['is_winner'] is bool ? json['is_winner'] : null;
+    status = json['status'];
+    ticketNumber = json['ticket_number'];
+    createdAt = json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null;
+    updatedAt = json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null;
+    user = json['user'] != null ? Profile.fromJson(json['user']) : null;
+    raffle = json['raffle'] != null ? Raffle.fromJson(json['raffle']) : null;
+    order = json['order'];
   }
 
+  // Updated toJson method to serialize the Winner object properly
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    // data['status'] = status;
-    // data['entry'] = entry;
-    // data['winner'] = winner;
-    // data['created'] = created;
-    // data['updated'] = updated;
-    data['created'] = created?.toIso8601String();
-    data['updated'] = updated?.toIso8601String();
-
+    data['_id'] = id;
+    data['is_winner'] = isWinner;
+    data['status'] = status;
+    data['ticket_number'] = ticketNumber;
+    data['createdAt'] = createdAt?.toIso8601String();
+    data['updatedAt'] = updatedAt?.toIso8601String();
     if (user != null) {
       data['user'] = user!.toJson();
     }
     if (raffle != null) {
-      data['raffledraw'] = raffle!.toJson();
+      data['raffle'] = raffle!.toJson();
     }
-    if (tickets != null) {
-      data['tickets'] = tickets!.map((v) => v.toJson()).toList();
-    }
+    data['order'] = order;
     return data;
   }
 }
+
 

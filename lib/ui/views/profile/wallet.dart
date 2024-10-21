@@ -9,12 +9,14 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:afriprize/core/data/models/profile.dart' as pro;
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../core/data/models/transaction.dart';
 import '../../../state.dart';
 import '../../components/empty_state.dart';
+import 'full_transaction_page.dart';
 
 class Wallet extends StatefulWidget {
   // final pro.Wallet wallet;
@@ -30,31 +32,16 @@ class _WalletState extends State<Wallet> {
   bool loading = false;
   bool loadingProfile = true;
   List<Transaction> transactions = [];
+  Map<String, List<Transaction>> groupedTransactions = {};
 
   @override
   void initState() {
     getProfile();
     getHistory();
+
     super.initState();
   }
 
-  // void getProfile() async {
-  //   try {
-  //     ApiResponse res = await locator<Repository>().getProfile();
-  //     if (res.statusCode == 200) {
-  //       profile.value =
-  //           Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
-  //       setState(() {
-  //         wallet = profile.value.wallet!;
-  //         transactions = (res.data['user']['transaction'] as List)
-  //             .map((e) => Transaction.fromJson(Map<String, dynamic>.from(e)))
-  //             .toList();
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 
   void getHistory() async {
     setState(() {
@@ -71,6 +58,8 @@ class _WalletState extends State<Wallet> {
                   as List) // Accessing items array
               .map((e) => Transaction.fromJson(Map<String, dynamic>.from(e)))
               .toList();
+
+          groupRidesByMonth();
         });
       }
     } catch (e) {
@@ -82,19 +71,35 @@ class _WalletState extends State<Wallet> {
     });
   }
 
+  void groupRidesByMonth() {
+    setState(() {
+      groupedTransactions.clear();
+      for (var transaction in transactions) {
+        String monthYear = transaction.createdAt != null
+            ? DateFormat('MMMM yyyy').format(DateTime.parse(transaction.createdAt!))
+            : 'Unknown Date';
+        if (groupedTransactions.containsKey(monthYear)) {
+          groupedTransactions[monthYear]!.add(transaction);
+        } else {
+          groupedTransactions[monthYear] = [transaction];
+        }
+      }
+    });
+  }
+
   Future<void> getProfile() async {
     ApiResponse res = await locator<Repository>().getProfile();
     setState(() {
       loadingProfile = false;
       if (res.statusCode == 200) {
         Map<String, dynamic> userData =
-            res.data["user"] as Map<String, dynamic>;
+            res.data["data"] as Map<String, dynamic>;
         profile.value = Profile.fromJson(userData);
-        if (profile.value.wallet != null) {
-          wallet = profile.value.wallet!;
-        } else {
-          wallet = pro.Wallet(balance: 0);
-        }
+        // if (profile.value.wallet != null) {
+        //   wallet = profile.value.wallet!;
+        // } else {
+        //   wallet = pro.Wallet(balance: 0);
+        // }
       } else {
         wallet = pro.Wallet(balance: 0);
         locator<SnackbarService>().showSnackbar(message: res.data["message"]);
@@ -109,7 +114,6 @@ class _WalletState extends State<Wallet> {
         centerTitle: true,
         title: const Text(
           "My wallet",
-          //style: TextStyle(fontFamily: "Panchang" ),
         ),
       ),
       body: RefreshIndicator(
@@ -125,19 +129,18 @@ class _WalletState extends State<Wallet> {
                   children: [
                     Center(
                       child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 18),
                         child: Stack(
-                          alignment: Alignment
-                              .center, // Centers all children in the stack
+                          alignment: Alignment.center, // Centers all children in the stack
                           children: [
                             // Background Image
                             Align(
                               alignment: Alignment.center,
                               child: SizedBox(
-                                width: 390,
+                                width: 400,
                                 child: const Image(
                                   image: AssetImage('assets/images/Frame.png'),
-                                  fit: BoxFit
-                                      .cover, // Ensures the image covers the container
+                                  fit: BoxFit.cover, // Ensures the image covers the container
                                 ),
                               ),
                             ),
@@ -147,23 +150,40 @@ class _WalletState extends State<Wallet> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Wallet Balance',
-                                    style: TextStyle(
-                                      color: kcWhiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 11,
+                                    style: GoogleFonts.redHatDisplay(
+                                      textStyle: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kcWhiteColor,
+                                      ),
                                     ),
                                   ),
                                   Text(
-                                    '\$${profile.value.accountPointsLocal ?? 0}',
-                                    style: const TextStyle(
-                                      fontFamily: 'Roboto',
-                                      fontSize:
-                                          34, // Size for the dollar amount
-                                      fontWeight: FontWeight.w900,
-                                      color: kcPrimaryColor,
+                                    '${profile.value.accountPoints ?? 0} pts',
+                                    style: GoogleFonts.redHatDisplay(
+                                      textStyle: const TextStyle(
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.w700,
+                                        color: kcPrimaryColor,
+                                      ),
                                     ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        '${profile.value.accountPointsLocal ?? 0}',
+                                        style: const TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 14, // Size for the dollar amount
+                                          fontWeight: FontWeight.w900,
+                                          color: kcPrimaryColor,
+                                        ),
+                                      ),
+                                      horizontalSpaceMedium
+                                    ],
                                   ),
                                 ],
                               ),
@@ -176,274 +196,185 @@ class _WalletState extends State<Wallet> {
                 ),
               ],
             ),
-
-            // Align(
-            //         alignment: Alignment.bottomRight,
+            // Padding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //     children: [
+            //       // Transfer Credits Button
+            //       Container(
+            //         padding: const EdgeInsets.all(16.0),
+            //         decoration: BoxDecoration(
+            //           border: Border.all(
+            //             color: kcSecondaryColor, // Border color
+            //             width: 1.0, // Border width
+            //           ),
+            //           borderRadius: BorderRadius.circular(8.0), // Optional rounded corners
+            //         ),
             //         child: Row(
-            //           crossAxisAlignment: CrossAxisAlignment.end,
             //           children: [
-            //             Expanded(
-            //               child: SubmitButton(
-            //                 isLoading: false,
-            //                 svgFileName: 'plus.svg',
-            //                 iconIsPrefix: true,
-            //                 label: "Buy Afriprize Card",
-            //                 family: "Panchang",
-            //                 textSize: 13,
-            //                 submit: () {
-            //                   currentModuleNotifier.value = AppModules.raffle;
-            //                   locator<NavigationService>().clearStackAndShow(Routes.homeView);
-            //                 },
-            //                 color: Colors.transparent,
-            //                 iconColor: Colors.black,
-            //                 textColor: Colors.black,
-            //                 boldText: true,
+            //             SvgPicture.asset(
+            //               'assets/images/send-2.svg', // Replace with your SVG file path
+            //               color: kcSecondaryColor, // Set the color for the icon
+            //               height: 17,
+            //               width: 17,
+            //             ), // Icon for Transfer
+            //             const SizedBox(width: 8.0), // Space between icon and text
+            //             const Text(
+            //               'Transfer Credits',
+            //               style: TextStyle(
+            //                 fontWeight: FontWeight.bold,
+            //                 color: kcBlackColor,
+            //                 fontSize: 14,
             //               ),
-            //             )
+            //             ),
             //           ],
             //         ),
             //       ),
+            //     ],
+            //   ),
+            // ),
+            verticalSpaceMedium,
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // Credit Card Container
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: kcSecondaryColor, // Border color
-                          width: 1.0, // Border width
-                        ),
-                        borderRadius: BorderRadius.circular(
-                            8.0), // Optional rounded corners
-                      ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/send-2.svg', // Replace with your SVG file path
-                            color:
-                                kcSecondaryColor, // Set the color for the icon
-                            height: 17,
-                            width: 17,
-                          ), // Icon for Credit Card
-                          const SizedBox(
-                              width: 8.0), // Space between icon and text
-                          const Text(
-                            'Transfer Credits',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: kcLightGrey,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    horizontalSpaceTiny,
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: kcSecondaryColor, // Border color
-                          width: 1.0, // Border width
-                        ),
-                        borderRadius: BorderRadius.circular(
-                            8.0), // Optional rounded corners
-                      ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/shop-remove.svg', // Replace with your SVG file path
-                            color:
-                                kcSecondaryColor, // Set the color for the icon
-                            height: 17,
-                            width: 17,
-                          ), // Icon for Debit Card
-                          const SizedBox(
-                              width: 8.0), // Space between icon and text
-                          const Text(
-                            'Shop with Points',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: kcLightGrey,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(26.0),
+              padding: const EdgeInsets.symmetric(horizontal: 26.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     "Transactions",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: kcBlackColor,
-                        fontWeight: FontWeight.w700),
+                    style: GoogleFonts.bricolageGrotesque(
+                      textStyle:  TextStyle(
+                        fontSize: 15, // Custom font size
+                        fontWeight: FontWeight.w700, // Custom font weight
+                        color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor, // Custom text color
+                      ),
+                    ),
                   ),
-                  const Text(
-                    "See all",
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w700),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FullTransactionsPage()),
+                      );
+                    },
+                    child: Text(
+                      "See all",
+                      style: GoogleFonts.redHatDisplay(
+                        textStyle: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
             loading
                 ? Padding(
-                    padding: const EdgeInsets.all(26.0),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
+              padding: const EdgeInsets.all(26.0),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
                 : transactions.isEmpty
-                    ? const EmptyState(
-                        animation: "no_transactions.json",
-                        label: "No Transaction Yet",
-                      )
-                    : SizedBox(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            transactions.sort(
-                                (b, a) => b.createdAt!.compareTo(a.createdAt!));
-                            Transaction transaction =
-                                transactions.reversed.toList()[index];
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: (){},
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: kcWhiteColor, // Replace with your color
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        spreadRadius: 2,
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                    child: ListTile(
-                                      minLeadingWidth:
-                                          10, // Reduced to align with the design
-                                      leading: Container(
-                                        margin: const EdgeInsets.only(
-                                            right: 8), // Adjust spacing if needed
-                                        child: transaction == 1
-                                            ? SvgPicture.asset(
-                                                'assets/icons/shop_out.svg',
-                                                height: 28, // Icon size
-                                              )
-                                            : transaction == 2
-                                                ? SvgPicture.asset(
-                                                    'assets/icons/card_in.svg',
-                                                    height: 28, // Icon size
-                                                  )
-                                                : transaction == 4
-                                                    ? SvgPicture.asset(
-                                                        'assets/icons/ticket_out.svg',
-                                                        height: 28, // Icon size
-                                                      )
-                                                    : Container(
-                                                        width:
-                                                            30, // Width and height of the circle
-                                                        height: 30,
-                                                        decoration: BoxDecoration(
-                                                          color: kcWhiteColor,
-                                                          shape: BoxShape.circle,
-                                                          border: Border.all(
-                                                            color: kcSecondaryColor,
-                                                            width: 0.5,
-                                                          ),
-                                                        ),
-                                                        child: Center(
-                                                          child: SvgPicture.asset(
-                                                            'assets/images/shop-remove.svg',
-                                                            color: kcSecondaryColor,
-                                                            width: 14,
-                                                            height: 14,
-                                                          ),
-                                                        ),
-                                                      ),
-                                      ),
-                                      title: Text(
-                                        transaction == 1
-                                            ? 'Shop Purchase'
-                                            : transaction == 2
-                                                ? 'Afriprize Card Top-Up'
-                                                : transaction == 4
-                                                    ? 'Ticket Purchase'
-                                                    : 'Purchase',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors
-                                              .black, // Changed color to black to match the design
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        DateFormat('EEEE, d MMM hh:mm a').format(
-                                          DateTime.parse(transaction.createdAt!),
-                                        ), // Changed format to match design
-                                        style: const TextStyle(
-                                          color: Colors
-                                              .grey, // Adjusted color to grey to match design
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      trailing: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            transaction == 1
-                                                ? '-\$${transaction.amount}'
-                                                : transaction == 2
-                                                    ? '+\$${transaction.amount}'
-                                                    : transaction == 4
-                                                        ? '-\$${transaction.amount}'
-                                                        : 'Purchase',
-                                            style: TextStyle(
-                                              color: transaction == 1
-                                                  ? Colors.red
-                                                  : transaction == 2
-                                                      ? Colors.green
-                                                      : transaction == 4
-                                                          ? Colors.red
-                                                          : kcPrimaryColor,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ),
-                                  ),
-                            );
-
-                          },
-                          itemCount: transactions.length,
+                ? const EmptyState(
+              animation: "no_transactions.json",
+              label: "No Transaction Yet",
+            )
+                : SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6, // Bounded height
+              child: ListView.builder(
+                itemCount: groupedTransactions.keys.length,
+                itemBuilder: (context, index) {
+                  String monthYear = groupedTransactions.keys.elementAt(index);
+                  List<Transaction> transactions = groupedTransactions[monthYear]!;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: Text(
+                          monthYear,
+                          style: GoogleFonts.redHatDisplay(
+                            textStyle:  TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: uiMode.value == AppUiModes.dark ? kcLightGrey :  kcMediumGrey,
+                            ),
+                          ),
                         ),
-                      )
+                      ),
+                      ...transactions.map(
+                            (transaction) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: ListTile(
+                            minLeadingWidth: 10,
+                            leading: Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              child: SvgPicture.asset(
+                                'assets/icons/ticket_out.svg',
+                                height: 28,
+                              ),
+                            ),
+                            title: Text(
+                              transaction.paymentType == 'raffle'
+                                  ? 'Ticket Purchase'
+                                  : transaction.paymentType == 'donation'
+                                  ? 'Project Donation'
+                                  : 'Purchase',
+                              style: GoogleFonts.redHatDisplay(
+                                textStyle: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            subtitle: Text(
+                              DateFormat('EEEE, d MMM hh:mm a').format(
+                                DateTime.parse(transaction.createdAt!),
+                              ),
+                              style: GoogleFonts.redHatDisplay(
+                                textStyle:  TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w400,
+                                  color: uiMode.value == AppUiModes.dark ? kcLightGrey : kcMediumGrey,
+                                ),
+                              ),
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  transaction.paymentType == 'raffle'
+                                      ? '+₦${transaction.amount}'
+                                      : '-₦${transaction.amount}',
+                                  style: TextStyle(
+                                    color: transaction.paymentType == 'donation'
+                                        ? Colors.red
+                                        : Colors.green,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'roboto'
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+
 }

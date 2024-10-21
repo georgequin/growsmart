@@ -44,7 +44,7 @@ class HomeView extends StackedView<HomeViewModel> {
               ValueListenableBuilder<List<dynamic>>(
                 valueListenable: raffleCart, // Replace with your cart notifier
                 builder: (context, cartItems, _) {
-                  if (raffleCart.value.isNotEmpty) {
+                  if (raffleCart.value.isNotEmpty && viewModel.selectedRafflesTab != 3) {
 
                     // Calculate total number of tickets and total amount
                     int totalTickets = raffleCart.value.fold(0, (sum, item) => sum + (item.quantity ?? 0));
@@ -152,7 +152,9 @@ class HomeView extends StackedView<HomeViewModel> {
 
   @override
   void onViewModelReady(HomeViewModel viewModel) {
-    viewModel.fetchOnlineCart();
+    if(userLoggedIn.value == true){
+      viewModel.fetchOnlineCart();
+    }
     super.onViewModelReady(viewModel);
   }
 }
@@ -183,7 +185,11 @@ class BottomNavBar extends StatelessWidget {
 
         return BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          backgroundColor: currentModule == AppModules.shop ? const Color(0xFFFFF3DB) : Colors.white,
+          backgroundColor: uiMode.value == AppUiModes.dark
+              ? kcDarkGreyColor // Dark mode logo
+              : kcWhiteColor,
+
+          // currentModule == AppModules.shop ? const Color(0xFFFFF3DB) : Colors.white,
           selectedLabelStyle: TextStyle(color: selectedColor),
           selectedItemColor: selectedColor,
           unselectedItemColor: iconColor,
@@ -198,23 +204,19 @@ class BottomNavBar extends StatelessWidget {
   List<BottomNavigationBarItem> _rafflesItems(Color iconColor, Color selectedColor) {
     return [
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('home.svg', viewModel.selectedRafflesTab == 0, iconColor),
+        icon: _navBarItemIcon('home.svg', 'home_outline.svg', viewModel.selectedRafflesTab == 0, iconColor),
         label: "Home",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('home_ticket.svg', viewModel.selectedRafflesTab == 1, iconColor),
+        icon: _navBarItemIcon('ticket_star.svg', 'ticket_star_outline.svg', viewModel.selectedRafflesTab == 1, iconColor),
         label: "Draws",
       ),
-      // BottomNavigationBarItem(
-      //   icon: _navBarItemWithCounter('buy.svg', viewModel.selectedRafflesTab == 2, raffleCart, iconColor),
-      //   label: "Cart",
-      // ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('heart.svg', viewModel.selectedRafflesTab == 3, iconColor),
+        icon: _navBarItemIcon('heart.svg', 'heart_outline.svg', viewModel.selectedRafflesTab == 2, iconColor),
         label: "Donate",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('menu.svg', viewModel.selectedRafflesTab == 4, iconColor),
+        icon: _navBarItemIcon('menu.svg', 'menu_outline.svg', viewModel.selectedRafflesTab == 3, iconColor),
         label: "Menu",
       ),
     ];
@@ -223,29 +225,27 @@ class BottomNavBar extends StatelessWidget {
   List<BottomNavigationBarItem> _shopItems(Color iconColor, Color selectedColor) {
     return [
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('home.svg', viewModel.selectedShopTab == 0, iconColor),
+        icon: _navBarItemIcon('home.svg', 'home_outline.svg', viewModel.selectedShopTab == 0, iconColor),
         label: "Home",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('home_ticket.svg', viewModel.selectedShopTab == 1, iconColor),
+        icon: _navBarItemIcon('ticket_star.svg', 'ticket_star_outline.svg', viewModel.selectedShopTab == 1, iconColor),
         label: "Draws",
       ),
+
       BottomNavigationBarItem(
-        icon: _navBarItemWithCounter('buy.svg', viewModel.selectedShopTab == 2, shopCart, iconColor),
-        label: "Cart",
-      ),
-      BottomNavigationBarItem(
-        icon: _navBarItemIcon('notification.svg', viewModel.selectedShopTab == 3, iconColor),
+        icon: _navBarItemIcon('notification.svg','notification.svg', viewModel.selectedShopTab == 3, iconColor),
         label: "Notifications",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('menu.svg', viewModel.selectedShopTab == 4, iconColor),
+        icon: _navBarItemIcon('menu.svg', 'notification.svg', viewModel.selectedShopTab == 4, iconColor),
         label: "Menu",
       ),
     ];
   }
 
-  Widget _navBarItemIcon(String iconData, bool isSelected, Color iconColor) {
+
+  Widget _navBarItemIcon(String filledIcon, String outlinedIcon, bool isSelected, Color iconColor) {
     return Container(
       width: 30,
       height: 30,
@@ -254,40 +254,41 @@ class BottomNavBar extends StatelessWidget {
         color: isSelected ? kcSecondaryColor.withOpacity(0.2) : Colors.transparent,
       ),
       child: SvgPicture.asset(
-        'assets/icons/$iconData',
+        'assets/icons/${isSelected ? filledIcon : outlinedIcon}', // Use filledIcon when selected, outlinedIcon when unselected
         height: 16, // Icon size
         color: isSelected ? kcSecondaryColor : iconColor,
       ),
     );
   }
 
-  Widget _navBarItemWithCounter(String icon, bool isSelected, ValueListenable<List<dynamic>> counterListenable, Color color) {
-    return ValueListenableBuilder<List<dynamic>>(
-      valueListenable: counterListenable,
-      builder: (context, value, child) {
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [
-            _navBarItemIcon(icon, isSelected, color),
-            if (value.isNotEmpty)
-              Positioned(
-                right: -6,
-                top: -6,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '${value.length}',
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
+
+  // Widget _navBarItemWithCounter(String icon, bool isSelected, ValueListenable<List<dynamic>> counterListenable, Color color) {
+  //   return ValueListenableBuilder<List<dynamic>>(
+  //     valueListenable: counterListenable,
+  //     builder: (context, value, child) {
+  //       return Stack(
+  //         clipBehavior: Clip.none,
+  //         children: [
+  //           _navBarItemIcon(icon, isSelected, color),
+  //           if (value.isNotEmpty)
+  //             Positioned(
+  //               right: -6,
+  //               top: -6,
+  //               child: Container(
+  //                 padding: const EdgeInsets.all(4),
+  //                 decoration: const BoxDecoration(
+  //                   color: Colors.red,
+  //                   shape: BoxShape.circle,
+  //                 ),
+  //                 child: Text(
+  //                   '${value.length}',
+  //                   style: const TextStyle(color: Colors.white, fontSize: 12),
+  //                 ),
+  //               ),
+  //             ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }

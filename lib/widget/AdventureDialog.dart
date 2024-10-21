@@ -1,6 +1,10 @@
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
+import '../app/app.locator.dart';
+import '../core/utils/local_store_dir.dart';
+import '../core/utils/local_stotage.dart';
+
 class AdventureModal extends StatelessWidget {
   const AdventureModal({super.key});
 
@@ -52,7 +56,11 @@ class AdventureModal extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () {
+                    print('skip card');
                     Navigator.of(context).pop(); // Close the modal
+
+                    // Update onboarded status after showing the modal
+                    locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
                   },
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -71,7 +79,11 @@ class AdventureModal extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Move to the next step or close
+                    print('next button');
+                    Navigator.of(context).pop();
+
+                    // Update onboarded status after showing the modal
+                    locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

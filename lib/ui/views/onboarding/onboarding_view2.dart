@@ -19,23 +19,20 @@ class OnboardingView2 extends StatelessWidget {
       body: OnboardingPagePresenter(pages: [
         OnboardingPageModel(
           title: 'Join the Excitement!',
-          video: true,
           description:
           'Every ticket you purchase is your golden ticket to adventure! Imagine the thrill of winning incredible prizes while having fun.',
-          imageUrl: "assets/videos/onboarding.mp4",
+          imageUrl: "second.json",
           bgColor: kcWhiteColor,
         ),
-        OnboardingPageModel(
-          title: 'Earn Points with Every Ticket!',
-          video: false,
-          description:
-          'Every ticket isn’t just a chance to win; it’s a step towards unlocking exciting rewards! Watch your points stack up as you play.',
-          imageUrl: 'second.json',
-          bgColor: kcWhiteColor,
-        ),
+        // OnboardingPageModel(
+        //   title: 'Earn Points with Every Ticket!',
+        //   description:
+        //   'Every ticket isn’t just a chance to win; it’s a step towards unlocking exciting rewards! Watch your points stack up as you play.',
+        //   imageUrl: 'second.json',
+        //   bgColor: kcWhiteColor,
+        // ),
         OnboardingPageModel(
           title: 'Make an Impact!',
-          video: false,
           description:
           'Your points hold the power to create change! Team up with fellow adventurers to support noble causes.',
           imageUrl: 'third.json',
@@ -62,25 +59,16 @@ class OnboardingPagePresenter extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPagePresenter> {
   int _currentPage = 0;
   final PageController _pageController = PageController(initialPage: 0);
-  late VideoPlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(
-      "assets/videos/onboarding.mp4",
-    )..initialize().then((_) {
-      _controller.setLooping(true);
-      _controller.play();
-      setState(() {});
-    });
-    locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
+    // locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
   }
 
   @override
   void dispose() {
     // Dispose of the video controller to release resources
-    _controller.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -94,7 +82,7 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
         child: SafeArea(
           child: Column(
             children: [
-              // This section contains the PageView.builder
+
               Expanded(
                 child: PageView.builder(
                   controller: _pageController,
@@ -132,22 +120,12 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        if (item.video)
-                          Expanded(
-                            child: AspectRatio(
-                              aspectRatio: _controller.value.isInitialized
-                                  ? _controller.value.aspectRatio
-                                  : 16 / 9,
-                              child: VideoPlayer(_controller),
-                            ),
-                          )
-                        else
-                          Expanded(
-                            child: EmptyState(
-                              animation: item.imageUrl,
-                              label: "",
-                            ),
+                        Expanded(
+                          child: EmptyState(
+                            animation: item.imageUrl,
+                            label: "",
                           ),
+                        ),
                       ],
                     );
                   },
@@ -243,7 +221,6 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
 
 class OnboardingPageModel {
   final String title;
-  final bool video;
   final String description;
   final String imageUrl;
   final Color bgColor;
@@ -251,7 +228,6 @@ class OnboardingPageModel {
 
   OnboardingPageModel({
     required this.title,
-    required this.video,
     required this.description,
     required this.imageUrl,
     this.bgColor = Colors.blue,

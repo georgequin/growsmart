@@ -22,12 +22,13 @@ class NotificationViewModel extends BaseViewModel {
   String searchQuery = '';
   List<Project> projects = [];
   List<ProjectResource> projectResource = [];
-  List<Project> filteredProjects = [];
   List<ProjectResource> filteredProjectResource = [];
 
   Future<void> init() async {
+    setBusy(true);
     await loadDonationCategories();
     await loadProjects();
+    setBusy(false);
     notifyListeners();
   }
 
@@ -36,58 +37,57 @@ class NotificationViewModel extends BaseViewModel {
     selectedId = id;
 
     if (id == allCategoriesId) {
-      filteredProjects = projects;
+      filteredProjectResource = projectResource;
     } else {
-
-      filteredProjects = projects.where((project) {
-        return project.category?.id == id;
+      print('id is: $id');
+      filteredProjectResource = projectResource.where((project) {
+        return project.project?.category?.id == id;
       }).toList();
     }
+
     notifyListeners();
   }
 
 
-  void readNotification(notification) async {
-    loadingId = notification.id;
-    rebuildUi();
-    setBusy(true);
-    await locator<Repository>().updateNotification(notification.id!)
-        .whenComplete(() async {
-      await getNotifications();
-    });
-    setBusy(false);
-  }
+  // void readNotification(notification) async {
+  //   loadingId = notification.id;
+  //   rebuildUi();
+  //   setBusy(true);
+  //   await locator<Repository>().updateNotification(notification.id!)
+  //       .whenComplete(() async {
+  //     await getNotifications();
+  //   });
+  //   setBusy(false);
+  // }
+
 
   Future<void> loadDonationCategories() async {
     dynamic storedDonations = await locator<LocalStorage>().fetch(LocalStorageDir.donationsCategories);
-
     if (storedDonations != null) {
       categories = List<Map<String, dynamic>>.from(storedDonations)
           .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
           .toList();
-    } else {
-       getDonationsCategories();  // Fetch categories from API if not available locally
+
+      // Add the "All Categories" option
+      filteredCategories = [
+        Category(id: 'all', name: 'All'),
+        ...categories,
+      ];
       notifyListeners();
+
     }
-
-    // Add the "All Categories" option at the beginning
-    filteredCategories = [
-      Category(id: 'all', name: 'All'),
-      ...categories,
-    ];
-
+    await getDonationsCategories();
     notifyListeners();
   }
 
 
-  void getDonationsCategories() async {
-    setBusyForObject(categories, true);
+
+  Future<void> getDonationsCategories() async {
+    setBusy(true);
+    notifyListeners();
     try {
       ApiResponse res = await repo.getDonationsCategories();
       if (res.statusCode == 200) {
-        print('res.data: ${res.data}');
-        print('res.data: ${res.data["data"]}');
-        print('res.data: ${res.data["data"]["items"]}');
 
         if (res.data != null && res.data["data"]["items"] != null) {
           // Extract categories from 'items'
@@ -105,71 +105,63 @@ class NotificationViewModel extends BaseViewModel {
             Category(id: 'all', name: 'All'),
             ...categories,
           ];
-        } else {
-          // Handle empty or null 'items' response
-          categories = [];
         }
         rebuildUi();
       }
     } catch (e) {
       print(e);
+    }finally{
+      setBusy(false);
+      notifyListeners();
     }
-    setBusyForObject(categories, false);
+
   }
 
   Future<void> loadProjects() async {
     dynamic storedSellingFast = await locator<LocalStorage>().fetch(LocalStorageDir.projects);
     dynamic storedProjectResource = await locator<LocalStorage>().fetch(LocalStorageDir.projectResource);
     if (storedProjectResource != null) {
-      projectResource = List<Map<String, dynamic>>.from(storedSellingFast)
+      projectResource = List<Map<String, dynamic>>.from(storedProjectResource)
           .map((e) => ProjectResource.fromJson(Map<String, dynamic>.from(e)))
           .toList();
 
       filteredProjectResource = projectResource;
+      notifyListeners();
 
-    } else {
-      getProjects();
+      await getProjects();
+      notifyListeners();
     }
     notifyListeners();
   }
 
-  void getProjects() async {
-    setBusyForObject(projects, true);
-
+  Future<void> getProjects() async {
+    setBusy(true);
     try {
       ApiResponse res = await repo.getProjects();
 
       if (res.statusCode == 200) {
         if (res.data != null && res.data["data"]["items"] != null) {
           // Extract projects, members, and recent comments from 'items'
-          var projectResources = (res.data["data"]["items"] as List)
+          projectResource = (res.data["data"]["items"] as List)
               .map((e) => ProjectResource.fromJson(Map<String, dynamic>.from(e)))
               .toList();
-          print('projrct response is: $projectResources');
-          projectResource = projectResources;
+          filteredProjectResource = projectResource;
 
           // Separate the project list
-          projects = projectResources.map((resource) => resource.project!).toList();
-          var members = projectResources.map((resource) => resource.members!).toList();
-          var comments = projectResources.map((resource) => resource.recentComments!).toList();
-          print('projrct comments is: $comments');
-          List<Map<String, dynamic>> storedProjects = projects.map((e) => e.toJson()).toList();
-          List<Map<String, dynamic>> storedProjectResources = projectResources.map((resource) => resource.toJson()).toList();
+          projects = projectResource.map((resource) => resource.project!).toList();
 
-          locator<LocalStorage>().save(LocalStorageDir.projects, storedProjects);
+
+          List<Map<String, dynamic>> storedProjectResources = projectResource.map((resource) => resource.toJson()).toList();
           locator<LocalStorage>().save(LocalStorageDir.projectResource, storedProjectResources);
-
-          filteredProjects = projects;
-          filteredProjectResource = projectResource;
-        } else {
-          projects = [];
+          notifyListeners();
         }
         rebuildUi();
       }
     } catch (e) {
       log.e(e);
+    }finally{
+      setBusy(false);
     }
-    setBusyForObject(projects, false);
   }
 
   void updateSearchQuery(String query) {
@@ -185,16 +177,5 @@ class NotificationViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> getNotifications() async {
-    try {
-      ApiResponse res = await repo.getNotifications(profile.value.id!);
-      if (res.statusCode == 200) {
-        notifications.value = (res.data["events"] as List)
-            .map((e) => AppNotification.fromJson(Map<String, dynamic>.from(e)))
-            .toList();
-      }
-    } catch (e) {
-      log.e(e);
-    }
-  }
+
 }

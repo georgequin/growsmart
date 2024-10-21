@@ -130,6 +130,17 @@ class Repository extends IRepository {
   }
 
   @override
+  Future<ApiResponse> donateToProject(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "projects/donate",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
   Future<ApiResponse> verifyTransaction(String ref) async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
@@ -170,6 +181,31 @@ class Repository extends IRepository {
   }
 
   @override
+  Future<ApiResponse> forgotPassword(
+      Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/forgot_password",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> newPassword(
+      Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/reset_password",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+
+  @override
   Future<ApiResponse> updatePassword(
       Map<String, dynamic> req, String email) async {
     ApiResponse response = await api.call(
@@ -203,13 +239,38 @@ class Repository extends IRepository {
     return response;
   }
 
+
+  @override
+  Future<ApiResponse> makeComment(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "projects/comment/new",
+      reqBody: req,
+    );
+
+    return response;
+  }
+
+
+  @override
+  Future<ApiResponse> updateMedia(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "media/upload",
+      useFormData: true,
+      formData: FormData.fromMap(req),
+    );
+
+    return response;
+  }
+
+
   @override
   Future<ApiResponse> updateProfilePicture(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
-      method: HttpMethod.post,
-      endpoint: "user/profile/picture",
-      useFormData: true,
-      formData: FormData.fromMap(req),
+      method: HttpMethod.put,
+      endpoint: "users/me/update_dp",
+      reqBody: req,
     );
 
     return response;
@@ -220,6 +281,42 @@ class Repository extends IRepository {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
       endpoint: "raffle/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getAds() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      reqParams: {
+        "media_type": "APP_BANNER",
+        "page": 1,
+        "page_size": 10,
+      },
+      endpoint: "media/list",
+    );
+
+    return response;
+  }
+
+
+  @override
+  Future<ApiResponse> getDrawEvents() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "raffle/events/list",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> getRaffleWinners() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "raffle/winners/list",
     );
 
     return response;
@@ -313,7 +410,7 @@ class Repository extends IRepository {
   Future<ApiResponse> raffleList() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "raffle/user/list",
+      endpoint: "raffle/tickets/list",
     );
 
     return response;
@@ -324,6 +421,16 @@ class Repository extends IRepository {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
       endpoint: "orders/cart",
+    );
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> clearCart() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.delete,
+      endpoint: "orders/cart/clear",
     );
 
     return response;
@@ -361,14 +468,20 @@ class Repository extends IRepository {
     return response;
   }
 
+
   @override
-  Future<ApiResponse> getTransactions() async {
+  Future<ApiResponse> getTransactions({int page = 1, int pageSize = 10}) async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
       endpoint: "payments/list",
+      reqParams: {
+        "page": page,
+        "page_size": pageSize,
+      },
     );
     return response;
   }
+
 
   @override
   Future<ApiResponse> recommendedProducts(String productId) async {
@@ -419,10 +532,21 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> getNotifications(String userId) async {
+  Future<ApiResponse> getNotifications() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "event/user/list",
+      endpoint: "notifications/list",
+    );
+
+    return response;
+  }
+
+  //repo for mark as read on notification
+  @override
+  Future<ApiResponse> markNotificationAsRead() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.put,
+      endpoint: "notifications/read",
     );
 
     return response;

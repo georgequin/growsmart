@@ -39,6 +39,8 @@ class MoneyUtils extends TextInputFormatter {
     );
   }
 
+
+
   String formatAmount(int amount) {
     final formatter = NumberFormat("#,##0", "en_US");
 
@@ -69,60 +71,40 @@ class MoneyUtils extends TextInputFormatter {
     return int.tryParse(text) ?? 0; // Convert to int, return 0 if null
   }
 
-  Future<ApiResponse> chargeCardUtil(PaymentMethod paymentMethod, List<String> orderIds, BuildContext context, int amount) async {
+  Future<ApiResponse> chargeCardUtil(PaymentMethod paymentMethod, BuildContext context, int amount, String orderId) async {
 
-
-
-    // Prepare common payload
-    var payload = {
-      "orderId": orderIds,
-      "payment_method": getPaymentMethodCode(paymentMethod),
-      "reference": getReference(),
-      "id": profile.value.id,
-    };
-
-    // Handle wallet payment
-    if (paymentMethod == PaymentMethod.wallet) {
-      var res = await locator<Repository>().payForOrder(payload);
-      if (res.statusCode != 200) {
-        locator<SnackbarService>().showSnackbar(message: res.data["message"]);
-      }
-      return res;
-    }
 
     // Handle Paystack payment
-    // if (paymentMethod == PaymentMethod.payStack) {
-    //   var charge = Charge()
-    //     ..amount = amount * 100  // Convert to kobo
-    //     ..reference = getReference()
-    //     ..email = profile.value.email;
-    //
-    //   CheckoutResponse checkoutResponse = await plugin.checkout(
-    //     context,
-    //     method: CheckoutMethod.card,
-    //     charge: charge,
-    //   );
-    //
-    //   if (checkoutResponse.status == true) {
-    //     var response = await locator<Repository>().payForOrder({
-    //       ...payload, // Spread the existing payload
-    //       "reference": charge.reference, // Override the reference with the one from Charge
-    //     });
-    //
-    //     if (response.statusCode != 200) {
-    //       locator<SnackbarService>().showSnackbar(message: response.data["message"]);
-    //     }
-    //     return response;
-    //   } else {
-    //     // Create a fake response to wrap the error message
-    //     var errorResponse = Response(
-    //       requestOptions: RequestOptions(path: ''),
-    //       data: checkoutResponse.message,
-    //       statusCode: 500,
-    //     );
-    //     return ApiResponse(errorResponse);
-    //   }
-    // }
+    if (paymentMethod == PaymentMethod.paystack) {
+      var charge = Charge()
+        ..amount = amount * 100  // Convert to kobo
+        ..reference = orderId
+        ..email = profile.value.email;
+
+      plugin.initialize(publicKey: AppConfig.paystackApiKeyTest);
+      CheckoutResponse checkoutResponse = await plugin.checkout(
+        context,
+        method: CheckoutMethod.card,
+        charge: charge,
+      );
+
+      if (checkoutResponse.status == true) {
+        var successResponse = Response(
+          requestOptions: RequestOptions(path: ''),
+          data: checkoutResponse.message,
+          statusCode: 200,
+        );
+        return ApiResponse(successResponse);
+      } else {
+        // Create a fake response to wrap the error message
+        var errorResponse = Response(
+          requestOptions: RequestOptions(path: ''),
+          data: checkoutResponse.message,
+          statusCode: 500,
+        );
+        return ApiResponse(errorResponse);
+      }
+    }
 
     // Handle flutterwave payment
     if (paymentMethod == PaymentMethod.flutterwave) {
@@ -132,63 +114,20 @@ class MoneyUtils extends TextInputFormatter {
         context: context,
         amount: amount.toString(),
         isTestMode: AppConfig.isTestMode,
+        reference: orderId
       );
 
       if (response.success == true || response.status == 'completed') {
         print('flutterwave response was success');
-        ApiResponse res = await locator<Repository>().payForOrder({
-                  "orderId": orderIds,
-                  "payment_method": 4,
-                  "reference": response.transactionId,
-                  "id": profile.value.id
-                });
-        if (res.statusCode == 200) {
-                  print('flutterwave payment was suceessful');
-                 return res;
-
-                } else {
-          print('backend call response failed');
-                  locator<SnackbarService>()
-                      .showSnackbar(message: res.data["message"] ?? 'system error');
-                  return res;
-                }
+        var successResponse = Response(
+          requestOptions: RequestOptions(path: ''),
+          data: response.transactionId,
+          statusCode: 200,
+        );
+        return ApiResponse(successResponse);
       }else{
         print('flutterwave payment was different ${response.success}');
         locator<SnackbarService>().showSnackbar(message: response.status ?? 'flutterwave payment failed');
-      }
-    }
-
-    if(paymentMethod == PaymentMethod.binancePay) {
-      var res = await locator<Repository>().payForOrder(payload);
-      if (res.statusCode != 200) {
-        locator<SnackbarService>().showSnackbar(message: res.data["message"] ?? 'system error');
-      }
-      return res;
-    }
-
-    if(paymentMethod == PaymentMethod.paystack){
-      var charge = Charge()
-        ..amount = amount *
-            100 //the money should be in kobo hence the need to multiply the value by 100
-        ..reference = MoneyUtils().getReference()
-        ..email = profile.value.email;
-      CheckoutResponse response = await plugin.checkout(
-        context,
-        method: CheckoutMethod.card,
-        charge: charge,
-      );
-
-      if (response.status == true) {
-        print('paystack payment successful');
-        // ApiResponse res = await locator<Repository>().payForOrder({
-        //   "orderId": widget.infoList.map((e) => e.id).toList(),
-        //   "payment_method": 2,
-        //   "reference": charge.reference,
-        //   "id": profile.value.id
-        // });
-
-        locator<SnackbarService>()
-            .showSnackbar(message: "Order Placed Successfully");
       }
     }
 
@@ -208,8 +147,8 @@ class MoneyUtils extends TextInputFormatter {
         return 1;
       case PaymentMethod.paystack:
         return 2;
-      case PaymentMethod.binancePay:
-        return 3;
+      // case PaymentMethod.binancePay:
+      //   return 3;
       case PaymentMethod.flutterwave:
         return 4;
       default:

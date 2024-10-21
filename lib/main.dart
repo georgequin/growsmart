@@ -1,4 +1,5 @@
 
+import 'package:afriprize/core/utils/config.dart';
 import 'package:afriprize/core/utils/local_store_dir.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
@@ -17,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:update_available/update_available.dart';
 import 'package:workmanager/workmanager.dart';
+import 'app/flutter_paystack/lib/flutter_paystack.dart';
 import 'firebase_options.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -31,16 +33,21 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 
 void main() async{
-  setupLocator();
-  setupDialogUi();
-  setupBottomSheetUi();
+
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
   // initializeNotifications();
+  setupLocator();
+  setupDialogUi();
+  setupBottomSheetUi();
+  // Initialize Paystack with your public key
+  final  paystackPlugin = PaystackPlugin();
+  await paystackPlugin.initialize(publicKey: AppConfig.paystackApiKeyTest);
 
-  // PaystackService().initialize(AppConfig.paystackApiKey);
+
+
 
 
   //final messaging = FirebaseMessaging.instance;
@@ -194,7 +201,10 @@ class _MyAppState extends State<MyApp> {
       valueListenable: uiMode,
       builder: (context, value, child) => MaterialApp(
         title: 'Afriprize',
-        theme: value == AppUiModes.dark ? darkTheme() : lightTheme(),
+        // theme: value == AppUiModes.dark ? darkTheme() : lightTheme(),
+        theme: ThemeData.light(useMaterial3: true),
+        darkTheme: ThemeData.dark(),
+        themeMode: value == AppUiModes.dark ? ThemeMode.dark : ThemeMode.light,
         initialRoute: Routes.startupView,
         onGenerateRoute: StackedRouter().onGenerateRoute,
         navigatorKey: StackedService.navigatorKey,

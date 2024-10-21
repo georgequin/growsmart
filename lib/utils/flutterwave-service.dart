@@ -11,6 +11,7 @@ class FlutterwavePaymentService {
     String? publicKey,
     String? encryptionKey,
     String? phoneNumber,
+    String? reference,
     bool isTestMode = false,
   }) async {
     final Customer customer = Customer(
@@ -21,10 +22,10 @@ class FlutterwavePaymentService {
 
     final Flutterwave flutterwave = Flutterwave(
       context: context,
-      publicKey: AppConfig.flutterWaveLiveKey,
+      publicKey: AppConfig.flutterWaveTestKey,
       currency: "NGN",
       amount: amount,
-      txRef: getReference(),
+      txRef: reference!,
       redirectUrl: "https://www.afriprize.com",
       customer: customer,
       paymentOptions: "card, ussd, payattitude, barter",

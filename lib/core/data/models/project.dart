@@ -1,4 +1,7 @@
-import 'order_item.dart';
+
+
+import 'package:afriprize/core/data/models/product.dart';
+import 'package:afriprize/core/data/models/profile.dart';
 
 class Project {
   String? id;
@@ -86,7 +89,8 @@ class Comment {
   String? createdAt;
   String? updatedAt;
   String? replyTo;
-  User? user;
+  Profile? user;
+  bool isExpanded;
 
   Comment({
     this.id,
@@ -96,17 +100,19 @@ class Comment {
     this.updatedAt,
     this.replyTo,
     this.user,
+    this.isExpanded = false,
   });
 
-  Comment.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    comment = json['comment'];
-    status = json['status'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    replyTo = json['replyTo'];
-    user = json['user'] != null ? User.fromJson(json['user']) : null;
-  }
+  Comment.fromJson(Map<String, dynamic> json)
+      : isExpanded = false,
+        id = json['_id'],
+        comment = json['comment'],
+        status = json['status'],
+        createdAt = json['createdAt'],
+        updatedAt = json['updatedAt'],
+        replyTo = json['replyTo'],
+        user = json['user'] != null ? Profile.fromJson(json['user']) : null;
+
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -154,18 +160,21 @@ class Category {
 class Member {
   String? firstname;
   String? lastname;
+  ProfilePic? profilePic;
 
-  Member({this.firstname, this.lastname});
+  Member({this.firstname, this.lastname, this.profilePic});
 
   Member.fromJson(Map<String, dynamic> json) {
     firstname = json['firstname'];
     lastname = json['lastname'];
+    profilePic = json['profile_pic'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['firstname'] = firstname;
     data['lastname'] = lastname;
+    data['profile_pic'] = profilePic;
     return data;
   }
 }
@@ -174,8 +183,9 @@ class ProjectResource {
   Project? project;
   List<Member>? members;
   List<Comment>? recentComments;
+  List<ProjectChecklist>? projectChecklist;
 
-  ProjectResource({this.project, this.members, this.recentComments});
+  ProjectResource({this.project, this.members, this.recentComments,  this.projectChecklist,});
 
   ProjectResource.fromJson(Map<String, dynamic> json) {
     project = json['project'] != null ? Project.fromJson(json['project']) : null;
@@ -193,6 +203,13 @@ class ProjectResource {
         recentComments!.add(Comment.fromJson(v));
       });
     }
+
+    if (json['projectChecklist'] != null) {
+      projectChecklist = <ProjectChecklist>[];
+      json['projectChecklist'].forEach((v) {
+        projectChecklist!.add(ProjectChecklist.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -206,9 +223,52 @@ class ProjectResource {
     if (recentComments != null) {
       data['recentComments'] = recentComments!.map((v) => v.toJson()).toList();
     }
+    if (projectChecklist != null) {
+      data['projectChecklist'] =
+          projectChecklist!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
+
+class ProjectChecklist {
+  String? id;
+  String? projectId;
+  String? name;
+  bool? completed;
+  String? createdAt;
+  String? updatedAt;
+
+  ProjectChecklist({
+    this.id,
+    this.projectId,
+    this.name,
+    this.completed,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  ProjectChecklist.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    projectId = json['project'];
+    name = json['name'];
+    completed = json['completed'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = id;
+    data['project'] = projectId;
+    data['name'] = name;
+    data['completed'] = completed;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    return data;
+  }
+}
+
 
 class Media {
   String? id;
