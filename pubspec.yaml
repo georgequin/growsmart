@@ -86,9 +86,10 @@ dependencies:
   google_fonts: ^6.2.1
   carousel_slider: ^5.0.0
   slide_countdown: ^1.1.0
+  pin_code_fields: ^8.0.1
 #  flutter_paystack: ^1.0.7
-  flutter_paystack:
-    path: lib/app/flutter_paystack
+#  flutter_paystack:
+#    path: lib/app/flutter_paystack
 
 
 

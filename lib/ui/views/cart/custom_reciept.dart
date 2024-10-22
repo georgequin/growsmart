@@ -161,10 +161,10 @@ class ReceiptPage extends StatelessWidget {
                                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                                     ),
                                     ...cart.map((cartItem) =>  ListTile(
-                                      leading: Image.network(cartItem.raffle!.media!.first.location ?? '', height: 44, width: 48), // Replace with your image URL field
-                                      title: Text(cartItem.raffle!.name!, style: const TextStyle(fontSize: 10.61)),
+                                      leading: Image.network(cartItem.raffle!.images!.first ?? '', height: 44, width: 48), // Replace with your image URL field
+                                      title: Text(cartItem.raffle!.productName!, style: const TextStyle(fontSize: 10.61)),
                                       subtitle: Text('${cartItem.quantity}', style: const TextStyle(fontSize: 10.61)),
-                                      trailing: Text(cartItem.raffle!.formattedTicketPrice!,style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
+                                      trailing: Text(cartItem.raffle!.price!,style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
                                         color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
                                         fontFamily: "roboto",)),
                                     )),
@@ -178,7 +178,7 @@ class ReceiptPage extends StatelessWidget {
                                           style: TextStyle(fontWeight: FontWeight.w100),
                                         ),
                                         Text(
-                                          MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
+                                          MoneyUtils().formatAmount(getRaffleSubTotal(cart).toInt()),
                                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12,
                                             color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
                                             fontFamily: "satoshi",),
@@ -195,7 +195,7 @@ class ReceiptPage extends StatelessWidget {
                                           style: TextStyle(fontWeight: FontWeight.w100),
                                         ),
                                         Text(
-                                          MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
+                                          MoneyUtils().formatAmount(getRaffleSubTotal(cart).toInt()),
                                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.3),
                                         ),
                                       ],
@@ -339,7 +339,7 @@ class ReceiptPage extends StatelessWidget {
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
                   pw.Text(
-                    MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
+                    MoneyUtils().formatAmount(getRaffleSubTotal(cart).toInt()),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 12,
                     ),
                   ),
@@ -354,7 +354,7 @@ class ReceiptPage extends StatelessWidget {
                     'TOTAL:',
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
-                  pw.Text(MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
+                  pw.Text(MoneyUtils().formatAmount(getRaffleSubTotal(cart).toInt()),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14.3),
                   ),
                 ],
@@ -378,7 +378,7 @@ class ReceiptPage extends StatelessWidget {
 
   Future<pw.Widget> createCartItemWidget(RaffleCartItem cartItem) async {
     // Attempt to load the image from the network
-    final response = await http.get(Uri.parse(cartItem.raffle!.media!.first.location!));
+    final response = await http.get(Uri.parse(cartItem.raffle!.images!.first!));
 
     pw.Widget imageWidget;
     if (response.statusCode == 200) {
@@ -406,12 +406,12 @@ class ReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.raffle!.name!, style: const pw.TextStyle(fontSize: 10.61)),
+                pw.Text(cartItem.raffle!.productName!, style: const pw.TextStyle(fontSize: 10.61)),
                 pw.Text('${cartItem.quantity}', style: const pw.TextStyle(fontSize: 10.61)),
               ],
             ),
           ),
-          pw.Text(cartItem.raffle!.formattedTicketPrice!,
+          pw.Text(cartItem.raffle!.price!,
             style: pw.TextStyle(fontSize: 10.61, fontWeight: pw.FontWeight.bold),
           ),
         ],

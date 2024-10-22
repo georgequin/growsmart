@@ -2,7 +2,7 @@ import 'package:afriprize/core/utils/config.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/flutter_paystack.dart';
+// import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutterwave_standard/models/responses/charge_response.dart';
 import 'package:intl/intl.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -16,7 +16,7 @@ import 'flutterwave-service.dart';
 
 class MoneyUtils extends TextInputFormatter {
 
-  final plugin = PaystackPlugin();
+  // final plugin = PaystackPlugin();
 
   @override
   TextEditingValue formatEditUpdate(
@@ -75,36 +75,36 @@ class MoneyUtils extends TextInputFormatter {
 
 
     // Handle Paystack payment
-    if (paymentMethod == PaymentMethod.paystack) {
-      var charge = Charge()
-        ..amount = amount * 100  // Convert to kobo
-        ..reference = orderId
-        ..email = profile.value.email;
-
-      plugin.initialize(publicKey: AppConfig.paystackApiKeyTest);
-      CheckoutResponse checkoutResponse = await plugin.checkout(
-        context,
-        method: CheckoutMethod.card,
-        charge: charge,
-      );
-
-      if (checkoutResponse.status == true) {
-        var successResponse = Response(
-          requestOptions: RequestOptions(path: ''),
-          data: checkoutResponse.message,
-          statusCode: 200,
-        );
-        return ApiResponse(successResponse);
-      } else {
-        // Create a fake response to wrap the error message
-        var errorResponse = Response(
-          requestOptions: RequestOptions(path: ''),
-          data: checkoutResponse.message,
-          statusCode: 500,
-        );
-        return ApiResponse(errorResponse);
-      }
-    }
+    // if (paymentMethod == PaymentMethod.paystack) {
+    //   var charge = Charge()
+    //     ..amount = amount * 100  // Convert to kobo
+    //     ..reference = orderId
+    //     ..email = profile.value.email;
+    //
+    //   plugin.initialize(publicKey: AppConfig.paystackApiKeyTest);
+    //   CheckoutResponse checkoutResponse = await plugin.checkout(
+    //     context,
+    //     method: CheckoutMethod.card,
+    //     charge: charge,
+    //   );
+    //
+    //   if (checkoutResponse.status == true) {
+    //     var successResponse = Response(
+    //       requestOptions: RequestOptions(path: ''),
+    //       data: checkoutResponse.message,
+    //       statusCode: 200,
+    //     );
+    //     return ApiResponse(successResponse);
+    //   } else {
+    //     // Create a fake response to wrap the error message
+    //     var errorResponse = Response(
+    //       requestOptions: RequestOptions(path: ''),
+    //       data: checkoutResponse.message,
+    //       statusCode: 500,
+    //     );
+    //     return ApiResponse(errorResponse);
+    //   }
+    // }
 
     // Handle flutterwave payment
     if (paymentMethod == PaymentMethod.flutterwave) {

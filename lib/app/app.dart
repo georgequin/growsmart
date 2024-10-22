@@ -3,8 +3,8 @@ import 'package:afriprize/core/network/api_service.dart';
 import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:afriprize/ui/dialogs/info_alert/info_alert_dialog.dart';
-import 'package:afriprize/ui/views/cart/checkout.dart';
-import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
+// import 'package:afriprize/ui/views/cart/checkout.dart';
+// import 'package:afriprize/ui/views/cart/shop_cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
 import 'package:afriprize/ui/views/home/home_view.dart';
 import 'package:afriprize/ui/views/profile/track.dart';
@@ -39,14 +39,14 @@ import 'package:afriprize/ui/views/withdraw/withdraw_view.dart';
     MaterialRoute(page: DashboardView),
     MaterialRoute(page: DrawsView),
     MaterialRoute(page: CartView),
-    MaterialRoute(page: ShopCartView),
+    // MaterialRoute(page: ShopCartView),
     MaterialRoute(page: NotificationView),
     MaterialRoute(page: ProfileView),
-    MaterialRoute(page: Checkout),
+    // MaterialRoute(page: Checkout),
     MaterialRoute(page: RaffleDetail),
     // MaterialRoute(page: Receipt),
     MaterialRoute(page: Wallet),
-    MaterialRoute(page: Track),
+    // MaterialRoute(page: Track),
 
     MaterialRoute(page: OtpView),
     MaterialRoute(page: ChangePasswordView),

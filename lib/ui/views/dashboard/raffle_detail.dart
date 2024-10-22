@@ -440,10 +440,10 @@ class _RaffleDetailState extends State<RaffleDetail> {
                             )
                                 : InkWell(
                               onTap: () async {
-                                RaffleCartItem newItem = RaffleCartItem(
-                                    raffle: widget.raffle,
-                                    quantity: 1);
-                                viewModel.addToRaffleCart(widget.raffle);
+                                // RaffleCartItem newItem = RaffleCartItem(
+                                //     raffle: widget.raffle,
+                                //     quantity: 1);
+                                // viewModel.addToRaffleCart(widget.raffle);
                               },
                               child: Container(
                                 height: 50,

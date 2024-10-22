@@ -18,7 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:update_available/update_available.dart';
 import 'package:workmanager/workmanager.dart';
-import 'app/flutter_paystack/lib/flutter_paystack.dart';
+// import 'app/flutter_paystack/lib/flutter_paystack.dart';
 import 'firebase_options.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -43,8 +43,8 @@ void main() async{
   setupDialogUi();
   setupBottomSheetUi();
   // Initialize Paystack with your public key
-  final  paystackPlugin = PaystackPlugin();
-  await paystackPlugin.initialize(publicKey: AppConfig.paystackApiKeyTest);
+  // final  paystackPlugin = PaystackPlugin();
+  // await paystackPlugin.initialize(publicKey: AppConfig.paystackApiKeyTest);
 
 
 

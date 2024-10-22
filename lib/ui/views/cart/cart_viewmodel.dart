@@ -15,7 +15,6 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../app/app.dialogs.dart';
 import '../../../app/app.router.dart';
-import '../../../app/flutter_paystack/lib/flutter_paystack.dart';
 import '../../../core/data/models/order_info.dart';
 import '../../../utils/binance_pay.dart';
 import '../../../utils/money_util.dart';
@@ -111,14 +110,23 @@ class CartViewModel extends BaseViewModel {
 
   void getRaffleSubTotal() {
     int total = 0;
+
     for (var element in raffleCart.value) {
       final raffle = element.raffle;
-      total += (raffle?.ticketPrice ?? 0) * element.quantity!;
+
+      // Convert ticketPrice from String to double, defaulting to 0 if ticketPrice is null
+      final ticketPrice = raffle?.price != null
+          ? double.parse(raffle!.price!)
+          : 0;
+
+      // Multiply ticketPrice by quantity and cast to int
+      total += (ticketPrice * element.quantity!).toInt();
     }
 
     raffleSubTotal = total;
     rebuildUi();
   }
+
 
   void checkoutRaffle(BuildContext context) async {
     if (raffleCart.value.isEmpty) {
@@ -243,10 +251,10 @@ class CartViewModel extends BaseViewModel {
   }
 
 
-  Future<void> loadPayStackPlugin() async{
-    final plugin = PaystackPlugin();
-    plugin.initialize(publicKey: AppConfig.paystackApiKeyTest);
-  }
+  // Future<void> loadPayStackPlugin() async{
+  //   final plugin = PaystackPlugin();
+  //   plugin.initialize(publicKey: AppConfig.paystackApiKeyTest);
+  // }
 
 
 }

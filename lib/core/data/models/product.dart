@@ -1,167 +1,96 @@
 import 'package:afriprize/core/data/models/order_item.dart';
 
-// class Product {
-//   String? id;
-//   String? productName;
-//   String? productDescription;
-//   int? productPrice;
-//
-//   int? shippingFee;
-//   int? availability;
-//   int? verifiedSales;
-//   int? stockTotal;
-//   bool? featured;
-//   bool? lowStockAlert;
-//   int? stock;
-//   int? status;
-//   String? created;
-//   List<dynamic>? orders;
-//   String? updated;
-//   Category? category;
-//   List<Pictures>? pictures;
-//   List<dynamic>? reviews;
-//   List<Raffle>? raffle;
-//
-//   Product(
-//       {this.id,
-//       this.productName,
-//       this.productDescription,
-//       this.productPrice,
-//
-//       this.shippingFee,
-//       this.availability,
-//       this.verifiedSales,
-//       this.stockTotal,
-//       this.orders,
-//       this.featured,
-//       this.lowStockAlert,
-//       this.stock,
-//       this.status,
-//       this.created,
-//       this.updated,
-//       this.category,
-//       this.pictures,
-//       this.reviews,
-//       this.raffle});
-//
-//   Product.fromJson(Map<String, dynamic> json) {
-//     id = json['id'];
-//     productName = json['product_name'];
-//     productDescription = json['product_description'];
-//     productPrice = json['product_price'];
-//     shippingFee = json['shipping_fee'];
-//     availability = json['availability'];
-//     verifiedSales = json['verified_sales'];
-//     stockTotal = json['stock_total'];
-//     featured = json['featured'];
-//     orders = json['orders'];
-//     lowStockAlert = json['low_stock_alert'];
-//     reviews = json['reviews'];
-//     stock = json['stock'];
-//     status = json['status'];
-//     created = json['created'];
-//     updated = json['updated'];
-//     category =
-//         json['category'] != null ? Category.fromJson(json['category']) : null;
-//     if (json['pictures'] != null) {
-//       pictures = <Pictures>[];
-//       json['pictures'].forEach((v) {
-//         pictures!.add(Pictures.fromJson(v));
-//       });
-//     }
-//     if (json['reviews'] != null) {
-//       reviews = <Review>[];
-//       json['reviews'].forEach((v) {
-//         reviews!.add(Review.fromJson(v));
-//       });
-//     }
-//     if (json['raffle'] != null) {
-//       raffle = <Raffle>[];
-//       json['raffle'].forEach((v) {
-//         raffle!.add(Raffle.fromJson(v));
-//       });
-//     }
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = <String, dynamic>{};
-//     data['id'] = id;
-//     data['product_name'] = productName;
-//     data['product_description'] = productDescription;
-//     data['product_price'] = productPrice;
-//     data['shipping_fee'] = shippingFee;
-//     data['availability'] = availability;
-//     data['verified_sales'] = verifiedSales;
-//     data['stock_total'] = stockTotal;
-//     data['featured'] = featured;
-//     data['orders'] = orders;
-//     data['low_stock_alert'] = lowStockAlert;
-//     data['stock'] = stock;
-//     data['status'] = status;
-//     data['created'] = created;
-//     data['updated'] = updated;
-//     if (category != null) {
-//       data['category'] = category!.toJson();
-//     }
-//     if (pictures != null) {
-//       data['pictures'] = pictures!.map((v) => v.toJson()).toList();
-//     }
-//     if (reviews != null) {
-//       data['reviews'] = reviews!.map((v) => v.toJson()).toList();
-//     }
-//     if (raffle != null) {
-//       data['raffle'] = raffle!.map((v) => v.toJson()).toList();
-//     }
-//     return data;
-//   }
-// }
-
-class Category {
+class Product {
   String? id;
-  String? id2;
-  String? name;
-  String? description;
-  bool? status;
-  String? created;
-  String? updated;
+  String? productName;
+  String? productDescription;
+  String? price;
+  double? rating;
+  int? availability;
+  int? stock;
+  bool? ad;
+  bool? featured;
+  bool? lowStockAlert;
+  int? categoryId;
+  int? verifiedSales;
+  String? brandName;
+  int? modelNumber;
+  String? createdAt;
+  String? updatedAt;
+  List<String>? reviews;
+  List<String>? images;
 
-  Category({
+  Product({
     this.id,
-    this.id2,
-    this.name,
-    this.description,
-    this.status,
-    this.created,
-    this.updated,
+    this.productName,
+    this.productDescription,
+    this.price,
+    this.rating,
+    this.availability,
+    this.stock,
+    this.ad,
+    this.featured,
+    this.lowStockAlert,
+    this.categoryId,
+    this.verifiedSales,
+    this.brandName,
+    this.modelNumber,
+    this.createdAt,
+    this.updatedAt,
+    this.reviews,
+    this.images,
   });
 
-  Category.fromJson(Map<String, dynamic> json) {
+  Product.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    id2 = json['_id'];
-    name = json['name'];
-    description = json['description'];
-    status = (json['status'].runtimeType == int)
-        ? json["status"] == 1
-            ? true
-            : false
-        : json['status'];
-
-    created = json['created'];
-    updated = json['updated'];
+    productName = json['name'];
+    productDescription = json['description'];
+    price = json['price']?.toString() ?? '0'; // Convert price to int
+    rating = double.tryParse(json['rating']?.toString() ?? '0.0');
+    availability = json['availability'];
+    stock = json['stock'];
+    ad = json['ad'];
+    featured = json['featured'];
+    lowStockAlert = json['lowStockAlert'];
+    categoryId = json['categoryId'] is int ? json['categoryId'] : int.tryParse(json['categoryId']?.toString() ?? '0'); // Convert categoryId to int
+    verifiedSales = json['verifiedSale'];
+    brandName = json['brandName'];
+    modelNumber = json['modelNumber'] is int ? json['modelNumber'] : int.tryParse(json['modelNumber']?.toString() ?? '0'); // Convert modelNumber to int
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    reviews = json['reviews'] != null ? List<String>.from(json['reviews']) : null;
+    images = json['images'] != null ? List<String>.from(json['images']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['_id'] = id2;
-    data['name'] = name;
-    data['description'] = description;
-    data['status'] = status;
-    data['created'] = created;
-    data['updated'] = updated;
+    data['productName'] = productName;
+    data['productDescription'] = productDescription;
+    data['price'] = price;
+    data['rating'] = rating;
+    data['availability'] = availability;
+    data['stock'] = stock;
+    data['ad'] = ad;
+    data['featured'] = featured;
+    data['lowStockAlert'] = lowStockAlert;
+    data['categoryId'] = categoryId;
+    data['verifiedSale'] = verifiedSales;
+    data['brandName'] = brandName;
+    data['modelNumber'] = modelNumber;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    if (reviews != null) {
+      data['reviews'] = reviews;
+    }
+    if (images != null) {
+      data['images'] = images;
+    }
     return data;
   }
 }
+
+
 
 class Pictures {
   String? id;

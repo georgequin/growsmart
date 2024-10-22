@@ -3,12 +3,14 @@ import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import '../core/data/models/cart_item.dart';
 
 
-
-int getRaffleSubTotal(List<RaffleCartItem> cart) {
-  int total = 0;
+double getRaffleSubTotal(List<RaffleCartItem> cart) {
+  double total = 0;
 
   for (var element in cart) {
-    total = total + (element.raffle!.ticketPrice! * element.quantity!);
+    // Convert the price from string to double before performing the multiplication
+    double price = double.parse(element.raffle!.price!);
+
+    total = total + (price * element.quantity!);
   }
 
   return total;

@@ -3,6 +3,8 @@
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/models/profile.dart';
 
+import 'category.dart';
+
 class Project {
   String? id;
   String? projectTitle;
@@ -129,33 +131,7 @@ class Comment {
   }
 }
 
-class Category {
-  String? id;
-  String? name;
-  String? description;
-  String? createdAt;
-  String? updatedAt;
 
-  Category({this.id, this.name, this.description, this.createdAt, this.updatedAt});
-
-  Category.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    name = json['name'];
-    description = json['description'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = id;
-    data['name'] = name;
-    data['description'] = description;
-    data['createdAt'] = createdAt;
-    data['updatedAt'] = updatedAt;
-    return data;
-  }
-}
 
 class Member {
   String? firstname;

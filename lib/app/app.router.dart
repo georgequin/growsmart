@@ -25,7 +25,7 @@ import 'package:afriprize/ui/views/draws/draws_view.dart' as _i7;
 import 'package:afriprize/ui/views/enter_email/enter_email_view.dart' as _i18;
 import 'package:afriprize/ui/views/home/home_view.dart' as _i2;
 import 'package:afriprize/ui/views/notification/notification_view.dart' as _i9;
-import 'package:afriprize/ui/views/onboarding/onboarding_view2.dart' as _i31;
+import 'package:afriprize/ui/views/onboarding/onboarding_view.dart' as _i31;
 import 'package:afriprize/ui/views/otp/otp_view.dart' as _i16;
 import 'package:afriprize/ui/views/profile/profile_view.dart' as _i10;
 import 'package:afriprize/ui/views/profile/track.dart' as _i15;
@@ -151,7 +151,7 @@ class StackedRouter extends _i1.RouterBase {
     ),
     _i1.RouteDef(
       Routes.onboardingView2,
-      page: _i31.OnboardingView2,
+      page: _i31.OnboardingView,
     ),
     _i1.RouteDef(
       Routes.authView,
@@ -252,9 +252,9 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i31.OnboardingView2: (data) {
+    _i31.OnboardingView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i31.OnboardingView2(),
+        builder: (context) =>  _i31.OnboardingView(),
         settings: data,
       );
     },

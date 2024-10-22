@@ -12,6 +12,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import 'auth_view.dart';
+
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -20,7 +22,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 
 class Login extends StatefulWidget {
-  final Function(bool) updateIsLogin;
+  final Function(PresentPage) updateIsLogin;
   const Login({Key? key, required this.updateIsLogin}) : super(key: key);
 
   @override
@@ -42,39 +44,31 @@ class _LoginState extends State<Login> {
           viewModelBuilder: () => AuthViewModel(),
           builder: (context, model, child) => ListView(
             children: [
-              const Text(
-                "Login Account",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Panchang"
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Login Account",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: kcPrimaryColor,
+                      ),
+                    ),
+                    verticalSpaceTiny,
+                    Text(
+                      "Welcome back you’ve been missed!",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
               verticalSpaceTiny,
-          Row(
-            children:  [
-                const Text(
-                  "Don't have an account? ",
-                  style: TextStyle(
-                      fontSize: 12,
-                      ),
-                ),
-              GestureDetector(
-                onTap: () {
-                  gotoRegister();
-
-                },
-                child: const Text(
-                  "Create Account",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: kcSecondaryColor,
-                  ),
-                ),
-              )
-
-            ]
-          ),
 
               verticalSpaceMedium,
               TextFieldWidget(
@@ -96,46 +90,46 @@ class _LoginState extends State<Login> {
               ),
               verticalSpaceTiny,
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  InkWell(
-                    onTap: model.toggleRemember,
-                    child: Row(
-                      children: [
-                        Container(
-                            height: 20,
-                            width: 20,
-                            decoration: BoxDecoration(
-                                color: model.remember
-                                    ? kcSecondaryColor
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                    color: model.remember
-                                        ? Colors.transparent
-                                        : kcSecondaryColor)),
-                            child: model.remember
-                                ? const Center(
-                              child: Icon(
-                                Icons.check,
-                                color: kcWhiteColor,
-                                size: 14,
-                              ),
-                            )
-                                : const SizedBox()),
-                        horizontalSpaceSmall,
-                        const Text(
-                          "Remember Me",
-                          style: TextStyle(
-                              fontSize: 14, decoration: TextDecoration.underline),
-                        )
-                      ],
-                    ),
-                  ),
+                  // InkWell(
+                  //   onTap: model.toggleRemember,
+                  //   child: Row(
+                  //     children: [
+                  //       Container(
+                  //           height: 20,
+                  //           width: 20,
+                  //           decoration: BoxDecoration(
+                  //               color: model.remember
+                  //                   ? kcSecondaryColor
+                  //                   : Colors.transparent,
+                  //               borderRadius: BorderRadius.circular(5),
+                  //               border: Border.all(
+                  //                   color: model.remember
+                  //                       ? Colors.transparent
+                  //                       : kcSecondaryColor)),
+                  //           child: model.remember
+                  //               ? const Center(
+                  //             child: Icon(
+                  //               Icons.check,
+                  //               color: kcWhiteColor,
+                  //               size: 14,
+                  //             ),
+                  //           )
+                  //               : const SizedBox()),
+                  //       horizontalSpaceSmall,
+                  //       const Text(
+                  //         "Remember Me",
+                  //         style: TextStyle(
+                  //             fontSize: 14, decoration: TextDecoration.underline),
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
                   InkWell(
                     onTap: () {
                       locator<NavigationService>()
-                          .navigateToEnterEmailView();
+                          .navigateToChangePasswordView(isResetPassword: true);
                     },
                     child: const Text(
                       "Forgot password?",
@@ -147,15 +141,16 @@ class _LoginState extends State<Login> {
                   )
                 ],
               ),
-              verticalSpaceLarge,
+              verticalSpaceMedium,
               SubmitButton(
                 isLoading: model.isBusy,
                 boldText: true,
-                label: "Login Account",
+                label: "Login",
                 submit: () {
+                  //locator<NavigationService>().clearStackAndShow(Routes.homeView);
                   model.login();
                 },
-                color: kcSecondaryColor,
+                color: kcPrimaryColor,
               ),
               // verticalSpaceMedium,
               // Row(
@@ -185,7 +180,7 @@ class _LoginState extends State<Login> {
               //     ),
               //   ],
               // ),
-              //
+
               // verticalSpaceMedium,
               //
               // SubmitButton(
@@ -200,10 +195,38 @@ class _LoginState extends State<Login> {
               //         toastLength: Toast.LENGTH_LONG
               //     );
               //   },
-              //   color: kcLightGrey,
+              //   color: Colors.grey,
               // ),
 
-              verticalSpaceLarge,
+              verticalSpaceMedium,
+
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:  [
+                    const Text(
+                      "Don't have an account? ",
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+
+                        widget.updateIsLogin(PresentPage.signup);
+                        //gotoRegister();
+
+                      },
+                      child: const Text(
+                        "Create Account",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: kcSecondaryColor,
+                        ),
+                      ),
+                    )
+
+                  ]
+              ),
             ],
           ),
         ),
@@ -211,7 +234,4 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void gotoRegister() {
-    widget.updateIsLogin(false);
-  }
 }

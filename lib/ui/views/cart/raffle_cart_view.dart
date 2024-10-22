@@ -183,8 +183,8 @@ class CartView extends StackedView<CartViewModel> {
                                                               CachedNetworkImageProvider(
                                                             item
                                                                     .raffle
-                                                                    ?.media?[0]
-                                                                    .url ??
+                                                                    ?.images?[0]
+                                                                  ??
                                                                 'https://via.placeholder.com/120',
                                                           ),
                                                           fit: BoxFit.cover,
@@ -225,7 +225,7 @@ class CartView extends StackedView<CartViewModel> {
                                                                     .ellipsis,
                                                           ),
                                                           Text(
-                                                            item.raffle?.name ??
+                                                            item.raffle?.productName ??
                                                                 'Product Name',
                                                             style: GoogleFonts
                                                                 .bricolageGrotesque(
@@ -246,10 +246,10 @@ class CartView extends StackedView<CartViewModel> {
                                                           Row(
                                                             children: [
                                                               Text(
-                                                                MoneyUtils().formatAmount(item
-                                                                        .raffle
-                                                                        ?.ticketPrice ??
-                                                                    0 * item.quantity!),
+                                                                MoneyUtils().formatAmount(
+                                                              (double.parse(item.raffle!.price!)
+                                                                     ??
+                                                                    0 * item.quantity!).toInt()),
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         16,
@@ -676,7 +676,7 @@ class CartView extends StackedView<CartViewModel> {
   @override
   void onViewModelReady(CartViewModel viewModel) {
     viewModel.fetchOnlineCart();
-    viewModel.loadPayStackPlugin();
+    // viewModel.loadPayStackPlugin();
     viewModel.getRaffleSubTotal();
     super.onViewModelReady(viewModel);
   }

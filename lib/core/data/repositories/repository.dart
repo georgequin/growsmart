@@ -19,6 +19,28 @@ class Repository extends IRepository {
   }
 
   @override
+  Future<ApiResponse> requestOtp(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/initial-signup",
+      reqBody: req,
+    );
+
+    return response;
+  }
+  @override
+  Future<ApiResponse> submitOtp(Map<String, dynamic> req) async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.post,
+      endpoint: "auth/verifySignupCode",
+      reqBody: req,
+    );
+
+
+    return response;
+  }
+
+  @override
   Future<ApiResponse> logOut() async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
@@ -74,7 +96,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getProducts() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "products/list",
+      endpoint: "products",
     );
 
     return response;
@@ -523,10 +545,10 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> getDonationsCategories() async {
+  Future<ApiResponse> getCategories() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "projects/category/list",
+      endpoint: "categories",
     );
     return response;
   }

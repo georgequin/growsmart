@@ -47,7 +47,7 @@ class NotificationView extends StackedView<NotificationViewModel> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          viewModel.getDonationsCategories();
+          // viewModel.getDonationsCategories();
           viewModel.getProjects();
         },
         child: Padding(
@@ -105,14 +105,14 @@ class NotificationView extends StackedView<NotificationViewModel> {
           ),
           verticalSpaceSmall,
           // Wrap Row in SingleChildScrollView to allow horizontal scrolling
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: viewModel.filteredCategories.map((category) {
-                return _buildCategoryChip(category, viewModel);
-              }).toList(),
-            ),
-          ),
+          // SingleChildScrollView(
+          //   scrollDirection: Axis.horizontal,
+          //   child: Row(
+          //     children: viewModel.filteredCategories.map((category) {
+          //       return _buildCategoryChip(category, viewModel);
+          //     }).toList(),
+          //   ),
+          // ),
           verticalSpaceSmall,
           // Expanded to allow ListView to take remaining screen space
           Expanded(
@@ -288,38 +288,38 @@ class NotificationView extends StackedView<NotificationViewModel> {
   }
 
 
-  Widget _buildCategoryChip(Category category, NotificationViewModel viewModel) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-      child: ChoiceChip(
-        label: Text(category.name ?? '', style: GoogleFonts.redHatDisplay(
-          textStyle: const TextStyle(
-          ),
-        ),),
-        selected: category.id == viewModel.selectedId, // Check if this category is selected
-        onSelected: (bool selected) {
-          viewModel.setSelectedCategory(selected ? category.id! : ''); // Update viewModel properly
-          viewModel.notifyListeners();  // Notify the listeners to rebuild the UI
-        },
-        selectedColor: kcSecondaryColor,
-        backgroundColor: uiMode.value == AppUiModes.dark
-            ? Colors.grey[500]!
-            : Colors.grey[100]!,
-        labelStyle: TextStyle(
-          color: category.id == viewModel.selectedId ? Colors.white : Colors.black,
-        ),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: uiMode.value == AppUiModes.dark
-                ? Colors.grey[500]!
-                : Colors.grey[100]!,  // Set the border color to light grey
-            width: 1.0,                // Set the border width
-          ),
-          borderRadius: BorderRadius.circular(30.0), // Reduce the border radius (adjust this value)
-        ),
-      ),
-    );
-  }
+  // Widget _buildCategoryChip(Category category, NotificationViewModel viewModel) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 5.0),
+  //     child: ChoiceChip(
+  //       label: Text(category.name ?? '', style: GoogleFonts.redHatDisplay(
+  //         textStyle: const TextStyle(
+  //         ),
+  //       ),),
+  //       selected: category.id == viewModel.selectedId, // Check if this category is selected
+  //       onSelected: (bool selected) {
+  //         viewModel.setSelectedCategory(selected ? category.id! : ''); // Update viewModel properly
+  //         viewModel.notifyListeners();  // Notify the listeners to rebuild the UI
+  //       },
+  //       selectedColor: kcSecondaryColor,
+  //       backgroundColor: uiMode.value == AppUiModes.dark
+  //           ? Colors.grey[500]!
+  //           : Colors.grey[100]!,
+  //       labelStyle: TextStyle(
+  //         color: category.id == viewModel.selectedId ? Colors.white : Colors.black,
+  //       ),
+  //       shape: RoundedRectangleBorder(
+  //         side: BorderSide(
+  //           color: uiMode.value == AppUiModes.dark
+  //               ? Colors.grey[500]!
+  //               : Colors.grey[100]!,  // Set the border color to light grey
+  //           width: 1.0,                // Set the border width
+  //         ),
+  //         borderRadius: BorderRadius.circular(30.0), // Reduce the border radius (adjust this value)
+  //       ),
+  //     ),
+  //   );
+  // }
 
   List<Widget> _buildAppBarActions(BuildContext context, NotificationViewModel viewModel) {
 

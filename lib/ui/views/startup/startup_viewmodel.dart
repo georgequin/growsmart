@@ -25,33 +25,16 @@ class StartupViewModel extends BaseViewModel {
     String? token = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
     String? user = await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
     bool? onboarded = await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
-    print('value of onboarded is: $onboarded');
+    //bool? onboarded = false;
     if (onboarded == null || onboarded == false) {
       _navigationService.replaceWithOnboardingView2();
     } else {
       if (token != null && user != null) {
         userLoggedIn.value = true;
         profile.value = Profile.fromJson(Map<String, dynamic>.from(jsonDecode(user)));
-        getProfile();
-
       }
       _navigationService.replaceWithHomeView();
       // _navigationService.replaceWithAuthView();
-    }
-  }
-
-  void getProfile() async {
-    try {
-      ApiResponse res = await repo.getProfile();
-      if (res.statusCode == 200) {
-        profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data['data']));
-        await locator<LocalStorage>().save(LocalStorageDir.profileView, res.data["data"]);
-        notifyListeners();
-        print(profile.value.accountPoints);
-      }
-    } catch (e) {
-      throw Exception(e);
     }
   }
 

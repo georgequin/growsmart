@@ -3,7 +3,9 @@ import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
+import 'package:afriprize/ui/views/dashboard/productcard.dart';
 import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +22,10 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:top_bottom_sheet_flutter/top_bottom_sheet_flutter.dart';
 import '../../../app/app.locator.dart';
+import '../../../core/data/models/category.dart';
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/project.dart';
+import '../../../core/data/models/raffle_cart_item.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../widget/AdventureDialog.dart';
@@ -44,9 +48,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
     DashboardViewModel viewModel,
     Widget? child,
   ) {
-    if (viewModel.onboarded == false && viewModel.showDialog && !viewModel.modalShown) {
+    if (viewModel.onboarded == false &&
+        viewModel.showDialog &&
+        !viewModel.modalShown) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        viewModel.modalShown = true; // Set this to true to prevent showing the modal again
+        viewModel.modalShown =
+            true; // Set this to true to prevent showing the modal again
         showDialog(
           barrierColor: Colors.black.withOpacity(0.9),
           context: context,
@@ -57,29 +64,29 @@ class DashboardView extends StackedView<DashboardViewModel> {
           // Once the modal is dismissed, update the onboarded status
           locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
           viewModel.showDialog = false;
-          viewModel.modalShown = false; // Reset it in case the user reopens the view later
+          viewModel.modalShown =
+              false; // Reset it in case the user reopens the view later
         });
       });
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: ValueListenableBuilder(
-          valueListenable: uiMode,
-          builder: (context, AppUiModes mode, child) {
-            return SvgPicture.asset(
-              uiMode.value == AppUiModes.dark
-                  ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
-                  : "assets/images/dashboard_logo.svg",
-              width: 150,
-              height: 40,
-            );
-          },
-        ),
-        centerTitle: false,
-        actions: _buildAppBarActions(context, viewModel.appBarLoading, viewModel)
-
-      ),
+          title: ValueListenableBuilder(
+            valueListenable: uiMode,
+            builder: (context, AppUiModes mode, child) {
+              return SvgPicture.asset(
+                uiMode.value == AppUiModes.dark
+                    ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
+                    : "assets/images/dashboard_logo.svg",
+                width: 150,
+                height: 40,
+              );
+            },
+          ),
+          centerTitle: false,
+          actions:
+              _buildAppBarActions(context, viewModel.appBarLoading, viewModel)),
       body: RefreshIndicator(
         onRefresh: () async {
           await viewModel.refreshData();
@@ -102,13 +109,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
         Text(
           "Quick Actions",
           style: GoogleFonts.bricolageGrotesque(
-            textStyle:  TextStyle(
+            textStyle: TextStyle(
               fontSize: 15, // Custom font size
               fontWeight: FontWeight.bold, // Custom font weight
               color: uiMode.value == AppUiModes.dark
                   ? Colors.white // Dark mode logo
                   : Colors.black,
-
 
               // Custom text color (optional)
             ),
@@ -220,189 +226,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  Widget doMoreOnAfriprize(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Do More On Afriprize",
-          style: GoogleFonts.bricolageGrotesque(
-            textStyle: TextStyle(
-              fontSize: 15, // Custom font size
-              fontWeight: FontWeight.bold, // Custom font weight
-              color: uiMode.value == AppUiModes.dark
-                  ? Colors.white // Dark mode logo
-                  : Colors.black, // Custom text color (optional)
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        // Setting a fixed height for the ListView to avoid unbounded height issues
-        Container(
-          height: 80, // You can adjust the height as necessary
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  locator<NavigationService>().navigateToWallet();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: uiMode.value == AppUiModes.dark
-                          ? Color(0xFF2E2E2E)
-                          : Color(0xFFFAFAFA),
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: uiMode.value == AppUiModes.dark
-                              ? Colors.transparent
-                              : kcLightGrey,
-                          blurRadius: 5.0,
-                          spreadRadius: 1.0,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    // Added padding around the content of the container
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0, vertical: 8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Colored Circle
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                              color: kcSecondaryColor, // Customize the color
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8), // Space between the circle and the text
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Instant Wallet Credit",
-                                style: GoogleFonts.redHatDisplay(
-                                  textStyle: TextStyle(
-                                    fontSize: 14, // Custom font size
-                                    fontWeight: FontWeight.bold, // Custom font weight
-                                    color: uiMode.value == AppUiModes.dark
-                                        ? Colors.white
-                                        : Colors.black, // Custom text color
-                                  ),
-                                ),
-                              ),
-                              verticalSpaceTiny,
-                              Text(
-                                'Value equal to the ticket\'s value!',
-                                style: GoogleFonts.redHatDisplay(
-                                  textStyle: TextStyle(
-                                    fontSize: 10,
-                                    color: uiMode.value == AppUiModes.dark
-                                        ? kcWhiteColor
-                                        : kcBlackColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // Second GestureDetector for Donate to Non-profits
-              GestureDetector(
-                onTap: () {
-                  locator<NavigationService>().navigateToNotificationView();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: uiMode.value == AppUiModes.dark
-                          ? Color(0xFF2E2E2E)
-                          : Color(0xFFFAFAFA),
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: uiMode.value == AppUiModes.dark
-                              ? Colors.transparent
-                              : kcLightGrey,
-                          blurRadius: 5.0,
-                          spreadRadius: 1.0,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0, vertical: 8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                              color: kcSecondaryColor, // Customize the color
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8), // Space between the circle and the text
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Donate to Non-profits",
-                                style: GoogleFonts.redHatDisplay(
-                                  textStyle: TextStyle(
-                                    fontSize: 14, // Custom font size
-                                    fontWeight: FontWeight.bold, // Custom font weight
-                                    color: uiMode.value == AppUiModes.dark
-                                        ? kcWhiteColor
-                                        : kcBlackColor,
-                                  ),
-                                ),
-                              ),
-                              verticalSpaceTiny,
-                              Text(
-                                'Supported by our partners',
-                                style: GoogleFonts.redHatDisplay(
-                                  textStyle: TextStyle(
-                                    fontSize: 10,
-                                    color: uiMode.value == AppUiModes.dark
-                                        ? kcWhiteColor
-                                        : kcBlackColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 
-
-  Widget popularDrawsSlider(BuildContext context, List<Raffle> raffles) {
+  Widget popularDrawsSlider(
+      BuildContext context, DashboardViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -413,24 +239,26 @@ class DashboardView extends StackedView<DashboardViewModel> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Popular Draws",
+                  "Popular Products",
                   style: GoogleFonts.bricolageGrotesque(
-                    textStyle:  TextStyle(
+                    textStyle: TextStyle(
                       fontSize: 16, // Custom font size
                       fontWeight: FontWeight.w700, // Custom font weight
-                      color:  uiMode.value == AppUiModes.dark
-                          ? kcWhiteColor : kcBlackColor, // Custom text color (optional)
+                      color: uiMode.value == AppUiModes.dark
+                          ? kcWhiteColor
+                          : kcBlackColor, // Custom text color (optional)
                     ),
                   ),
                 ),
                 Text(
-                  "Explore our most sought-after draws",
+                  "Explore our most sought-after products",
                   style: GoogleFonts.redHatDisplay(
                     textStyle: TextStyle(
                       fontSize: 11, // Custom font size
                       fontWeight: FontWeight.w400, // Custom font weight
-                      color:  uiMode.value == AppUiModes.dark
-                          ? kcWhiteColor : kcWhiteColor, // Custom text color (optional)
+                      color: uiMode.value == AppUiModes.dark
+                          ? kcWhiteColor
+                          : kcBlackColor, // Custom text color (optional)
                     ),
                   ),
                 ),
@@ -475,210 +303,395 @@ class DashboardView extends StackedView<DashboardViewModel> {
           ],
         ),
         const SizedBox(height: 8),
-        SizedBox(
-          height: 300,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: raffles.length,
-            itemBuilder: (context, index) {
-              final raffle = raffles[index];
-              final imageUrl = raffle.media?.isNotEmpty == true
-                  ? raffle.media![0].url
-                  : 'https://via.placeholder.com/150';
-              // final formattedEndDate = DateFormat('yyyy-MM-dd HH:mm:ss')
-              final formattedEndDate = DateFormat('yyyy-MM-dd')
-                  .format(DateTime.parse(raffle.endDate ?? ''));
-
-              final endDate = DateTime.parse(raffle.endDate ?? '');
-              final now = DateTime.now();
-              final remainingDuration = endDate.difference(now);
-
-              double cardHeight = 250; // Default height
-              if (index % 3 == 1) {
-                cardHeight = 200; // Shorter card
-              } else if (index % 3 == 2) {
-                cardHeight = 300; // Full-height card
-              }
-
-              return InkWell(
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    isDismissible: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25.0),
-                          topRight: Radius.circular(25.0)),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // Number of columns in the grid
+            crossAxisSpacing: 10.0,
+            mainAxisSpacing: 10.0, // Added space between items
+            childAspectRatio: 0.8, // Adjust height relative to width
+          ),
+          itemCount: viewModel.productList.length,
+          itemBuilder: (context, index) {
+            final item = viewModel.productList[index];
+            return InkWell(
+              onTap: (){
+                showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                isDismissible: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(25.0),
+                                      topRight: Radius.circular(25.0)),
+                                ),
+                                // barrierColor: Colors.black.withAlpha(50),
+                                // backgroundColor: Colors.transparent,
+                                backgroundColor: Colors.black.withOpacity(0.7),
+                                builder: (BuildContext context) {
+                                  return ProductCard(product: item);
+                                },
+                              );
+              },
+              child: Container(
+                margin: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: index % 2 == 0
+                      ? Colors.purple[50]
+                      : Colors.pink[50], // Alternating background colors
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3), // Shadow position
                     ),
-                    // barrierColor: Colors.black.withAlpha(50),
-                    // backgroundColor: Colors.transparent,
-                    backgroundColor: Colors.black.withOpacity(0.7),
-                    builder: (BuildContext context) {
-                      return RaffleDetail(raffle: raffle);
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Container(
-                    height: cardHeight,
-                    width: 250,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        const BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 6.0,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image with "NEW" badge
+                    Stack(
                       children: [
-                        // Image covering the entire card
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            imageUrl!,
-                            height: double.infinity,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                          child: CachedNetworkImage(
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.0,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    kcSecondaryColor),
+                              ),
+                            ),
+                            imageUrl: item.images?.first ??
+                                'https://via.placeholder.com/120',
+                            height: 148,
                             width: double.infinity,
                             fit: BoxFit.cover,
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                            fadeInDuration: const Duration(milliseconds: 500),
+                            fadeOutDuration: const Duration(milliseconds: 300),
                           ),
                         ),
-                        // Tint overlay for better readability
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            color:  uiMode.value == AppUiModes.dark
-                                ? Colors.black.withOpacity(
-                                0.8) : Colors.black.withOpacity(
-                                0.6),
-                             // Dark semi-transparent overlay
-                            height: double.infinity,
-                            width: double.infinity,
-                          ),
-                        ),
-                        // Raffle details positioned on top of the image
+                        // "NEW" badge
                         Positioned(
-                          top: 8,
-                          right: 8,
+                          top: 0,
+                          left: 0,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 4.0),
                             decoration: BoxDecoration(
-                              color: uiMode.value == AppUiModes.dark
-                                  ? kcVeryLightGrey : kcWhiteColor,
-                              borderRadius: BorderRadius.circular(4),
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              raffle.formattedTicketPrice ?? '',
-                              style: const TextStyle(
-                                color: kcPrimaryColor,
-                                fontSize: 16,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 33,
-                          right: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: kcSecondaryColor,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Text(
-                              'Ticket Price',
+                              'NEW',
                               style: TextStyle(
-                                fontSize: 10,
-                                color: kcPrimaryColor,
-                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                                fontSize: 12,
                               ),
                             ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 10,
-                          left: 10,
-                          right: 10,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                // mainAxisAlignment:
-                                //     MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'WIN Prize in',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  SlideCountdown(
-                                    duration: remainingDuration,
-                                    decoration: const BoxDecoration(
-                                      // color: kcPrimaryColor,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                    separator: ':',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
-                                    onDone: () {
-                                      print('Countdown finished!');
-                                    },
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                raffle.name ?? '',
-                                style: const TextStyle(
-                                  color: kcSecondaryColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              // buildParticipantsAvatars(raffle.participants ?? []),
-
-
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    "assets/images/partcipant_icon.png",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${raffle.participants?.length ?? 0} Participants',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
+
+                    // Rating stars
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
+                      child: Row(
+                        children: List.generate(5, (starIndex) {
+                          return Icon(
+                            Icons.star,
+                            color: starIndex < item.rating!.toInt()
+                                ? kcStarColor
+                                : Colors.grey,
+                            size: 16,
+                          );
+                        }),
+                      ),
+                    ),
+
+                    // Product title
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        item.productName ?? 'Product name',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    // Price and Cart icon
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '₦${item.price}' ?? "\$0",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'roboto',
+                              color: kcPrimaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              RaffleCartItem newItem = RaffleCartItem(
+                                  raffle: item,
+                                  quantity: 1);
+                              viewModel.addToRaffleCart(item);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(
+                                  8.0), // Padding around the icon
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.shopping_cart_outlined,
+                                color: kcSecondaryColor,
+                                size: 16,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            );
+          },
+        )
+        // SizedBox(
+        //   height: 300,
+        //   child: ListView.builder(
+        //     scrollDirection: Axis.horizontal,
+        //     itemCount: raffles.length,
+        //     itemBuilder: (context, index) {
+        //       final raffle = raffles[index];
+        //       final imageUrl = raffle.media?.isNotEmpty == true
+        //           ? raffle.media![0].url
+        //           : 'https://via.placeholder.com/150';
+        //       // final formattedEndDate = DateFormat('yyyy-MM-dd HH:mm:ss')
+        //       final formattedEndDate = DateFormat('yyyy-MM-dd')
+        //           .format(DateTime.parse(raffle.endDate ?? ''));
+        //
+        //       final endDate = DateTime.parse(raffle.endDate ?? '');
+        //       final now = DateTime.now();
+        //       final remainingDuration = endDate.difference(now);
+        //
+        //       double cardHeight = 250; // Default height
+        //       if (index % 3 == 1) {
+        //         cardHeight = 200; // Shorter card
+        //       } else if (index % 3 == 2) {
+        //         cardHeight = 300; // Full-height card
+        //       }
+        //
+        //       return InkWell(
+        //         onTap: () {
+        //           showModalBottomSheet(
+        //             context: context,
+        //             isScrollControlled: true,
+        //             isDismissible: true,
+        //             shape: const RoundedRectangleBorder(
+        //               borderRadius: BorderRadius.only(
+        //                   topLeft: Radius.circular(25.0),
+        //                   topRight: Radius.circular(25.0)),
+        //             ),
+        //             // barrierColor: Colors.black.withAlpha(50),
+        //             // backgroundColor: Colors.transparent,
+        //             backgroundColor: Colors.black.withOpacity(0.7),
+        //             builder: (BuildContext context) {
+        //               return RaffleDetail(raffle: raffle);
+        //             },
+        //           );
+        //         },
+        //         child: Padding(
+        //           padding: const EdgeInsets.only(right: 10.0),
+        //           child: Container(
+        //             height: cardHeight,
+        //             width: 250,
+        //             decoration: BoxDecoration(
+        //               borderRadius: BorderRadius.circular(10),
+        //               boxShadow: [
+        //                 const BoxShadow(
+        //                   color: Colors.black12,
+        //                   blurRadius: 6.0,
+        //                   offset: Offset(0, 2),
+        //                 ),
+        //               ],
+        //             ),
+        //             child: Stack(
+        //               children: [
+        //                 // Image covering the entire card
+        //                 ClipRRect(
+        //                   borderRadius: BorderRadius.circular(10),
+        //                   child: Image.network(
+        //                     imageUrl!,
+        //                     height: double.infinity,
+        //                     width: double.infinity,
+        //                     fit: BoxFit.cover,
+        //                   ),
+        //                 ),
+        //                 // Tint overlay for better readability
+        //                 ClipRRect(
+        //                   borderRadius: BorderRadius.circular(10),
+        //                   child: Container(
+        //                     color:  uiMode.value == AppUiModes.dark
+        //                         ? Colors.black.withOpacity(
+        //                         0.8) : Colors.black.withOpacity(
+        //                         0.6),
+        //                      // Dark semi-transparent overlay
+        //                     height: double.infinity,
+        //                     width: double.infinity,
+        //                   ),
+        //                 ),
+        //                 // Raffle details positioned on top of the image
+        //                 Positioned(
+        //                   top: 8,
+        //                   right: 8,
+        //                   child: Container(
+        //                     padding: const EdgeInsets.symmetric(
+        //                         horizontal: 8, vertical: 4),
+        //                     decoration: BoxDecoration(
+        //                       color: uiMode.value == AppUiModes.dark
+        //                           ? kcVeryLightGrey : kcWhiteColor,
+        //                       borderRadius: BorderRadius.circular(4),
+        //                     ),
+        //                     child: Text(
+        //                       raffle.formattedTicketPrice ?? '',
+        //                       style: const TextStyle(
+        //                         color: kcPrimaryColor,
+        //                         fontSize: 16,
+        //                         fontFamily: 'Roboto',
+        //                         fontWeight: FontWeight.w700,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ),
+        //                 Positioned(
+        //                   top: 33,
+        //                   right: 8,
+        //                   child: Container(
+        //                     padding: const EdgeInsets.symmetric(
+        //                         horizontal: 8, vertical: 4),
+        //                     decoration: BoxDecoration(
+        //                       color: kcSecondaryColor,
+        //                       borderRadius: BorderRadius.circular(4),
+        //                     ),
+        //                     child: const Text(
+        //                       'Ticket Price',
+        //                       style: TextStyle(
+        //                         fontSize: 10,
+        //                         color: kcPrimaryColor,
+        //                         fontWeight: FontWeight.w400,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ),
+        //                 Positioned(
+        //                   bottom: 10,
+        //                   left: 10,
+        //                   right: 10,
+        //                   child: Column(
+        //                     crossAxisAlignment: CrossAxisAlignment.start,
+        //                     children: [
+        //                       Row(
+        //                         // mainAxisAlignment:
+        //                         //     MainAxisAlignment.spaceBetween,
+        //                         children: [
+        //                           Text(
+        //                             'WIN Prize in',
+        //                             style: const TextStyle(
+        //                               color: Colors.white,
+        //                               fontSize: 13,
+        //                             ),
+        //                           ),
+        //                           SlideCountdown(
+        //                             duration: remainingDuration,
+        //                             decoration: const BoxDecoration(
+        //                               // color: kcPrimaryColor,
+        //                               borderRadius:
+        //                                   BorderRadius.all(Radius.circular(5)),
+        //                             ),
+        //                             separator: ':',
+        //                             style: const TextStyle(
+        //                               color: Colors.white,
+        //                               fontSize: 14,
+        //                             ),
+        //                             onDone: () {
+        //                               print('Countdown finished!');
+        //                             },
+        //                           ),
+        //                         ],
+        //                       ),
+        //                       Text(
+        //                         raffle.name ?? '',
+        //                         style: const TextStyle(
+        //                           color: kcSecondaryColor,
+        //                           fontWeight: FontWeight.w600,
+        //                           fontSize: 20,
+        //                         ),
+        //                         maxLines: 2,
+        //                         overflow: TextOverflow.ellipsis,
+        //                       ),
+        //                       const SizedBox(height: 4),
+        //                       // buildParticipantsAvatars(raffle.participants ?? []),
+        //
+        //
+        //                       Row(
+        //                         children: [
+        //                           Image.asset(
+        //                             "assets/images/partcipant_icon.png",
+        //                             width: 40,
+        //                           ),
+        //                           const SizedBox(width: 4),
+        //                           Text(
+        //                             '${raffle.participants?.length ?? 0} Participants',
+        //                             style: const TextStyle(
+        //                               color: Colors.white,
+        //                               fontSize: 12,
+        //                             ),
+        //                           ),
+        //                         ],
+        //                       ),
+        //                     ],
+        //                   ),
+        //                 ),
+        //               ],
+        //             ),
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ),
       ],
     );
   }
@@ -695,14 +708,15 @@ class DashboardView extends StackedView<DashboardViewModel> {
             left: index * overlapOffset,
             child: participant.profilePic?.url != null
                 ? ClipOval(
-              child: Image.network(
-                participant.profilePic!.url!,
-                width: 25,
-                height: 25,
-                fit: BoxFit.cover,
-              ),
-            )
-                : _buildInitialsCircle(participant), // Show initials if no image
+                    child: Image.network(
+                      participant.profilePic!.url!,
+                      width: 25,
+                      height: 25,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : _buildInitialsCircle(
+                    participant), // Show initials if no image
           );
         }).toList(),
       ),
@@ -726,9 +740,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   String _getInitials(Participant participant) {
-    String firstName = participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
-    String lastName = participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
-    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'.toUpperCase();
+    String firstName =
+        participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
+    String lastName =
+        participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
+    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
+        .toUpperCase();
   }
 
   Widget donationsSlider(BuildContext context, List<ProjectResource> projects) {
@@ -774,10 +791,13 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 locator<NavigationService>().navigateToNotificationView();
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: kcSecondaryColor.withOpacity(0.2), // Capsule background color
-                  borderRadius: BorderRadius.circular(20), // Rounded capsule shape
+                  color: kcSecondaryColor
+                      .withOpacity(0.2), // Capsule background color
+                  borderRadius:
+                      BorderRadius.circular(20), // Rounded capsule shape
                 ),
                 child: const Row(
                   children: [
@@ -852,7 +872,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ClipRRect(
-                            borderRadius: const BorderRadius.all(Radius.circular(12)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12)),
                             child: Image.network(
                               imageUrl!,
                               width: double.infinity, // or specify a width
@@ -861,7 +882,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0),
+                            padding:
+                                const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0),
                             child: Text(
                               project?.projectTitle ?? 'service title',
                               style: GoogleFonts.redHatDisplay(
@@ -876,7 +898,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(5.0, 0, 8.0, 8.0),
+                            padding:
+                                const EdgeInsets.fromLTRB(5.0, 0, 8.0, 8.0),
                             child: Text(
                               project?.projectDescription ?? '',
                               style: GoogleFonts.redHatDisplay(
@@ -891,7 +914,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
                             child: buildMembersAvatars(members ?? []),
                             // Row(
                             //   children: [
@@ -938,7 +962,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
         // Constrain the Stack with a specific width
         SizedBox(
           height: avatarSize,
-          width: participants.length * overlapOffset + avatarSize, // Ensure a finite width
+          width: participants.length * overlapOffset +
+              avatarSize, // Ensure a finite width
           child: Stack(
             children: participants.asMap().entries.map((entry) {
               int index = entry.key;
@@ -949,31 +974,30 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 child: ClipOval(
                   child: participant.profilePic?.url != null
                       ? Image.network(
-                    participant.profilePic!.url!,
-                    width: avatarSize,
-                    height: avatarSize,
-                    fit: BoxFit.cover,
-                  )
+                          participant.profilePic!.url!,
+                          width: avatarSize,
+                          height: avatarSize,
+                          fit: BoxFit.cover,
+                        )
                       : _buildMembersInitialsCircle(participant),
                 ),
               );
             }).toList(),
           ),
         ),
-          Text(
-            ' ${participants.length} Participants',
-            style: GoogleFonts.redHatDisplay(
-              fontSize: 10,
-              color: uiMode.value == AppUiModes.dark
-                  ? kcWhiteColor // Dark mode logo
-                  : kcBlackColor,
-              fontWeight: FontWeight.w400,
-            ),
+        Text(
+          ' ${participants.length} Participants',
+          style: GoogleFonts.redHatDisplay(
+            fontSize: 10,
+            color: uiMode.value == AppUiModes.dark
+                ? kcWhiteColor // Dark mode logo
+                : kcBlackColor,
+            fontWeight: FontWeight.w400,
           ),
+        ),
       ],
     );
   }
-
 
   Widget _buildMembersInitialsCircle(Member participant) {
     String initials = _getMemberInitials(participant);
@@ -992,9 +1016,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   String _getMemberInitials(Member participant) {
-    String firstName = participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
-    String lastName = participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
-    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'.toUpperCase();
+    String firstName =
+        participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
+    String lastName =
+        participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
+    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
+        .toUpperCase();
   }
 
   Widget _buildShimmerOrContent(
@@ -1016,47 +1043,151 @@ class DashboardView extends StackedView<DashboardViewModel> {
     } else {
       return Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      // Handle search button press
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          verticalSpaceSmall,
           _buildAdsSlideshow(viewModel),
           verticalSpaceSmall,
           quickActions(context),
           verticalSpaceMedium,
-          doMoreOnAfriprize(context),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: viewModel.filteredCategories.map((category) {
+                return _buildCategoryChip(category, viewModel);
+              }).toList(),
+            ),
+          ),
           verticalSpaceMedium,
-          popularDrawsSlider(context, viewModel.raffleList),
-          verticalSpaceMedium,
-          donationsSlider(context, viewModel.projectResources),
+          popularDrawsSlider(context, viewModel),
+          verticalSpaceSmall,
         ],
       );
     }
   }
 
   Widget _buildAdsSlideshow(DashboardViewModel viewModel) {
-    if (viewModel.adsList.isEmpty) {
-      return Container(
-        width: double.infinity,
-        height: 150,
-        decoration: BoxDecoration(
-          color: kcSecondaryColor,
-          borderRadius: BorderRadius.circular(20),
+    if (viewModel.productList.where((element) => element.ad == true).isEmpty) {
+      return Card(
+        color: kcPrimaryColor,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
         ),
-        child: Center(child: SvgPicture.asset(
-          uiMode.value == AppUiModes.dark
-              ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
-              : "assets/images/dashboard_logo.svg",
-          width: 500,
-          height: 200,
-        )),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 150, // Set the width to control text wrapping
+                    child: const Text(
+                      'Best Full Solar Installation',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: kcWhiteColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      softWrap: true,
+                    ),
+                  ),
+                  Container(
+                    width: 200, // Set the width to control text wrapping
+                    child: Text(
+                      'Light out your world',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: kcWhiteColor,
+                      ),
+                      softWrap: true,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: kcBlackColor,
+                        backgroundColor: kcWhiteColor,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12.0, horizontal: 24.0),
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      child: Text("Check now"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage(
+                        "assets/images/Mercury-10KVA-Solar-System-1 2.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                height: 150,
+                width: 130,
+              ),
+            ),
+          ],
+        ),
       );
     }
 
     return CarouselSlider.builder(
-      itemCount: viewModel.adsList.length,
+      itemCount:
+          viewModel.productList.where((element) => element.ad == true).length,
       itemBuilder: (context, index, realIndex) {
-        final ad = viewModel.adsList[index];
+        final ad = viewModel.productList
+            .where((element) => element.ad == true)
+            .toList()[index];
         return _buildAdItem(ad);
       },
       options: CarouselOptions(
-        height: 150,
+        height: 200,
         autoPlay: true,
         enlargeCenterPage: true,
         viewportFraction: 1,
@@ -1068,24 +1199,85 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  Widget _buildAdItem(Ads ad) {
+  Widget _buildAdItem(Product ad) {
     return Container(
+      padding: EdgeInsets.all(16), // Add padding around the content
       width: double.infinity,
-      height: 150,
+      height: 200, // Adjust the height if necessary
       decoration: BoxDecoration(
-        color: kcSecondaryColor,
+        color: kcSecondaryColor, // Your custom color
         borderRadius: BorderRadius.circular(20),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Image.network(
-          ad.url ?? '',
-          fit: BoxFit.cover,
-          loadingBuilder: (context, child, progress) {
-            if (progress == null) return child;
-            return Center(child: CircularProgressIndicator());
-          },
-        ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Left side: Title and description
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment
+                  .center, // Adjust the layout to avoid overflow
+              children: [
+                // Product title
+                Text(
+                  ad.productName ?? 'Best Full Solar Installation',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                verticalSpaceSmall,
+                // Product description (1 line max)
+                Text(
+                  ad.productDescription ?? 'Light out your world',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                ),
+                verticalSpaceMedium,
+                // Checkout button
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your checkout logic here
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white, // Background color
+                    foregroundColor: kcSecondaryColor, // Text color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text('Check Now'),
+                ),
+              ],
+            ),
+          ),
+
+          // Right side: Product image
+          SizedBox(width: 16), // Space between text and image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              ad.images?.first ?? '',
+              width: 100, // Adjust the width of the image
+              height: 100, // Adjust the height of the image
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return Center(child: CircularProgressIndicator());
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(Icons.broken_image, size: 100, color: Colors.white);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1158,17 +1350,22 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  Widget _notificationIcon(int unreadCount, BuildContext context, DashboardViewModel viewModel) {
+  Widget _notificationIcon(
+      int unreadCount, BuildContext context, DashboardViewModel viewModel) {
     print('notif count is $unreadCount');
     return Stack(
       children: [
         IconButton(
-          icon: SvgPicture.asset(
-            uiMode.value == AppUiModes.dark
-                ? "assets/images/dashboard_otification_white.svg" // Dark mode logo
-                : "assets/images/dashboard_otification.svg", width: 30, height: 30,),
-          onPressed: (){_showNotificationSheet(context, viewModel);}
-        ),
+            icon: SvgPicture.asset(
+              uiMode.value == AppUiModes.dark
+                  ? "assets/images/dashboard_otification_white.svg" // Dark mode logo
+                  : "assets/images/dashboard_otification.svg",
+              width: 30,
+              height: 30,
+            ),
+            onPressed: () {
+              _showNotificationSheet(context, viewModel);
+            }),
         if (unreadCount > 0)
           Positioned(
             right: 10,
@@ -1191,8 +1388,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  void _showNotificationSheet(BuildContext context, DashboardViewModel viewModel) {
-    viewModel.markAllNotificationsAsRead();
+  void _showNotificationSheet(
+      BuildContext context, DashboardViewModel viewModel) {
+    // viewModel.markAllNotificationsAsRead();
 
     TopModalSheet.show(
         context: context,
@@ -1205,7 +1403,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
           height: MediaQuery.of(context).size.height * 0.5,
           child: Column(
             children: [
-              Text("Notifications", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text("Notifications",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               Expanded(
                 child: ListView.builder(
                   itemCount: notifications.value.length,
@@ -1239,7 +1438,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           ),
                         ),
                       ),
-                      trailing: notification.unread ? Icon(Icons.circle, color: Colors.red, size: 10) : null,
+                      trailing: notification.unread
+                          ? Icon(Icons.circle, color: Colors.red, size: 10)
+                          : null,
                     );
                   },
                 ),
@@ -1249,10 +1450,47 @@ class DashboardView extends StackedView<DashboardViewModel> {
         ));
   }
 
+  Widget _buildCategoryChip(Category category, DashboardViewModel viewModel) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: ChoiceChip(
+        label: Text(
+          category.name ?? '',
+          style: GoogleFonts.redHatDisplay(
+            textStyle: const TextStyle(),
+          ),
+        ),
+        selected: category.id ==
+            viewModel.selectedId, // Check if this category is selected
+        onSelected: (bool selected) {
+          viewModel.setSelectedCategory(
+              selected ? category.id : 0); // Update viewModel properly
+          viewModel.notifyListeners(); // Notify the listeners to rebuild the UI
+        },
+        selectedColor: kcSecondaryColor,
+        backgroundColor: uiMode.value == AppUiModes.dark
+            ? Colors.grey[500]!
+            : Colors.grey[100]!,
+        labelStyle: TextStyle(
+          color:
+              category.id == viewModel.selectedId ? Colors.white : Colors.black,
+        ),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: uiMode.value == AppUiModes.dark
+                ? Colors.grey[500]!
+                : Colors.grey[100]!, // Set the border color to light grey
+            width: 1.0, // Set the border width
+          ),
+          borderRadius: BorderRadius.circular(
+              30.0), // Reduce the border radius (adjust this value)
+        ),
+      ),
+    );
+  }
 
-
-
-  List<Widget> _buildAppBarActions(BuildContext context, bool isLoading, DashboardViewModel viewModel) {
+  List<Widget> _buildAppBarActions(
+      BuildContext context, bool isLoading, DashboardViewModel viewModel) {
     if (isLoading) {
       // Display the shimmer effect while loading
       return [
@@ -1288,8 +1526,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           bottomLeft: Radius.circular(5.0),
                         ),
                       ),
-                      width: 80,  // Adjust width for the shimmer
-                      height: 20,  // Adjust height for the shimmer
+                      width: 80, // Adjust width for the shimmer
+                      height: 20, // Adjust height for the shimmer
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -1356,10 +1594,13 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     locator<NavigationService>().navigateTo(Routes.authView);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: kcSecondaryColor.withOpacity(0.2), // Capsule background color
-                      borderRadius: BorderRadius.circular(10), // Rounded capsule shape
+                      color: kcSecondaryColor
+                          .withOpacity(0.2), // Capsule background color
+                      borderRadius:
+                          BorderRadius.circular(10), // Rounded capsule shape
                     ),
                     child: const Row(
                       children: [
@@ -1382,13 +1623,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
     }
   }
 
-
-
-
-
   @override
   void onViewModelReady(DashboardViewModel viewModel) {
-
     super.onViewModelReady(viewModel);
     viewModel.initialise();
     Timer.periodic(const Duration(seconds: 8), (Timer timer) {
@@ -1510,307 +1746,7 @@ class RaffleRow extends StatelessWidget {
         children: [
           const Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              // Container(
-              //   margin: const EdgeInsets.fromLTRB(14.0, 14.0, 14.0, 0.0),
-              //   child: ClipRRect(
-              //     borderRadius: const BorderRadius.all(
-              //       Radius.circular(12),
-              //     ),
-              //     child: CachedNetworkImage(
-              //       placeholder: (context, url) => const Center(
-              //         child: CircularProgressIndicator(
-              //           strokeWidth: 2.0, // Make the loader thinner
-              //           valueColor: AlwaysStoppedAnimation<Color>(
-              //               kcSecondaryColor), // Change the loader color
-              //         ),
-              //       ),
-              //       imageUrl: raffle.pictures?.first.location ??
-              //           'https://via.placeholder.com/150',
-              //       fit: BoxFit.cover,
-              //       height: 182,
-              //       width: double.infinity,
-              //       errorWidget: (context, url, error) =>
-              //           const Icon(Icons.error),
-              //       fadeInDuration: const Duration(milliseconds: 500),
-              //       fadeOutDuration: const Duration(milliseconds: 300),
-              //     ),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         'Win!!!',
-              //         style: TextStyle(
-              //             fontSize: 22,
-              //             color: uiMode.value == AppUiModes.light
-              //                 ? kcSecondaryColor
-              //                 : kcWhiteColor,
-              //             fontWeight: FontWeight.bold,
-              //             fontFamily: "Panchang"),
-              //         maxLines: 2,
-              //         overflow: TextOverflow.ellipsis,
-              //       ),
-              //       Text(
-              //         raffle.ticketName ?? 'raffle Name',
-              //         style: TextStyle(
-              //             fontSize: 20,
-              //             color: uiMode.value == AppUiModes.light
-              //                 ? kcPrimaryColor
-              //                 : kcSecondaryColor,
-              //             fontWeight: FontWeight.bold,
-              //             fontFamily: "Panchang"),
-              //         maxLines: 3,
-              //         overflow: TextOverflow.ellipsis,
-              //       ),
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Container(
-              //             padding: const EdgeInsets.symmetric(
-              //                 horizontal: 11, vertical: 7),
-              //             decoration: BoxDecoration(
-              //               color: Colors.grey[300]?.withOpacity(0.2),
-              //               borderRadius: BorderRadius.circular(8),
-              //             ),
-              //             child: Text(
-              //               'Buy \$5 Afriprize Card',
-              //               style: TextStyle(
-              //                   color: uiMode.value == AppUiModes.light
-              //                       ? kcBlackColor
-              //                       : kcWhiteColor,
-              //                   fontSize: 12,
-              //                   fontWeight: FontWeight.bold),
-              //             ),
-              //           ),
-              //           Container(
-              //             padding: const EdgeInsets.symmetric(
-              //                 horizontal: 16, vertical: 10),
-              //             decoration: BoxDecoration(
-              //               color: uiMode.value == AppUiModes.light
-              //                   ? kcPrimaryColor
-              //                   : kcSecondaryColor,
-              //               borderRadius: BorderRadius.circular(8),
-              //             ),
-              //             child: Column(
-              //               children: [
-              //                 Text(
-              //                   'Shopping Card',
-              //                   style: TextStyle(
-              //                       color: uiMode.value == AppUiModes.light
-              //                           ? kcWhiteColor
-              //                           : kcBlackColor,
-              //                       fontWeight: FontWeight.bold,
-              //                       fontSize: 10),
-              //                 ),
-              //                 Row(
-              //                   children: [
-              //                     SvgPicture.asset(
-              //                       'assets/icons/card_icon.svg',
-              //                       height: 20, // Icon size
-              //                     ),
-              //                     horizontalSpaceTiny,
-              //                     RichText(
-              //                       text: TextSpan(
-              //                         children: [
-              //                           TextSpan(
-              //                             text: '\$5',
-              //                             style: TextStyle(
-              //                               fontSize:
-              //                                   18, // Size for the dollar amount
-              //                               fontWeight: FontWeight.bold,
-              //                               color:
-              //                                   uiMode.value == AppUiModes.light
-              //                                       ? kcSecondaryColor
-              //                                       : kcBlackColor,
-              //                             ),
-              //                           ),
-              //                           TextSpan(
-              //                             text:
-              //                                 '.00', // Assuming you want the decimal part smaller
-              //                             style: TextStyle(
-              //                               fontSize: 13, // Size for the cents
-              //                               fontWeight: FontWeight.bold,
-              //                               color:
-              //                                   uiMode.value == AppUiModes.light
-              //                                       ? kcSecondaryColor
-              //                                       : kcBlackColor,
-              //                             ),
-              //                           ),
-              //                         ],
-              //                       ),
-              //                     )
-              //                   ],
-              //                 )
-              //               ],
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Expanded(
-              //             child: Column(
-              //               mainAxisAlignment: MainAxisAlignment.center,
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Row(
-              //                   children: [
-              //                     SvgPicture.asset(
-              //                       'assets/icons/loader.svg',
-              //                       height: 20, // Icon size
-              //                     ),
-              //                     horizontalSpaceTiny,
-              //                     Column(
-              //                       children: [
-              //                         Text(
-              //                           "${raffle.verifiedSales} sold out of ${raffle.stockTotal}",
-              //                           overflow: TextOverflow.ellipsis,
-              //                           maxLines: 3,
-              //                           style: const TextStyle(
-              //                             fontSize: 12,
-              //                           ),
-              //                         ),
-              //                         SizedBox(
-              //                           width: 95,
-              //                           child: LinearProgressIndicator(
-              //                             value: (raffle.verifiedSales !=
-              //                                         null &&
-              //                                     raffle.stockTotal != null &&
-              //                                     raffle.stockTotal! > 0)
-              //                                 ? raffle.verifiedSales! /
-              //                                     raffle.stockTotal!
-              //                                 : 0.0, // Default value in case of null or invalid stock
-              //                             backgroundColor:
-              //                                 kcSecondaryColor.withOpacity(0.3),
-              //                             valueColor:
-              //                                 const AlwaysStoppedAnimation(
-              //                                     kcSecondaryColor),
-              //                           ),
-              //                         ),
-              //                       ],
-              //                     )
-              //                   ],
-              //                 ),
-              //                 verticalSpaceTiny,
-              //                 Container(
-              //                   padding: const EdgeInsets.symmetric(
-              //                       horizontal: 7, vertical: 4),
-              //                   decoration: BoxDecoration(
-              //                     color: Colors.grey[300]?.withOpacity(0.2),
-              //                     borderRadius: BorderRadius.circular(4),
-              //                   ),
-              //                   child: Text(
-              //                     (raffle == null)
-              //                         ? ""
-              //                         : "Draw Date: ${DateFormat("d MMM").format(DateTime.parse(raffle.endDate ?? DateTime.now().toIso8601String()))}",
-              //                     overflow: TextOverflow.ellipsis,
-              //                     maxLines: 3,
-              //                     style: const TextStyle(
-              //                         fontSize: 12,
-              //                         fontWeight: FontWeight.bold),
-              //                   ),
-              //                 ),
-              //               ],
-              //             ),
-              //           ),
-              //           Column(
-              //             // crossAxisAlignment: CrossAxisAlignment.end,
-              //             children: [
-              //               userLoggedIn.value == false
-              //                   ? const SizedBox()
-              //                   : ValueListenableBuilder<List<RaffleCartItem>>(
-              //                       valueListenable: raffleCart,
-              //                       builder: (context, value, child) {
-              //                         // Determine if raffle is in cart
-              //                         bool isInCart = value.any((item) =>
-              //                             item.raffle?.id == raffle.id);
-              //                         RaffleCartItem? cartItem = isInCart
-              //                             ? value.firstWhere((item) =>
-              //                                 item.raffle?.id == raffle.id)
-              //                             : null;
-              //
-              //                         return isInCart && cartItem != null
-              //                             ? Row(
-              //                                 children: [
-              //                                   InkWell(
-              //                                     onTap: () => viewModel
-              //                                         .decreaseRaffleQuantity(
-              //                                             cartItem),
-              //                                     child: Container(
-              //                                       height: 30,
-              //                                       width: 30,
-              //                                       decoration: BoxDecoration(
-              //                                         border: Border.all(
-              //                                             color: kcLightGrey),
-              //                                         borderRadius:
-              //                                             BorderRadius.circular(
-              //                                                 5),
-              //                                       ),
-              //                                       child: const Center(
-              //                                         child: Icon(Icons.remove,
-              //                                             size: 18),
-              //                                       ),
-              //                                     ),
-              //                                   ),
-              //                                   horizontalSpaceSmall,
-              //                                   Text("${cartItem.quantity}"),
-              //                                   horizontalSpaceSmall,
-              //                                   InkWell(
-              //                                     onTap: () => viewModel
-              //                                         .increaseRaffleQuantity(
-              //                                             cartItem),
-              //                                     child: Container(
-              //                                       height: 30,
-              //                                       width: 30,
-              //                                       decoration: BoxDecoration(
-              //                                         border: Border.all(
-              //                                             color: kcLightGrey),
-              //                                         borderRadius:
-              //                                             BorderRadius.circular(
-              //                                                 5),
-              //                                       ),
-              //                                       child: const Align(
-              //                                         alignment:
-              //                                             Alignment.center,
-              //                                         child: Icon(Icons.add,
-              //                                             size: 18),
-              //                                       ),
-              //                                     ),
-              //                                   ),
-              //                                 ],
-              //                               )
-              //                             : SizedBox(
-              //                                 width:
-              //                                     150, // Adjust width to your preference
-              //                                 height: 35,
-              //                                 child: SubmitButton(
-              //                                   isLoading: false,
-              //                                   label: "Buy Ticket",
-              //                                   submit: () => viewModel
-              //                                       .addToRaffleCart(raffle),
-              //                                   color: kcSecondaryColor,
-              //                                   boldText: true,
-              //                                   iconColor: Colors.black,
-              //                                   borderRadius: 10.0,
-              //                                   textSize: 12,
-              //                                   svgFileName: "ticket.svg",
-              //                                 ),
-              //                               );
-              //                       },
-              //                     ),
-              //             ],
-              //           )
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
-            ],
+            children: [],
           ),
           if (containerColor != Colors.transparent)
             Positioned(

@@ -48,7 +48,7 @@ class HomeView extends StackedView<HomeViewModel> {
 
                     // Calculate total number of tickets and total amount
                     int totalTickets = raffleCart.value.fold(0, (sum, item) => sum + (item.quantity ?? 0));
-                    int totalAmount = raffleCart.value.fold(0, (sum, item) => sum + ((item.quantity ?? 0) * (item.raffle?.ticketPrice ?? 0)));
+                    // int totalAmount = raffleCart.value.fold(0, (int sum, item) => sum + ((item.quantity ?? 0) * (item.raffle.price ?? 0)).toInt());
 
                     return Positioned(
                       bottom: 20, // Adjust the value to control how high above the bottom it should be
@@ -119,7 +119,7 @@ class HomeView extends StackedView<HomeViewModel> {
                                     ),
                                   ),
                                   Text(
-                                    '₦$totalAmount',
+                                    '₦000',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontFamily: 'Roboto',

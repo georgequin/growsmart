@@ -13,6 +13,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../core/data/models/app_notification.dart';
+import '../../../core/data/models/category.dart';
 import '../../../core/data/models/profile.dart';
 import '../../../core/data/models/project.dart';
 
@@ -26,6 +27,14 @@ class DashboardViewModel extends BaseViewModel {
   List<Ads> adsList = [];
   List<ProjectResource> projectResources = [];
   List<Raffle> featuredRaffle = [];
+  List<Product> productList = [];
+  List<Product> filteredProductList = [];
+  List<Category> filteredCategories = [];
+  List<Category> categories = [];
+
+  static const int allCategoriesId = 0;
+
+  int selectedId = allCategoriesId;
 
   bool? onboarded;
 
@@ -34,10 +43,27 @@ class DashboardViewModel extends BaseViewModel {
   bool appBarLoading = false;
   bool shouldShowShowcase = true;  // Controls when to show showcase
 
+  final snackBar = locator<SnackbarService>();
 
   @override
   void initialise() {
     init();
+  }
+
+
+  void setSelectedCategory(int id) {
+    selectedId = id;
+
+    if (id == allCategoriesId) {
+      filteredProductList = productList;
+    } else {
+      print('id is: $id');
+      filteredProductList = productList.where((product) {
+        return product.categoryId == id;
+      }).toList();
+    }
+
+    notifyListeners();
   }
 
   bool showcaseShown = false; // Track whether the showcase has been shown
@@ -67,13 +93,14 @@ class DashboardViewModel extends BaseViewModel {
     }
     notifyListeners();
     await loadRaffles();
-    await loadAds();
-    // await loadProducts();
-     await loadProjects();
+    await loadCategories();
+    // await loadAds();
+    // // await loadProducts();
+    //  await loadProjects();
     if (userLoggedIn.value == true) {
       initCart();
-      await getNotifications();
-      await getProfile();
+      // await getNotifications();
+      // await getProfile();
     }
     setBusy(false);
     notifyListeners();
@@ -82,92 +109,27 @@ class DashboardViewModel extends BaseViewModel {
 
   Future<void> loadRaffles() async {
 
-    if (raffleList.isEmpty) {
+    if (productList.isEmpty) {
       setBusy(true);
       notifyListeners();
     }
 
-    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.raffle);
+    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.product);
     if (storedRaffle != null) {
       // Extracting and filtering only active raffles
-      raffleList = List<Map<String, dynamic>>.from(storedRaffle)
-          .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e)))
-          .where((raffle) => raffle.status == "ACTIVE")
+      productList = List<Map<String, dynamic>>.from(storedRaffle)
+          .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
           .toList();
       notifyListeners();
     }
 
-    await getRaffles();
+    await getProducts();
     setBusy(false);
     notifyListeners();
 
   }
 
-  Future<void> loadAds() async {
-
-    if (raffleList.isEmpty) {
-      setBusy(true);
-      notifyListeners();
-    }
-
-    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.raffle);
-    // if (storedRaffle != null) {
-    //   // Extracting and filtering only active raffles
-    //   raffleList = List<Map<String, dynamic>>.from(storedRaffle)
-    //       .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e)))
-    //       .where((raffle) => raffle.status == "ACTIVE")
-    //       .toList();
-    //   notifyListeners();
-    // }
-
-    await getAds();
-    setBusy(false);
-    notifyListeners();
-
-  }
-
-  Future<void> loadWinners() async {
-
-    if (raffleList.isEmpty) {
-      setBusy(true);
-      notifyListeners();
-    }
-
-    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.raffle);
-    if (storedRaffle != null) {
-      // Extracting and filtering only active raffles
-      raffleList = List<Map<String, dynamic>>.from(storedRaffle)
-          .map((e) => Raffle.fromJson(Map<String, dynamic>.from(e)))
-          .where((raffle) => raffle.status == "ACTIVE")
-          .toList();
-      notifyListeners();
-    }
-
-    await getRaffles();
-    setBusy(false);
-    notifyListeners();
-
-  }
-
-  Future<void> loadProjects() async {
-    if (projectResources.isEmpty) {
-      setBusy(true);
-      notifyListeners();
-    }
-
-    dynamic storedProjectResources = await locator<LocalStorage>().fetch(LocalStorageDir.projectResource);
-    if (storedProjectResources != null) {
-      projectResources = List<Map<String, dynamic>>.from(storedProjectResources)
-          .map((e) => ProjectResource.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-    }
-
-    await getProjects();
-    setBusy(false);
-    notifyListeners();
-  }
-
-  Future<void> refreshData() async {
+ Future<void> refreshData() async {
     setBusy(true);
     notifyListeners();
     getResourceList();
@@ -176,154 +138,105 @@ class DashboardViewModel extends BaseViewModel {
   }
 
   void getResourceList(){
-    getRaffles();
-    getProjects();
-    getAds();
+    getProducts();
+    getCategories();
+
     if (userLoggedIn.value == true) {
       initCart();
-       getNotifications();
     }
   }
 
-  Future<void> getRaffles() async {
+  Future<void> getProducts() async {
     setBusy(true);
-    notifyListeners();
+
     try {
-      ApiResponse res = await repo.getRaffle();
-      if (res.statusCode == 200) {
-        if (res.data != null && res.data["data"]["items"] != null) {
-          raffleList = (res.data["data"]["items"] as List)
-              .map((e) {
-            final raffle = Raffle.fromJson(Map<String, dynamic>.from(e['raffle']));
-            final participants = (e['participants'] as List?)?.map((participant) => Participant.fromJson(Map<String, dynamic>.from(participant))).toList();
-            raffle.participants = participants;
-            return raffle;
-          })
-              .where((raffle) => raffle.status == "ACTIVE")
-              .toList();
-
-          // Store raffles locally
-          List<Map<String, dynamic>> storedRaffles = raffleList.map((e) => e.toJson()).toList();
-          locator<LocalStorage>().save(LocalStorageDir.raffle, storedRaffles);
-          notifyListeners();
-        }
-        rebuildUi();
-      }
-    } catch (e) {
-      log.e(e);
-    } finally {
-      setBusy(false);
-      notifyListeners();
-    }
-    print('raffle list is: $raffleList');
-  }
-
-
-  Future<void> getAds() async {
-    setBusy(true);
-    notifyListeners();
-    try {
-      ApiResponse res = await repo.getAds();
-      if (res.statusCode == 200) {
-        if (res.data != null && res.data["data"]["items"] != null) {
-          adsList = (res.data["data"]["items"] as List)
-              .map((e) => Ads.fromJson(Map<String, dynamic>.from(e)))
-              .toList();
-
-          // Save ads to local storage if needed
-          List<Map<String, dynamic>> storedAds = adsList.map((e) => e.toJson()).toList();
-          locator<LocalStorage>().save(LocalStorageDir.ads, storedAds);
-          notifyListeners();
-        }
-      }
-    } catch (e) {
-      log.e(e);
-    } finally {
-      setBusy(false);
-      notifyListeners();
-    }
-  }
-
-  Future<void> getProjects() async {
-    setBusy(true);
-    notifyListeners();
-    try {
-      ApiResponse res = await repo.getProjects();
+      ApiResponse res = await repo.getProducts();
 
       if (res.statusCode == 200) {
 
-        if (res.data != null && res.data["data"]["items"] != null) {
-
-          projectResources = (res.data["data"]["items"] as List)
-              .map((e) => ProjectResource.fromJson(Map<String, dynamic>.from(e)))
-              .toList();
-
-          projects = projectResources.map((resource) => resource.project!).toList();
-          List<Map<String, dynamic>> storedProjects = projects.map((e) => e.toJson()).toList();
-          List<Map<String, dynamic>> storedProjectResources = projectResources.map((resource) => resource.toJson()).toList();
-
-          locator<LocalStorage>().save(LocalStorageDir.projectResource, storedProjectResources);
-          locator<LocalStorage>().save(LocalStorageDir.projects, storedProjects);
-          notifyListeners();
-        }
-        rebuildUi();
-      }
-    } catch (e) {
-      log.e(e);
-    }finally{
-      setBusy(false);
-      notifyListeners();
-    }
-
-  }
-
-  Future<void> getNotifications() async {
-    try {
-      ApiResponse res = await repo.getNotifications();
-      if (res.statusCode == 200) {
-        notifications.value = (res.data['data']['items'] as List)
-            .map((e) => AppNotification.fromJson(Map<String, dynamic>.from(e)))
+        productList = (res.data["products"] as List)
+            .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
-        unreadCount.value = notifications.value.where((n) => n.unread).length;
+
+        print("${res.data}");
+                List<Map<String, dynamic>> storedRaffles = productList.map((e) => e.toJson()).toList();
+                locator<LocalStorage>().save(LocalStorageDir.product, storedRaffles);
+                notifyListeners();
+
         notifyListeners();
+      }else {
+        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
+        setBusy(false);
       }
     } catch (e) {
-      log.e(e);
+      log.i(e);
+      setBusy(false);
     }
+    setBusy(false);
+    notifyListeners();
+
   }
 
-  Future<void> markAllNotificationsAsRead() async {
-    try {
-      await repo.markNotificationAsRead();
-      notifications.value.forEach((n) => n.unread = false);
-      unreadCount.value--;
+  Future<void> loadCategories() async {
+    dynamic storedDonations = await locator<LocalStorage>().fetch(LocalStorageDir.donationsCategories);
+    if (storedDonations != null) {
+      categories = List<Map<String, dynamic>>.from(storedDonations)
+          .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+
+      // Add the "All Categories" option
+      filteredCategories = [
+        Category(id: 0, name: 'All', status: CategoryStatus.active),
+        ...categories,
+      ];
       notifyListeners();
-    } catch (e) {
-      log.e(e);
-    }
-  }
 
-  Future<void> getProfile() async {
-    try {
-      ApiResponse res = await repo.getProfile();
-      if (res.statusCode == 200) {
-        profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data['data']));
-        await locator<LocalStorage>().save(LocalStorageDir.profileView, res.data["data"]);
-        notifyListeners();
-        print(profile.value.accountPoints);
-      }
-    } catch (e) {
-      throw Exception(e);
     }
+    await getCategories();
+    notifyListeners();
   }
 
 
 
-
-  void addToRaffleCart(Raffle raffle) async {
+  Future<void> getCategories() async {
     setBusy(true);
     notifyListeners();
+    try {
+      ApiResponse res = await repo.getCategories();
+      if (res.statusCode == 200) {
+        if (res.data != null && res.data["categories"] != null) {
+          // Extract categories from the response
+          categories = (res.data["categories"] as List)
+              .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+
+          // Save the categories locally
+          List<Map<String, dynamic>> storedCategories = categories.map((e) => e.toJson()).toList();
+          locator<LocalStorage>().save(LocalStorageDir.donationsCategories, storedCategories);
+
+          // Apply any filtering logic if needed
+          filteredCategories = [
+            Category(id: 0, name: 'All', status: CategoryStatus.active),
+            ...categories,
+          ];
+        }
+        rebuildUi();
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setBusy(false);
+      notifyListeners();
+    }
+  }
+
+
+
+
+
+  void addToRaffleCart(Product raffle) async {
+    // setBusy(true);
+    // notifyListeners();
     try {
       final existingItem = raffleCart.value.firstWhere(
             (raffleItem) => raffleItem.raffle?.id == raffle.id,
@@ -342,16 +255,16 @@ class DashboardViewModel extends BaseViewModel {
       await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
 
       // Save to online cart using API
-      final response = await repo.addToCart({
-        "raffle": raffle.id,
-        "quantity": existingItem.quantity,
-      });
+      // final response = await repo.addToCart({
+      //   "raffle": raffle.id,
+      //   "quantity": existingItem.quantity,
+      // });
 
-      if (response.statusCode == 201) {
-        locator<SnackbarService>().showSnackbar(message: "Raffle added to cart", duration: Duration(seconds: 2));
-      } else {
-        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
-      }
+      // if (response.statusCode == 201) {
+      //   locator<SnackbarService>().showSnackbar(message: "Raffle added to cart", duration: Duration(seconds: 2));
+      // } else {
+      //   locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
+      // }
     } catch (e) {
       locator<SnackbarService>().showSnackbar(message: "Failed to add raffle to cart: $e", duration: Duration(seconds: 2));
       log.e(e);

@@ -1,13 +1,6 @@
 import 'dart:convert';
 
-import 'package:afriprize/app/app.locator.dart';
-import 'package:afriprize/app/app.logger.dart';
-import 'package:afriprize/app/app.router.dart';
-import 'package:afriprize/core/data/repositories/repository.dart';
-import 'package:afriprize/core/network/api_response.dart';
-import 'package:afriprize/core/utils/local_store_dir.dart';
-import 'package:afriprize/core/utils/local_stotage.dart';
-import 'package:afriprize/state.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/phone_number.dart';
@@ -15,7 +8,15 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.locator.dart';
+import '../../../app/app.logger.dart';
+import '../../../app/app.router.dart';
 import '../../../core/data/models/profile.dart';
+import '../../../core/data/repositories/repository.dart';
+import '../../../core/network/api_response.dart';
+import '../../../core/utils/local_store_dir.dart';
+import '../../../core/utils/local_stotage.dart';
+import '../../../state.dart';
 
 
 /// @author George David
@@ -44,12 +45,20 @@ class AuthViewModel extends BaseViewModel {
   bool terms = false;
   bool remember = false;
 
+  final initialEmail = TextEditingController();
+  final otp = TextEditingController();
+
+
+  bool isOtpRequested = false;
+  bool isLoading = false;
+
+
   init() async {
 
-    bool rem = await locator<LocalStorage>().fetch(LocalStorageDir.remember);
+    // bool rem = await locator<LocalStorage>().fetch(LocalStorageDir.remember);
     String? token = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
     String? lastEmail = await locator<LocalStorage>().fetch(LocalStorageDir.lastEmail);
-    remember = rem;
+    // remember = rem;
 
 
     // If remember me is true and we have a token, validate it
@@ -114,16 +123,14 @@ class AuthViewModel extends BaseViewModel {
       ApiResponse res = await repo.login({
         "email": email.text,
         "password": password.text,
-        "account_type": "CUSTOMER"
       });
-      if (res.statusCode == 201) {
-        print('login response: ${res.data["data"]}');
+      if (res.statusCode == 200) {
         userLoggedIn.value = true;
         profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data['data']["user"]));
-        locator<LocalStorage>().save(LocalStorageDir.authToken, res.data['data']["accessToken"]);
-        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data['data']["refreshToken"]);
-        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data['data']["user"]));
+            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+        locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refresh_token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
         locator<LocalStorage>().save(LocalStorageDir.remember, remember);
 
 
@@ -147,6 +154,7 @@ class AuthViewModel extends BaseViewModel {
 
   Future<RegistrationResult> register() async {
 
+
     // if (!terms) {
     //   snackBar.showSnackbar(message: "Accept terms to continue");
     //   return RegistrationResult.failure;
@@ -157,23 +165,24 @@ class AuthViewModel extends BaseViewModel {
       ApiResponse res = await repo.register({
         "firstname": firstname.text,
         "lastname": lastname.text,
-        "email": email.text,
-        "phone": phoneNumber.completeNumber,
-        "country": countryId,
+        "userId":  profile.value.id,
         "password": password.text,
-        "confirm_password": password.text
 
       });
-      if (res.statusCode == 201) {
-        snackBar.showSnackbar(message: res.data["message"]);
+      if (res.statusCode == 200) {
 
-        locator<NavigationService>().replaceWithOtpView(email: email.text);
-        firstname.text = "";
-        lastname.text = "";
-        email.text = "";
-        phone.text = "";
-        password.text = "";
-        terms = false;
+        print('response is ${res.data}');
+
+        userLoggedIn.value = true;
+        profile.value =
+            Profile.fromJson(Map<String, dynamic>.from(res.data["User"]));
+        locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refresh_token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["User"]));
+
+
+        snackBar.showSnackbar(message: res.data["message"]);
+        locator<NavigationService>().clearStackAndShow(Routes.homeView);
         setBusy(false);
         return RegistrationResult.success;
       } else {
@@ -201,4 +210,69 @@ class AuthViewModel extends BaseViewModel {
     }
 
   }
+
+  Future<void> submitOtp() async {
+    setBusy(true);
+
+    try {
+      ApiResponse res = await repo.submitOtp({
+        "userId": profile.value.id,
+        "verificationCode": otp.text,
+      });
+      isLoading =false;
+      if (res.statusCode == 200) {
+        snackBar.showSnackbar(message: 'OTP verified successfully', duration: Duration(seconds: 5));
+        // print(res);
+        // isOtpRequested = true;
+        // notifyListeners();
+        // isLoading =false;
+        locator<NavigationService>().clearStackAndShow(Routes.registerView);
+
+      }
+      else {
+        isLoading =false;
+        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
+        setBusy(false);
+      }
+    } catch (e) {
+      log.i(e);
+      setBusy(false);
+      isLoading =false;
+
+    }
+
+    setBusy(false);
+  }
+
+
+  void requestOtp() async {
+    setBusy(true);
+
+    try {
+      ApiResponse res = await repo.requestOtp({
+
+        "email": email.text,
+      });
+      if (res.statusCode == 200) {
+        snackBar.showSnackbar(message: 'OTP successfully sent', duration: Duration(seconds: 5));
+        print(res);
+        print(res.data['data']["userId"]);
+
+        profile.value.id = res.data['data']["userId"];
+        isOtpRequested = true;
+        notifyListeners();
+      }else {
+        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
+        setBusy(false);
+      }
+    } catch (e) {
+      log.i(e);
+      setBusy(false);
+
+    }
+
+    setBusy(false);
+  }
+
+
 }

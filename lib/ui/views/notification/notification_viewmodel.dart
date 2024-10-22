@@ -5,6 +5,7 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../../core/data/models/app_notification.dart';
+import '../../../core/data/models/category.dart';
 import '../../../core/data/models/project.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
@@ -26,7 +27,7 @@ class NotificationViewModel extends BaseViewModel {
 
   Future<void> init() async {
     setBusy(true);
-    await loadDonationCategories();
+    // await loadDonationCategories();
     await loadProjects();
     setBusy(false);
     notifyListeners();
@@ -61,61 +62,61 @@ class NotificationViewModel extends BaseViewModel {
   // }
 
 
-  Future<void> loadDonationCategories() async {
-    dynamic storedDonations = await locator<LocalStorage>().fetch(LocalStorageDir.donationsCategories);
-    if (storedDonations != null) {
-      categories = List<Map<String, dynamic>>.from(storedDonations)
-          .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-
-      // Add the "All Categories" option
-      filteredCategories = [
-        Category(id: 'all', name: 'All'),
-        ...categories,
-      ];
-      notifyListeners();
-
-    }
-    await getDonationsCategories();
-    notifyListeners();
-  }
-
-
-
-  Future<void> getDonationsCategories() async {
-    setBusy(true);
-    notifyListeners();
-    try {
-      ApiResponse res = await repo.getDonationsCategories();
-      if (res.statusCode == 200) {
-
-        if (res.data != null && res.data["data"]["items"] != null) {
-          // Extract categories from 'items'
-          categories = (res.data["data"]["items"] as List)
-              .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
-              .toList();
-
-          // Save the categories locally
-          List<Map<String, dynamic>> storedCategories = categories.map((e) => e.toJson()).toList();
-          locator<LocalStorage>().save(LocalStorageDir.donationsCategories, storedCategories);
-
-          // Apply any filtering logic here if needed (currently just assigning)
-          filteredCategories = categories;
-          filteredCategories = [
-            Category(id: 'all', name: 'All'),
-            ...categories,
-          ];
-        }
-        rebuildUi();
-      }
-    } catch (e) {
-      print(e);
-    }finally{
-      setBusy(false);
-      notifyListeners();
-    }
-
-  }
+  // Future<void> loadDonationCategories() async {
+  //   dynamic storedDonations = await locator<LocalStorage>().fetch(LocalStorageDir.donationsCategories);
+  //   if (storedDonations != null) {
+  //     categories = List<Map<String, dynamic>>.from(storedDonations)
+  //         .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
+  //         .toList();
+  //
+  //     // Add the "All Categories" option
+  //     filteredCategories = [
+  //       Category(id: 'all', name: 'All'),
+  //       ...categories,
+  //     ];
+  //     notifyListeners();
+  //
+  //   }
+  //   await getDonationsCategories();
+  //   notifyListeners();
+  // }
+  //
+  //
+  //
+  // Future<void> getDonationsCategories() async {
+  //   setBusy(true);
+  //   notifyListeners();
+  //   try {
+  //     ApiResponse res = await repo.getDonationsCategories();
+  //     if (res.statusCode == 200) {
+  //
+  //       if (res.data != null && res.data["data"]["items"] != null) {
+  //         // Extract categories from 'items'
+  //         categories = (res.data["data"]["items"] as List)
+  //             .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
+  //             .toList();
+  //
+  //         // Save the categories locally
+  //         List<Map<String, dynamic>> storedCategories = categories.map((e) => e.toJson()).toList();
+  //         locator<LocalStorage>().save(LocalStorageDir.donationsCategories, storedCategories);
+  //
+  //         // Apply any filtering logic here if needed (currently just assigning)
+  //         filteredCategories = categories;
+  //         filteredCategories = [
+  //           Category(id: 'all', name: 'All'),
+  //           ...categories,
+  //         ];
+  //       }
+  //       rebuildUi();
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }finally{
+  //     setBusy(false);
+  //     notifyListeners();
+  //   }
+  //
+  // }
 
   Future<void> loadProjects() async {
     dynamic storedSellingFast = await locator<LocalStorage>().fetch(LocalStorageDir.projects);

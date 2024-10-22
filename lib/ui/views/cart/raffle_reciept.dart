@@ -205,12 +205,12 @@ class RaffleReceiptPage extends StatelessWidget {
                                 verticalSpaceTiny,
                                 ...cart.map((cartItem) => ListTile(
                                       leading: Image.network(
-                                          cartItem.raffle!.media!.first.url ??
+                                          cartItem.raffle!.images!.first ??
                                               '',
                                           height: 44,
                                           width:
                                               48), // Replace with your image URL field
-                                      title: Text(cartItem.raffle!.name!,
+                                      title: Text(cartItem.raffle!.productName!,
                                           style:
                                               const TextStyle(fontSize: 10.61)),
                                       subtitle: Text('${cartItem.quantity}',
@@ -218,7 +218,7 @@ class RaffleReceiptPage extends StatelessWidget {
                                               const TextStyle(fontSize: 10.61)),
                                       trailing: Text(
                                           MoneyUtils().formatAmount(
-                                              cartItem.raffle!.ticketPrice!),
+                                              double.parse(cartItem.raffle!.price!).toInt()),
                                           style: TextStyle(
                                             fontSize: 10.61,
                                             fontWeight: FontWeight.bold,
@@ -242,7 +242,7 @@ class RaffleReceiptPage extends StatelessWidget {
                                     ),
                                     Text(
                                       MoneyUtils().formatAmount(
-                                          getRaffleSubTotal(cart)),
+                                          getRaffleSubTotal(cart).toInt()),
                                       style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                         fontSize: 12,
@@ -267,7 +267,7 @@ class RaffleReceiptPage extends StatelessWidget {
                                     ),
                                     Text(
                                       MoneyUtils().formatAmount(
-                                          getRaffleSubTotal(cart)),
+                                          getRaffleSubTotal(cart).toInt()),
                                       style: const TextStyle(
                                           fontFamily: 'roboto',
                                           fontWeight: FontWeight.bold,
@@ -446,7 +446,7 @@ class RaffleReceiptPage extends StatelessWidget {
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
                   pw.Text(
-                    MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
+                    MoneyUtils().formatAmount(getRaffleSubTotal(cart).toInt()),
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.normal,
                       fontSize: 12,
@@ -464,7 +464,7 @@ class RaffleReceiptPage extends StatelessWidget {
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
                   pw.Text(
-                    MoneyUtils().formatAmount(getRaffleSubTotal(cart)),
+                    MoneyUtils().formatAmount(getRaffleSubTotal(cart).toInt()),
                     style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold, fontSize: 14.3),
                   ),
@@ -493,7 +493,7 @@ class RaffleReceiptPage extends StatelessWidget {
   Future<pw.Widget> createCartItemWidget(RaffleCartItem cartItem) async {
     // Attempt to load the image from the network
     final response =
-        await http.get(Uri.parse(cartItem.raffle!.media!.first.url!));
+        await http.get(Uri.parse(cartItem.raffle!.images!.first));
 
     pw.Widget imageWidget;
     if (response.statusCode == 200) {
@@ -523,7 +523,7 @@ class RaffleReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.raffle!.name!,
+                pw.Text(cartItem.raffle!.productName!,
                     style: const pw.TextStyle(fontSize: 10.61)),
                 pw.Text('${cartItem.quantity}',
                     style: const pw.TextStyle(fontSize: 10.61)),
@@ -531,7 +531,9 @@ class RaffleReceiptPage extends StatelessWidget {
             ),
           ),
           pw.Text(
-            '₦${MoneyUtils().formatAmount(cartItem.raffle!.ticketPrice!)}',
+            '₦${MoneyUtils().formatAmount(
+                double.parse(cartItem.raffle!.price!).toInt()
+                )}',
             style:
                 pw.TextStyle(fontSize: 10.61, fontWeight: pw.FontWeight.bold),
           ),
