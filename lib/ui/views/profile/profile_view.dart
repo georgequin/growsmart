@@ -10,7 +10,7 @@ import 'package:afriprize/ui/views/profile/order_list.dart';
 import 'package:afriprize/ui/views/profile/profile_details.dart';
 import 'package:afriprize/ui/views/profile/refferal.dart';
 import 'package:afriprize/ui/views/profile/support.dart';
-import 'package:afriprize/ui/views/profile/ticket_list.dart';
+import 'package:afriprize/ui/views/profile/shippinga_ddresses_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -169,13 +169,10 @@ class ProfileView extends StatelessWidget {
                                 },
                               );
                             },
-                            leading: SvgPicture.asset(
-                              'assets/images/person.svg', // Replace with your SVG file path
-                              color: kcSecondaryColor,        // Set the color for the icon
-                              height: 24,
-                              width: 24,
+                            leading: Icon(Icons.shopping_cart,
+                              color: kcOrangeColor,
                             ),
-                            title: const Text("Profile"),
+                            title: const Text("My oders"),
                           ),
                           ListTile(
                             onTap: () {
@@ -183,13 +180,10 @@ class ProfileView extends StatelessWidget {
                                   .navigateToWallet()
                                   .whenComplete(() => viewModel.getProfile());
                             },
-                            leading: SvgPicture.asset(
-                              'assets/images/wallet.svg', // Replace with your SVG file path
-                              color: kcSecondaryColor,        // Set the color for the icon
-                              height: 24,
-                              width: 24,
+                            leading: Icon(Icons.wallet,
+                              color: kcOrangeColor,
                             ),
-                            title: const Text("My wallet"),
+                            title: const Text("Wallet"),
                           ),
                           // ListTile(
                           //   onTap: () {
@@ -210,16 +204,13 @@ class ProfileView extends StatelessWidget {
                               // locator<NavigationService>().navigateToTrack();
                               Navigator.of(context)
                                   .push(MaterialPageRoute(builder: (c) {
-                                return const TicketList();
+                                return const ShippingAddressesPage();
                               }));
                             },
-                            leading: SvgPicture.asset(
-                              'assets/images/ticket.svg', // Replace with your SVG file path
-                              color: kcSecondaryColor,
-                              height: 17,
-                              width: 17,
+                            leading: Icon(Icons.location_on,
+                              color: kcOrangeColor,
                             ),
-                            title: const Text("My tickets"),
+                            title: const Text("Shipping addresses"),
                           ),
                           ListTile(
                             onTap: () {
@@ -229,13 +220,10 @@ class ProfileView extends StatelessWidget {
                                 return const Referral();
                               }));
                             },
-                            leading: SvgPicture.asset(
-                              'assets/images/gift.svg', // Replace with your SVG file path
-                              color: kcSecondaryColor,        // Set the color for the icon
-                              height: 24,
-                              width: 24,
+                            leading: Icon(Icons.credit_card,
+                              color: kcOrangeColor,
                             ),
-                            title: const Text("Referrals"),
+                            title: const Text("Payment method"),
                           ),
                           ListTile(
                             onTap: () {
@@ -244,34 +232,25 @@ class ProfileView extends StatelessWidget {
                                 return const Support();
                               }));
                             },
-                            leading: SvgPicture.asset(
-                              'assets/images/phone-outgoing.svg', // Replace with your SVG file path
-                              color: kcSecondaryColor,        // Set the color for the icon
-                              height: 24,
-                              width: 24,
+                            leading: Icon(Icons.local_offer,
+                              color: kcOrangeColor,
                             ),
-                            title: const Text("Support"),
+                            title: const Text("Promocodes"),
                           ),
                           ListTile(
                             onTap: () {
                               locator<NavigationService>()
                                   .navigateToChangePasswordView();
                             },
-                            leading: SvgPicture.asset(
-                              'assets/images/lock-closed.svg', // Replace with your SVG file path
-                              color: kcSecondaryColor,        // Set the color for the icon
-                              height: 24,
-                              width: 24,
+                            leading: Icon(Icons.lock,
+                              color: kcOrangeColor,
                             ),
                             title: const Text("Change password"),
                           ),
                           ListTile(
                             onTap: () {},
-                            leading: SvgPicture.asset(
-                              'assets/images/sun.svg', // Replace with your SVG file path
-                              color: kcSecondaryColor,        // Set the color for the icon
-                              height: 24,
-                              width: 24,
+                            leading: Icon(Icons.light_mode_sharp,
+                              color: kcOrangeColor,
                             ),
                             title: const Text("Dark Theme"),
                             trailing: ValueListenableBuilder<AppUiModes>(
@@ -315,9 +294,8 @@ class ProfileView extends StatelessWidget {
                                       .clearStackAndShow(Routes.authView);
                                 }
                               },
-                              leading: Icon(
-                                Icons.logout,
-                                color: kcSecondaryColor,
+                              leading: Icon(Icons.logout,
+                                color: kcOrangeColor,
                               ),
                               title: Text("Signout")),
                         ],

@@ -20,6 +20,7 @@ class TextFieldWidget extends StatelessWidget {
   final TextInputType? inputType;
   final bool readOnly;
   final Function? onChanged;
+  final TextInputType? keyboardType;
 
   const TextFieldWidget({
     Key? key,
@@ -33,6 +34,7 @@ class TextFieldWidget extends StatelessWidget {
     this.onChanged,
     this.leading,
     this.suffix,
+    this.keyboardType,
   }) : super(key: key);
 
   @override

@@ -21,7 +21,8 @@ import '../../common/app_colors.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
-import '../profile/ticket_list.dart';
+import '../profile/shippinga_ddresses_page.dart';
+// import '../profile/ticket_list.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -317,7 +318,7 @@ class RaffleReceiptPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              TicketList()), // Assuming TicketPage is the page to navigate to
+                              ShippingAddressesPage()), // Assuming TicketPage is the page to navigate to
                     ).then((_) {
                       // When coming back from TicketPage, navigate to HomePage
                       locator<NavigationService>()

@@ -21,7 +21,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
 import '../home/home_view.dart';
-import '../profile/ticket_list.dart';
+import '../profile/shippinga_ddresses_page.dart';
 
 
 /// @author George David
@@ -445,7 +445,7 @@ class ReceiptPage extends StatelessWidget {
     ).then((_) =>
         Future.delayed(const Duration(milliseconds: 500), () { // Delay to ensure the stack is updated
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const TicketList()), // Push TicketsPage
+            MaterialPageRoute(builder: (context) => const ShippingAddressesPage()), // Push TicketsPage
           );
         })
     );

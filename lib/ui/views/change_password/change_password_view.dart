@@ -115,7 +115,7 @@ class ChangePasswordView extends StackedView<ChangePasswordViewModel> {
                         viewModel.changePassword(context, isResetPassword);
                       },
                       boldText: true,
-                      color: kcSecondaryColor,
+                      color: kcPrimaryColor,
                     ),
                   ],
                 ),
