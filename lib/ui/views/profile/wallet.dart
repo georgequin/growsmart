@@ -196,44 +196,73 @@ class _WalletState extends State<Wallet> {
                 ),
               ],
             ),
-            // Padding(
-            //   padding: const EdgeInsets.all(16.0),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //     children: [
-            //       // Transfer Credits Button
-            //       Container(
-            //         padding: const EdgeInsets.all(16.0),
-            //         decoration: BoxDecoration(
-            //           border: Border.all(
-            //             color: kcSecondaryColor, // Border color
-            //             width: 1.0, // Border width
-            //           ),
-            //           borderRadius: BorderRadius.circular(8.0), // Optional rounded corners
-            //         ),
-            //         child: Row(
-            //           children: [
-            //             SvgPicture.asset(
-            //               'assets/images/send-2.svg', // Replace with your SVG file path
-            //               color: kcSecondaryColor, // Set the color for the icon
-            //               height: 17,
-            //               width: 17,
-            //             ), // Icon for Transfer
-            //             const SizedBox(width: 8.0), // Space between icon and text
-            //             const Text(
-            //               'Transfer Credits',
-            //               style: TextStyle(
-            //                 fontWeight: FontWeight.bold,
-            //                 color: kcBlackColor,
-            //                 fontSize: 14,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Transfer Credits Button
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: kcSecondaryColor, // Border color
+                        width: 1.0, // Border width
+                      ),
+                      borderRadius: BorderRadius.circular(8.0), // Optional rounded corners
+                    ),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/send-2.svg', // Replace with your SVG file path
+                          color: kcSecondaryColor, // Set the color for the icon
+                          height: 17,
+                          width: 17,
+                        ), // Icon for Transfer
+                        const SizedBox(width: 8.0), // Space between icon and text
+                        const Text(
+                          'Transfer Credits',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: kcBlackColor,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: kcSecondaryColor, // Border color
+                        width: 1.0, // Border width
+                      ),
+                      borderRadius: BorderRadius.circular(8.0), // Optional rounded corners
+                    ),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/send-2.svg', // Replace with your SVG file path
+                          color: kcSecondaryColor, // Set the color for the icon
+                          height: 17,
+                          width: 17,
+                        ), // Icon for Transfer
+                        const SizedBox(width: 8.0), // Space between icon and text
+                        const Text(
+                          'Transfer Credits',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: kcBlackColor,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             verticalSpaceMedium,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 26.0),
