@@ -9,6 +9,7 @@ import 'package:afriprize/ui/components/profile_picture.dart';
 import 'package:afriprize/ui/views/profile/order_list.dart';
 import 'package:afriprize/ui/views/profile/profile_details.dart';
 import 'package:afriprize/ui/views/profile/refferal.dart';
+import 'package:afriprize/ui/views/profile/settings.dart';
 import 'package:afriprize/ui/views/profile/support.dart';
 import 'package:afriprize/ui/views/profile/shippinga_ddresses_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -236,6 +237,18 @@ class ProfileView extends StatelessWidget {
                               color: kcOrangeColor,
                             ),
                             title: const Text("Promocodes"),
+                          ),
+                          ListTile(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (c) {
+                                return  Settings();
+                              }));
+                            },
+                            leading: Icon(Icons.settings,
+                                color: kcOrangeColor,
+                                ),
+                            title: const Text("Settings"),
                           ),
                           ListTile(
                             onTap: () {

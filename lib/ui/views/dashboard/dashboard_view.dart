@@ -1448,7 +1448,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ],
           ),
         ));
-  }
+   }
 
   Widget _buildCategoryChip(Category category, DashboardViewModel viewModel) {
     return Padding(

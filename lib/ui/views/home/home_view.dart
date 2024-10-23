@@ -208,16 +208,16 @@ class BottomNavBar extends StatelessWidget {
         label: "Home",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('ticket_star.svg', 'ticket_star_outline.svg', viewModel.selectedRafflesTab == 1, iconColor),
-        label: "Draws",
+        icon: _navBarItemIcon('heart.svg', 'heart_outline.svg', viewModel.selectedRafflesTab == 2, iconColor),
+        label: "Shop",
       ),
       BottomNavigationBarItem(
         icon: _navBarItemIcon('heart.svg', 'heart_outline.svg', viewModel.selectedRafflesTab == 2, iconColor),
-        label: "Donate",
+        label: "Services",
       ),
       BottomNavigationBarItem(
         icon: _navBarItemIcon('menu.svg', 'menu_outline.svg', viewModel.selectedRafflesTab == 3, iconColor),
-        label: "Menu",
+        label: "Profile",
       ),
     ];
   }
