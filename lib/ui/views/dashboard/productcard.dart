@@ -952,24 +952,24 @@ class _ProductCardState extends State<ProductCard> {
                       onTap: () {
                         // Add to favorite logic here
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          child: Icon(Icons.favorite_border_outlined,
-                              size: 25, color: Colors.black),
-                          radius: 18,
-                          backgroundColor: Colors.white,
-                        ),
-                      ),
+                      // child: Container(
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(50),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.grey.withOpacity(0.5),
+                      //         blurRadius: 7,
+                      //         offset: Offset(0, 3),
+                      //       ),
+                      //     ],
+                      //   ),
+                      //   child: CircleAvatar(
+                      //     child: Icon(Icons.favorite_border_outlined,
+                      //         size: 25, color: Colors.black),
+                      //     radius: 18,
+                      //     backgroundColor: Colors.white,
+                      //   ),
+                      // ),
                     ),
                   ],
                 ),
@@ -984,21 +984,27 @@ class _ProductCardState extends State<ProductCard> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            widget.product.productDescription ?? '',
-                            style: TextStyle(fontSize: 12),
-                            softWrap: true,
+                          Row(
+                            children: [
+                              Text(
+                                widget.product.productDescription ?? '',
+                                style: TextStyle(fontSize: 12),
+                                softWrap: true,
+                              ),
+                            ],
                           ),
+                          verticalSpaceSmall,
+                          Text(
+                            '\$${widget.product.price}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                          )
                         ],
                       ),
                     ),
-                    Text(
-                      '\$${widget.product.price}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 20,
-                      ),
-                    )
+
                   ],
                 ),
               ),
