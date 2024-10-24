@@ -27,6 +27,7 @@ import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
 import '../../common/ui_helpers.dart';
 import '../draws/draws_view.dart';
+import '../shop/shop_view.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -59,7 +60,7 @@ class HomeViewModel extends BaseViewModel {
   // Pages for the Raffles dashboard
   List<Widget> rafflesPages = [
     DashboardView(),
-     const DrawsView(),
+    ShopView(),
     const NotificationView(),
     const ProfileView()
   ];

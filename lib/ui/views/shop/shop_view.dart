@@ -30,23 +30,24 @@ import '../../../core/data/models/raffle_cart_item.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../widget/AdventureDialog.dart';
+import '../draws/draws_viewmodel.dart';
 import '../notification/projectDetailsPage.dart';
-import 'dashboard_viewmodel.dart';
+import 'shop_viewmodel.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
 /// Feb, 2024
 ///
 
-class DashboardView extends StackedView<DashboardViewModel> {
-  DashboardView({Key? key}) : super(key: key);
+class ShopView extends StackedView<ShopViewModel> {
+  ShopView({Key? key}) : super(key: key);
 
   final PageController _pageController = PageController();
 
   @override
   Widget builder(
     BuildContext context,
-    DashboardViewModel viewModel,
+    ShopViewModel viewModel,
     Widget? child,
   ) {
     if (viewModel.onboarded == false &&
@@ -229,7 +230,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
 
   Widget popularDrawsSlider(
-      BuildContext context, DashboardViewModel viewModel) {
+      BuildContext context, ShopViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1032,7 +1033,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   Widget _buildShimmerOrContent(
-      BuildContext context, DashboardViewModel viewModel) {
+      BuildContext context, ShopViewModel viewModel) {
     if (viewModel.raffleList.isEmpty && viewModel.isBusy) {
       return Column(
         children: [
@@ -1099,7 +1100,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
     }
   }
 
-  Widget _buildAdsSlideshow(DashboardViewModel viewModel) {
+  Widget _buildAdsSlideshow(ShopViewModel viewModel) {
     if (viewModel.productList.where((element) => element.ad == true).isEmpty) {
       return Card(
         color: kcPrimaryColor,
@@ -1365,7 +1366,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   Widget _notificationIcon(
-      int unreadCount, BuildContext context, DashboardViewModel viewModel) {
+      int unreadCount, BuildContext context, ShopViewModel viewModel) {
     print('notif count is $unreadCount');
     return Stack(
       children: [
@@ -1403,7 +1404,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   void _showNotificationSheet(
-      BuildContext context, DashboardViewModel viewModel) {
+      BuildContext context, ShopViewModel viewModel) {
     // viewModel.markAllNotificationsAsRead();
 
     TopModalSheet.show(
@@ -1464,7 +1465,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
         ));
    }
 
-  Widget _buildCategoryChip(Category category, DashboardViewModel viewModel) {
+  Widget _buildCategoryChip(Category category, ShopViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: ChoiceChip(
@@ -1504,7 +1505,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   List<Widget> _buildAppBarActions(
-      BuildContext context, bool isLoading, DashboardViewModel viewModel) {
+      BuildContext context, bool isLoading, ShopViewModel viewModel) {
     if (isLoading) {
       // Display the shimmer effect while loading
       return [
@@ -1638,7 +1639,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   @override
-  void onViewModelReady(DashboardViewModel viewModel) {
+  void onViewModelReady(ShopViewModel viewModel) {
     super.onViewModelReady(viewModel);
     viewModel.initialise();
     Timer.periodic(const Duration(seconds: 8), (Timer timer) {
@@ -1657,7 +1658,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   @override
-  void onDispose(DashboardViewModel viewModel) {
+  void onDispose(ShopViewModel viewModel) {
     viewModel.dispose();
     _pageController.dispose();
   }
@@ -1689,15 +1690,15 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   @override
-  DashboardViewModel viewModelBuilder(
+  ShopViewModel viewModelBuilder(
     BuildContext context,
   ) =>
-      DashboardViewModel();
+      ShopViewModel();
 }
 
 class RaffleRow extends StatelessWidget {
   final Raffle raffle;
-  final DashboardViewModel viewModel;
+  final ShopViewModel viewModel;
   final int index;
 
   const RaffleRow({
