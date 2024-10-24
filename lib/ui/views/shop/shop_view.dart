@@ -74,21 +74,9 @@ class ShopView extends StackedView<ShopViewModel> {
 
     return Scaffold(
       appBar: AppBar(
-          title: ValueListenableBuilder(
-            valueListenable: uiMode,
-            builder: (context, AppUiModes mode, child) {
-              return SvgPicture.asset(
-                uiMode.value == AppUiModes.dark
-                    ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
-                    : "assets/images/dashboard_logo.svg",
-                width: 150,
-                height: 40,
-              );
-            },
-          ),
-          centerTitle: false,
-          actions:
-              _buildAppBarActions(context, viewModel.appBarLoading, viewModel)),
+        centerTitle: true,
+        title: const Text("Shop"),
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           await viewModel.refreshData();
@@ -104,129 +92,129 @@ class ShopView extends StackedView<ShopViewModel> {
     );
   }
 
-  Widget quickActions(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Quick Actions",
-          style: GoogleFonts.bricolageGrotesque(
-            textStyle: TextStyle(
-              fontSize: 15, // Custom font size
-              fontWeight: FontWeight.bold, // Custom font weight
-              color: uiMode.value == AppUiModes.dark
-                  ? Colors.white // Dark mode logo
-                  : Colors.black,
-
-              // Custom text color (optional)
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          height: 60, // Adjust height according to your design
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              // First Container
-              GestureDetector(
-                onTap: () {
-                  locator<NavigationService>().navigateToDrawsView();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      width: 110, // Adjust width according to your design
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        boxShadow: [
-                          const BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5.0,
-                            spreadRadius: 1.0,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: SvgPicture.asset(
-                        'assets/images/raffles.svg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // Second Container
-              GestureDetector(
-                onTap: () {
-                  print('there is the second click');
-                  locator<NavigationService>().navigateToNotificationView();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      width: 110, // Adjust width according to your design
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        boxShadow: [
-                          const BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5.0,
-                            spreadRadius: 1.0,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: SvgPicture.asset(
-                        'assets/images/donations.svg', // Second image
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // Third Container
-              GestureDetector(
-                onTap: () {
-                  // Action for the third container
-                  print('Coming Soon clicked!');
-                  // You can navigate or perform other actions here
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      width: 110, // Adjust width according to your design
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        boxShadow: [
-                          const BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5.0,
-                            spreadRadius: 1.0,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: SvgPicture.asset(
-                        'assets/images/shop.svg', // Third image
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget quickActions(BuildContext context) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         "Quick Actions",
+  //         style: GoogleFonts.bricolageGrotesque(
+  //           textStyle: TextStyle(
+  //             fontSize: 15, // Custom font size
+  //             fontWeight: FontWeight.bold, // Custom font weight
+  //             color: uiMode.value == AppUiModes.dark
+  //                 ? Colors.white // Dark mode logo
+  //                 : Colors.black,
+  //
+  //             // Custom text color (optional)
+  //           ),
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       Container(
+  //         height: 60, // Adjust height according to your design
+  //         child: ListView(
+  //           scrollDirection: Axis.horizontal,
+  //           children: [
+  //             // First Container
+  //             GestureDetector(
+  //               onTap: () {
+  //                 locator<NavigationService>().navigateToDrawsView();
+  //               },
+  //               child: Padding(
+  //                 padding: const EdgeInsets.only(left: 0.0, right: 8.0),
+  //                 child: ClipRRect(
+  //                   borderRadius: BorderRadius.circular(10.0),
+  //                   child: Container(
+  //                     width: 110, // Adjust width according to your design
+  //                     decoration: BoxDecoration(
+  //                       color: Colors.grey[200],
+  //                       boxShadow: [
+  //                         const BoxShadow(
+  //                           color: Colors.black12,
+  //                           blurRadius: 5.0,
+  //                           spreadRadius: 1.0,
+  //                           offset: Offset(0, 3),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     child: SvgPicture.asset(
+  //                       'assets/images/raffles.svg',
+  //                       fit: BoxFit.cover,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             // Second Container
+  //             GestureDetector(
+  //               onTap: () {
+  //                 print('there is the second click');
+  //                 locator<NavigationService>().navigateToNotificationView();
+  //               },
+  //               child: Padding(
+  //                 padding: const EdgeInsets.only(left: 0.0, right: 8.0),
+  //                 child: ClipRRect(
+  //                   borderRadius: BorderRadius.circular(10.0),
+  //                   child: Container(
+  //                     width: 110, // Adjust width according to your design
+  //                     decoration: BoxDecoration(
+  //                       color: Colors.grey[200],
+  //                       boxShadow: [
+  //                         const BoxShadow(
+  //                           color: Colors.black12,
+  //                           blurRadius: 5.0,
+  //                           spreadRadius: 1.0,
+  //                           offset: Offset(0, 3),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     child: SvgPicture.asset(
+  //                       'assets/images/donations.svg', // Second image
+  //                       fit: BoxFit.cover,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             // Third Container
+  //             GestureDetector(
+  //               onTap: () {
+  //                 // Action for the third container
+  //                 print('Coming Soon clicked!');
+  //                 // You can navigate or perform other actions here
+  //               },
+  //               child: Padding(
+  //                 padding: const EdgeInsets.only(left: 0.0, right: 8.0),
+  //                 child: ClipRRect(
+  //                   borderRadius: BorderRadius.circular(10.0),
+  //                   child: Container(
+  //                     width: 110, // Adjust width according to your design
+  //                     decoration: BoxDecoration(
+  //                       color: Colors.grey[200],
+  //                       boxShadow: [
+  //                         const BoxShadow(
+  //                           color: Colors.black12,
+  //                           blurRadius: 5.0,
+  //                           spreadRadius: 1.0,
+  //                           offset: Offset(0, 3),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     child: SvgPicture.asset(
+  //                       'assets/images/shop.svg', // Third image
+  //                       fit: BoxFit.cover,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
 
   Widget popularDrawsSlider(
@@ -1059,30 +1047,30 @@ class ShopView extends StackedView<ShopViewModel> {
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      // Handle search button press
-                    },
-                  ),
-                ],
-              ),
+              // child: Row(
+              //   children: [
+              //     Expanded(
+              //       child: TextField(
+              //         decoration: InputDecoration(
+              //           hintText: 'Search',
+              //           border: InputBorder.none,
+              //         ),
+              //       ),
+              //     ),
+              //     IconButton(
+              //       icon: Icon(Icons.search),
+              //       onPressed: () {
+              //         // Handle search button press
+              //       },
+              //     ),
+              //   ],
+              // ),
             ),
           ),
           verticalSpaceSmall,
-          _buildAdsSlideshow(viewModel),
+          // _buildAdsSlideshow(viewModel),
           verticalSpaceSmall,
-          quickActions(context),
+          // quickActions(context),
           verticalSpaceMedium,
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -1100,112 +1088,112 @@ class ShopView extends StackedView<ShopViewModel> {
     }
   }
 
-  Widget _buildAdsSlideshow(ShopViewModel viewModel) {
-    if (viewModel.productList.where((element) => element.ad == true).isEmpty) {
-      return Card(
-        color: kcPrimaryColor,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 150, // Set the width to control text wrapping
-                    child: const Text(
-                      'Best Full Solar Installation',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: kcWhiteColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      softWrap: true,
-                    ),
-                  ),
-                  Container(
-                    width: 200, // Set the width to control text wrapping
-                    child: Text(
-                      'Light out your world',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: kcWhiteColor,
-                      ),
-                      softWrap: true,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: kcBlackColor,
-                        backgroundColor: kcWhiteColor,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 24.0),
-                        textStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      child: Text("Check now"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15),
-                  ),
-                  image: DecorationImage(
-                    image: AssetImage(
-                        "assets/images/Mercury-10KVA-Solar-System-1 2.png"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                height: 150,
-                width: 130,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return CarouselSlider.builder(
-      itemCount:
-          viewModel.productList.where((element) => element.ad == true).length,
-      itemBuilder: (context, index, realIndex) {
-        final ad = viewModel.productList
-            .where((element) => element.ad == true)
-            .toList()[index];
-        return _buildAdItem(ad);
-      },
-      options: CarouselOptions(
-        height: 210,
-        autoPlay: true,
-        enlargeCenterPage: true,
-        viewportFraction: 1,
-        autoPlayInterval: Duration(seconds: 5),
-        onPageChanged: (index, reason) {
-          // Optionally handle page change event
-        },
-      ),
-    );
-  }
+  // Widget _buildAdsSlideshow(ShopViewModel viewModel) {
+  //   if (viewModel.productList.where((element) => element.ad == true).isEmpty) {
+  //     return Card(
+  //       color: kcPrimaryColor,
+  //       elevation: 2,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(15),
+  //       ),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.start,
+  //         children: [
+  //           Padding(
+  //             padding: const EdgeInsets.all(16.0),
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Container(
+  //                   width: 150, // Set the width to control text wrapping
+  //                   child: const Text(
+  //                     'Best Full Solar Installation',
+  //                     style: TextStyle(
+  //                       fontSize: 20,
+  //                       color: kcWhiteColor,
+  //                       fontWeight: FontWeight.bold,
+  //                     ),
+  //                     softWrap: true,
+  //                   ),
+  //                 ),
+  //                 Container(
+  //                   width: 200, // Set the width to control text wrapping
+  //                   child: Text(
+  //                     'Light out your world',
+  //                     style: TextStyle(
+  //                       fontSize: 16,
+  //                       color: kcWhiteColor,
+  //                     ),
+  //                     softWrap: true,
+  //                   ),
+  //                 ),
+  //                 Padding(
+  //                   padding: const EdgeInsets.all(8.0),
+  //                   child: ElevatedButton(
+  //                     onPressed: () {},
+  //                     style: ElevatedButton.styleFrom(
+  //                       foregroundColor: kcBlackColor,
+  //                       backgroundColor: kcWhiteColor,
+  //                       padding: const EdgeInsets.symmetric(
+  //                           vertical: 12.0, horizontal: 24.0),
+  //                       textStyle: const TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         fontSize: 16,
+  //                       ),
+  //                       shape: RoundedRectangleBorder(
+  //                         borderRadius: BorderRadius.circular(8.0),
+  //                       ),
+  //                     ),
+  //                     child: Text("Check now"),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           Padding(
+  //             padding: const EdgeInsets.only(right: 8.0),
+  //             child: Container(
+  //               decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.only(
+  //                   topLeft: Radius.circular(15),
+  //                   topRight: Radius.circular(15),
+  //                 ),
+  //                 image: DecorationImage(
+  //                   image: AssetImage(
+  //                       "assets/images/Mercury-10KVA-Solar-System-1 2.png"),
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //               height: 150,
+  //               width: 130,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
+  //
+  //   return CarouselSlider.builder(
+  //     itemCount:
+  //         viewModel.productList.where((element) => element.ad == true).length,
+  //     itemBuilder: (context, index, realIndex) {
+  //       final ad = viewModel.productList
+  //           .where((element) => element.ad == true)
+  //           .toList()[index];
+  //       return _buildAdItem(ad);
+  //     },
+  //     options: CarouselOptions(
+  //       height: 210,
+  //       autoPlay: true,
+  //       enlargeCenterPage: true,
+  //       viewportFraction: 1,
+  //       autoPlayInterval: Duration(seconds: 5),
+  //       onPageChanged: (index, reason) {
+  //         // Optionally handle page change event
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget _buildAdItem(Product ad) {
     return Container(
