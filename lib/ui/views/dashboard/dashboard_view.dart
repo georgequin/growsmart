@@ -31,6 +31,7 @@ import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../widget/AdventureDialog.dart';
 import '../notification/projectDetailsPage.dart';
+import '../shop/shop_view.dart';
 import 'dashboard_viewmodel.dart';
 
 /// @author George David
@@ -76,10 +77,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
           title: ValueListenableBuilder(
             valueListenable: uiMode,
             builder: (context, AppUiModes mode, child) {
-              return SvgPicture.asset(
-                    "assets/images/easy_power_logo.svg",
-                width: 150,
-                height: 40,
+              return CircleAvatar(
+                backgroundImage: AssetImage("assets/images/display_pic.png"),
+                radius: 20, // Adjust size as needed
               );
             },
           ),
@@ -266,7 +266,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
             // Explore Capsule
             InkWell(
               onTap: () {
-                locator<NavigationService>().navigateToDrawsView();
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ShopView()),
+                );
               },
               child: Container(
                 padding:

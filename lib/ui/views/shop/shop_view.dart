@@ -77,10 +77,9 @@ class ShopView extends StackedView<ShopViewModel> {
           title: ValueListenableBuilder(
             valueListenable: uiMode,
             builder: (context, AppUiModes mode, child) {
-              return SvgPicture.asset(
-                "assets/images/easy_power_logo.svg",
-                width: 150,
-                height: 40,
+              return CircleAvatar(
+                backgroundImage: AssetImage("assets/images/display_pic.png"),
+                radius: 20, // Adjust size as needed
               );
             },
           ),

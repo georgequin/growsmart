@@ -902,7 +902,7 @@ class _ProductCardState extends State<ProductCard> {
                 ),
               ),
             ],
-          ),///share Icon
+          ),
           Row(
             children: [
               Padding(
@@ -950,7 +950,7 @@ class _ProductCardState extends State<ProductCard> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   widget.product.productName ?? '',
                   style: TextStyle(
@@ -961,7 +961,7 @@ class _ProductCardState extends State<ProductCard> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Text(
                   widget.product.productDescription ?? '',
                   style: TextStyle(fontSize: 12),

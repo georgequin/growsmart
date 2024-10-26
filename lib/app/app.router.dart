@@ -40,7 +40,7 @@ import 'package:stacked_services/stacked_services.dart' as _i27;
 import '../core/data/models/cart_item.dart';
 import '../core/data/models/raffle_ticket.dart';
 import '../ui/views/profile/order_list.dart';
-import '../ui/views/profile/shippinga_ddresses_page.dart' as _i28;
+import '../ui/views/profile/shipping_addresses_page.dart' as _i28;
 
 /// @author George David
 /// email: georgequin19@gmail.com

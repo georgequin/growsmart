@@ -37,6 +37,7 @@ class _LoginState extends State<Login> {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: ViewModelBuilder<AuthViewModel>.reactive(
           onViewModelReady: (model) {
             model.init();
