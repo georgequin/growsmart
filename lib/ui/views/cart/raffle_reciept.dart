@@ -21,7 +21,7 @@ import '../../common/app_colors.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
-import '../profile/shippinga_ddresses_page.dart';
+import '../profile/shipping_addresses_page.dart';
 // import '../profile/ticket_list.dart';
 
 /// @author George David

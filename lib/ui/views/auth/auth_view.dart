@@ -5,13 +5,6 @@ import '../../common/app_colors.dart';
 import 'SignUp.dart';
 import 'login.dart';
 
-
-/// @author George David
-/// email: georgequin19@gmail.com
-/// Feb, 2024
-///
-
-
 enum PresentPage {
   login,
   register,
@@ -45,29 +38,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               ),
             ),
           ),
-          CustomScrollView(
-            slivers: [
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    Container(
-                      padding: const EdgeInsets.all(25),
-                      height: MediaQuery.of(context).size.height,
-                      child: Column(
-                        children: [
-                          Flexible(
-                            child: SingleChildScrollView(
-                              child: getPageWidget(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          getPageWidget(), // Directly load the page here without additional container
         ],
       ),
     );

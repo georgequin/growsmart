@@ -71,21 +71,27 @@ class _LoginState extends State<Login> {
               verticalSpaceTiny,
 
               verticalSpaceMedium,
-              TextFieldWidget(
-                hint: "Email",
-                controller: model.email,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  hint: "Email",
+                  controller: model.email,
+                ),
               ),
               verticalSpaceMedium,
-              TextFieldWidget(
-                hint: "Password",
-                controller: model.password,
-                obscureText: model.obscure,
-                suffix: InkWell(
-                  onTap: () {
-                    model.toggleObscure();
-                  },
-                  child: Icon(
-                      model.obscure ? Icons.visibility_off : Icons.visibility),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  hint: "Password",
+                  controller: model.password,
+                  obscureText: model.obscure,
+                  suffix: InkWell(
+                    onTap: () {
+                      model.toggleObscure();
+                    },
+                    child: Icon(
+                        model.obscure ? Icons.visibility_off : Icons.visibility),
+                  ),
                 ),
               ),
               verticalSpaceTiny,
@@ -142,15 +148,18 @@ class _LoginState extends State<Login> {
                 ],
               ),
               verticalSpaceMedium,
-              SubmitButton(
-                isLoading: model.isBusy,
-                boldText: true,
-                label: "Login",
-                submit: () {
-                  //locator<NavigationService>().clearStackAndShow(Routes.homeView);
-                  model.login();
-                },
-                color: kcPrimaryColor,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SubmitButton(
+                  isLoading: model.isBusy,
+                  boldText: true,
+                  label: "Login",
+                  submit: () {
+                    //locator<NavigationService>().clearStackAndShow(Routes.homeView);
+                    model.login();
+                  },
+                  color: kcPrimaryColor,
+                ),
               ),
               // verticalSpaceMedium,
               // Row(

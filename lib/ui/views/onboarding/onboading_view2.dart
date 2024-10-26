@@ -7,6 +7,7 @@ import 'package:stacked/stacked.dart';
 
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
+import '../auth/login.dart';
 import 'onboading_view3.dart';
 class OnboardingView2 extends StatefulWidget {
   @override
@@ -43,7 +44,12 @@ class _OnboardingViewState extends State<OnboardingView2> {
                       alignment: Alignment.topRight,
                       child: TextButton(
                         onPressed: () {
-                          // Handle skip
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => Login(
+                              updateIsLogin: (page) {
+                              },
+                            )),
+                          );
                         },
                         child: const Text(
                           "Skip",

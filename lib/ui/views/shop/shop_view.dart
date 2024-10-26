@@ -78,9 +78,7 @@ class ShopView extends StackedView<ShopViewModel> {
             valueListenable: uiMode,
             builder: (context, AppUiModes mode, child) {
               return SvgPicture.asset(
-                uiMode.value == AppUiModes.dark
-                    ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
-                    : "assets/images/dashboard_logo.svg",
+                "assets/images/easy_power_logo.svg",
                 width: 150,
                 height: 40,
               );
@@ -661,7 +659,6 @@ class ShopView extends StackedView<ShopViewModel> {
           //     ),
           //   ),
           // ),
-          verticalSpaceSmall,
           Autocomplete<Product>(
 
             optionsBuilder: (TextEditingValue productTextEditingValue) {

@@ -11,7 +11,7 @@ import 'package:afriprize/ui/views/profile/profile_details.dart';
 import 'package:afriprize/ui/views/profile/refferal.dart';
 import 'package:afriprize/ui/views/profile/settings.dart';
 import 'package:afriprize/ui/views/profile/support.dart';
-import 'package:afriprize/ui/views/profile/shippinga_ddresses_page.dart';
+import 'package:afriprize/ui/views/profile/shipping_addresses_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

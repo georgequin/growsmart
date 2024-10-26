@@ -77,9 +77,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             valueListenable: uiMode,
             builder: (context, AppUiModes mode, child) {
               return SvgPicture.asset(
-                uiMode.value == AppUiModes.dark
-                    ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
-                    : "assets/images/dashboard_logo.svg",
+                    "assets/images/easy_power_logo.svg",
                 width: 150,
                 height: 40,
               );
@@ -1050,33 +1048,109 @@ class DashboardView extends StackedView<DashboardViewModel> {
     } else {
       return Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        border: InputBorder.none,
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
+          //   child: Container(
+          //     padding: EdgeInsets.symmetric(horizontal: 8.0),
+          //     decoration: BoxDecoration(
+          //       border: Border.all(color: Colors.grey),
+          //       borderRadius: BorderRadius.circular(8.0),
+          //     ),
+          //     child: Row(
+          //       children: [
+          //         Expanded(
+          //           child: TextField(
+          //             decoration: InputDecoration(
+          //               hintText: 'Search',
+          //               border: InputBorder.none,
+          //             ),
+          //           ),
+          //         ),
+          //         IconButton(
+          //           icon: Icon(Icons.search),
+          //           onPressed: () {
+          //             // Handle search button press
+          //           },
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          Autocomplete<Product>(
+
+            optionsBuilder: (TextEditingValue productTextEditingValue) {
+
+              // if user is input nothing
+              if (productTextEditingValue.text == '') {
+                return const Iterable<Product>.empty();
+              }
+
+              // if user is input something the build
+              // suggestion based on the user input
+              return viewModel.productList.where((Product product) {
+                final query = productTextEditingValue.text.toLowerCase();
+                return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
+                    (product.brandName != null && product.brandName!.toLowerCase().contains(query));
+              });
+
+            },
+            displayStringForOption: (Product product) => product.productName ?? '',
+
+            // when user click on the suggested
+            // item this function calls
+            onSelected: (Product value) {
+              debugPrint('You just selected $value.productName');
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                isDismissible: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25.0),
+                      topRight: Radius.circular(25.0)),
+                ),
+                // barrierColor: Colors.black.withAlpha(50),
+                // backgroundColor: Colors.transparent,
+                backgroundColor: Colors.black.withOpacity(0.7),
+                builder: (BuildContext context) {
+                  return ProductCard(product: value);
+                },
+              );
+            },
+            fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey), // Grey border around the search bar
+                    borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: textEditingController,
+                          focusNode: focusNode,
+                          decoration: InputDecoration(
+                            hintText: 'Search product...',
+                            border: InputBorder.none, // Removes the default border
+                            contentPadding: EdgeInsets.symmetric(vertical: 15.0), // Adjust padding
+                          ),
+                        ),
                       ),
-                    ),
+                      IconButton(
+                        icon: Icon(Icons.search), // Search icon outside the text field
+                        onPressed: () {
+                          // Optionally handle search button press here
+                        },
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      // Handle search button press
-                    },
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
+
           ),
           verticalSpaceSmall,
           _buildAdsSlideshow(viewModel),

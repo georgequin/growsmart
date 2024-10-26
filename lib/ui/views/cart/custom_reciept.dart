@@ -21,7 +21,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 
 import '../home/home_view.dart';
-import '../profile/shippinga_ddresses_page.dart';
+import '../profile/shipping_addresses_page.dart';
 
 
 /// @author George David

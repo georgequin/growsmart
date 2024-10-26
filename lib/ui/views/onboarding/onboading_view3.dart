@@ -10,6 +10,7 @@ import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import '../../components/submit_button.dart';
 import '../auth/auth_view.dart';
+import '../auth/login.dart';
 import 'onboarding_viewmodel.dart';
 
 class OnboardingView3 extends StatefulWidget {
@@ -44,24 +45,29 @@ class _OnboardingViewState extends State<OnboardingView3> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Skip button
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0, top: 16.0),
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: TextButton(
-                        onPressed: () {
-                          // Handle skip
-                        },
-                        child: const Text(
-                          "Skip",
-                          style: TextStyle(
-                            color: kcDarkGreyColor,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(right: 16.0, top: 16.0),
+                  //   child: Align(
+                  //     alignment: Alignment.topRight,
+                  //     child: TextButton(
+                  //       onPressed: () {
+                  //         Navigator.of(context).push(
+                  //           MaterialPageRoute(builder: (context) => Login(
+                  //             updateIsLogin: (page) {
+                  //             },
+                  //           )),
+                  //         );
+                  //       },
+                  //       child: const Text(
+                  //         "Skip",
+                  //         style: TextStyle(
+                  //           color: kcDarkGreyColor,
+                  //           fontSize: 16,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: SvgPicture.asset(

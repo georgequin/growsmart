@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../state.dart';
 import '../../common/app_colors.dart';
 import '../../components/submit_button.dart';
+import '../../components/text_field_widget.dart';
 
 class ShippingAddressesPage extends StatefulWidget {
   const ShippingAddressesPage({Key? key}) : super(key: key);
@@ -12,6 +13,11 @@ class ShippingAddressesPage extends StatefulWidget {
 }
 
 class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
+  final TextEditingController houseAddressController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController stateController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+
   List<Map<String, dynamic>> shippingAddresses = [
     {
       'name': '${profile.value.firstname} ${profile.value.lastname}',
@@ -70,11 +76,29 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                       ),
                       const SizedBox(height: 16),
 
-                      _buildTextFieldCard('House address', (value) => houseAddress = value),
-                      _buildTextFieldCard('City', (value) => city = value),
-                      _buildTextFieldCard('State/Nationality', (value) => state = value),
-
-                      _buildPhoneField((value) => phoneNumber = value),
+                      TextFieldWidget(
+                        hint: 'House address',
+                        controller: houseAddressController,
+                        onChanged: (value) => houseAddress = value,
+                      ),
+                      verticalSpaceSmall,
+                      TextFieldWidget(
+                        hint: 'City',
+                        controller: cityController,
+                        onChanged: (value) => houseAddress = value,
+                      ),
+                      verticalSpaceSmall,
+                      TextFieldWidget(
+                        hint: 'State/Nationality',
+                        controller: stateController,
+                        onChanged: (value) => houseAddress = value,
+                      ),
+                      verticalSpaceSmall,
+                      TextFieldWidget(
+                        hint: 'Phone Number',
+                        controller: phoneNumberController,
+                        onChanged: (value) => houseAddress = value,
+                      ),
 
                       const SizedBox(height: 16),
                       Row(
@@ -98,12 +122,16 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                           isLoading: false,
                           label: 'Add Address',
                           submit: () {
-                            if (houseAddress.isNotEmpty &&
-                                city.isNotEmpty &&
-                                state.isNotEmpty &&
-                                phoneNumber.isNotEmpty) {
+                            if (houseAddressController.text.isNotEmpty &&
+                                cityController.text.isNotEmpty &&
+                                stateController.text.isNotEmpty &&
+                                phoneNumberController.text.isNotEmpty) {
                               addAddress(name, houseAddress, city, state, phoneNumber, isDefaultPayment);
                             }
+                            houseAddressController.clear();
+                            cityController.clear();
+                            stateController.clear();
+                            phoneNumberController.clear();
                             Navigator.pop(context);
                           },
                           color: kcPrimaryColor),
@@ -115,78 +143,6 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
           },
         );
       },
-    );
-  }
-
-  Widget _buildTextFieldCard(String labelText, Function(String) onChanged) {
-    return Card(
-      color: Colors.white,
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 16.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextField(
-          decoration: InputDecoration(
-            labelText: labelText,
-            border: InputBorder.none,
-          ),
-          onChanged: onChanged,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPhoneField(Function(String) onChanged) {
-    return Card(
-      color: Colors.white,
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 16.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Phone Number',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Container(
-                  width: 60,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: const Text(
-                    '+234',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                const VerticalDivider(color: Colors.grey, thickness: 1),
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(border: InputBorder.none),
-                    onChanged: onChanged,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -277,7 +233,7 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
         },
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 150), // Adjust this value to move the button up
+        padding: const EdgeInsets.only(bottom: 50), // Adjust this value to move the button up
         child: FloatingActionButton(
           onPressed: showAddAddressBottomSheet,
           backgroundColor: Colors.black,

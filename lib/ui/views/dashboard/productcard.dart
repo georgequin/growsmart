@@ -8,6 +8,7 @@ import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import '../../components/submit_button.dart';
 import '../dashboard/dashboard_viewmodel.dart';
+import '../shop/shop_view.dart';
 
 // class ProductCard extends StatefulWidget {
 //   const ProductCard({Key? key}) : super(key: key);
@@ -859,36 +860,49 @@ class _ProductCardState extends State<ProductCard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Product Details'),
+      ),
+
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () {
+          //           // locator<NavigationService>().navigateToTrack();
+          //           Navigator.of(context)
+          //               .push(MaterialPageRoute(builder:(c) {
+          //             return ShopView();
+          //           }));
+          //         },
+          //         child: Icon(Icons.arrow_back, size: 25, color: Colors.black),
+          //       ),
+          //       const Text(
+          //         'Product Details',
+          //         style: TextStyle(fontSize: 22),
+          //         softWrap: true,
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GestureDetector(
                   onTap: () {
-                    Navigator.pop(context); // Navigate back on tap
+                    // Define share action
                   },
-                  child: Icon(Icons.arrow_back, size: 25, color: Colors.black),
+                  child: Icon(Icons.share, size: 25, color: Colors.black),
                 ),
-                const Text(
-                  'Product Details',
-                  style: TextStyle(fontSize: 22),
-                  softWrap: true,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      // Define share action
-                    },
-                    child: Icon(Icons.share, size: 25, color: Colors.black),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            ],
+          ),///share Icon
           Row(
             children: [
               Padding(
@@ -936,100 +950,62 @@ class _ProductCardState extends State<ProductCard> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.product.productName ?? '',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Add to favorite logic here
-                      },
-                      // child: Container(
-                      //   decoration: BoxDecoration(
-                      //     borderRadius: BorderRadius.circular(50),
-                      //     boxShadow: [
-                      //       BoxShadow(
-                      //         color: Colors.grey.withOpacity(0.5),
-                      //         blurRadius: 7,
-                      //         offset: Offset(0, 3),
-                      //       ),
-                      //     ],
-                      //   ),
-                      //   child: CircleAvatar(
-                      //     child: Icon(Icons.favorite_border_outlined,
-                      //         size: 25, color: Colors.black),
-                      //     radius: 18,
-                      //     backgroundColor: Colors.white,
-                      //   ),
-                      // ),
-                    ),
-                  ],
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  widget.product.productName ?? '',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                widget.product.productDescription ?? '',
-                                style: TextStyle(fontSize: 12),
-                                softWrap: true,
-                              ),
-                            ],
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            '\$${widget.product.price}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                  ],
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  widget.product.productDescription ?? '',
+                  style: TextStyle(fontSize: 12),
+                  softWrap: true,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Add to cart logic here
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Add to cart logic here
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'Add to Cart',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    'Add to Cart',
-                    style: TextStyle(fontSize: 14),
-                  ),
+                    Text(
+                      '\$${widget.product.price}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
           Divider(),
+          verticalSpaceTiny,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
@@ -1046,6 +1022,7 @@ class _ProductCardState extends State<ProductCard> {
               ],
             ),
           ),
+          verticalSpaceMedium,
         ],
       ),
     );

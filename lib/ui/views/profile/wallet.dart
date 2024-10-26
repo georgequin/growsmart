@@ -15,6 +15,7 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 
@@ -350,128 +351,132 @@ class _WalletState extends State<Wallet> {
 
               child: Row(
 
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                 children: [
 
-                  Container(
+                  Expanded(
+                    child: Container(
 
-                    width: 200,
+                      width: 200,
 
-                    padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
 
-                    decoration: BoxDecoration(
+                      decoration: BoxDecoration(
 
-                      border: Border.all(
-
-                        color: kcSecondaryColor,
-
-                        width: 1.0,
-
-                      ),
-
-                      borderRadius: BorderRadius.circular(8.0),
-
-                    ),
-
-                    child: Row(
-
-                      children: [
-
-                        SvgPicture.asset(
-
-                          'assets/images/send-2.svg',
+                        border: Border.all(
 
                           color: kcSecondaryColor,
 
-                          height: 17,
-
-                          width: 17,
+                          width: 1.0,
 
                         ),
 
-                        const SizedBox(width: 8.0),
+                        borderRadius: BorderRadius.circular(8.0),
 
-                        const Text(
+                      ),
 
-                          'Deposit',
+                      child: Row(
 
-                          style: TextStyle(
+                        children: [
 
-                            fontWeight: FontWeight.bold,
+                          SvgPicture.asset(
 
-                            color: kcBlackColor,
+                            'assets/images/send-2.svg',
 
-                            fontSize: 14,
+                            color: kcSecondaryColor,
+
+                            height: 17,
+
+                            width: 17,
 
                           ),
 
-                        ),
+                          const SizedBox(width: 8.0),
 
-                      ],
+                          const Text(
+
+                            'Deposit',
+
+                            style: TextStyle(
+
+                              fontWeight: FontWeight.bold,
+
+                              color: kcBlackColor,
+
+                              fontSize: 14,
+
+                            ),
+
+                          ),
+
+                        ],
+
+                      ),
 
                     ),
-
                   ),
 
-                  Container(
+                  Expanded(
+                    child: Container(
 
-                    width: 200,
+                      width: 200,
 
-                    padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
 
-                    decoration: BoxDecoration(
+                      decoration: BoxDecoration(
 
-                      border: Border.all(
-
-                        color: kcSecondaryColor,
-
-                        width: 1.0,
-
-                      ),
-
-                      borderRadius: BorderRadius.circular(8.0),
-
-                    ),
-
-                    child: Row(
-
-                      children: [
-
-                        SvgPicture.asset(
-
-                          'assets/images/send-2.svg',
+                        border: Border.all(
 
                           color: kcSecondaryColor,
 
-                          height: 17,
-
-                          width: 17,
+                          width: 1.0,
 
                         ),
 
-                        const SizedBox(width: 8.0),
+                        borderRadius: BorderRadius.circular(8.0),
 
-                        const Text(
+                      ),
 
-                          'Withdraw',
+                      child: Row(
 
-                          style: TextStyle(
+                        children: [
 
-                            fontWeight: FontWeight.bold,
+                          SvgPicture.asset(
 
-                            color: kcBlackColor,
+                            'assets/images/send-2.svg',
 
-                            fontSize: 14,
+                            color: kcSecondaryColor,
+
+                            height: 17,
+
+                            width: 17,
 
                           ),
 
-                        ),
+                          const SizedBox(width: 8.0),
 
-                      ],
+                          const Text(
+
+                            'Withdraw',
+
+                            style: TextStyle(
+
+                              fontWeight: FontWeight.bold,
+
+                              color: kcBlackColor,
+
+                              fontSize: 14,
+
+                            ),
+
+                          ),
+
+                        ],
+
+                      ),
 
                     ),
-
                   ),
 
                 ],

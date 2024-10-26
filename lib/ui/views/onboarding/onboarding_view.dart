@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
+import '../auth/login.dart';
 import 'onboading_view2.dart';
 
 
@@ -42,7 +43,12 @@ class _OnboardingViewState extends State<OnboardingView> {
                       alignment: Alignment.topRight,
                       child: TextButton(
                         onPressed: () {
-                          // Handle skip
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => Login(
+                              updateIsLogin: (page) {
+                              },
+                            )),
+                          );
                         },
                         child: const Text(
                           "Skip",
