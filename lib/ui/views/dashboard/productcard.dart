@@ -861,8 +861,9 @@ class _ProductCardState extends State<ProductCard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Details'),
-      ),
+        centerTitle: true,
+          title: Text("Product Details"),
+          ),
 
       body: ListView(
         children: [

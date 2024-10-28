@@ -266,9 +266,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
             // Explore Capsule
             InkWell(
               onTap: () {
-                Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ShopView()),
-                );
+                // locator<NavigationService>().navigateToTrack();
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (c) {
+                  return ShopView();
+                }));
               },
               child: Container(
                 padding:
@@ -1267,7 +1269,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
         final ad = viewModel.productList
             .where((element) => element.ad == true)
             .toList()[index];
-        return _buildAdItem(ad);
+        return _buildAdItem(ad, context);
       },
       options: CarouselOptions(
         height: 210,
@@ -1282,7 +1284,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  Widget _buildAdItem(Product ad) {
+  Widget _buildAdItem(Product ad, BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16), // Add padding around the content
       width: double.infinity,
@@ -1298,8 +1300,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment
-                  .center, // Adjust the layout to avoid overflow
+              mainAxisAlignment: MainAxisAlignment.center, // Adjust the layout to avoid overflow
               children: [
                 // Product title
                 Text(
@@ -1330,7 +1331,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     height: 30,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Add your checkout logic here
+                        Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ShopView()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white, // Background color
