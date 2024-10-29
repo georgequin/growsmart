@@ -50,27 +50,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
     DashboardViewModel viewModel,
     Widget? child,
   ) {
-    if (viewModel.onboarded == false &&
-        viewModel.showDialog &&
-        !viewModel.modalShown) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        viewModel.modalShown =
-            true; // Set this to true to prevent showing the modal again
-        showDialog(
-          barrierColor: Colors.black.withOpacity(0.9),
-          context: context,
-          builder: (BuildContext context) {
-            return const AdventureModal();
-          },
-        ).then((_) {
-          // Once the modal is dismissed, update the onboarded status
-          locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
-          viewModel.showDialog = false;
-          viewModel.modalShown =
-              false; // Reset it in case the user reopens the view later
-        });
-      });
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -315,9 +294,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
             mainAxisSpacing: 10.0, // Added space between items
             childAspectRatio: 0.8, // Adjust height relative to width
           ),
-          itemCount: viewModel.productList.length,
+          itemCount: viewModel.filteredProductList.length,
           itemBuilder: (context, index) {
-            final item = viewModel.productList[index];
+            final item = viewModel.filteredProductList[index];
             return InkWell(
               onTap: (){
                 showModalBottomSheet(
@@ -1035,7 +1014,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   Widget _buildShimmerOrContent(
       BuildContext context, DashboardViewModel viewModel) {
-    if (viewModel.raffleList.isEmpty && viewModel.isBusy) {
+    if (viewModel.filteredProductList.isEmpty && viewModel.isBusy) {
       return Column(
         children: [
           _buildShimmerContainer(), // shimmer for video player placeholder
@@ -1091,7 +1070,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
               // if user is input something the build
               // suggestion based on the user input
-              return viewModel.productList.where((Product product) {
+              return viewModel.filteredProductList.where((Product product) {
                 final query = productTextEditingValue.text.toLowerCase();
                 return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
                     (product.brandName != null && product.brandName!.toLowerCase().contains(query));

@@ -92,7 +92,7 @@ class DashboardViewModel extends BaseViewModel {
       showDialog = true; // Show modal if not onboarded
     }
     notifyListeners();
-    await loadRaffles();
+    await loadProduct();
     await loadCategories();
     // await loadAds();
     // // await loadProducts();
@@ -107,10 +107,10 @@ class DashboardViewModel extends BaseViewModel {
   }
 
 
-  Future<void> loadRaffles() async {
+  Future<void> loadProduct() async {
 
     if (productList.isEmpty) {
-      setBusy(true);
+      // setBusy(true);
       notifyListeners();
     }
 
@@ -120,11 +120,12 @@ class DashboardViewModel extends BaseViewModel {
       productList = List<Map<String, dynamic>>.from(storedRaffle)
           .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
           .toList();
+      filteredProductList = productList;
       notifyListeners();
     }
 
     await getProducts();
-    setBusy(false);
+    // setBusy(false);
     notifyListeners();
 
   }
@@ -162,6 +163,7 @@ class DashboardViewModel extends BaseViewModel {
                 List<Map<String, dynamic>> storedRaffles = productList.map((e) => e.toJson()).toList();
                 locator<LocalStorage>().save(LocalStorageDir.product, storedRaffles);
                 notifyListeners();
+                filteredProductList = productList;
 
         notifyListeners();
       }else {

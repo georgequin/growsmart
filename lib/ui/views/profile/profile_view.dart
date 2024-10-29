@@ -155,6 +155,17 @@ class ProfileView extends StatelessWidget {
                         children: [
                           ListTile(
                             onTap: () {
+                              locator<NavigationService>()
+                                  .navigateToWallet()
+                                  .whenComplete(() => viewModel.getProfile());
+                            },
+                            leading: Icon(Icons.wallet,
+                              color: kcOrangeColor,
+                            ),
+                            title: const Text("Wallet"),
+                          ),
+                          ListTile(
+                            onTap: () {
                               showModalBottomSheet(
                                 context: context,
                                 isScrollControlled: true,
@@ -174,17 +185,6 @@ class ProfileView extends StatelessWidget {
                               color: kcOrangeColor,
                             ),
                             title: const Text("My oders"),
-                          ),
-                          ListTile(
-                            onTap: () {
-                              locator<NavigationService>()
-                                  .navigateToWallet()
-                                  .whenComplete(() => viewModel.getProfile());
-                            },
-                            leading: Icon(Icons.wallet,
-                              color: kcOrangeColor,
-                            ),
-                            title: const Text("Wallet"),
                           ),
                           // ListTile(
                           //   onTap: () {
@@ -213,43 +213,43 @@ class ProfileView extends StatelessWidget {
                             ),
                             title: const Text("Shipping addresses"),
                           ),
-                          ListTile(
-                            onTap: () {
-                              // locator<NavigationService>().navigateToTrack();
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (c) {
-                                return const Referral();
-                              }));
-                            },
-                            leading: Icon(Icons.credit_card,
-                              color: kcOrangeColor,
-                            ),
-                            title: const Text("Payment method"),
-                          ),
-                          ListTile(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (c) {
-                                return const Support();
-                              }));
-                            },
-                            leading: Icon(Icons.local_offer,
-                              color: kcOrangeColor,
-                            ),
-                            title: const Text("Promocodes"),
-                          ),
-                          ListTile(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (c) {
-                                return  Settings();
-                              }));
-                            },
-                            leading: Icon(Icons.settings,
-                                color: kcOrangeColor,
-                                ),
-                            title: const Text("Settings"),
-                          ),
+                          // ListTile(
+                          //   onTap: () {
+                          //     // locator<NavigationService>().navigateToTrack();
+                          //     Navigator.of(context)
+                          //         .push(MaterialPageRoute(builder: (c) {
+                          //       return const Referral();
+                          //     }));
+                          //   },
+                          //   leading: Icon(Icons.credit_card,
+                          //     color: kcOrangeColor,
+                          //   ),
+                          //   title: const Text("Payment method"),
+                          // ),
+                          // ListTile(
+                          //   onTap: () {
+                          //     Navigator.of(context)
+                          //         .push(MaterialPageRoute(builder: (c) {
+                          //       return const Support();
+                          //     }));
+                          //   },
+                          //   leading: Icon(Icons.local_offer,
+                          //     color: kcOrangeColor,
+                          //   ),
+                          //   title: const Text("Promocodes"),
+                          // ),
+                          // ListTile(
+                          //   onTap: () {
+                          //     Navigator.of(context)
+                          //         .push(MaterialPageRoute(builder: (c) {
+                          //       return  Settings();
+                          //     }));
+                          //   },
+                          //   leading: Icon(Icons.settings,
+                          //       color: kcOrangeColor,
+                          //       ),
+                          //   title: const Text("Settings"),
+                          // ),
                           ListTile(
                             onTap: () {
                               locator<NavigationService>()
