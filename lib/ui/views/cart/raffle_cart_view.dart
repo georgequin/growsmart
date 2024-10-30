@@ -11,6 +11,7 @@ import '../../../utils/money_util.dart';
 import '../../../utils/paymentModal.dart';
 import '../../components/text_field_widget.dart';
 import 'cart_viewmodel.dart';
+import 'checkout.dart';
 
 /// @author George David
 /// email: georgequin19@gmail.com
@@ -35,8 +36,7 @@ class CartView extends StackedView<CartViewModel> {
           "My Carts",
           style: TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.bold,
-              fontFamily: "Panchang"),
+              fontWeight: FontWeight.bold,),
         ),
         actions: [
           // viewModel.itemsToDeleteRaffle.isNotEmpty
@@ -55,7 +55,9 @@ class CartView extends StackedView<CartViewModel> {
           //     : const SizedBox()
         ],
       ),
-      body: viewModel.isPaymentProcessing.value
+      body:
+
+      viewModel.isPaymentProcessing.value
           ? const Center(
               child: EmptyState(
               animation: "payment_process.json",
@@ -464,76 +466,99 @@ class CartView extends StackedView<CartViewModel> {
 
   Widget _buildProceedToPaySection(
       BuildContext context, CartViewModel viewModel) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
-        color: kcSecondaryColor,
-        borderRadius:
-            BorderRadius.circular(5), // Adjust the color to match the design
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 4,
-            offset: Offset(0, -2), // Shadow for the top edge
-          ),
-        ],
-        border: Border.all(color: kcPrimaryColor),
-      ),
-      child: SafeArea(
-          child: InkWell(
-        onTap: () {
-          _showPaymentModal(context, viewModel);
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Text(
-                  "Payment Method",
-                  style: GoogleFonts.redHatDisplay(
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Icon(
-                  Icons.arrow_forward, // Use the appropriate icon
+    return
+      SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // Adjust the background color as needed
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.grey.shade300, // Adjust the border color as needed
+                width: 1.0,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 6,
+                  offset: Offset(0, -4), // Shadow for the top edge
                 ),
               ],
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  "Total Amount",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: kcPrimaryColor, // Adjust text color to match design
-                    fontSize: 12, // Adjust font size to match design
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Total Amount",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: kcPrimaryColor, // Adjust text color to match design
+                          fontSize: 14, // Adjust font size to match design
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            MoneyUtils().formatAmount(viewModel.raffleSubTotal),
+                            style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      MoneyUtils().formatAmount(viewModel.raffleSubTotal),
-                      style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w700),
+                  InkWell(
+                    onTap: () {
+                      //_showPaymentModal(context, viewModel);
+                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Checkout(infoList: [],),
+                                        ),
+                                      );
+
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: kcPrimaryColor,
+                        borderRadius: BorderRadius.circular(5),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 4,
+                            offset: Offset(0, -2), // Shadow for the top edge
+                          ),
+                        ],
+                        border: Border.all(color: kcPrimaryColor),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Checkout",
+                            style: GoogleFonts.redHatDisplay(
+                              textStyle: const TextStyle(
+                                color: kcWhiteColor,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                )
-              ],
-            )
-          ],
-        ),
-      )),
-    );
+                  ),
+                ],
+              ),
+            ),
+          ));
   }
 
   Widget _buildProceedToPayButton(
