@@ -116,9 +116,9 @@ class ShopView extends StackedView<ShopViewModel> {
             mainAxisSpacing: 10.0, // Added space between items
             childAspectRatio: 0.8, // Adjust height relative to width
           ),
-          itemCount: viewModel.productList.length,
+          itemCount: viewModel.filteredProductList.length,
           itemBuilder: (context, index) {
-            final item = viewModel.productList[index];
+            final item = viewModel.filteredProductList[index];
             return InkWell(
               onTap: (){
                 showModalBottomSheet(
@@ -613,7 +613,7 @@ class ShopView extends StackedView<ShopViewModel> {
 
   Widget _buildShimmerOrContent(
       BuildContext context, ShopViewModel viewModel) {
-    if (viewModel.raffleList.isEmpty && viewModel.isBusy) {
+    if (viewModel.filteredProductList.isEmpty && viewModel.isBusy) {
       return Column(
         children: [
           _buildShimmerContainer(), // shimmer for video player placeholder
@@ -669,7 +669,7 @@ class ShopView extends StackedView<ShopViewModel> {
 
               // if user is input something the build
               // suggestion based on the user input
-              return viewModel.productList.where((Product product) {
+              return viewModel.filteredProductList.where((Product product) {
                 final query = productTextEditingValue.text.toLowerCase();
                 return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
                     (product.brandName != null && product.brandName!.toLowerCase().contains(query));
@@ -705,7 +705,7 @@ class ShopView extends StackedView<ShopViewModel> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey), // Grey border around the search bar
+                    border: Border.all(color: const Color(0xFFEBE4E4)), // Grey border around the search bar
                     borderRadius: BorderRadius.circular(8.0), // Rounded corners
                   ),
                   child: Row(

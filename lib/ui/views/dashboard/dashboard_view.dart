@@ -1106,7 +1106,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey), // Grey border around the search bar
+                    border: Border.all(color: const Color(0xFFEBE4E4)
+                    ), // Grey border around the search bar
                     borderRadius: BorderRadius.circular(8.0), // Rounded corners
                   ),
                   child: Row(

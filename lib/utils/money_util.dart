@@ -15,7 +15,7 @@ import '../state.dart';
 import 'flutterwave-service.dart';
 
 class MoneyUtils extends TextInputFormatter {
-
+  String payStackPublicKey = 'pk_test_aae035e8425d5319b6500ef86c0472474a38a5fd';
   // final plugin = PaystackPlugin();
 
   @override

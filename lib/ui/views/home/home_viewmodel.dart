@@ -61,6 +61,7 @@ class HomeViewModel extends BaseViewModel {
   List<Widget> rafflesPages = [
     DashboardView(),
     ShopView(),
+    CartView(),
     const NotificationView(),
     const ProfileView()
   ];

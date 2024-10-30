@@ -30,7 +30,7 @@ class CartView extends StackedView<CartViewModel> {
       backgroundColor: kcSecondaryColor,
       appBar: AppBar(
         backgroundColor: kcSecondaryColor,
-        centerTitle: false,
+        centerTitle: true,
         title: const Text(
           "My Carts",
           style: TextStyle(
@@ -39,12 +39,6 @@ class CartView extends StackedView<CartViewModel> {
               fontFamily: "Panchang"),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.cancel, color: Colors.black),
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the cart page
-            },
-          ),
           // viewModel.itemsToDeleteRaffle.isNotEmpty
           //     ? InkWell(
           //   onTap: () {
@@ -84,40 +78,40 @@ class CartView extends StackedView<CartViewModel> {
                 ),
                 child: Column(
                   children: [
-                    if (raffleCart.value.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                viewModel.clearRaffleCart();
-                              },
-                              child: Row(
-                                children: [
-                                  Text("Clear",
-                                      style: GoogleFonts.redHatDisplay(
-                                        textStyle: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.red,
-                                        ),
-                                      )),
-                                  SizedBox(width: 2),
-                                  Icon(
-                                    size: 20,
-                                    Icons.delete_outline,
-                                    color:  uiMode.value == AppUiModes.dark
-                                        ? kcWhiteColor
-                                        : kcBlackColor,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    // if (raffleCart.value.isNotEmpty)
+                    //   Padding(
+                    //     padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.start,
+                    //       children: [
+                    //         GestureDetector(
+                    //           onTap: () {
+                    //             viewModel.clearRaffleCart();
+                    //           },
+                    //           child: Row(
+                    //             children: [
+                    //               Text("Clear",
+                    //                   style: GoogleFonts.redHatDisplay(
+                    //                     textStyle: const TextStyle(
+                    //                       fontSize: 16,
+                    //                       fontWeight: FontWeight.w500,
+                    //                       color: Colors.red,
+                    //                     ),
+                    //                   )),
+                    //               SizedBox(width: 2),
+                    //               Icon(
+                    //                 size: 20,
+                    //                 Icons.delete_outline,
+                    //                 color:  uiMode.value == AppUiModes.dark
+                    //                     ? kcWhiteColor
+                    //                     : kcBlackColor,
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
                     Expanded(
                       child: raffleCart.value.isEmpty
                           ? const EmptyState(
@@ -202,29 +196,6 @@ class CartView extends StackedView<CartViewModel> {
                                                                 .center,
                                                         children: [
                                                           Text(
-                                                            'Win Prize!!!',
-                                                            style: GoogleFonts
-                                                                .bricolageGrotesque(
-                                                              textStyle:
-                                                                  TextStyle(
-                                                                fontSize: 12,
-                                                                color: uiMode
-                                                                            .value ==
-                                                                        AppUiModes
-                                                                            .light
-                                                                    ? kcSecondaryColor
-                                                                    : kcWhiteColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                            ),
-                                                            maxLines: 2,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                          Text(
                                                             item.raffle?.productName ??
                                                                 'Product Name',
                                                             style: GoogleFonts
@@ -281,40 +252,40 @@ class CartView extends StackedView<CartViewModel> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.end,
                                                 children: [
-                                                  viewModel.itemsToDeleteRaffle
-                                                          .contains(item)
-                                                      ? Container(
-                                                          height: 20,
-                                                          width: 20,
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            color:
-                                                                kcSecondaryColor,
-                                                            shape:
-                                                                BoxShape.circle,
-                                                          ),
-                                                          child: const Center(
-                                                            child: Icon(
-                                                              Icons.check,
-                                                              color:
-                                                                  kcWhiteColor,
-                                                              size: 16,
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : Container(
-                                                          height: 20,
-                                                          width: 20,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            border: Border.all(
-                                                                color:
-                                                                    kcLightGrey),
-                                                          ),
-                                                        ),
-                                                  verticalSpaceSmall,
+                                                  // viewModel.itemsToDeleteRaffle
+                                                  //         .contains(item)
+                                                  //     ? Container(
+                                                  //         height: 20,
+                                                  //         width: 20,
+                                                  //         decoration:
+                                                  //             const BoxDecoration(
+                                                  //           color:
+                                                  //               kcSecondaryColor,
+                                                  //           shape:
+                                                  //               BoxShape.circle,
+                                                  //         ),
+                                                  //         child: const Center(
+                                                  //           child: Icon(
+                                                  //             Icons.check,
+                                                  //             color:
+                                                  //                 kcWhiteColor,
+                                                  //             size: 16,
+                                                  //           ),
+                                                  //         ),
+                                                  //       )
+                                                  //     : Container(
+                                                  //         height: 20,
+                                                  //         width: 20,
+                                                  //         decoration:
+                                                  //             BoxDecoration(
+                                                  //           shape:
+                                                  //               BoxShape.circle,
+                                                  //           border: Border.all(
+                                                  //               color:
+                                                  //                   kcLightGrey),
+                                                  //         ),
+                                                  //       ),
+                                                  // verticalSpaceSmall,
                                                   Row(
                                                     children: [
                                                       InkWell(
@@ -471,14 +442,14 @@ class CartView extends StackedView<CartViewModel> {
                     //   ),
                     // ),
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFieldWidget(
-                        label: "referral code",
-                        hint: "referral code (optional)",
-                        controller: viewModel.refferalCode,
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: TextFieldWidget(
+                    //     label: "referral code",
+                    //     hint: "referral code (optional)",
+                    //     controller: viewModel.refferalCode,
+                    //   ),
+                    // ),
                     verticalSpaceSmall,
                     if (raffleCart.value.isNotEmpty)
                       _buildProceedToPaySection(context,
@@ -675,7 +646,7 @@ class CartView extends StackedView<CartViewModel> {
 
   @override
   void onViewModelReady(CartViewModel viewModel) {
-    viewModel.fetchOnlineCart();
+    // viewModel.fetchOnlineCart();
     // viewModel.loadPayStackPlugin();
     viewModel.getRaffleSubTotal();
     super.onViewModelReady(viewModel);

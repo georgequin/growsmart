@@ -110,7 +110,7 @@ class ShopViewModel extends BaseViewModel {
   Future<void> loadRaffles() async {
 
     if (productList.isEmpty) {
-      setBusy(true);
+      // setBusy(true);
       notifyListeners();
     }
 
@@ -120,11 +120,12 @@ class ShopViewModel extends BaseViewModel {
       productList = List<Map<String, dynamic>>.from(storedRaffle)
           .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
           .toList();
+      filteredProductList = productList;
       notifyListeners();
     }
 
     await getProducts();
-    setBusy(false);
+    // setBusy(false);
     notifyListeners();
 
   }
@@ -162,7 +163,7 @@ class ShopViewModel extends BaseViewModel {
                 List<Map<String, dynamic>> storedRaffles = productList.map((e) => e.toJson()).toList();
                 locator<LocalStorage>().save(LocalStorageDir.product, storedRaffles);
                 notifyListeners();
-
+        filteredProductList = productList;
         notifyListeners();
       }else {
         snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
