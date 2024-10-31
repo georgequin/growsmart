@@ -196,7 +196,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                             children: [
                               ProfilePicture(
                                   size: 100,
-                                  url: profile.value.profilePic?.url,
+                                  url: profile.value.profilePicture,
                                   ),
                               GestureDetector(
                                 onTap: () {
@@ -251,7 +251,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   ),
                                 ),
                                 subtitle: Text(
-                                  "${profile.value.firstname} ${profile.value.lastname}",
+                                  "${profile.value.firstName} ${profile.value.lastName}",
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -296,7 +296,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   ),
                                 ),
                                 subtitle: Text(
-                                  "${profile.value.phone}",
+                                  "${profile.value.phoneNumber}",
                                   style: TextStyle(
                                       color: uiMode.value == AppUiModes.dark
                                           ? Colors.white

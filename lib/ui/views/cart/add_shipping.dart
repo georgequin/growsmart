@@ -47,7 +47,7 @@ class _AddShippingState extends State<AddShipping> {
 
   @override
   void initState() {
-    loadCountries();
+    // loadCountries();
     super.initState();
   }
 
@@ -172,8 +172,8 @@ class _AddShippingState extends State<AddShipping> {
                 try {
 
                   ApiResponse res = await locator<Repository>().saveShipping({
-                    "shipping_firstname": profile.value.firstname,
-                    "shipping_lastname": profile.value.lastname,
+                    "shipping_firstname": profile.value.firstName,
+                    "shipping_lastname": profile.value.lastName,
                     "shipping_phone": phoneNumber.completeNumber,
                     "shipping_additional_phone":altPhoneNumber.completeNumber,
                     "shipping_address": address.text,
@@ -232,25 +232,25 @@ class _AddShippingState extends State<AddShipping> {
     );
   }
 
-  void loadCountries() async {
-    try {
-      setState(() {
-        loadingCountries = true;
-      });
-      List<Country> countries = await CountryUtils().getSupportedCountries();
-      setState(() {
-        this.countries = countries;
-        loadingCountries = false;
-      });
-    } catch (e) {
-      setState(() {
-        loadingCountries = false;
-      });
-      if (kDebugMode) {
-        print('Error loading countries: $e');
-      }
-    }
-  }
+  // void loadCountries() async {
+  //   try {
+  //     setState(() {
+  //       loadingCountries = true;
+  //     });
+  //     List<Country> countries = await CountryUtils().getSupportedCountries();
+  //     setState(() {
+  //       this.countries = countries;
+  //       loadingCountries = false;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       loadingCountries = false;
+  //     });
+  //     if (kDebugMode) {
+  //       print('Error loading countries: $e');
+  //     }
+  //   }
+  // }
 }
 
 

@@ -13,11 +13,13 @@ import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../utils/money_util.dart';
 import '../../common/ui_helpers.dart';
+import '../../components/text_field_widget.dart';
 import 'add_shipping.dart';
 
 
 class Checkout extends StatefulWidget {
   final List<OrderInfo> infoList;
+
 
   const Checkout({
     required this.infoList,
@@ -36,6 +38,10 @@ class _CheckoutState extends State<Checkout> {
   String publicKeyTest = MoneyUtils().payStackPublicKey;
   //final plugin = PaystackPlugin();
   bool isPaying = false;
+  final TextEditingController houseAddressController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController stateController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
 
 
   @override
@@ -207,7 +213,7 @@ class _CheckoutState extends State<Checkout> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               children: [
-                (profile.value.accountType == null
+                (profile.value.addresses == null && profile.value.addresses!.isNotEmpty
                 )
                     ? Column(
                         children: [
@@ -221,13 +227,8 @@ class _CheckoutState extends State<Checkout> {
                               style: TextStyle(color: kcWhiteColor),
                             ),
                             onPressed: () {
-                              Navigator.of(context)
-                                  .push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const AddShipping(),
-                                    ),
-                                  )
-                                  .whenComplete(() => setState(() {}));
+                              Navigator.pop(context);
+                              showAddAddressBottomSheet();
                             },
                           ),
                         ],
@@ -736,4 +737,117 @@ class _CheckoutState extends State<Checkout> {
   //     },
   //   );
   // }
+  void addAddress(String name, String address, String city, String state, String phoneNumber, bool isDefaultPayment) {
+    // setState(() {
+    //   shippingAddresses.add({
+    //     'name': '${profile.value.firstname} ${profile.value.lastname}',
+    //     'address': '$address, $city, $state',
+    //     'phone': phoneNumber,
+    //     'isDefaultPayment': isDefaultPayment,
+    //   });
+    // });
+  }
+
+  void showAddAddressBottomSheet() {
+    String name = '';
+    String houseAddress = '';
+    String city = '';
+    String state = '';
+    String phoneNumber = '';
+    bool isDefaultPayment = false;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Add Address',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 16),
+
+                      TextFieldWidget(
+                        hint: 'House address',
+                        controller: houseAddressController,
+                        onChanged: (value) => houseAddress = value,
+                      ),
+                      verticalSpaceSmall,
+                      TextFieldWidget(
+                        hint: 'City',
+                        controller: cityController,
+                        onChanged: (value) => city = value,
+                      ),
+                      verticalSpaceSmall,
+                      TextFieldWidget(
+                        hint: 'State/Nationality',
+                        controller: stateController,
+                        onChanged: (value) => state = value,
+                      ),
+                      verticalSpaceSmall,
+                      TextFieldWidget(
+                        hint: 'Phone Number',
+                        controller: phoneNumberController,
+                        onChanged: (value) => phoneNumber = value,
+                      ),
+
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isDefaultPayment,
+                            activeColor: Colors.black,
+                            checkColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            onChanged: (value) {
+                              setModalState(() {
+                                isDefaultPayment = value ?? false;
+                              });
+                            },
+                          ),
+                          const Text("Set as default payment method"),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      SubmitButton(
+                          isLoading: false,
+                          label: 'Add Address',
+                          submit: () {
+                            if (houseAddressController.text.isNotEmpty &&
+                                cityController.text.isNotEmpty &&
+                                stateController.text.isNotEmpty &&
+                                phoneNumberController.text.isNotEmpty) {
+                              addAddress(name, houseAddress, city, state, phoneNumber, isDefaultPayment);
+                            }
+                            houseAddressController.clear();
+                            cityController.clear();
+                            stateController.clear();
+                            phoneNumberController.clear();
+                            Navigator.pop(context);
+                          },
+                          color: kcPrimaryColor),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }

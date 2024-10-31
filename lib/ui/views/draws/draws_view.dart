@@ -489,7 +489,7 @@ class DrawsCard extends StatelessWidget {
                       ),
                     if (isWinner)
                       Text(
-                        '${winner?.user?.firstname} ${winner?.user?.lastname}' ??
+                        '${winner?.user?.firstName} ${winner?.user?.lastName}' ??
                             'Product Name',
                         style: TextStyle(
                             fontSize: 20,
@@ -951,7 +951,7 @@ Widget _buildWinnerCard(Winner winner, DrawsViewModel viewModel, int index) {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                    '${viewModel.raffleWinnerList[index].user?.firstname?.substring(0, 1).toUpperCase() ?? ''}${viewModel.raffleWinnerList[index].user?.firstname?.substring(1).toLowerCase() ?? ''} ${viewModel.raffleWinnerList[index].user?.lastname?.substring(0, 1).toUpperCase() ?? ''}${viewModel.raffleWinnerList[index].user?.lastname?.substring(1).toLowerCase() ?? ''}',
+                    '${viewModel.raffleWinnerList[index].user?.firstName?.substring(0, 1).toUpperCase() ?? ''}${viewModel.raffleWinnerList[index].user?.firstName?.substring(1).toLowerCase() ?? ''} ${viewModel.raffleWinnerList[index].user?.lastName?.substring(0, 1).toUpperCase() ?? ''}${viewModel.raffleWinnerList[index].user?.lastName?.substring(1).toLowerCase() ?? ''}',
                     style: GoogleFonts.redHatDisplay(
                       textStyle: const TextStyle(
                         fontSize: 14,

@@ -69,7 +69,7 @@ class ProfileView extends StatelessWidget {
                                 },
                                 child: ProfilePicture(
                                     size: 100,
-                                      url: profile.value.profilePic?.url,
+                                      url: profile.value.profilePicture,
                                     ),
                               ),
                               // horizontalSpaceLarge,
@@ -119,13 +119,12 @@ class ProfileView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                "${profile.value.firstname} ${profile.value.lastname}",
+                                "${profile.value.firstName} ${profile.value.lastName}",
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(profile.value.username ?? "")
                             ],
                           ),
                         ],

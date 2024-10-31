@@ -145,21 +145,21 @@ class DonationsPaymentModalWidget extends StatelessWidget {
               const SizedBox(height: 10),
           
               if(selectedPaymentMethod == PaymentMethod.wallet)
-                Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    "Available Balance: ${profileData?.accountPoints} points",
-                    style: TextStyle(
-                      color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-                      fontSize: 12,
-                      fontFamily: 'roboto',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
+              //   Align(
+              //   alignment: Alignment.centerRight,
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              //     child: Text(
+              //       "Available Balance: ${profileData?.accountPoints} points",
+              //       style: TextStyle(
+              //         color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
+              //         fontSize: 12,
+              //         fontFamily: 'roboto',
+              //         fontWeight: FontWeight.w500,
+              //       ),
+              //     ),
+              //   ),
+              // ),
           
               const SizedBox(height: 20),
           

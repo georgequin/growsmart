@@ -1033,25 +1033,25 @@ class ShopView extends StackedView<ShopViewModel> {
                   },
                   child: Row(
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 0.0),
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: kcPrimaryColor.withOpacity(0.1),
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(5.0),
-                            bottomLeft: Radius.circular(5.0),
-                          ),
-                        ),
-                        child: Text(
-                          '${profile.value.accountPoints} points',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Roboto',
-                          ),
-                        ),
-                      ),
+                      // Container(
+                      //   margin: const EdgeInsets.only(right: 0.0),
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   decoration: BoxDecoration(
+                      //     color: kcPrimaryColor.withOpacity(0.1),
+                      //     borderRadius: const BorderRadius.only(
+                      //       topLeft: Radius.circular(5.0),
+                      //       bottomLeft: Radius.circular(5.0),
+                      //     ),
+                      //   ),
+                      //   child: Text(
+                      //     '${profile.value.accountPoints} points',
+                      //     style: const TextStyle(
+                      //       fontSize: 14,
+                      //       fontWeight: FontWeight.bold,
+                      //       fontFamily: 'Roboto',
+                      //     ),
+                      //   ),
+                      // ),
                       SvgPicture.asset(
                         "assets/images/dashboard_wallet.svg",
                         width: 30,

@@ -432,7 +432,7 @@ class _ProjectdetalsState extends State<ProjectDetailsPage> {
                     CircleAvatar(
                       backgroundColor: Colors.grey[400],
                       child: Text(
-                        '${topLevelComment.user?.firstname?[0].toUpperCase() ?? ''}${topLevelComment.user?.lastname?[0].toUpperCase() ?? ''}',
+                        '${topLevelComment.user?.firstName?[0].toUpperCase() ?? ''}${topLevelComment.user?.lastName?[0].toUpperCase() ?? ''}',
                         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -454,8 +454,8 @@ class _ProjectdetalsState extends State<ProjectDetailsPage> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    '${topLevelComment.user?.firstname?.substring(0, 1).toUpperCase() ?? ''}${topLevelComment.user?.firstname?.substring(1).toLowerCase() ?? ''} '
-                                        '${topLevelComment.user?.lastname?.substring(0, 1).toUpperCase() ?? ''}${topLevelComment.user?.lastname?.substring(1).toLowerCase() ?? ''}',
+                                    '${topLevelComment.user?.firstName?.substring(0, 1).toUpperCase() ?? ''}${topLevelComment.user?.firstName?.substring(1).toLowerCase() ?? ''} '
+                                        '${topLevelComment.user?.lastName?.substring(0, 1).toUpperCase() ?? ''}${topLevelComment.user?.lastName?.substring(1).toLowerCase() ?? ''}',
                                     style:  TextStyle(fontWeight: FontWeight.bold, color:  uiMode.value == AppUiModes.dark
                                         ? kcWhiteColor
                                         : Colors.grey[400],),
@@ -510,7 +510,7 @@ class _ProjectdetalsState extends State<ProjectDetailsPage> {
                                         CircleAvatar(
                                           backgroundColor: Colors.grey[400],
                                           child: Text(
-                                            '${reply.user?.firstname?[0].toUpperCase() ?? ''}${reply.user?.lastname?[0].toUpperCase() ?? ''}',
+                                            '${reply.user?.firstName?[0].toUpperCase() ?? ''}${reply.user?.lastName?[0].toUpperCase() ?? ''}',
                                             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                           ),
                                         ),
@@ -597,7 +597,7 @@ class _ProjectdetalsState extends State<ProjectDetailsPage> {
             Row(
               children: [
                 Text(
-                  'Replying to ${replyingToComment?.user?.firstname}',
+                  'Replying to ${replyingToComment?.user?.firstName}',
                   style: const TextStyle(color: Colors.black54, fontSize: 12),
                 ),
                 IconButton(

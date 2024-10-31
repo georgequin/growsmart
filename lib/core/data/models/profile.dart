@@ -4,103 +4,123 @@ import 'package:afriprize/core/data/models/product.dart';
 
 class Profile {
   String? id;
-  String? firstname;
-  String? lastname;
   String? email;
-  String? username;
-  String? phone;
-  Country? country;
-  Media? profilePic;
-  bool? isUserVerified;
-  String? status;
-  String? accountType;
-  int? accountPoints;
-  String? accountPointsLocal;
-  String? createdAt;
-  String? updatedAt;
-  String? lastActivity;
-  NotificationPreferences? notificationPreferences;
+  String? password;
+  String? oauthProvider;
+  String? oauthId;
+  String? firstName;
+  String? lastName;
+  String? phoneNumber;
+  String? verificationCode;
+  String? profilePicture;
+  bool? canPayInstallmentally;
+  UserStatus? status;
+  List<Address>? addresses;  // List to hold multiple addresses
 
   Profile({
     this.id,
-    this.firstname,
-    this.lastname,
     this.email,
-    this.username,
-    this.phone,
-    this.country,
-    this.profilePic,
-    this.isUserVerified,
+    this.password,
+    this.oauthProvider,
+    this.oauthId,
+    this.firstName,
+    this.lastName,
+    this.phoneNumber,
+    this.verificationCode,
+    this.profilePicture,
+    this.canPayInstallmentally,
     this.status,
-    this.accountType,
-    this.accountPoints,
-    this.accountPointsLocal,
-    this.createdAt,
-    this.updatedAt,
-    this.lastActivity,
-    this.notificationPreferences,
+    this.addresses,
   });
 
-  // Updated Profile.fromJson method
+  // Constructor for creating Profile object from JSON
   Profile.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    firstname = json['firstname'];
-    lastname = json['lastname'];
+    id = json['id'];
     email = json['email'];
-    username = json['username'];
-    phone = json['phone'];
-    // Country object handling
-    country = json['country'] != null ? Country.fromJson(json['country']) : null;
-    profilePic = json['profile_pic'] != null ? Media.fromJson(json['profile_pic']) : null; // Handle profile_pic
-    isUserVerified = json['is_user_verified'];
-    status = json['status'];
-    accountType = json['account_type'];
-    accountPoints = json['account_points'];
-    accountPointsLocal = json['account_points_local'];
+    password = json['password'];
+    oauthProvider = json['oauthProvider'];
+    oauthId = json['oauthId'];
+    firstName = json['firstName'];
+    lastName = json['lastName'];
+    phoneNumber = json['phoneNumber'];
+    verificationCode = json['verificationCode'];
+    profilePicture = json['profilePicture'];
+    canPayInstallmentally = json['canPayInstallmentally'];
+    status = json['status'] != null ? UserStatus.values.firstWhere((e) => e.toString() == 'UserStatus.${json['status']}') : null;
 
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    lastActivity = json['last_activity']; // New field added
-
-    // Notification preferences object handling
-    notificationPreferences = json['notification_preferences'] != null
-        ? NotificationPreferences.fromJson(json['notification_preferences'])
-        : null;
+    // Parsing addresses from JSON array
+    if (json['addresses'] != null) {
+      addresses = List<Address>.from(json['addresses'].map((address) => Address.fromJson(address)));
+    }
   }
 
+  // Method for converting Profile object to JSON
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = id;
-    data['firstname'] = firstname;
-    data['lastname'] = lastname;
+    data['id'] = id;
     data['email'] = email;
-    data['username'] = username;
-    data['phone'] = phone;
+    data['password'] = password;
+    data['oauthProvider'] = oauthProvider;
+    data['oauthId'] = oauthId;
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['phoneNumber'] = phoneNumber;
+    data['verificationCode'] = verificationCode;
+    data['profilePicture'] = profilePicture;
+    data['canPayInstallmentally'] = canPayInstallmentally;
+    data['status'] = status?.toString().split('.').last;
 
-    // Country object serialization
-    if (country != null) {
-      data['country'] = country!.toJson();
-    }
-    if (profilePic != null) {
-      data['profile_pic'] = profilePic!.toJson();
-    }
-
-    data['is_user_verified'] = isUserVerified;
-    data['status'] = status;
-    data['account_type'] = accountType;
-    data['account_points'] = accountPoints;
-    data['account_points_local'] = accountPointsLocal;
-    data['createdAt'] = createdAt;
-    data['updatedAt'] = updatedAt;
-    data['last_activity'] = lastActivity;
-
-    // Notification preferences serialization
-    if (notificationPreferences != null) {
-      data['notification_preferences'] = notificationPreferences!.toJson();
+    // Serializing addresses to JSON
+    if (addresses != null) {
+      data['addresses'] = addresses!.map((address) => address.toJson()).toList();
     }
 
     return data;
   }
+}
+
+// Enum for user status
+enum UserStatus { Active, Inactive }
+
+// Address model to represent address objects
+class Address {
+  String? id;
+  String? street;
+  String? city;
+  String? state;
+  String? country;
+  String? postalCode;
+
+  Address({
+    this.id,
+    this.street,
+    this.city,
+    this.state,
+    this.country,
+    this.postalCode,
+  });
+
+  // Constructor for creating Address object from JSON
+  Address.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    street = json['street'];
+    city = json['city'];
+    state = json['state'];
+    country = json['country'];
+    postalCode = json['postalCode'];
+  }
+
+  // Method for converting Address object to JSON
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['street'] = street;
+    data['city'] = city;
+    data['state'] = state;
+    data['country'] = country;
+    data['postalCode'] = postalCode;
+    return data;
+    }
 }
 
 // Model for NotificationPreferences

@@ -20,7 +20,7 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
 
   List<Map<String, dynamic>> shippingAddresses = [
     {
-      'name': '${profile.value.firstname} ${profile.value.lastname}',
+      'name': '${profile.value.firstName} ${profile.value.lastName}',
       'address': '3 Newbridge Court, Chino Hills, CA 91709',
       'isDefaultPayment': false,
     },
@@ -29,7 +29,7 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
   void addAddress(String name, String address, String city, String state, String phoneNumber, bool isDefaultPayment) {
     setState(() {
       shippingAddresses.add({
-        'name': '${profile.value.firstname} ${profile.value.lastname}',
+        'name': '${profile.value.firstName} ${profile.value.lastName}',
         'address': '$address, $city, $state',
         'phone': phoneNumber,
         'isDefaultPayment': isDefaultPayment,
