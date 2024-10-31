@@ -126,8 +126,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           ),
                         ],
                       ),
-                      child: SvgPicture.asset(
-                        'assets/images/raffles.svg',
+                      child: Image.asset(
+                        'assets/images/services.png',
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -157,8 +157,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           ),
                         ],
                       ),
-                      child: SvgPicture.asset(
-                        'assets/images/donations.svg', // Second image
+                      child: Image.asset(
+                        'assets/images/solarenergy.png', // Second image
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -189,8 +189,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           ),
                         ],
                       ),
-                      child: SvgPicture.asset(
-                        'assets/images/shop.svg', // Third image
+                      child:  Image.asset(
+                        'assets/images/lightingelectronics.png', // Third image
                         fit: BoxFit.cover,
                       ),
                     ),
