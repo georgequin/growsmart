@@ -85,19 +85,19 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                       TextFieldWidget(
                         hint: 'City',
                         controller: cityController,
-                        onChanged: (value) => houseAddress = value,
+                        onChanged: (value) => city = value,
                       ),
                       verticalSpaceSmall,
                       TextFieldWidget(
                         hint: 'State/Nationality',
                         controller: stateController,
-                        onChanged: (value) => houseAddress = value,
+                        onChanged: (value) => state = value,
                       ),
                       verticalSpaceSmall,
                       TextFieldWidget(
                         hint: 'Phone Number',
                         controller: phoneNumberController,
-                        onChanged: (value) => houseAddress = value,
+                        onChanged: (value) => phoneNumber = value,
                       ),
 
                       const SizedBox(height: 16),

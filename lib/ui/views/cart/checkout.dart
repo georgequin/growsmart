@@ -625,7 +625,7 @@ class _CheckoutState extends State<Checkout> {
     int total = 0;
 
     for (var element in raffleCart.value) {
-      total = total + (int.tryParse(element.raffle!.price!)! * element.quantity!);
+      total = total + (double.parse(element.raffle?.price.toString() ?? '0').round() * element.quantity!);
     }
 
     return total;
