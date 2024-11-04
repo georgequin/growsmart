@@ -111,7 +111,15 @@ class Servicesview extends StackedView<ServicesviewModel> {
                       child: Container(
                         height: 200,
                         padding: const EdgeInsets.all(16.0),
-                        child: Text('Site Suitability Evaluation'),
+                        child: Column(
+                          children: [
+                            Text('Site Suitability Evaluation'),
+                            verticalSpaceMassive,
+                            Container(
+                              alignment: Alignment.bottomRight,
+                                child: Text('\$100')),
+                          ],
+                        ),
                       ),
                     ),
                     // Add more items here as needed
@@ -122,10 +130,14 @@ class Servicesview extends StackedView<ServicesviewModel> {
                 child: ListView(
                   children: [
                     Card(
-                      child: Container(
-                        height: 200,
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text('Panel Cleaning'),
+                      child: Column(
+                        children: [
+                          Text('Panel Cleaning'),
+                          verticalSpaceMassive,
+                          Container(
+                              alignment: Alignment.bottomRight,
+                              child: Text('\$100')),
+                        ],
                       ),
                     ),
                     // Add more items here as needed
@@ -136,10 +148,14 @@ class Servicesview extends StackedView<ServicesviewModel> {
                 child: ListView(
                   children: [
                     Card(
-                      child: Container(
-                        height: 200,
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text('Inverter Installation'),
+                      child: Column(
+                        children: [
+                          Text('Inverter Installation'),
+                          verticalSpaceMassive,
+                          Container(
+                              alignment: Alignment.bottomRight,
+                              child: Text('\$100')),
+                        ],
                       ),
                     ),
                     // Add more items here as needed
