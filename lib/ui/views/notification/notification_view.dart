@@ -3,6 +3,7 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:afriprize/ui/views/notification/projectDetailsPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -22,28 +23,28 @@ class Servicesview extends StackedView<ServicesviewModel> {
 
   @override
   Widget builder(
-      BuildContext context,
-      ServicesviewModel viewModel,
-      Widget? child,
-      ) {
+    BuildContext context,
+    ServicesviewModel viewModel,
+    Widget? child,
+  ) {
     return Scaffold(
       appBar: AppBar(
-        // Uncomment and adjust if you want to add a title or other AppBar elements
-        // title: ValueListenableBuilder(
-        //   valueListenable: uiMode,
-        //   builder: (context, AppUiModes mode, child) {
-        //     return SvgPicture.asset(
-        //       uiMode.value == AppUiModes.dark
-        //           ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
-        //           : "assets/images/dashboard_logo.svg",
-        //       width: 150,
-        //       height: 40,
-        //     );
-        //   },
-        // ),
-        // centerTitle: false,
-        // actions: _buildAppBarActions(context, viewModel)
-      ),
+          // Uncomment and adjust if you want to add a title or other AppBar elements
+          // title: ValueListenableBuilder(
+          //   valueListenable: uiMode,
+          //   builder: (context, AppUiModes mode, child) {
+          //     return SvgPicture.asset(
+          //       uiMode.value == AppUiModes.dark
+          //           ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
+          //           : "assets/images/dashboard_logo.svg",
+          //       width: 150,
+          //       height: 40,
+          //     );
+          //   },
+          // ),
+          // centerTitle: false,
+          // actions: _buildAppBarActions(context, viewModel)
+          ),
       body: RefreshIndicator(
         onRefresh: () async {
           // viewModel.getDonationsCategories();
@@ -56,25 +57,11 @@ class Servicesview extends StackedView<ServicesviewModel> {
               verticalSpaceSmall,
               Row(
                 children: [
-                  Text(
-                    "Services",
-                    style: GoogleFonts.redHatDisplay(
-                      textStyle: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              verticalSpaceSmall,
-              Row(
-                children: [
                   Expanded(
                     child: TextField(
                       onChanged: viewModel.updateSearchQuery,
                       decoration: InputDecoration(
-                        hintText: 'Search',
+                        hintText: 'Search on Easy Power',
                         hintStyle: GoogleFonts.redHatDisplay(
                           textStyle: const TextStyle(),
                         ),
@@ -90,16 +77,20 @@ class Servicesview extends StackedView<ServicesviewModel> {
                       ),
                     ),
                   ),
-                  // Uncomment and adjust if you want to add a filter button
-                  // const SizedBox(width: 10.0),
-                  // Container(
-                  //   padding: const EdgeInsets.all(10.0),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey[100],
-                  //     borderRadius: BorderRadius.circular(10.0),
-                  //   ),
-                  //   child: const Icon(Icons.filter_list),
-                  // ),
+                ],
+              ),
+              verticalSpaceSmall,
+              Row(
+                children: [
+                  Text(
+                    "Services",
+                    style: GoogleFonts.redHatDisplay(
+                      textStyle: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               verticalSpaceSmall,
@@ -108,21 +99,49 @@ class Servicesview extends StackedView<ServicesviewModel> {
                 child: ListView(
                   children: [
                     Card(
-                      child: Container(
-                        height: 200,
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Text('Site Suitability Evaluation'),
-                            verticalSpaceMassive,
-                            Container(
-                              alignment: Alignment.bottomRight,
-                                child: Text('\$100')),
-                          ],
-                        ),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 200,
+                            padding: const EdgeInsets.all(6.0),
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                        height: 180,
+                                        width: 150,
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment.centerLeft,
+                                        'assets/images/siteevaluation.png'),
+                                  ],
+                                ),
+                                horizontalSpaceLarge,
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                        'Site Suitability Evaluation'),
+                                    verticalSpaceMassive,
+                                    Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Text('\$100')),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    // Add more items here as needed
                   ],
                 ),
               ),
@@ -130,17 +149,49 @@ class Servicesview extends StackedView<ServicesviewModel> {
                 child: ListView(
                   children: [
                     Card(
-                      child: Column(
+                      child: Row(
                         children: [
-                          Text('Panel Cleaning'),
-                          verticalSpaceMassive,
                           Container(
-                              alignment: Alignment.bottomRight,
-                              child: Text('\$100')),
+                            height: 200,
+                            padding: const EdgeInsets.all(6.0),
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                        height: 180,
+                                        width: 150,
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment.centerLeft,
+                                        'assets/images/Panelcleaning.png'),
+                                  ],
+                                ),
+                                horizontalSpaceLarge,
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                        'Panel Cleaning'),
+                                    verticalSpaceMassive,
+                                    Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Text('\$100')),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    // Add more items here as needed
                   ],
                 ),
               ),
@@ -148,17 +199,49 @@ class Servicesview extends StackedView<ServicesviewModel> {
                 child: ListView(
                   children: [
                     Card(
-                      child: Column(
+                      child: Row(
                         children: [
-                          Text('Inverter Installation'),
-                          verticalSpaceMassive,
                           Container(
-                              alignment: Alignment.bottomRight,
-                              child: Text('\$100')),
+                            height: 200,
+                            padding: const EdgeInsets.all(6.0),
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                        height: 180,
+                                        width: 150,
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment.centerLeft,
+                                        'assets/images/Inverterinstallation.png'),
+                                  ],
+                                ),
+                                horizontalSpaceLarge,
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                        'Inverter Installation'),
+                                    verticalSpaceMassive,
+                                    Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Text('\$100')),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    // Add more items here as needed
                   ],
                 ),
               ),
