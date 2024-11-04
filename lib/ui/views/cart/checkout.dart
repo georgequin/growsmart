@@ -36,6 +36,7 @@ class _CheckoutState extends State<Checkout> {
   String shippingId = "";
   bool makingDefault = false;
   String publicKeyTest = MoneyUtils().payStackPublicKey;
+
   //final plugin = PaystackPlugin();
   bool isPaying = false;
   final TextEditingController houseAddressController = TextEditingController();
@@ -46,7 +47,7 @@ class _CheckoutState extends State<Checkout> {
 
   @override
   void initState() {
-   // plugin.initialize(publicKey: publicKeyTest);
+    // plugin.initialize(publicKey: publicKeyTest);
     super.initState();
   }
 
@@ -106,9 +107,9 @@ class _CheckoutState extends State<Checkout> {
                             image: item.raffle!.images![0].isEmpty
                                 ? null
                                 : DecorationImage(
-                                    image: NetworkImage(
-                                        item.raffle!.images![0]),
-                                  ),
+                              image: NetworkImage(
+                                  item.raffle!.images![0]),
+                            ),
                           ),
                         ),
                         horizontalSpaceMedium,
@@ -189,10 +190,11 @@ class _CheckoutState extends State<Checkout> {
                     const Text(
                       "Total",
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      MoneyUtils().formatAmount(getSubTotal() + getDeliveryFee()),
+                      MoneyUtils().formatAmount(
+                          getSubTotal() + getDeliveryFee()),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -205,148 +207,35 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMedium,
           Card(
             child: ExpansionTile(
-              initiallyExpanded: true,
-              childrenPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              title: const Text(
-                "Shipping details",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              children: [
-                (profile.value.addresses == null && profile.value.addresses!.isNotEmpty
-                )
-                    ? Column(
-                        children: [
-                          const Text("No Shipping address found"),
-                          TextButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(kcPrimaryColor)),
-                            child: const Text(
-                              "Add new shipping address",
-                              style: TextStyle(color: kcWhiteColor),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              showAddAddressBottomSheet();
-                            },
-                          ),
-                        ],
-                      )
-                    : Text("replace with list of shipping")
-                // Column(
-                //         children: [
-                //           ...List.generate(
-                //             profile.value.shipping!.length,
-                //             (index) {
-                //               Shipping shipping =
-                //                   profile.value.shipping![index];
-                //               return Container(
-                //                 padding: const EdgeInsets.all(10),
-                //                 margin: const EdgeInsets.only(bottom: 10),
-                //                 decoration: BoxDecoration(
-                //                     border: Border.all(
-                //                         color: kcBlackColor, width: 0.5)),
-                //                 child: Row(
-                //                   mainAxisAlignment:
-                //                       MainAxisAlignment.spaceBetween,
-                //                   children: [
-                //                     Column(
-                //                       crossAxisAlignment:
-                //                           CrossAxisAlignment.start,
-                //                       children: [
-                //                         Text(shipping.shippingAddress ?? ""),
-                //                         Text(shipping.shippingCity ?? ""),
-                //                         Text(shipping.shippingState ?? "")
-                //                       ],
-                //                     ),
-                //                     (shipping.isDefault ?? false)
-                //                         ? const Text("Default")
-                //                         : (shippingId == shipping.id &&
-                //                                 makingDefault)
-                //                             ? const Center(
-                //                                 child:
-                //                                     CircularProgressIndicator(),
-                //                               )
-                //                             : TextButton(
-                //                                 style: ButtonStyle(
-                //                                     backgroundColor:
-                //                                         MaterialStateProperty
-                //                                             .all(
-                //                                                 kcPrimaryColor)),
-                //                                 onPressed: () async {
-                //                                   setState(() {
-                //                                     shippingId = shipping.id!;
-                //                                     makingDefault = true;
-                //                                   });
-                //
-                //                                   try {
-                //                                     ApiResponse res =
-                //                                         await locator<
-                //                                                 Repository>()
-                //                                             .setDefaultShipping(
-                //                                                 {},
-                //                                                 shipping.id!);
-                //                                     if (res.statusCode == 200) {
-                //                                       ApiResponse pRes =
-                //                                           await locator<
-                //                                                   Repository>()
-                //                                               .getProfile();
-                //                                       if (pRes.statusCode ==
-                //                                           200) {
-                //                                         profile.value = Profile
-                //                                             .fromJson(Map<
-                //                                                     String,
-                //                                                     dynamic>.from(
-                //                                                 pRes.data[
-                //                                                     "user"]));
-                //
-                //                                         profile
-                //                                             .notifyListeners();
-                //                                       }
-                //                                     }
-                //                                   } catch (e) {
-                //                                     print(e);
-                //                                   }
-                //
-                //                                   setState(() {
-                //                                     shippingId = "";
-                //                                     makingDefault = false;
-                //                                   });
-                //                                 },
-                //                                 child: const Text(
-                //                                   "Make default",
-                //                                   style: TextStyle(
-                //                                       color: kcWhiteColor),
-                //                                 ),
-                //                               )
-                //                   ],
-                //                 ),
-                //               );
-                //             },
-                //           ),
-                //           TextButton(
-                //             style: ButtonStyle(
-                //                 backgroundColor:
-                //                     MaterialStateProperty.all(kcPrimaryColor)),
-                //             child: const Text(
-                //               "Add new shipping address",
-                //               style: TextStyle(color: kcWhiteColor),
-                //             ),
-                //             onPressed: () {
-                //               Navigator.of(context)
-                //                   .push(
-                //                     MaterialPageRoute(
-                //                       builder: (context) => const AddShipping(),
-                //                     ),
-                //                   )
-                //                   .whenComplete(() => setState(() {}));
-                //             },
-                //           ),
-                //         ],
-                //       )
-
-              ],
+                initiallyExpanded: true,
+                childrenPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                title: const Text(
+                  "Shipping details",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                children: [
+                  ((profile.value.addresses == null) ||
+                      profile.value.addresses!.isEmpty)
+                      ? Column(
+                    children: [
+                      const Text("No Shipping address found"),
+                      TextButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                            MaterialStateProperty.all(kcPrimaryColor)),
+                        child: const Text(
+                          "Add new shipping address",
+                          style: TextStyle(color: kcWhiteColor),
+                        ),
+                        onPressed: () {
+                          showAddAddressBottomSheet();
+                        },
+                      ),
+                    ],
+                  )
+                      : Text("replace with list of shipping")
+                ]
             ),
           ),
           verticalSpaceMedium,
@@ -354,7 +243,7 @@ class _CheckoutState extends State<Checkout> {
             child: ExpansionTile(
               initiallyExpanded: true,
               childrenPadding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               title: const Text(
                 "Payment method",
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -384,11 +273,11 @@ class _CheckoutState extends State<Checkout> {
                               )),
                           child: paymentMethod == "paystack"
                               ? const Center(
-                                  child: Icon(
-                                    Icons.check,
-                                    size: 12,
-                                  ),
-                                )
+                            child: Icon(
+                              Icons.check,
+                              size: 12,
+                            ),
+                          )
                               : const SizedBox(),
                         ),
                         horizontalSpaceSmall,
@@ -539,11 +428,11 @@ class _CheckoutState extends State<Checkout> {
                               )),
                           child: paymentMethod == "wallet"
                               ? const Center(
-                                  child: Icon(
-                                    Icons.check,
-                                    size: 12,
-                                  ),
-                                )
+                            child: Icon(
+                              Icons.check,
+                              size: 12,
+                            ),
+                          )
                               : const SizedBox(),
                         ),
                         horizontalSpaceSmall,
@@ -593,7 +482,6 @@ class _CheckoutState extends State<Checkout> {
               });
               try {
                 chargeCard(getSubTotal() + getDeliveryFee());
-
               } catch (e) {
                 print(e);
               }
@@ -626,7 +514,9 @@ class _CheckoutState extends State<Checkout> {
     int total = 0;
 
     for (var element in raffleCart.value) {
-      total = total + (double.parse(element.raffle?.price.toString() ?? '0').round() * element.quantity!);
+      total = total +
+          (double.parse(element.raffle?.price.toString() ?? '0').round() *
+              element.quantity!);
     }
 
     return total;
@@ -643,14 +533,11 @@ class _CheckoutState extends State<Checkout> {
   }
 
 
-
-
-  chargeCard( int amount) async {
-
+  chargeCard(int amount) async {
     setState(() {
       isPaying = true;
     });
-    if(paymentMethod == 'wallet'){
+    if (paymentMethod == 'wallet') {
       print('payment is from wallet');
       ApiResponse res = await locator<Repository>().payForOrder({
         "orderId": widget.infoList.map((e) => e.id).toList(),
@@ -667,62 +554,60 @@ class _CheckoutState extends State<Checkout> {
         raffleCart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>()
             .save(LocalStorageDir.cart, storedList);
-        if(res.data['receipt'] != null){
-         // showReceipt(res.data['receipt']);
+        if (res.data['receipt'] != null) {
+          // showReceipt(res.data['receipt']);
         }
-
-      }else{
+      } else {
         locator<SnackbarService>()
             .showSnackbar(message: res.data["message"]);
       }
-      }
+    }
     else
-    //   if(paymentMethod == 'paystack'){
-    //   var charge = Charge()
-    //     ..amount = (getSubTotal() + getDeliveryFee()) *
-    //         100 //the money should be in kobo hence the need to multiply the value by 100
-    //     ..reference = MoneyUtils().getReference()
-    //     ..email = profile.value.email;
-    //   CheckoutResponse response = await plugin.checkout(
-    //     context,
-    //     method: CheckoutMethod.card,
-    //     charge: charge,
-    //   );
-    //
-    //   if (response.status == true) {
-    //     print('paystack payment successful');
-    //     ApiResponse res = await locator<Repository>().payForOrder({
-    //       "orderId": widget.infoList.map((e) => e.id).toList(),
-    //       "payment_method": 2,
-    //       "reference": charge.reference,
-    //       "id": profile.value.id
-    //     });
-    //
-    //     if (res.statusCode == 200) {
-    //       raffleCart.value.clear();
-    //       raffleCart.notifyListeners();
-    //       //update local cart
-    //       List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
-    //       await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
-    //
-    //       if (res.data['receipt'] != null) {
-    //         print('receipt');
-    //         showReceipt(res.data['receipt']);
-    //         locator<SnackbarService>()
-    //             .showSnackbar(message: "Order Placed Successfully");
-    //         return;
-    //       }
-    //
-    //     } else {
-    //       locator<SnackbarService>()
-    //           .showSnackbar(message: res.data["message"]);
-    //     }
-    //   }
-    // }
-    setState(() {
-      isPaying = false;
-    });
-
+      //   if(paymentMethod == 'paystack'){
+      //   var charge = Charge()
+      //     ..amount = (getSubTotal() + getDeliveryFee()) *
+      //         100 //the money should be in kobo hence the need to multiply the value by 100
+      //     ..reference = MoneyUtils().getReference()
+      //     ..email = profile.value.email;
+      //   CheckoutResponse response = await plugin.checkout(
+      //     context,
+      //     method: CheckoutMethod.card,
+      //     charge: charge,
+      //   );
+      //
+      //   if (response.status == true) {
+      //     print('paystack payment successful');
+      //     ApiResponse res = await locator<Repository>().payForOrder({
+      //       "orderId": widget.infoList.map((e) => e.id).toList(),
+      //       "payment_method": 2,
+      //       "reference": charge.reference,
+      //       "id": profile.value.id
+      //     });
+      //
+      //     if (res.statusCode == 200) {
+      //       raffleCart.value.clear();
+      //       raffleCart.notifyListeners();
+      //       //update local cart
+      //       List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      //       await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
+      //
+      //       if (res.data['receipt'] != null) {
+      //         print('receipt');
+      //         showReceipt(res.data['receipt']);
+      //         locator<SnackbarService>()
+      //             .showSnackbar(message: "Order Placed Successfully");
+      //         return;
+      //       }
+      //
+      //     } else {
+      //       locator<SnackbarService>()
+      //           .showSnackbar(message: res.data["message"]);
+      //     }
+      //   }
+      // }
+      setState(() {
+        isPaying = false;
+      });
   }
 
   // void showReceipt(Map<String, dynamic> info) {
@@ -737,7 +622,8 @@ class _CheckoutState extends State<Checkout> {
   //     },
   //   );
   // }
-  void addAddress(String name, String address, String city, String state, String phoneNumber, bool isDefaultPayment) {
+  void addAddress(String name, String address, String city, String state,
+      String phoneNumber, bool isDefaultPayment) {
     // setState(() {
     //   shippingAddresses.add({
     //     'name': '${profile.value.firstname} ${profile.value.lastname}',
@@ -767,7 +653,10 @@ class _CheckoutState extends State<Checkout> {
           builder: (BuildContext context, StateSetter setModalState) {
             return Padding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
+                bottom: MediaQuery
+                    .of(context)
+                    .viewInsets
+                    .bottom,
               ),
               child: SingleChildScrollView(
                 child: Padding(
@@ -777,7 +666,8 @@ class _CheckoutState extends State<Checkout> {
                     children: [
                       const Text(
                         'Add Address',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight
+                            .bold),
                       ),
                       const SizedBox(height: 16),
 
@@ -812,7 +702,8 @@ class _CheckoutState extends State<Checkout> {
                             value: isDefaultPayment,
                             activeColor: Colors.black,
                             checkColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5)),
                             onChanged: (value) {
                               setModalState(() {
                                 isDefaultPayment = value ?? false;
@@ -831,7 +722,9 @@ class _CheckoutState extends State<Checkout> {
                                 cityController.text.isNotEmpty &&
                                 stateController.text.isNotEmpty &&
                                 phoneNumberController.text.isNotEmpty) {
-                              addAddress(name, houseAddress, city, state, phoneNumber, isDefaultPayment);
+                              addAddress(
+                                  name, houseAddress, city, state, phoneNumber,
+                                  isDefaultPayment);
                             }
                             houseAddressController.clear();
                             cityController.clear();
