@@ -10,7 +10,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:label="afriprize"
+        android:label="easy ph"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"

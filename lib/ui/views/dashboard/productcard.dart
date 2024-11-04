@@ -294,14 +294,14 @@ class _ProductCardState extends State<ProductCard> {
                                           Text(
                                             "Goto Cart",
                                             style: TextStyle(
-                                                color: kcPrimaryColor,
+                                                color: kcBlackColor,
                                                 fontWeight: FontWeight.w700),
                                           ),
                                         ],
                                       ),
                                     ),
                                   ),
-                                  verticalSpaceTiny,
+                                  verticalSpaceSmall,
                                   Container(
                                     height: 53,
                                     decoration: BoxDecoration(
