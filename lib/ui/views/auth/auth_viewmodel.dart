@@ -126,11 +126,12 @@ class AuthViewModel extends BaseViewModel {
       });
       if (res.statusCode == 200) {
         userLoggedIn.value = true;
+        print(res.data);
         profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data["user"]));
+            Profile.fromJson(Map<String, dynamic>.from(res.data["User"]));
         locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
-        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refresh_token"]);
-        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["user"]));
+        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refreshToken"]);
+        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["User"]));
         locator<LocalStorage>().save(LocalStorageDir.remember, remember);
 
 
@@ -145,8 +146,10 @@ class AuthViewModel extends BaseViewModel {
       }
     } catch (e) {
       log.i(e);
+    }finally{
+      setBusy(false);
+      notifyListeners();
     }
-
     setBusy(false);
   }
 
@@ -204,10 +207,11 @@ class AuthViewModel extends BaseViewModel {
       }
     } catch (e) {
       log.e(e);
-      setBusy(false);
+
       return RegistrationResult.failure;
 
-    }
+    }finally{setBusy(false);
+    notifyListeners();}
 
   }
 
@@ -239,6 +243,9 @@ class AuthViewModel extends BaseViewModel {
       setBusy(false);
       isLoading =false;
 
+    }finally{
+      setBusy(false);
+      notifyListeners();
     }
 
     setBusy(false);
@@ -271,6 +278,7 @@ class AuthViewModel extends BaseViewModel {
 
     } finally {
       setBusy(false);
+      notifyListeners();
     }
 
     setBusy(false);

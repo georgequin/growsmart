@@ -15,7 +15,7 @@ class Profile {
   String? profilePicture;
   bool? canPayInstallmentally;
   UserStatus? status;
-  List<Address>? addresses;  // List to hold multiple addresses
+  List<Address>? addresses;
 
   Profile({
     this.id,

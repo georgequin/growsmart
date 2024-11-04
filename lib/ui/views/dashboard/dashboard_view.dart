@@ -57,7 +57,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             valueListenable: uiMode,
             builder: (context, AppUiModes mode, child) {
               return CircleAvatar(
-                backgroundImage: AssetImage("assets/images/display_pic.png"),
+                backgroundImage: AssetImage(profile.value.profilePicture ?? "assets/images/display_pic.png"),
                 radius: 20, // Adjust size as needed
               );
             },
@@ -299,6 +299,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             final item = viewModel.filteredProductList[index];
             return InkWell(
               onTap: (){
+                print('product to see is: ${item.productName}');
                 showModalBottomSheet(
                                 context: context,
                                 isScrollControlled: true,
@@ -1031,45 +1032,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
     } else {
       return Column(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          //   child: Container(
-          //     padding: EdgeInsets.symmetric(horizontal: 8.0),
-          //     decoration: BoxDecoration(
-          //       border: Border.all(color: Colors.grey),
-          //       borderRadius: BorderRadius.circular(8.0),
-          //     ),
-          //     child: Row(
-          //       children: [
-          //         Expanded(
-          //           child: TextField(
-          //             decoration: InputDecoration(
-          //               hintText: 'Search',
-          //               border: InputBorder.none,
-          //             ),
-          //           ),
-          //         ),
-          //         IconButton(
-          //           icon: Icon(Icons.search),
-          //           onPressed: () {
-          //             // Handle search button press
-          //           },
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           Autocomplete<Product>(
-
             optionsBuilder: (TextEditingValue productTextEditingValue) {
 
-              // if user is input nothing
               if (productTextEditingValue.text == '') {
                 return const Iterable<Product>.empty();
               }
-
-              // if user is input something the build
-              // suggestion based on the user input
               return viewModel.filteredProductList.where((Product product) {
                 final query = productTextEditingValue.text.toLowerCase();
                 return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
@@ -1159,6 +1127,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   Widget _buildAdsSlideshow(DashboardViewModel viewModel) {
     if (viewModel.productList.where((element) => element.ad == true).isEmpty) {
+      // Placeholder Card for no ads
       return Card(
         color: kcPrimaryColor,
         elevation: 2,
@@ -1174,7 +1143,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 150, // Set the width to control text wrapping
+                    width: 150,
                     child: const Text(
                       'Best Full Solar Installation',
                       style: TextStyle(
@@ -1186,7 +1155,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     ),
                   ),
                   Container(
-                    width: 200, // Set the width to control text wrapping
+                    width: 200,
                     child: Text(
                       'Light out your world',
                       style: TextStyle(
@@ -1244,7 +1213,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
     return CarouselSlider.builder(
       itemCount:
-          viewModel.productList.where((element) => element.ad == true).length,
+      viewModel.productList.where((element) => element.ad == true).length,
       itemBuilder: (context, index, realIndex) {
         final ad = viewModel.productList
             .where((element) => element.ad == true)
@@ -1252,37 +1221,34 @@ class DashboardView extends StackedView<DashboardViewModel> {
         return _buildAdItem(ad, context);
       },
       options: CarouselOptions(
-        height: 210,
+        height: 180, // Updated height here
         autoPlay: true,
         enlargeCenterPage: true,
         viewportFraction: 1,
         autoPlayInterval: Duration(seconds: 5),
-        onPageChanged: (index, reason) {
-          // Optionally handle page change event
-        },
+        onPageChanged: (index, reason) {},
       ),
     );
   }
 
   Widget _buildAdItem(Product ad, BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16), // Add padding around the content
+      padding: EdgeInsets.all(16),
       width: double.infinity,
-      height: 210, // Adjust the height if necessary
+      height: 180,
       decoration: BoxDecoration(
-        color: kcSecondaryColor, // Your custom color
+        color: kcSecondaryColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Left side: Title and description
-          Expanded(
+          Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center, // Adjust the layout to avoid overflow
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Product title
                 Text(
                   ad.productName ?? 'Best Full Solar Installation',
                   maxLines: 2,
@@ -1294,7 +1260,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   ),
                 ),
                 verticalSpaceSmall,
-                // Product description (1 line max)
                 Text(
                   ad.productDescription ?? 'Light out your world',
                   maxLines: 1,
@@ -1304,50 +1269,57 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     color: Colors.white70,
                   ),
                 ),
-                verticalSpaceMedium,
-                // Checkout button
-                Expanded(
-                  child: SizedBox(
-                    height: 30,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ShopView()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // Background color
-                        foregroundColor: kcSecondaryColor, // Text color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                verticalSpaceSmall,
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        isDismissible: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(25.0),
+                              topRight: Radius.circular(25.0)),
                         ),
+                        backgroundColor: Colors.black.withOpacity(0.7),
+                        builder: (BuildContext context) {
+                          return ProductCard(product: ad);
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: kcSecondaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Text('Check Now'),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      minimumSize: Size(80, 30),
                     ),
+                    child: Text('Check Now'),
                   ),
                 ),
               ],
             ),
           ),
-
           // Right side: Product image
-          SizedBox(width: 16), // Space between text and image
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                ad.images?.first ?? '',
-                width: 100, // Adjust the width of the image
-                height: 100, // Adjust the height of the image
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-                  return Center(child: CircularProgressIndicator());
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.broken_image, size: 100, color: Colors.white);
-                },
-              ),
+          SizedBox(width: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              ad.images?.first ?? '',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return Center(child: CircularProgressIndicator());
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(Icons.broken_image, size: 100, color: Colors.white);
+              },
             ),
           ),
         ],

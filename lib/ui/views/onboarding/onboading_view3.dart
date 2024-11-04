@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
 import '../../../core/utils/local_store_dir.dart';
@@ -35,7 +36,7 @@ class _OnboardingViewState extends State<OnboardingView3> {
                 clipper: CurvedClipper(),
                 child: Container(
                   height: 500,
-                  color: kcMediumGrey,
+                  color: kcClipColor,
                 ),
               ),
             ),
@@ -44,30 +45,6 @@ class _OnboardingViewState extends State<OnboardingView3> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Skip button
-                  // Padding(
-                  //   padding: const EdgeInsets.only(right: 16.0, top: 16.0),
-                  //   child: Align(
-                  //     alignment: Alignment.topRight,
-                  //     child: TextButton(
-                  //       onPressed: () {
-                  //         Navigator.of(context).push(
-                  //           MaterialPageRoute(builder: (context) => Login(
-                  //             updateIsLogin: (page) {
-                  //             },
-                  //           )),
-                  //         );
-                  //       },
-                  //       child: const Text(
-                  //         "Skip",
-                  //         style: TextStyle(
-                  //           color: kcDarkGreyColor,
-                  //           fontSize: 16,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: SvgPicture.asset(
@@ -75,8 +52,7 @@ class _OnboardingViewState extends State<OnboardingView3> {
                       height: 400,
                     ),
                   ),
-
-                  verticalSpaceMassive,
+                  verticalSpaceLarge,
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Align(
@@ -85,7 +61,7 @@ class _OnboardingViewState extends State<OnboardingView3> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: const [
                           Text(
-                            "Address",
+                            "Anywhere, Anytime",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 22,
@@ -94,7 +70,7 @@ class _OnboardingViewState extends State<OnboardingView3> {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            "Suite B3, Saham Plaza, 10 Alexandria Cres, Behind Vom Banex Plaza, Wuse 2, Abuja",
+                            "We're here for you, wherever you are! Reach out to us from anywhere for seamless support and services.",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
@@ -115,12 +91,7 @@ class _OnboardingViewState extends State<OnboardingView3> {
                       submit: () async {
                         await _localStorage.save(
                             LocalStorageDir.onboarded, true);
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AuthView()),
-                        );
+                        locator<NavigationService>().clearStackAndShow(Routes.authView);
                       },
                       color: kcPrimaryColor,
                     ),

@@ -148,8 +148,11 @@ final requestInterceptors = InterceptorsWrapper(
 );
 
 Future<bool> refreshAccessToken() async {
+  String refreshToken = await locator<LocalStorage>().fetch(LocalStorageDir.authRefreshToken);
 
-    ApiResponse res = await repo.refresh();
+    ApiResponse res = await repo.refresh({
+      "refreshToken": refreshToken
+    });
     if (res.statusCode == 200 && res.data["tokens"] != null) {
       Map<String, dynamic> tokens = res.data["tokens"];
       String accessToken = tokens["access_token"];

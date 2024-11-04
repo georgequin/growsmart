@@ -51,10 +51,11 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> refresh() async {
+  Future<ApiResponse> refresh(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
         method: HttpMethod.postRefresh,
-        endpoint: "auth/refresh_tokens"
+        reqBody: req,
+        endpoint: "auth/refresh-token"
     );
     return response;
   }
@@ -442,7 +443,7 @@ class Repository extends IRepository {
   Future<ApiResponse> cartList() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "orders/cart",
+      endpoint: "cart",
     );
 
     return response;
@@ -452,7 +453,7 @@ class Repository extends IRepository {
   Future<ApiResponse> clearCart() async {
     ApiResponse response = await api.call(
       method: HttpMethod.delete,
-      endpoint: "orders/cart/clear",
+      endpoint: "cart/clear",
     );
 
     return response;
@@ -462,7 +463,7 @@ class Repository extends IRepository {
   Future<ApiResponse> addToCart(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "orders/cart/add",
+      endpoint: "cart",
       reqBody: req,
     );
 
@@ -470,10 +471,10 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> deleteFromCart(String raffleId) async {
+  Future<ApiResponse> deleteFromCart(String productId) async {
     ApiResponse response = await api.call(
       method: HttpMethod.delete,
-      endpoint: "orders/cart/remove/$raffleId",
+      endpoint: "cart/remove/$productId",
     );
 
     return response;

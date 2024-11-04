@@ -225,8 +225,9 @@ class HomeViewModel extends BaseViewModel {
       ApiResponse res = await repo.cartList();
       if (res.statusCode == 200) {
         // Access the 'items' from the response 'data'
-        List<dynamic> items = res.data["data"]["items"];
+        List<dynamic> items = res.data["cardItems"];
 
+        print('online cart is:  ${res.data}');
         print('online cart is:  $items');
 
         // Map the items list to List<RaffleCartItem>

@@ -31,7 +31,7 @@ class StartupView extends StackedView<StartupViewModel> {
                 clipper: CurvedClipper(),
                 child: Container(
                   height: 600,
-                  color: kcMediumGrey,
+                  color: kcClipColor,
                 ),
               ),
             ),

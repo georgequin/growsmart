@@ -143,32 +143,29 @@ class ApiService {
       }
     } on DioError catch (e) {
       log.e(e.message);
-      if (e.type == DioErrorType.connectTimeout) {
-        return ApiResponse(
-          Response(
-            statusCode: 504,
-            data: "Request timeout",
-            requestOptions: RequestOptions(path: ''),
-          ),
-        );
-      } else if (e.type == DioErrorType.other) {
-        return ApiResponse(
-          Response(
-            statusCode: 101,
-            data: "Network is unreachable",
-            requestOptions: RequestOptions(path: ''),
-          ),
-        );
-      } else if (e.type == DioErrorType.receiveTimeout) {
-        return ApiResponse(
-          Response(
-            statusCode: 504,
-            data: "Receive timeout",
-            requestOptions: RequestOptions(path: ''),
-          ),
-        );
-      }
-      return ApiResponse(e.response!);
+      int statusCode = e.response?.statusCode ?? 500;
+      String errorMessage = e.type == DioErrorType.receiveTimeout
+          ? "Receive timeout"
+          : e.type == DioErrorType.connectTimeout
+          ? "Request timeout"
+          : "Network is unreachable";
+
+      return ApiResponse(
+        Response(
+          statusCode: statusCode,
+          data: errorMessage,
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+    }catch (e) {
+      // Handle unexpected errors
+      return ApiResponse(
+        Response(
+          statusCode: 500,
+          data: "An unexpected error occurred",
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
     }
   }
 

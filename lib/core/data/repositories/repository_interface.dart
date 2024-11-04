@@ -9,7 +9,7 @@ abstract class IRepository {
 
   Future<ApiResponse> logOut();
 
-  Future<ApiResponse> refresh();
+  Future<ApiResponse> refresh(Map<String, dynamic> req);
 
   Future<ApiResponse> register(Map<String, dynamic> req);
 

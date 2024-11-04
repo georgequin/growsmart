@@ -4,7 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.locator.dart';
+import '../../../app/app.router.dart';
+import '../../../core/utils/local_store_dir.dart';
+import '../../../core/utils/local_stotage.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import '../auth/login.dart';
@@ -28,7 +33,7 @@ class _OnboardingViewState extends State<OnboardingView2> {
                 clipper: CurvedClipper(),
                 child: Container(
                   height: 500,
-                  color: kcMediumGrey,
+                  color: kcClipColor,
                 ),
               ),
             ),
@@ -43,13 +48,10 @@ class _OnboardingViewState extends State<OnboardingView2> {
                     child: Align(
                       alignment: Alignment.topRight,
                       child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => Login(
-                              updateIsLogin: (page) {
-                              },
-                            )),
-                          );
+                        onPressed: () async {
+                          await locator<LocalStorage>().save(
+                              LocalStorageDir.onboarded, true);
+                          locator<NavigationService>().clearStackAndShow(Routes.authView);
                         },
                         child: const Text(
                           "Skip",
@@ -69,9 +71,6 @@ class _OnboardingViewState extends State<OnboardingView2> {
                     ),
                   ),
               
-              
-              
-                  verticalSpaceMassive,
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Align(
