@@ -269,6 +269,8 @@ class AuthViewModel extends BaseViewModel {
       log.i(e);
       setBusy(false);
 
+    } finally {
+      setBusy(false);
     }
 
     setBusy(false);
