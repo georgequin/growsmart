@@ -40,7 +40,7 @@ import 'package:afriprize/ui/views/withdraw/withdraw_view.dart';
     MaterialRoute(page: DrawsView),
     MaterialRoute(page: CartView),
     // MaterialRoute(page: ShopCartView),
-    MaterialRoute(page: NotificationView),
+    MaterialRoute(page: Servicesview),
     MaterialRoute(page: ProfileView),
     // MaterialRoute(page: Checkout),
     MaterialRoute(page: RaffleDetail),
