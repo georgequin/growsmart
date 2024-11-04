@@ -52,7 +52,6 @@ class AuthViewModel extends BaseViewModel {
   bool isOtpRequested = false;
   bool isLoading = false;
 
-
   init() async {
 
     // bool rem = await locator<LocalStorage>().fetch(LocalStorageDir.remember);
@@ -274,7 +273,7 @@ class AuthViewModel extends BaseViewModel {
       }
     } catch (e) {
       log.i(e);
-      setBusy(false);
+      // setBusy(false);
 
     } finally {
       setBusy(false);
@@ -283,6 +282,5 @@ class AuthViewModel extends BaseViewModel {
 
     setBusy(false);
   }
-
 
 }
