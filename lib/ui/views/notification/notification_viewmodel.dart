@@ -11,9 +11,9 @@ import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
 
-class NotificationViewModel extends BaseViewModel {
+class ServicesviewModel extends BaseViewModel {
   final repo = locator<Repository>();
-  final log = getLogger("NotificationViewModel");
+  final log = getLogger("ServicesviewModel");
   String loadingId = "";
   static const String allCategoriesId = 'all';
 
