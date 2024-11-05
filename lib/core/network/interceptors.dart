@@ -153,10 +153,10 @@ Future<bool> refreshAccessToken() async {
     ApiResponse res = await repo.refresh({
       "refreshToken": refreshToken
     });
-    if (res.statusCode == 200 && res.data["tokens"] != null) {
-      Map<String, dynamic> tokens = res.data["tokens"];
-      String accessToken = tokens["access_token"];
-      String refreshToken = tokens["refresh_token"];
+
+    if (res.statusCode == 200 && res.data["token"] != null) {
+      String accessToken = res.data["token"];
+      String refreshToken = res.data["refreshToken"];
       await locator<LocalStorage>().save(LocalStorageDir.authToken, accessToken);
       await locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, refreshToken);
       print('refresh successful');
