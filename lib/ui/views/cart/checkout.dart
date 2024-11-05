@@ -9,6 +9,7 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
+import '../../../core/network/interceptors.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../utils/money_util.dart';
@@ -48,6 +49,7 @@ class _CheckoutState extends State<Checkout> {
   @override
   void initState() {
     // plugin.initialize(publicKey: publicKeyTest);
+    getShippings();
     super.initState();
   }
 
@@ -722,15 +724,15 @@ class _CheckoutState extends State<Checkout> {
                                 cityController.text.isNotEmpty &&
                                 stateController.text.isNotEmpty &&
                                 phoneNumberController.text.isNotEmpty) {
-                              addAddress(
-                                  name, houseAddress, city, state, phoneNumber,
-                                  isDefaultPayment);
+                              createNewShipping();
+                              // addAddress(
+                              //     name, houseAddress, city, state, phoneNumber,
+                              //     isDefaultPayment);
                             }
                             houseAddressController.clear();
                             cityController.clear();
                             stateController.clear();
                             phoneNumberController.clear();
-                            Navigator.pop(context);
                           },
                           color: kcPrimaryColor),
                     ],
@@ -742,5 +744,73 @@ class _CheckoutState extends State<Checkout> {
         );
       },
     );
+  }
+
+  Future<void> createNewShipping() async {
+    try {
+      loading = true;
+      final response = await repo.saveShipping({
+        "address": houseAddressController.text,
+        "city": cityController.text,
+        "state": stateController.text,
+        "phoneNumber": phoneNumberController.text,
+        "type": "Shipping"
+      });
+
+      if (response.statusCode == 200) {
+        locator<SnackbarService>().showSnackbar(message: "Created address successfully", duration: Duration(seconds: 2));
+        loading = false;
+      } else {
+        Navigator.pop(context);
+        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
+      }
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(message: "Failed to create address: $e", duration: Duration(seconds: 2));
+    }finally{
+      loading = false;
+    }
+  }
+
+  Future<void> getShippings() async {
+    try {
+      loading = true;
+      final response = await repo.getAddresses();
+
+
+      if (response.statusCode == 200) {
+        print('response ${response.data}');
+
+        // if (res.data != null && res.data["categories"] != null) {
+        //   // Extract categories from the response
+        //   categories = (res.data["categories"] as List)
+        //       .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
+        //       .toList();
+        //
+        //   // Save the categories locally
+        //   List<Map<String, dynamic>> storedCategories = categories.map((e) =>
+        //       e.toJson()).toList();
+        //   locator<LocalStorage>().save(
+        //       LocalStorageDir.donationsCategories, storedCategories);
+        //
+        //   // Apply any filtering logic if needed
+        //   filteredCategories = [
+        //     Category(id: 0, name: 'All', status: CategoryStatus.active),
+        //     ...categories,
+        //   ];
+        // }
+      }
+
+      if (response.statusCode == 200) {
+        locator<SnackbarService>().showSnackbar(message: "Created address successfully", duration: Duration(seconds: 2));
+        loading = false;
+      } else {
+        Navigator.pop(context);
+        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
+      }
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(message: "Failed to create address: $e", duration: Duration(seconds: 2));
+    }finally{
+      loading = false;
+    }
   }
 }

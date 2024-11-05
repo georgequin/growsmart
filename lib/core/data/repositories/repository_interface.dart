@@ -95,6 +95,8 @@ abstract class IRepository {
 
   Future<ApiResponse> getNotifications();
 
+  Future<ApiResponse> getAddresses();
+
   Future<ApiResponse> getCategories();
 
   Future<ApiResponse> updateNotification(String eventId);

@@ -578,13 +578,24 @@ class Repository extends IRepository {
   @override
   Future<ApiResponse> saveShipping(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
-      method: HttpMethod.put,
-      endpoint: "user/saveshipping",
+      method: HttpMethod.post,
+      endpoint: "profile/address",
       reqBody: req,
     );
 
     return response;
   }
+
+  @override
+  Future<ApiResponse> getAddresses() async {
+    ApiResponse response = await api.call(
+      method: HttpMethod.get,
+      endpoint: "profile/addresses",
+    );
+
+    return response;
+  }
+
 
   @override
   Future<ApiResponse> setDefaultShipping(

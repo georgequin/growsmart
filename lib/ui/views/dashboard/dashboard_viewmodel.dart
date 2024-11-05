@@ -257,22 +257,18 @@ class DashboardViewModel extends BaseViewModel {
       await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
 
       // Save to online cart using API
-      // final response = await repo.addToCart({
-      //   "raffle": raffle.id,
-      //   "quantity": existingItem.quantity,
-      // });
+      final response = await repo.addToCart({
+        "productId": raffle.id,
+        "quantity": existingItem.quantity,
+      });
 
-      // if (response.statusCode == 201) {
-      //   locator<SnackbarService>().showSnackbar(message: "Raffle added to cart", duration: Duration(seconds: 2));
-      // } else {
-      //   locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
-      // }
+      if (response.statusCode == 200) {
+        locator<SnackbarService>().showSnackbar(message: "Raffle added to cart", duration: Duration(seconds: 2));
+      } else {
+        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
+      }
     } catch (e) {
       locator<SnackbarService>().showSnackbar(message: "Failed to add raffle to cart: $e", duration: Duration(seconds: 2));
-      log.e(e);
-    } finally {
-      setBusy(false);
-      raffleCart.notifyListeners();
     }
   }
   
@@ -285,16 +281,15 @@ class DashboardViewModel extends BaseViewModel {
     raffleCart.value = localRaffleCart;
     raffleCart.notifyListeners();
   }
-  
+
   Future<void> decreaseRaffleQuantity(RaffleCartItem item) async {
-    setBusy(true);
     try {
       if (item.quantity! > 1) {
         item.quantity = item.quantity! - 1;
 
         // Update online cart
         await repo.addToCart({
-          "raffle": item.raffle?.id,
+          "productId": item.raffle?.id,
           "quantity": item.quantity,
         });
       } else if (item.quantity! == 1) {
@@ -310,15 +305,12 @@ class DashboardViewModel extends BaseViewModel {
       await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
     } catch (e) {
       locator<SnackbarService>().showSnackbar(message: "Failed to decrease raffle quantity: $e", duration: Duration(seconds: 2));
-      log.e(e);
-    } finally {
-      setBusy(false);
-      raffleCart.notifyListeners();
+      print(e);
     }
   }
-  
+
   Future<void> increaseRaffleQuantity(RaffleCartItem item) async {
-    setBusy(true);
+
     try {
       item.quantity = item.quantity! + 1;
       int index = raffleCart.value.indexWhere((raffleItem) => raffleItem.raffle?.id == item.raffle?.id);
@@ -328,7 +320,7 @@ class DashboardViewModel extends BaseViewModel {
 
         // Update online cart
         await repo.addToCart({
-          "raffle": item.raffle?.id,
+          "productId": item.raffle?.id,
           "quantity": item.quantity,
         });
 
@@ -338,13 +330,12 @@ class DashboardViewModel extends BaseViewModel {
       }
     } catch (e) {
       locator<SnackbarService>().showSnackbar(message: "Failed to increase raffle quantity: $e", duration: Duration(seconds: 2));
-      log.e(e);
+
     } finally {
-      setBusy(false);
+
       raffleCart.notifyListeners();
     }
   }
-
 
 
 

@@ -121,337 +121,187 @@ class CartView extends StackedView<CartViewModel> {
                               label: "Cart Is Empty",
                             )
                           : ListView(
-                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                              children: [
-                                ValueListenableBuilder<List<RaffleCartItem>>(
-                                  valueListenable: raffleCart,
-                                  builder: (context, value, child) =>
-                                      ListView.builder(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: value.length,
-                                    itemBuilder: (context, index) {
-                                      RaffleCartItem item = value[index];
-                                      return GestureDetector(
-                                        onTap: () {
-                                          viewModel.addRemoveDeleteRaffle(item);
-                                        },
-                                        child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                uiMode.value == AppUiModes.light
-                                                    ? kcWhiteColor
-                                                    : kcDarkGreyColor,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color:  uiMode.value == AppUiModes.dark
-                                                      ? Color(0xFFE5E5E5)
-                                                      .withOpacity(0.1)
-                                                      : Color(0xFFE5E5E5)
-                                                      .withOpacity(0.9),
-                                                  offset:
-                                                      const Offset(8.8, 8.8),
-                                                  blurRadius: 8.8)
-                                            ],
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      height: 70,
-                                                      width: 70,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        image: DecorationImage(
-                                                          image:
-                                                              CachedNetworkImageProvider(
-                                                            item
-                                                                    .raffle
-                                                                    ?.images?[0]
-                                                                  ??
-                                                                'https://via.placeholder.com/120',
-                                                          ),
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    horizontalSpaceSmall,
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Text(
-                                                            item.raffle?.productName ??
-                                                                'Product Name',
-                                                            style: GoogleFonts
-                                                                .bricolageGrotesque(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                              ),
-                                                            ),
-                                                            maxLines: 2,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                          verticalSpaceTiny,
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                MoneyUtils().formatAmount(
-                                                              (double.parse(item.raffle!.price!)
-                                                                     ??
-                                                                    0 * item.quantity!).toInt()),
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    color: uiMode.value ==
-                                                                            AppUiModes
-                                                                                .dark
-                                                                        ? Colors
-                                                                            .white
-                                                                        : Colors
-                                                                            .black,
-                                                                    fontFamily:
-                                                                        "Satoshi",
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700),
-                                                              ),
-                                                            ],
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  // viewModel.itemsToDeleteRaffle
-                                                  //         .contains(item)
-                                                  //     ? Container(
-                                                  //         height: 20,
-                                                  //         width: 20,
-                                                  //         decoration:
-                                                  //             const BoxDecoration(
-                                                  //           color:
-                                                  //               kcSecondaryColor,
-                                                  //           shape:
-                                                  //               BoxShape.circle,
-                                                  //         ),
-                                                  //         child: const Center(
-                                                  //           child: Icon(
-                                                  //             Icons.check,
-                                                  //             color:
-                                                  //                 kcWhiteColor,
-                                                  //             size: 16,
-                                                  //           ),
-                                                  //         ),
-                                                  //       )
-                                                  //     : Container(
-                                                  //         height: 20,
-                                                  //         width: 20,
-                                                  //         decoration:
-                                                  //             BoxDecoration(
-                                                  //           shape:
-                                                  //               BoxShape.circle,
-                                                  //           border: Border.all(
-                                                  //               color:
-                                                  //                   kcLightGrey),
-                                                  //         ),
-                                                  //       ),
-                                                  // verticalSpaceSmall,
-                                                  Row(
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: () {
-                                                          if (item.quantity! >
-                                                              1) {
-                                                            item.quantity =
-                                                                item.quantity! -
-                                                                    1;
-                                                            viewModel
-                                                                .getRaffleSubTotal();
-                                                            raffleCart
-                                                                .notifyListeners();
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          height: 30,
-                                                          width: 30,
-                                                          decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                  color:
-                                                                      kcLightGrey),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5)),
-                                                          child: const Center(
-                                                            child: Icon(
-                                                              Icons.remove,
-                                                              size: 18,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      horizontalSpaceSmall,
-                                                      Text("${item.quantity!}"),
-                                                      horizontalSpaceSmall,
-                                                      InkWell(
-                                                        onTap: () {
-                                                          item.quantity =
-                                                              item.quantity! +
-                                                                  1;
-                                                          viewModel
-                                                              .getRaffleSubTotal();
-                                                          raffleCart
-                                                              .notifyListeners();
-                                                        },
-                                                        child: Container(
-                                                          height: 30,
-                                                          width: 30,
-                                                          decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                  color:
-                                                                      kcLightGrey),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5)),
-                                                          child: const Align(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Icon(
-                                                              Icons.add,
-                                                              size: 18,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        children: [
+          ValueListenableBuilder<List<RaffleCartItem>>(
+            valueListenable: raffleCart,
+            builder: (context, value, child) =>
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: value.length,
+                  itemBuilder: (context, index) {
+                    RaffleCartItem item = value[index];
+                    return GestureDetector(
+                      onTap: () {
+                        viewModel.addRemoveDeleteRaffle(item);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: uiMode.value == AppUiModes.light
+                              ? kcWhiteColor
+                              : kcDarkGreyColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                                color: uiMode.value == AppUiModes.dark
+                                    ? Color(0xFFE5E5E5).withOpacity(0.1)
+                                    : Color(0xFFE5E5E5).withOpacity(0.9),
+                                offset: const Offset(8.8, 8.8),
+                                blurRadius: 8.8)
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 70,
+                                    width: 70,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      image: DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                          item.raffle?.images?[0] ??
+                                              'https://via.placeholder.com/120',
                                         ),
-                                      );
-                                    },
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  horizontalSpaceSmall,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          item.raffle?.productName ?? 'Product Name',
+                                          style: GoogleFonts.bricolageGrotesque(
+                                            textStyle: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        verticalSpaceTiny,
+                                        Row(
+                                          children: [
+                                            Text(
+                                              MoneyUtils().formatAmount(
+                                                  ((item.raffle?.price != null && item.quantity != null)
+                                                      ? (double.parse(item.raffle!.price!) * item.quantity!)
+                                                      : 0).toInt()
+                                              ),
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: uiMode.value == AppUiModes.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                fontFamily: "Satoshi",
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    if (item.quantity! >
+                                        1) {
+                                      item.quantity =
+                                          item.quantity! -
+                                              1;
+                                      viewModel
+                                          .getRaffleSubTotal();
+                                      raffleCart
+                                          .notifyListeners();
+                                    }
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color:
+                                            kcLightGrey),
+                                        borderRadius:
+                                        BorderRadius
+                                            .circular(
+                                            5)),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.remove,
+                                        size: 18,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                //Refferal input field
-                                verticalSpaceMedium,
+                                horizontalSpaceSmall,
+                                Text("${item.quantity!}"),
+                                horizontalSpaceSmall,
+                                InkWell(
+                                  onTap: () {
+                                    item.quantity =
+                                        item.quantity! +
+                                            1;
+                                    viewModel
+                                        .getRaffleSubTotal();
+                                    raffleCart
+                                        .notifyListeners();
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color:
+                                            kcLightGrey),
+                                        borderRadius:
+                                        BorderRadius
+                                            .circular(
+                                            5)),
+                                    child: const Align(
+                                      alignment: Alignment
+                                          .center,
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 18,
+                                      ),
+                                    ),
+                                  ),
+                                )
                               ],
-                            ),
-                    ),
-                    // Container(
-                    //   margin: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
-                    //   padding: const EdgeInsets.all(12), // Add padding inside the container
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.white, // Set the background color to white
-                    //     borderRadius: BorderRadius.circular(12),
-                    //     border: Border.all(color: kcDarkGreyColor),// Round the corners
-                    //     boxShadow: [
-                    //       BoxShadow(
-                    //         color: Colors.grey.withOpacity(0.1), // Shadow color
-                    //         spreadRadius: 1, // Spread radius
-                    //         blurRadius: 5, // Blur radius
-                    //         offset: const Offset(0, 3), // changes position of shadow
-                    //       ),
-                    //     ],
-                    //   ),
-                    //   child: Column(
-                    //     children: [
-                    //       RichText(
-                    //         text: TextSpan(
-                    //           children: [
-                    //             TextSpan(
-                    //               text: 'With Each Purchase Also get Afripoints which can be used on our ecommerce store',
-                    //               style: TextStyle(
-                    //                 fontSize: 13, // Size for the dollar amount
-                    //                 color: uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //       // const SizedBox(height: 16),
-                    //       // HorizontalSlidableButton(
-                    //       //   width: MediaQuery.of(context).size.width / 2,
-                    //       //   buttonWidth: 110.0,
-                    //       //   border: Border.all(color: kcPrimaryColor),
-                    //       //   color: kcSecondaryColor,
-                    //       //   buttonColor: kcPrimaryColor,
-                    //       //   dismissible: false,
-                    //       //   label: Center(child: Row(children: [
-                    //       //     horizontalSpaceTiny,
-                    //       //     const Text('Go to Shop', style: TextStyle(color: kcWhiteColor),),
-                    //       //     SvgPicture.asset(
-                    //       //       'assets/icons/arrow-circle-right.svg',
-                    //       //       height: 20, // Icon size
-                    //       //     ),
-                    //       //
-                    //       //    ],)
-                    //       //   ),
-                    //       //   child: const Padding(
-                    //       //     padding: EdgeInsets.all(8.0),
-                    //       //     child: Row(
-                    //       //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //       //       children: [
-                    //       //         // Text('Left'),
-                    //       //         // Text('Right'),
-                    //       //       ],
-                    //       //     ),
-                    //       //   ),
-                    //       //   onChanged: (position) {
-                    //       //     setState(() {
-                    //       //       if (position == SlidableButtonPosition.end) {
-                    //       //         Navigator.of(context).pop();
-                    //       //         switchModule(AppModules.shop);
-                    //       //       }
-                    //       //     });
-                    //       //   },
-                    //       // ),
-                    //     ],
-                    //   ),
-                    // ),
+                            )
 
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: TextFieldWidget(
-                    //     label: "referral code",
-                    //     hint: "referral code (optional)",
-                    //     controller: viewModel.refferalCode,
-                    //   ),
-                    // ),
+
+                            // Continue with other components, ensuring null checks
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+          ),
+        ],
+      ),
+                ),
+
                     verticalSpaceSmall,
                     if (raffleCart.value.isNotEmpty)
                       _buildProceedToPaySection(context,
@@ -671,7 +521,7 @@ class CartView extends StackedView<CartViewModel> {
 
   @override
   void onViewModelReady(CartViewModel viewModel) {
-    // viewModel.fetchOnlineCart();
+     viewModel.fetchOnlineCart();
     // viewModel.loadPayStackPlugin();
     viewModel.getRaffleSubTotal();
     super.onViewModelReady(viewModel);

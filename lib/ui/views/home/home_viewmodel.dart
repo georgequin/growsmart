@@ -224,19 +224,20 @@ class HomeViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.cartList();
       if (res.statusCode == 200) {
-        // Access the 'items' from the response 'data'
-        List<dynamic> items = res.data["cardItems"];
+        // Corrected the key to "cartItems" and added a null check
+        List<dynamic> items = res.data["cartItems"] ?? [];
 
-        print('online cart is:  ${res.data}');
-        print('online cart is:  $items');
+        print('online cart items: $items');
 
         // Map the items list to List<RaffleCartItem>
         List<RaffleCartItem> onlineItems = items
             .map((item) => RaffleCartItem.fromJson(Map<String, dynamic>.from(item)))
             .toList();
+        print('saved items are: ${onlineItems.first.raffle?.productName}');
 
         // Sync online items with the local cart
         raffleCart.value = onlineItems;
+        print('saved raffle cart are: ${raffleCart.value.first.raffle?.productName}');
 
         // Update local storage
         List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
@@ -244,8 +245,10 @@ class HomeViewModel extends BaseViewModel {
       }
     } catch (e) {
       locator<SnackbarService>().showSnackbar(message: "Failed to load cart from server: $e");
+      print('couldn\'t get online cart: $e');
     } finally {
       setBusy(false);
     }
   }
+
 }

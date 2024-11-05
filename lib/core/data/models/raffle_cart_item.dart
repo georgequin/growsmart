@@ -7,8 +7,8 @@ class RaffleCartItem {
   RaffleCartItem({this.raffle, this.quantity});
 
   RaffleCartItem.fromJson(Map<String, dynamic> json) {
-    raffle =
-        json['product'] != null ? Product.fromJson(json['product']) : null;
+    // Use Product.fromJson to create the Product instance
+    raffle = Product.fromJson(json);
     quantity = json['quantity'];
   }
 
@@ -21,3 +21,4 @@ class RaffleCartItem {
     return data;
   }
 }
+

@@ -117,7 +117,7 @@ class _ProductCardState extends State<ProductCard> {
 
         // Update online cart
         await repo.addToCart({
-          "raffle": item.raffle?.id,
+          "productId": item.raffle?.id,
           "quantity": item.quantity,
         });
 
