@@ -3,8 +3,6 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:afriprize/ui/views/notification/projectDetailsPage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
@@ -23,31 +21,15 @@ class Servicesview extends StackedView<ServicesviewModel> {
 
   @override
   Widget builder(
-    BuildContext context,
-    ServicesviewModel viewModel,
-    Widget? child,
-  ) {
+      BuildContext context,
+      ServicesviewModel viewModel,
+      Widget? child,
+      ) {
     return Scaffold(
       appBar: AppBar(
-          // Uncomment and adjust if you want to add a title or other AppBar elements
-          // title: ValueListenableBuilder(
-          //   valueListenable: uiMode,
-          //   builder: (context, AppUiModes mode, child) {
-          //     return SvgPicture.asset(
-          //       uiMode.value == AppUiModes.dark
-          //           ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
-          //           : "assets/images/dashboard_logo.svg",
-          //       width: 150,
-          //       height: 40,
-          //     );
-          //   },
-          // ),
-          // centerTitle: false,
-          // actions: _buildAppBarActions(context, viewModel)
-          ),
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // viewModel.getDonationsCategories();
           viewModel.getProjects();
         },
         child: Padding(
@@ -98,155 +80,103 @@ class Servicesview extends StackedView<ServicesviewModel> {
               Expanded(
                 child: ListView(
                   children: [
-                    Card(
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 200,
-                            padding: const EdgeInsets.all(6.0),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Image.asset(
-                                        height: 180,
-                                        width: 150,
-                                        fit: BoxFit.cover,
-                                        alignment: Alignment.centerLeft,
-                                        'assets/images/siteevaluation.png'),
-                                  ],
-                                ),
-                                horizontalSpaceLarge,
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                        'Site Suitability Evaluation'),
-                                    verticalSpaceMassive,
-                                    Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: Text('\$100')),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    _buildServiceItem(
+                      context,
+                      'assets/images/siteevaluation.png',
+                      'Site Suitability Evaluation',
+                      'Assess the suitability of your site for solar panel installation.',
+                      '100\$',
                     ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    Card(
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 200,
-                            padding: const EdgeInsets.all(6.0),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Image.asset(
-                                        height: 180,
-                                        width: 150,
-                                        fit: BoxFit.cover,
-                                        alignment: Alignment.centerLeft,
-                                        'assets/images/Panelcleaning.png'),
-                                  ],
-                                ),
-                                horizontalSpaceLarge,
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                        'Panel Cleaning'),
-                                    verticalSpaceMassive,
-                                    Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: Text('\$100')),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    _buildServiceItem(
+                      context,
+                      'assets/images/Panelcleaning.png',
+                      'Panel Cleaning',
+                      'Professional solar panel cleaning services.',
+                      '100\$',
                     ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    Card(
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 200,
-                            padding: const EdgeInsets.all(6.0),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Image.asset(
-                                        height: 180,
-                                        width: 150,
-                                        fit: BoxFit.cover,
-                                        alignment: Alignment.centerLeft,
-                                        'assets/images/Inverterinstallation.png'),
-                                  ],
-                                ),
-                                horizontalSpaceLarge,
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                        'Inverter Installation'),
-                                    verticalSpaceMassive,
-                                    Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: Text('\$100')),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    _buildServiceItem(
+                      context,
+                      'assets/images/Inverterinstallation.png',
+                      'Inverter Installation',
+                      'Expert inverter installation services.',
+                      '100\$',
                     ),
                   ],
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceItem(BuildContext context, String imagePath, String title, String description, String price) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                height: 100,
+                width: 86,
+              ),
+            ),
+            SizedBox(width: 16.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.redHatDisplay(
+                      textStyle: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    description,
+                    style: GoogleFonts.redHatDisplay(
+                      textStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 16.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Icon(Icons.more_vert),
+                SizedBox(height: 16.0),
+                Text(
+                  price,
+                  style: GoogleFonts.redHatDisplay(
+                    textStyle: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
