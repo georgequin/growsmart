@@ -3,7 +3,6 @@ import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/components/empty_state.dart';
 import 'package:afriprize/ui/views/notification/projectDetailsPage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
@@ -28,25 +27,9 @@ class Servicesview extends StackedView<ServicesviewModel> {
       ) {
     return Scaffold(
       appBar: AppBar(
-        // Uncomment and adjust if you want to add a title or other AppBar elements
-        // title: ValueListenableBuilder(
-        //   valueListenable: uiMode,
-        //   builder: (context, AppUiModes mode, child) {
-        //     return SvgPicture.asset(
-        //       uiMode.value == AppUiModes.dark
-        //           ? "assets/images/dashboard_logo_white.svg" // Dark mode logo
-        //           : "assets/images/dashboard_logo.svg",
-        //       width: 150,
-        //       height: 40,
-        //     );
-        //   },
-        // ),
-        // centerTitle: false,
-        // actions: _buildAppBarActions(context, viewModel)
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // viewModel.getDonationsCategories();
           viewModel.getProjects();
         },
         child: Padding(
@@ -56,25 +39,11 @@ class Servicesview extends StackedView<ServicesviewModel> {
               verticalSpaceSmall,
               Row(
                 children: [
-                  Text(
-                    "Services",
-                    style: GoogleFonts.redHatDisplay(
-                      textStyle: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              verticalSpaceSmall,
-              Row(
-                children: [
                   Expanded(
                     child: TextField(
                       onChanged: viewModel.updateSearchQuery,
                       decoration: InputDecoration(
-                        hintText: 'Search',
+                        hintText: 'Search on Easy Power',
                         hintStyle: GoogleFonts.redHatDisplay(
                           textStyle: const TextStyle(),
                         ),
@@ -90,16 +59,20 @@ class Servicesview extends StackedView<ServicesviewModel> {
                       ),
                     ),
                   ),
-                  // Uncomment and adjust if you want to add a filter button
-                  // const SizedBox(width: 10.0),
-                  // Container(
-                  //   padding: const EdgeInsets.all(10.0),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey[100],
-                  //     borderRadius: BorderRadius.circular(10.0),
-                  //   ),
-                  //   child: const Icon(Icons.filter_list),
-                  // ),
+                ],
+              ),
+              verticalSpaceSmall,
+              Row(
+                children: [
+                  Text(
+                    "Services",
+                    style: GoogleFonts.redHatDisplay(
+                      textStyle: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               verticalSpaceSmall,
@@ -107,63 +80,103 @@ class Servicesview extends StackedView<ServicesviewModel> {
               Expanded(
                 child: ListView(
                   children: [
-                    Card(
-                      child: Container(
-                        height: 200,
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Text('Site Suitability Evaluation'),
-                            verticalSpaceMassive,
-                            Container(
-                              alignment: Alignment.bottomRight,
-                                child: Text('\$100')),
-                          ],
-                        ),
-                      ),
+                    _buildServiceItem(
+                      context,
+                      'assets/images/siteevaluation.png',
+                      'Site Suitability Evaluation',
+                      'Assess the suitability of your site for solar panel installation.',
+                      '100\$',
                     ),
-                    // Add more items here as needed
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    Card(
-                      child: Column(
-                        children: [
-                          Text('Panel Cleaning'),
-                          verticalSpaceMassive,
-                          Container(
-                              alignment: Alignment.bottomRight,
-                              child: Text('\$100')),
-                        ],
-                      ),
+                    _buildServiceItem(
+                      context,
+                      'assets/images/Panelcleaning.png',
+                      'Panel Cleaning',
+                      'Professional solar panel cleaning services.',
+                      '100\$',
                     ),
-                    // Add more items here as needed
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    Card(
-                      child: Column(
-                        children: [
-                          Text('Inverter Installation'),
-                          verticalSpaceMassive,
-                          Container(
-                              alignment: Alignment.bottomRight,
-                              child: Text('\$100')),
-                        ],
-                      ),
+                    _buildServiceItem(
+                      context,
+                      'assets/images/Inverterinstallation.png',
+                      'Inverter Installation',
+                      'Expert inverter installation services.',
+                      '100\$',
                     ),
-                    // Add more items here as needed
                   ],
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceItem(BuildContext context, String imagePath, String title, String description, String price) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                height: 100,
+                width: 86,
+              ),
+            ),
+            SizedBox(width: 16.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.redHatDisplay(
+                      textStyle: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    description,
+                    style: GoogleFonts.redHatDisplay(
+                      textStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 16.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Icon(Icons.more_vert),
+                SizedBox(height: 16.0),
+                Text(
+                  price,
+                  style: GoogleFonts.redHatDisplay(
+                    textStyle: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
