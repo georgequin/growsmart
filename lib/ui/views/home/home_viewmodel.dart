@@ -103,36 +103,36 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void changeSelected(int index, AppModules module) {
-    // if (index != 0 && !userLoggedIn.value) {
-    //   showModalBottomSheet(
-    //       context: StackedService.navigatorKey!.currentState!.context,
-    //       shape: const RoundedRectangleBorder(
-    //           borderRadius: BorderRadius.only(
-    //               topRight: Radius.circular(20), topLeft: Radius.circular(20))),
-    //       builder: (ctx) {
-    //         return Container(
-    //           padding: const EdgeInsets.all(30),
-    //           height: 200,
-    //           child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.center,
-    //             children: [
-    //               const Text("You need to login to continue"),
-    //               verticalSpaceMedium,
-    //               SubmitButton(
-    //                 isLoading: false,
-    //                 label: "Login",
-    //                 submit: () {
-    //                   locator<NavigationService>().replaceWithAuthView();
-    //                 },
-    //                 color: kcSecondaryColor,
-    //               )
-    //             ],
-    //           ),
-    //         );
-    //       });
-    //   return;
-    // }
-    //
+    if (index != 0 && !userLoggedIn.value) {
+      showModalBottomSheet(
+          context: StackedService.navigatorKey!.currentState!.context,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20), topLeft: Radius.circular(20))),
+          builder: (ctx) {
+            return Container(
+              padding: const EdgeInsets.all(30),
+              height: 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("You need to login to continue"),
+                  verticalSpaceMedium,
+                  SubmitButton(
+                    isLoading: false,
+                    label: "Login",
+                    submit: () {
+                      locator<NavigationService>().replaceWithAuthView();
+                    },
+                    color: kcSecondaryColor,
+                  )
+                ],
+              ),
+            );
+          });
+      return;
+    }
+
       selectedRafflesTab = index;
 
     notifyListeners();
@@ -237,6 +237,7 @@ class HomeViewModel extends BaseViewModel {
 
         // Sync online items with the local cart
         raffleCart.value = onlineItems;
+        notifyListeners();
         print('saved raffle cart are: ${raffleCart.value.first.raffle?.productName}');
 
         // Update local storage

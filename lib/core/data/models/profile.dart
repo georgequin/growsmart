@@ -84,43 +84,53 @@ enum UserStatus { Active, Inactive }
 
 // Address model to represent address objects
 class Address {
-  String? id;
-  String? street;
-  String? city;
-  String? state;
-  String? country;
-  String? postalCode;
+  final String id;
+  final String address;
+  final String city;
+  final String state;
+  final String phoneNumber;
+  final String type;
+  final String userId;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   Address({
-    this.id,
-    this.street,
-    this.city,
-    this.state,
-    this.country,
-    this.postalCode,
+    required this.id,
+    required this.address,
+    required this.city,
+    required this.state,
+    required this.phoneNumber,
+    required this.type,
+    required this.userId,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
-  // Constructor for creating Address object from JSON
-  Address.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    street = json['street'];
-    city = json['city'];
-    state = json['state'];
-    country = json['country'];
-    postalCode = json['postalCode'];
+  factory Address.fromJson(Map<String, dynamic> json) {
+    return Address(
+      id: json['id'],
+      address: json['address'],
+      city: json['city'],
+      state: json['state'],
+      phoneNumber: json['phoneNumber'],
+      type: json['type'],
+      userId: json['userId'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
   }
 
-  // Method for converting Address object to JSON
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['street'] = street;
-    data['city'] = city;
-    data['state'] = state;
-    data['country'] = country;
-    data['postalCode'] = postalCode;
-    return data;
-    }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'address': address,
+    'city': city,
+    'state': state,
+    'phoneNumber': phoneNumber,
+    'type': type,
+    'userId': userId,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+  };
 }
 
 // Model for NotificationPreferences

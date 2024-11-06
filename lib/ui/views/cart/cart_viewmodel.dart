@@ -236,6 +236,8 @@ class CartViewModel extends BaseViewModel {
 
         // Sync online items with the local cart
         raffleCart.value = onlineItems;
+        getRaffleSubTotal();
+        notifyListeners();
         print('saved raffle cart are: ${raffleCart.value.first.raffle?.productName}');
 
         // Update local storage

@@ -7,6 +7,7 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
 import '../../../core/network/interceptors.dart';
@@ -33,12 +34,15 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   bool loading = false;
+  bool isShippingLoading = false;
   String paymentMethod = "paystack";
   String shippingId = "";
   bool makingDefault = false;
   String publicKeyTest = MoneyUtils().payStackPublicKey;
+  List<Address> shippingAddresses = [];
 
-  //final plugin = PaystackPlugin();
+  final plugin = PaystackPlugin();
+
   bool isPaying = false;
   final TextEditingController houseAddressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
@@ -48,7 +52,7 @@ class _CheckoutState extends State<Checkout> {
 
   @override
   void initState() {
-    // plugin.initialize(publicKey: publicKeyTest);
+    plugin.initialize(publicKey: publicKeyTest);
     getShippings();
     super.initState();
   }
@@ -209,35 +213,51 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMedium,
           Card(
             child: ExpansionTile(
-                initiallyExpanded: true,
-                childrenPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                title: const Text(
-                  "Shipping details",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                children: [
-                  ((profile.value.addresses == null) ||
-                      profile.value.addresses!.isEmpty)
-                      ? Column(
-                    children: [
-                      const Text("No Shipping address found"),
-                      TextButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                            MaterialStateProperty.all(kcPrimaryColor)),
-                        child: const Text(
-                          "Add new shipping address",
-                          style: TextStyle(color: kcWhiteColor),
-                        ),
-                        onPressed: () {
-                          showAddAddressBottomSheet();
+              initiallyExpanded: true,
+              title: const Text(
+                "Shipping details",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              children: [
+                isShippingLoading == true ? const CircularProgressIndicator() :
+                shippingAddresses.isEmpty
+                    ? Column(
+                  children: [
+                    const Text("No Shipping address found"),
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(kcPrimaryColor),
+                      ),
+                      child: const Text(
+                        "Add new shipping address",
+                        style: TextStyle(color: kcWhiteColor),
+                      ),
+                      onPressed: showAddAddressBottomSheet,
+                    ),
+                  ],
+                )
+                    : ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: shippingAddresses.length,
+                  itemBuilder: (context, index) {
+                    final address = shippingAddresses[index];
+                    return ListTile(
+                      title: Text("${address.address}, ${address.city}, ${address.state}"),
+                      subtitle: Text("Phone: ${address.phoneNumber}"),
+                      trailing: Radio<String>(
+                        value: address.id,
+                        groupValue: shippingId,
+                        onChanged: (String? value) {
+                          setState(() {
+                            shippingId = value!;
+                          });
                         },
                       ),
-                    ],
-                  )
-                      : Text("replace with list of shipping")
-                ]
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           verticalSpaceMedium,
@@ -306,156 +326,53 @@ class _CheckoutState extends State<Checkout> {
                 // InkWell(
                 //   onTap: () {
                 //     setState(() {
-                //       paymentMethod = "card";
+                //       paymentMethod = "wallet";
                 //     });
                 //   },
                 //   child: Container(
                 //     padding: const EdgeInsets.symmetric(horizontal: 10),
-                //     height: 250,
+                //     height: 50,
                 //     decoration: BoxDecoration(
                 //         border: Border.all(color: kcBlackColor, width: 0.5)),
-                //     child: Column(
+                //     child: Row(
                 //       children: [
-                //         verticalSpaceSmall,
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             Row(
-                //               children: [
-                //                 Container(
-                //                   height: 15,
-                //                   width: 15,
-                //                   decoration: BoxDecoration(
-                //                       shape: BoxShape.circle,
-                //                       border: Border.all(
-                //                         color: kcBlackColor,
-                //                         width: 1,
-                //                       )),
-                //                   child: paymentMethod == "card"
-                //                       ? const Center(
-                //                     child: Icon(
-                //                       Icons.check,
-                //                       size: 12,
-                //                     ),
-                //                   )
-                //                       : const SizedBox(),
-                //                 ),
-                //                 horizontalSpaceSmall,
-                //                 const Text(
-                //                   "Pay with Credit Card",
-                //                   style: TextStyle(
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 ),
-                //               ],
+                //         Container(
+                //           height: 15,
+                //           width: 15,
+                //           decoration: BoxDecoration(
+                //               shape: BoxShape.circle,
+                //               border: Border.all(
+                //                 color: kcBlackColor,
+                //                 width: 1,
+                //               )),
+                //           child: paymentMethod == "wallet"
+                //               ? const Center(
+                //             child: Icon(
+                //               Icons.check,
+                //               size: 12,
                 //             ),
-                //             Row(
-                //               children: [
-                //                 Image.asset("assets/images/visa.png"),
-                //                 verticalSpaceTiny,
-                //                 Image.asset("assets/images/discover.png"),
-                //                 verticalSpaceTiny,
-                //                 Image.asset("assets/images/maestro.png"),
-                //                 verticalSpaceTiny,
-                //                 Image.asset("assets/images/master_card.png"),
-                //               ],
-                //             )
-                //           ],
+                //           )
+                //               : const SizedBox(),
                 //         ),
-                //         verticalSpaceMedium,
-                //         Row(
-                //           children: [
-                //             Expanded(
-                //               flex: 3,
-                //               child: TextFieldWidget(
-                //                 hint: "Card number",
-                //                 controller: cardNumberController,
-                //               ),
-                //             ),
-                //             horizontalSpaceSmall,
-                //             Expanded(
-                //               flex: 2,
-                //               child: TextFieldWidget(
-                //                 hint: "Expiry",
-                //                 controller: cardExpiryController,
-                //               ),
-                //             ),
-                //           ],
+                //         horizontalSpaceSmall,
+                //         const Text(
+                //           "Wallet",
+                //           style: TextStyle(
+                //             fontWeight: FontWeight.bold,
+                //           ),
                 //         ),
-                //         verticalSpaceMedium,
-                //         Row(
-                //           children: [
-                //             Expanded(
-                //               flex: 3,
-                //               child: TextFieldWidget(
-                //                 hint: "Card Security Code",
-                //                 controller: cardCvcController,
-                //               ),
-                //             ),
-                //             horizontalSpaceSmall,
-                //             const Expanded(
-                //               flex: 2,
-                //               child: Text(
-                //                 "What is this?",
-                //                 style: TextStyle(color: Colors.blue),
-                //               ),
-                //             ),
-                //           ],
+                //         horizontalSpaceSmall,
+                //         const Expanded(
+                //           child: Text(
+                //             "Make payment from your in-app wallet",
+                //             style: TextStyle(fontSize: 11),
+                //           ),
                 //         ),
                 //       ],
                 //     ),
                 //   ),
                 // ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      paymentMethod = "wallet";
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    height: 50,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: kcBlackColor, width: 0.5)),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 15,
-                          width: 15,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: kcBlackColor,
-                                width: 1,
-                              )),
-                          child: paymentMethod == "wallet"
-                              ? const Center(
-                            child: Icon(
-                              Icons.check,
-                              size: 12,
-                            ),
-                          )
-                              : const SizedBox(),
-                        ),
-                        horizontalSpaceSmall,
-                        const Text(
-                          "Wallet",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        horizontalSpaceSmall,
-                        const Expanded(
-                          child: Text(
-                            "Make payment from your in-app wallet",
-                            style: TextStyle(fontSize: 11),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                verticalSpaceSmall,
+                // verticalSpaceSmall,
                 Row(
                   children: const [
                     Icon(
@@ -536,6 +453,7 @@ class _CheckoutState extends State<Checkout> {
 
 
   chargeCard(int amount) async {
+
     setState(() {
       isPaying = true;
     });
@@ -565,48 +483,48 @@ class _CheckoutState extends State<Checkout> {
       }
     }
     else
-      //   if(paymentMethod == 'paystack'){
-      //   var charge = Charge()
-      //     ..amount = (getSubTotal() + getDeliveryFee()) *
-      //         100 //the money should be in kobo hence the need to multiply the value by 100
-      //     ..reference = MoneyUtils().getReference()
-      //     ..email = profile.value.email;
-      //   CheckoutResponse response = await plugin.checkout(
-      //     context,
-      //     method: CheckoutMethod.card,
-      //     charge: charge,
-      //   );
-      //
-      //   if (response.status == true) {
-      //     print('paystack payment successful');
-      //     ApiResponse res = await locator<Repository>().payForOrder({
-      //       "orderId": widget.infoList.map((e) => e.id).toList(),
-      //       "payment_method": 2,
-      //       "reference": charge.reference,
-      //       "id": profile.value.id
-      //     });
-      //
-      //     if (res.statusCode == 200) {
-      //       raffleCart.value.clear();
-      //       raffleCart.notifyListeners();
-      //       //update local cart
-      //       List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
-      //       await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
-      //
-      //       if (res.data['receipt'] != null) {
-      //         print('receipt');
-      //         showReceipt(res.data['receipt']);
-      //         locator<SnackbarService>()
-      //             .showSnackbar(message: "Order Placed Successfully");
-      //         return;
-      //       }
-      //
-      //     } else {
-      //       locator<SnackbarService>()
-      //           .showSnackbar(message: res.data["message"]);
-      //     }
-      //   }
-      // }
+        if(paymentMethod == 'paystack'){
+        var charge = Charge()
+          ..amount = (getSubTotal() + getDeliveryFee()) *
+              100 //the money should be in kobo hence the need to multiply the value by 100
+          ..reference = MoneyUtils().getReference()
+          ..email = profile.value.email;
+        CheckoutResponse response = await plugin.checkout(
+          context,
+          method: CheckoutMethod.card,
+          charge: charge,
+        );
+
+        if (response.status == true) {
+          print('paystack payment successful');
+          ApiResponse res = await locator<Repository>().payForOrder({
+            "orderId": widget.infoList.map((e) => e.id).toList(),
+            "payment_method": 2,
+            "reference": charge.reference,
+            "id": profile.value.id
+          });
+
+          if (res.statusCode == 200) {
+            raffleCart.value.clear();
+            raffleCart.notifyListeners();
+            //update local cart
+            List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+            await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
+
+            if (res.data['receipt'] != null) {
+              print('receipt');
+              // showReceipt(res.data['receipt']);
+              locator<SnackbarService>()
+                  .showSnackbar(message: "Order Placed Successfully");
+              return;
+            }
+
+          } else {
+            locator<SnackbarService>()
+                .showSnackbar(message: res.data["message"]);
+          }
+        }
+      }
       setState(() {
         isPaying = false;
       });
@@ -624,17 +542,6 @@ class _CheckoutState extends State<Checkout> {
   //     },
   //   );
   // }
-  void addAddress(String name, String address, String city, String state,
-      String phoneNumber, bool isDefaultPayment) {
-    // setState(() {
-    //   shippingAddresses.add({
-    //     'name': '${profile.value.firstname} ${profile.value.lastname}',
-    //     'address': '$address, $city, $state',
-    //     'phone': phoneNumber,
-    //     'isDefaultPayment': isDefaultPayment,
-    //   });
-    // });
-  }
 
   void showAddAddressBottomSheet() {
     String name = '';
@@ -773,44 +680,34 @@ class _CheckoutState extends State<Checkout> {
 
   Future<void> getShippings() async {
     try {
-      loading = true;
+      isShippingLoading = true;
       final response = await repo.getAddresses();
 
-
       if (response.statusCode == 200) {
-        print('response ${response.data}');
+        // Access the `data` key in the response before mapping
+        final List<dynamic> addressList = response.data['data'] ?? [];
 
-        // if (res.data != null && res.data["categories"] != null) {
-        //   // Extract categories from the response
-        //   categories = (res.data["categories"] as List)
-        //       .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
-        //       .toList();
-        //
-        //   // Save the categories locally
-        //   List<Map<String, dynamic>> storedCategories = categories.map((e) =>
-        //       e.toJson()).toList();
-        //   locator<LocalStorage>().save(
-        //       LocalStorageDir.donationsCategories, storedCategories);
-        //
-        //   // Apply any filtering logic if needed
-        //   filteredCategories = [
-        //     Category(id: 0, name: 'All', status: CategoryStatus.active),
-        //     ...categories,
-        //   ];
-        // }
-      }
+        // Parse the address data
+        shippingAddresses = addressList
+            .map((item) => Address.fromJson(Map<String, dynamic>.from(item)))
+            .toList();
 
-      if (response.statusCode == 200) {
-        locator<SnackbarService>().showSnackbar(message: "Created address successfully", duration: Duration(seconds: 2));
-        loading = false;
+        print('Shipping addresses: $shippingAddresses');
       } else {
-        Navigator.pop(context);
-        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
+        locator<SnackbarService>().showSnackbar(
+          message: response.data["message"],
+          duration: Duration(seconds: 2),
+        );
       }
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(message: "Failed to create address: $e", duration: Duration(seconds: 2));
-    }finally{
-      loading = false;
+      locator<SnackbarService>().showSnackbar(
+        message: "Failed to fetch addresses: $e",
+        duration: Duration(seconds: 2),
+      );
+    } finally {
+      isShippingLoading = false;
+      setState(() {}); // Update the UI with the new data
     }
   }
+
 }
