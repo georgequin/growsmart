@@ -87,16 +87,10 @@ class ShopViewModel extends BaseViewModel {
 
   Future<void> init() async {
     setBusy(true);
-    onboarded = await locator<LocalStorage>().fetch(LocalStorageDir.onboarded) ?? false;
-    if (!onboarded!) {
-      showDialog = true; // Show modal if not onboarded
-    }
+    print("loading the initials" );
     notifyListeners();
-    await loadRaffles();
+    await loadProducts();
     await loadCategories();
-    // await loadAds();
-    // // await loadProducts();
-    //  await loadProjects();
     if (userLoggedIn.value == true) {
       initCart();
       // await getNotifications();
@@ -107,17 +101,17 @@ class ShopViewModel extends BaseViewModel {
   }
 
 
-  Future<void> loadRaffles() async {
+  Future<void> loadProducts() async {
 
     if (productList.isEmpty) {
       // setBusy(true);
       notifyListeners();
     }
 
-    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.product);
-    if (storedRaffle != null) {
+    dynamic storedProducts = await locator<LocalStorage>().fetch(LocalStorageDir.product);
+    if (storedProducts != null) {
       // Extracting and filtering only active raffles
-      productList = List<Map<String, dynamic>>.from(storedRaffle)
+      productList = List<Map<String, dynamic>>.from(storedProducts)
           .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
           .toList();
       filteredProductList = productList;
@@ -160,8 +154,8 @@ class ShopViewModel extends BaseViewModel {
             .toList();
 
         print("${res.data}");
-                List<Map<String, dynamic>> storedRaffles = productList.map((e) => e.toJson()).toList();
-                locator<LocalStorage>().save(LocalStorageDir.product, storedRaffles);
+                List<Map<String, dynamic>> storedProducts = productList.map((e) => e.toJson()).toList();
+                locator<LocalStorage>().save(LocalStorageDir.product, storedProducts);
                 notifyListeners();
         filteredProductList = productList;
         notifyListeners();
@@ -179,11 +173,12 @@ class ShopViewModel extends BaseViewModel {
   }
 
   Future<void> loadCategories() async {
-    dynamic storedDonations = await locator<LocalStorage>().fetch(LocalStorageDir.donationsCategories);
-    if (storedDonations != null) {
-      categories = List<Map<String, dynamic>>.from(storedDonations)
+    dynamic storedCategories = await locator<LocalStorage>().fetch(LocalStorageDir.donationsCategories);
+    if (storedCategories != null) {
+      categories = List<Map<String, dynamic>>.from(storedCategories)
           .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
           .toList();
+      print('There are categories: ${categories.map((element) => element.name).join(', ')}');
 
       // Add the "All Categories" option
       filteredCategories = [
@@ -191,7 +186,6 @@ class ShopViewModel extends BaseViewModel {
         ...categories,
       ];
       notifyListeners();
-
     }
     await getCategories();
     notifyListeners();
@@ -206,7 +200,7 @@ class ShopViewModel extends BaseViewModel {
       ApiResponse res = await repo.getCategories();
       if (res.statusCode == 200) {
         if (res.data != null && res.data["categories"] != null) {
-          // Extract categories from the response
+
           categories = (res.data["categories"] as List)
               .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
               .toList();

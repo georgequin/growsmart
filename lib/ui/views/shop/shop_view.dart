@@ -4,7 +4,8 @@ import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/views/dashboard/productcard.dart';
-import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -72,33 +73,317 @@ class ShopView extends StackedView<ShopViewModel> {
       });
     }
 
-    return Scaffold(
-      appBar: AppBar(
-          title: ValueListenableBuilder(
-            valueListenable: uiMode,
-            builder: (context, AppUiModes mode, child) {
-              return CircleAvatar(
-                backgroundImage: AssetImage("assets/images/display_pic.png"),
-                radius: 20, // Adjust size as needed
-              );
-            },
+    final List<Map<String, String>> slides = [
+    {
+      'image': 'assets/images/shop_solar.jpeg',
+      'title': 'Solar Energy Systems',
+      'description': 'explore',
+      'username': 'Paul Martine',
+      'userType': 'Premium',
+    },
+    {
+      'image': 'assets/images/shop_light.jpeg',
+      'title': 'Electronics',
+      'description': 'Get the best deals',
+      'username': 'Alice Jones',
+      'userType': 'Gold Member',
+    },
+    {
+      'image': 'assets/images/shop_light2.jpeg',
+      'title': 'lighting',
+      'description': 'Light up your world',
+      'username': 'John Doe',
+      'userType': 'Elite',
+    },
+  ];
+
+    // return SafeArea(
+    //   child: Scaffold(
+    //     body: NestedScrollView(
+    //       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+    //         return [
+    //           SliverOverlapAbsorber(
+    //             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+    //             sliver: SliverAppBar(
+    //               expandedHeight: 300.0,
+    //               pinned: true,
+    //               floating: true,
+    //               flexibleSpace:  FlexibleSpaceBar(
+    //                 background: CarouselSlider.builder(
+    //                   options: CarouselOptions(
+    //                     height: 300,
+    //                     viewportFraction: 1.0,
+    //                     autoPlay: true,
+    //                   ),
+    //                   itemCount: slides.length,
+    //                   itemBuilder: (BuildContext context, int index, int pageIndex) {
+    //                     final slide = slides[index];
+    //                     return Stack(
+    //                       fit: StackFit.expand,
+    //                       children: [
+    //                         Image.asset(
+    //                           slide['image']!,
+    //                           fit: BoxFit.cover,
+    //                         ),
+    //                         Container(
+    //                           color: Colors.black.withOpacity(0.3),
+    //                         ),
+    //                         Padding(
+    //                           padding: const EdgeInsets.all(20.0),
+    //                           child: Column(
+    //                             mainAxisAlignment: MainAxisAlignment.end,
+    //                             crossAxisAlignment: CrossAxisAlignment.start,
+    //                             children: [
+    //                               Spacer(),
+    //                               Text(
+    //                                 slide['title']!,
+    //                                 style: TextStyle(
+    //                                   color: Colors.white,
+    //                                   fontSize: 28,
+    //                                   fontWeight: FontWeight.bold,
+    //                                 ),
+    //                               ),
+    //                               Text(
+    //                                 slide['description']!,
+    //                                 style: TextStyle(
+    //                                   color: Colors.white70,
+    //                                   fontSize: 18,
+    //                                 ),
+    //                               ),
+    //                             ],
+    //                           ),
+    //                         ),
+    //                       ],
+    //                     );
+    //                   },
+    //                 ),
+    //               ),
+    //               actions: [
+    //                 Autocomplete<Product>(
+    //
+    //                   optionsBuilder: (TextEditingValue productTextEditingValue) {
+    //
+    //                     // if user is input nothing
+    //                     if (productTextEditingValue.text == '') {
+    //                       return const Iterable<Product>.empty();
+    //                     }
+    //
+    //                     // if user is input something the build
+    //                     // suggestion based on the user input
+    //                     return viewModel.filteredProductList.where((Product product) {
+    //                       final query = productTextEditingValue.text.toLowerCase();
+    //                       return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
+    //                           (product.brandName != null && product.brandName!.toLowerCase().contains(query));
+    //                     });
+    //
+    //                   },
+    //                   displayStringForOption: (Product product) => product.productName ?? '',
+    //
+    //                   // when user click on the suggested
+    //                   // item this function calls
+    //                   onSelected: (Product value) {
+    //                     debugPrint('You just selected $value.productName');
+    //                     showModalBottomSheet(
+    //                       context: context,
+    //                       isScrollControlled: true,
+    //                       isDismissible: true,
+    //                       shape: const RoundedRectangleBorder(
+    //                         borderRadius: BorderRadius.only(
+    //                             topLeft: Radius.circular(25.0),
+    //                             topRight: Radius.circular(25.0)),
+    //                       ),
+    //                       // barrierColor: Colors.black.withAlpha(50),
+    //                       // backgroundColor: Colors.transparent,
+    //                       backgroundColor: Colors.black.withOpacity(0.7),
+    //                       builder: (BuildContext context) {
+    //                         return ProductCard(product: value);
+    //                       },
+    //                     );
+    //                   },
+    //                     fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+    //                       return Padding(
+    //                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    //                         child: ConstrainedBox(
+    //                           constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9), // Set a maximum width constraint
+    //                           child: Container(
+    //                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    //                             decoration: BoxDecoration(
+    //                               border: Border.all(color: const Color(0xFFEBE4E4)), // Grey border around the search bar
+    //                               borderRadius: BorderRadius.circular(8.0), // Rounded corners
+    //                             ),
+    //                             child: Row(
+    //                               mainAxisSize: MainAxisSize.min, // Prevents the Row from expanding infinitely
+    //                               children: [
+    //                                 Flexible( // Use Flexible instead of Expanded
+    //                                   fit: FlexFit.loose,
+    //                                   child: TextField(
+    //                                     controller: textEditingController,
+    //                                     focusNode: focusNode,
+    //                                     decoration: InputDecoration(
+    //                                       hintText: 'Search product...',
+    //                                       border: InputBorder.none, // Removes the default border
+    //                                       contentPadding: EdgeInsets.symmetric(vertical: 15.0), // Adjust padding
+    //                                     ),
+    //                                   ),
+    //                                 ),
+    //                                 IconButton(
+    //                                   icon: Icon(Icons.search), // Search icon outside the text field
+    //                                   onPressed: () {
+    //                                     // Optionally handle search button press here
+    //                                   },
+    //                                 ),
+    //                               ],
+    //                             ),
+    //                           ),
+    //                         ),
+    //                       );
+    //                     }
+    //
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //         ];
+    //       },
+    //       body: Builder(
+    //         builder: (BuildContext context) {
+    //           return CustomScrollView(
+    //             slivers: [
+    //               SliverOverlapInjector(
+    //                 handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+    //               ),
+    //               SliverToBoxAdapter(
+    //                 child: Transform.translate(
+    //                   offset: Offset(0, -20),
+    //                   child: Padding(
+    //                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    //                     child:  Column(
+    //                       children: [
+    //                         SingleChildScrollView(
+    //                           scrollDirection: Axis.horizontal,
+    //                           child: Row(
+    //                             children: viewModel.filteredCategories.map((category) {
+    //                               return _buildCategoryChip(category, viewModel);
+    //                             }).toList(),
+    //                           ),
+    //                         ),
+    //                         popularDrawsSlider(context, viewModel),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //
+    //             ],
+    //           );
+    //         },
+    //       ),
+    //     ),
+    //   ),
+    // );
+
+    return SafeArea(
+      child: Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverOverlapAbsorber(
+                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverAppBar(
+                  expandedHeight: 300.0,
+                  pinned: true,
+                  floating: false,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: CarouselSlider.builder(
+                      options: CarouselOptions(
+                        height: 300,
+                        viewportFraction: 1.0,
+                        autoPlay: true,
+                      ),
+                      itemCount: slides.length,
+                      itemBuilder: (BuildContext context, int index, int pageIndex) {
+                        final slide = slides[index];
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.asset(
+                              slide['image']!,
+                              fit: BoxFit.cover,
+                            ),
+                            Container(
+                              color: Colors.black.withOpacity(0.3),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Spacer(),
+                                  Text(
+                                    slide['title']!,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    slide['description']!,
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  actions: [
+                    // Autocomplete widget or other actions here
+                  ],
+                ),
+              ),
+            ];
+          },
+          body: CustomScrollView(
+            slivers: [
+              SliverOverlapInjector(
+                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: viewModel.filteredCategories.map((category) {
+                            return _buildCategoryChip(category, viewModel);
+                          }).toList(),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      popularDrawsSlider(context, viewModel),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          centerTitle: false,
-          actions:
-          _buildAppBarActions(context, viewModel.appBarLoading, viewModel)),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await viewModel.refreshData();
-        },
-        child: ListView(
-          padding:
-              const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
-          children: [
-            _buildShimmerOrContent(context, viewModel),
-          ],
         ),
       ),
     );
+
+
+
+
+
   }
 
 
@@ -109,12 +394,12 @@ class ShopView extends StackedView<ShopViewModel> {
       children: [
         GridView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Number of columns in the grid
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
             crossAxisSpacing: 10.0,
-            mainAxisSpacing: 10.0, // Added space between items
-            childAspectRatio: 0.8, // Adjust height relative to width
+            mainAxisSpacing: 10.0,
+            childAspectRatio: 0.8,
           ),
           itemCount: viewModel.filteredProductList.length,
           itemBuilder: (context, index) {
@@ -302,315 +587,6 @@ class ShopView extends StackedView<ShopViewModel> {
     );
   }
 
-  Widget buildParticipantsAvatars(List<Participant> participants) {
-    return SizedBox(
-      height: 25, // Adjust the size to match the avatar size
-      child: Stack(
-        children: participants.asMap().entries.map((entry) {
-          int index = entry.key;
-          Participant participant = entry.value;
-          double overlapOffset = 20.0; // Control the overlap amount
-          return Positioned(
-            left: index * overlapOffset,
-            child: participant.profilePic?.url != null
-                ? ClipOval(
-                    child: Image.network(
-                      participant.profilePic!.url!,
-                      width: 25,
-                      height: 25,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : _buildInitialsCircle(
-                    participant), // Show initials if no image
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildInitialsCircle(Participant participant) {
-    String initials = _getInitials(participant);
-    return CircleAvatar(
-      radius: 12, // Adjust the size if needed
-      backgroundColor: kcSecondaryColor, // Customize background color
-      child: Text(
-        initials,
-        style: const TextStyle(
-          color: Colors.white, // Text color for initials
-          fontSize: 12, // Adjust the font size if needed
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  String _getInitials(Participant participant) {
-    String firstName =
-        participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
-    String lastName =
-        participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
-    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
-        .toUpperCase();
-  }
-
-  Widget donationsSlider(BuildContext context, List<ProjectResource> projects) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Popular Draws Text
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Donations",
-                  style: GoogleFonts.bricolageGrotesque(
-                    textStyle: TextStyle(
-                      fontSize: 16, // Custom font size
-                      fontWeight: FontWeight.w700, // Custom font weight
-                      color: uiMode.value == AppUiModes.dark
-                          ? Colors.white // Dark mode logo
-                          : Colors.black, // Custom text color (optional)
-                    ),
-                  ),
-                ),
-                Text(
-                  "Empower Change with Your Points",
-                  style: GoogleFonts.redHatDisplay(
-                    textStyle: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: uiMode.value == AppUiModes.dark
-                          ? Colors.white // Dark mode logo
-                          : Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Explore Capsule
-            InkWell(
-              onTap: () {
-                locator<NavigationService>().navigateToNotificationView();
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: kcSecondaryColor
-                      .withOpacity(0.2), // Capsule background color
-                  borderRadius:
-                      BorderRadius.circular(20), // Rounded capsule shape
-                ),
-                child: const Row(
-                  children: [
-                    Text(
-                      "Explore",
-                      style: TextStyle(
-                        color: kcBlackColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.arrow_forward,
-                      size: 16,
-                      color: kcSecondaryColor,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 250, // Adjust height to match the size of your cards
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: projects.length,
-            itemBuilder: (context, index) {
-              final project = projects[index].project;
-              final members = projects[index].members;
-              final imageUrl = project?.media?.isNotEmpty == true
-                  ? project?.media![0].url
-                  : 'https://via.placeholder.com/150';
-
-              return Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProjectDetailsPage(
-                          project: projects[index],
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: 222,
-                    decoration: BoxDecoration(
-                      color: uiMode.value == AppUiModes.dark
-                          ? Colors.transparent // Dark mode logo
-                          : kcWhiteColor,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.transparent,
-                          blurRadius: 6.0,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Card(
-                      color: uiMode.value == AppUiModes.dark
-                          ? kcDarkGreyColor // Dark mode logo
-                          : kcWhiteColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(12)),
-                            child: Image.network(
-                              imageUrl!,
-                              width: double.infinity, // or specify a width
-                              height: 124, // or specify a height
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0),
-                            child: Text(
-                              project?.projectTitle ?? 'service title',
-                              style: GoogleFonts.redHatDisplay(
-                                fontSize: 16,
-                                color: uiMode.value == AppUiModes.dark
-                                    ? kcWhiteColor // Dark mode logo
-                                    : kcBlackColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(5.0, 0, 8.0, 8.0),
-                            child: Text(
-                              project?.projectDescription ?? '',
-                              style: GoogleFonts.redHatDisplay(
-                                fontSize: 12,
-                                color: uiMode.value == AppUiModes.dark
-                                    ? kcWhiteColor // Dark mode logo
-                                    : kcBlackColor,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
-                            child: buildMembersAvatars(members ?? []),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildMembersAvatars(List<Member> participants) {
-    double avatarSize = 20.0;
-    double overlapOffset = 15.0; // Adjust the overlap amount
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        // Constrain the Stack with a specific width
-        SizedBox(
-          height: avatarSize,
-          width: participants.length * overlapOffset +
-              avatarSize, // Ensure a finite width
-          child: Stack(
-            children: participants.asMap().entries.map((entry) {
-              int index = entry.key;
-              Member participant = entry.value;
-
-              return Positioned(
-                left: index * overlapOffset,
-                child: ClipOval(
-                  child: participant.profilePic?.url != null
-                      ? Image.network(
-                          participant.profilePic!.url!,
-                          width: avatarSize,
-                          height: avatarSize,
-                          fit: BoxFit.cover,
-                        )
-                      : _buildMembersInitialsCircle(participant),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        Text(
-          ' ${participants.length} Participants',
-          style: GoogleFonts.redHatDisplay(
-            fontSize: 10,
-            color: uiMode.value == AppUiModes.dark
-                ? kcWhiteColor // Dark mode logo
-                : kcBlackColor,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMembersInitialsCircle(Member participant) {
-    String initials = _getMemberInitials(participant);
-    return CircleAvatar(
-      radius: 10, // Adjust the size if needed
-      backgroundColor: kcSecondaryColor, // Customize background color
-      child: Text(
-        initials,
-        style: const TextStyle(
-          color: Colors.white, // Text color for initials
-          fontSize: 10, // Adjust the font size if needed
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  String _getMemberInitials(Member participant) {
-    String firstName =
-        participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
-    String lastName =
-        participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
-    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
-        .toUpperCase();
-  }
-
   Widget _buildShimmerOrContent(
       BuildContext context, ShopViewModel viewModel) {
     if (viewModel.filteredProductList.isEmpty && viewModel.isBusy) {
@@ -630,34 +606,6 @@ class ShopView extends StackedView<ShopViewModel> {
     } else {
       return Column(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          //   child: Container(
-          //     padding: EdgeInsets.symmetric(horizontal: 8.0),
-          //     decoration: BoxDecoration(
-          //       border: Border.all(color: Colors.grey),
-          //       borderRadius: BorderRadius.circular(8.0),
-          //     ),
-          //     child: Row(
-          //       children: [
-          //         Expanded(
-          //           child: TextField(
-          //             decoration: InputDecoration(
-          //               hintText: 'Search',
-          //               border: InputBorder.none,
-          //             ),
-          //           ),
-          //         ),
-          //         IconButton(
-          //           icon: Icon(Icons.search),
-          //           onPressed: () {
-          //             // Handle search button press
-          //           },
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           Autocomplete<Product>(
 
             optionsBuilder: (TextEditingValue productTextEditingValue) {
@@ -735,6 +683,7 @@ class ShopView extends StackedView<ShopViewModel> {
 
           ),
           verticalSpaceSmall,
+
           // quickActions(context),
           verticalSpaceMedium,
           SingleChildScrollView(
@@ -811,117 +760,6 @@ class ShopView extends StackedView<ShopViewModel> {
     );
   }
 
-  Widget _buildVideContainer() {
-    return Container(
-      width: double.infinity,
-      height: 200,
-      decoration: BoxDecoration(
-        color: kcSecondaryColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
-  }
-
-  Widget _notificationIcon(
-      int unreadCount, BuildContext context, ShopViewModel viewModel) {
-    print('notif count is $unreadCount');
-    return Stack(
-      children: [
-        IconButton(
-            icon: SvgPicture.asset(
-              uiMode.value == AppUiModes.dark
-                  ? "assets/images/dashboard_otification_white.svg" // Dark mode logo
-                  : "assets/images/dashboard_otification.svg",
-              width: 30,
-              height: 30,
-            ),
-            onPressed: () {
-              _showNotificationSheet(context, viewModel);
-            }),
-        if (unreadCount > 0)
-          Positioned(
-            right: 10,
-            top: 10,
-            child: Container(
-              padding: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              constraints: BoxConstraints(minWidth: 10, minHeight: 10),
-              child: Text(
-                unreadCount.toString(),
-                style: TextStyle(color: Colors.white, fontSize: 6),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  void _showNotificationSheet(
-      BuildContext context, ShopViewModel viewModel) {
-    // viewModel.markAllNotificationsAsRead();
-
-    TopModalSheet.show(
-        context: context,
-        isShowCloseButton: true,
-        closeButtonRadius: 20.0,
-        closeButtonBackgroundColor: kcSecondaryColor,
-        child: Container(
-          color: kcWhiteColor,
-          padding: const EdgeInsets.all(16),
-          height: MediaQuery.of(context).size.height * 0.5,
-          child: Column(
-            children: [
-              Text("Notifications",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: notifications.value.length,
-                  itemBuilder: (context, index) {
-                    final notification = notifications.value[index];
-                    return ListTile(
-                      minLeadingWidth: 10,
-                      leading: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        child: SvgPicture.asset(
-                          'assets/icons/ticket_out.svg',
-                          height: 28,
-                        ),
-                      ),
-                      title: Text(
-                        notification.subject,
-                        style: GoogleFonts.redHatDisplay(
-                          textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      subtitle: Text(
-                        notification.message,
-                        style: GoogleFonts.redHatDisplay(
-                          textStyle: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w400,
-                            color: kcDarkGreyColor,
-                          ),
-                        ),
-                      ),
-                      trailing: notification.unread
-                          ? Icon(Icons.circle, color: Colors.red, size: 10)
-                          : null,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ));
-   }
-
   Widget _buildCategoryChip(Category category, ShopViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -959,140 +797,6 @@ class ShopView extends StackedView<ShopViewModel> {
         ),
       ),
     );
-  }
-
-  List<Widget> _buildAppBarActions(
-      BuildContext context, bool isLoading, ShopViewModel viewModel) {
-    if (isLoading) {
-      // Display the shimmer effect while loading
-      return [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  width: 25,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(right: 0.0),
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(5.0),
-                          bottomLeft: Radius.circular(5.0),
-                        ),
-                      ),
-                      width: 80, // Adjust width for the shimmer
-                      height: 20, // Adjust height for the shimmer
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )
-      ];
-    } else {
-      // Normal display when data is loaded
-      return [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              if (userLoggedIn.value == true) ...[
-                _notificationIcon(unreadCount.value, context, viewModel),
-                const SizedBox(width: 3),
-                InkWell(
-                  onTap: () {
-                    locator<NavigationService>().navigateTo(Routes.wallet);
-                  },
-                  child: Row(
-                    children: [
-                      // Container(
-                      //   margin: const EdgeInsets.only(right: 0.0),
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   decoration: BoxDecoration(
-                      //     color: kcPrimaryColor.withOpacity(0.1),
-                      //     borderRadius: const BorderRadius.only(
-                      //       topLeft: Radius.circular(5.0),
-                      //       bottomLeft: Radius.circular(5.0),
-                      //     ),
-                      //   ),
-                      //   child: Text(
-                      //     '${profile.value.accountPoints} points',
-                      //     style: const TextStyle(
-                      //       fontSize: 14,
-                      //       fontWeight: FontWeight.bold,
-                      //       fontFamily: 'Roboto',
-                      //     ),
-                      //   ),
-                      // ),
-                      SvgPicture.asset(
-                        "assets/images/dashboard_wallet.svg",
-                        width: 30,
-                        height: 30,
-                      ),
-                    ],
-                  ),
-                ),
-              ] else ...[
-                InkWell(
-                  onTap: () {
-                    locator<NavigationService>().navigateTo(Routes.authView);
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: kcSecondaryColor
-                          .withOpacity(0.2), // Capsule background color
-                      borderRadius:
-                          BorderRadius.circular(10), // Rounded capsule shape
-                    ),
-                    child: const Row(
-                      children: [
-                        Text(
-                          "Login",
-                          style: TextStyle(
-                            color: kcBlackColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        )
-      ];
-    }
   }
 
   @override
@@ -1312,3 +1016,208 @@ class RaffleRow extends StatelessWidget {
     return luminance < 0.1 ? Colors.white : Colors.black;
   }
 }
+
+
+//
+// import 'package:flutter/material.dart';
+// import 'package:carousel_slider/carousel_slider.dart';
+//
+// class ShopView extends StatelessWidget {
+//   final List<Map<String, String>> slides = [
+//     {
+//       'image': 'https://via.placeholder.com/120',
+//       'title': 'The Ultimate Collection',
+//       'description': 'Step into style',
+//       'username': 'Paul Martine',
+//       'userType': 'Premium',
+//     },
+//     {
+//       'image': 'https://via.placeholder.com/120',
+//       'title': 'Exclusive Offer',
+//       'description': 'Get the best deals',
+//       'username': 'Alice Jones',
+//       'userType': 'Gold Member',
+//     },
+//     {
+//       'image': 'https://via.placeholder.com/120',
+//       'title': 'New Arrivals',
+//       'description': 'Fresh styles for you',
+//       'username': 'John Doe',
+//       'userType': 'Elite',
+//     },
+//   ];
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: NestedScrollView(
+//         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+//           return [
+//             SliverOverlapAbsorber(
+//               handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+//               sliver: SliverAppBar(
+//                 expandedHeight: 300.0,
+//                 pinned: true,
+//                 flexibleSpace: FlexibleSpaceBar(
+//                   background: CarouselSlider.builder(
+//                     options: CarouselOptions(
+//                       height: 300,
+//                       viewportFraction: 1.0,
+//                       autoPlay: true,
+//                     ),
+//                     itemCount: slides.length,
+//                     itemBuilder: (BuildContext context, int index, int pageIndex) {
+//                       final slide = slides[index];
+//                       return Stack(
+//                         fit: StackFit.expand,
+//                         children: [
+//                           Image.network(
+//                             slide['image']!,
+//                             fit: BoxFit.cover,
+//                           ),
+//                           Container(
+//                             color: Colors.black.withOpacity(0.3),
+//                           ),
+//                           Padding(
+//                             padding: const EdgeInsets.all(20.0),
+//                             child: Column(
+//                               mainAxisAlignment: MainAxisAlignment.end,
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 CircleAvatar(
+//                                   backgroundImage: AssetImage(
+//                                       "assets/images/binance.png"), // Replace with actual image
+//                                   radius: 24,
+//                                 ),
+//                                 SizedBox(height: 8),
+//                                 Text(
+//                                   slide['username']!,
+//                                   style: TextStyle(
+//                                     color: Colors.white,
+//                                     fontSize: 18,
+//                                     fontWeight: FontWeight.bold,
+//                                   ),
+//                                 ),
+//                                 Text(
+//                                   slide['userType']!,
+//                                   style: TextStyle(
+//                                     color: Colors.white70,
+//                                     fontSize: 14,
+//                                   ),
+//                                 ),
+//                                 Spacer(),
+//                                 Text(
+//                                   slide['title']!,
+//                                   style: TextStyle(
+//                                     color: Colors.white,
+//                                     fontSize: 28,
+//                                     fontWeight: FontWeight.bold,
+//                                   ),
+//                                 ),
+//                                 Text(
+//                                   slide['description']!,
+//                                   style: TextStyle(
+//                                     color: Colors.white70,
+//                                     fontSize: 18,
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         ],
+//                       );
+//                     },
+//                   ),
+//                 ),
+//                 actions: [
+//                   IconButton(
+//                     icon: Icon(Icons.favorite),
+//                     onPressed: () {},
+//                   ),
+//                   IconButton(
+//                     icon: Icon(Icons.shopping_cart),
+//                     onPressed: () {},
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ];
+//         },
+//         body: Builder(
+//           builder: (BuildContext context) {
+//             return CustomScrollView(
+//               slivers: [
+//                 SliverOverlapInjector(
+//                   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+//                 ),
+//                 SliverToBoxAdapter(
+//                   child: Transform.translate(
+//                     offset: Offset(0, -30), // Shift the grid upwards
+//                     child: Padding(
+//                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//                       child: GridView.builder(
+//                         shrinkWrap: true,
+//                         physics: NeverScrollableScrollPhysics(),
+//                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//                           crossAxisCount: 2, // Number of columns in the grid
+//                           mainAxisSpacing: 10.0,
+//                           crossAxisSpacing: 10.0,
+//                           childAspectRatio: 0.7,
+//                         ),
+//                         itemCount: 10,
+//                         itemBuilder: (context, index) => ProductCardShop(),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             );
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class ProductCardShop extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Card(
+//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           AspectRatio(
+//             aspectRatio: 1,
+//             child: ClipRRect(
+//               borderRadius: BorderRadius.circular(16),
+//               child: Image.network(
+//                 'https://via.placeholder.com/120',
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text('\$34.00', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+//                 Text(
+//                   'Stripe Details Jersey Track Top',
+//                   style: TextStyle(fontSize: 14, color: Colors.black54),
+//                   maxLines: 1,
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//                 Text(
+//                   "Men's shoes",
+//                   style: TextStyle(fontSize: 12, color: Colors.black38),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
