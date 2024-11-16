@@ -18,21 +18,15 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:slide_countdown/slide_countdown.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:top_bottom_sheet_flutter/top_bottom_sheet_flutter.dart';
 import '../../../app/app.locator.dart';
 import '../../../core/data/models/category.dart';
 import '../../../core/data/models/product.dart';
-import '../../../core/data/models/project.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../widget/AdventureDialog.dart';
-import '../draws/draws_viewmodel.dart';
-import '../notification/projectDetailsPage.dart';
 import 'shop_viewmodel.dart';
 
 /// @author George David

@@ -10,7 +10,6 @@ import 'package:afriprize/ui/common/app_strings.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/views/cart/raffle_cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
-import 'package:afriprize/ui/views/notification/notification_view.dart';
 import 'package:afriprize/ui/views/profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,6 +26,7 @@ import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
 import '../../common/ui_helpers.dart';
 import '../draws/draws_view.dart';
+import '../service/notification_view.dart';
 import '../shop/shop_view.dart';
 
 /// @author George David

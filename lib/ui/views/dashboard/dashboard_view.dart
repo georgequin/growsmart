@@ -27,10 +27,7 @@ import '../../../core/data/models/category.dart';
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/project.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
-import '../../../core/utils/local_store_dir.dart';
-import '../../../core/utils/local_stotage.dart';
-import '../../../widget/AdventureDialog.dart';
-import '../notification/projectDetailsPage.dart';
+import '../service/projectDetailsPage.dart';
 import '../shop/shop_view.dart';
 import 'dashboard_viewmodel.dart';
 

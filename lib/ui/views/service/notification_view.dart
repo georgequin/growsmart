@@ -1,19 +1,9 @@
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
-import 'package:afriprize/ui/components/empty_state.dart';
-import 'package:afriprize/ui/views/notification/projectDetailsPage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
-import 'package:top_bottom_sheet_flutter/top_bottom_sheet_flutter.dart';
-
-import '../../../app/app.locator.dart';
-import '../../../app/app.router.dart';
-import '../../../core/data/models/project.dart';
-import '../../common/app_colors.dart';
 import 'notification_viewmodel.dart';
 
 class Servicesview extends StackedView<ServicesviewModel> {
