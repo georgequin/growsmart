@@ -127,7 +127,7 @@ class Repository extends IRepository {
   Future<ApiResponse> getProfile() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "users/me",
+      endpoint: "profile",
     );
 
     return response;

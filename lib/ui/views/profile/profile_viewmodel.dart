@@ -71,7 +71,8 @@ class ProfileViewModel extends BaseViewModel {
     try {
       ApiResponse res = await repo.getProfile();
       if (res.statusCode == 200) {
-        profile.value = Profile.fromJson(Map<String, dynamic>.from(res.data["data"]));
+        profile.value =
+            Profile.fromJson(Map<String, dynamic>.from(res.data["User"]));
         await locator<LocalStorage>().save(LocalStorageDir.profileView, res.data["data"]); // Cache updated profile
         rebuildUi(); // Update UI with fresh data
       }
