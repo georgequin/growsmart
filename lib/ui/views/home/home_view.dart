@@ -110,7 +110,7 @@ class BottomNavBar extends StatelessWidget {
         label: "Home",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('heart.svg', 'heart_outline.svg', viewModel.selectedRafflesTab == 1, iconColor),
+        icon: _navBarItemIcon('shopicon.svg', 'shopicon.svg', viewModel.selectedRafflesTab == 1, iconColor),
         label: "Shop",
       ),
       BottomNavigationBarItem(

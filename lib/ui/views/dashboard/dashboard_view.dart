@@ -27,6 +27,7 @@ import '../../../core/data/models/category.dart';
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/project.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
+import '../../components/profile_picture.dart';
 import '../service/projectDetailsPage.dart';
 import '../shop/shop_view.dart';
 import 'dashboard_viewmodel.dart';
@@ -47,21 +48,27 @@ class DashboardView extends StackedView<DashboardViewModel> {
     DashboardViewModel viewModel,
     Widget? child,
   ) {
-
     return Scaffold(
       appBar: AppBar(
-          title: ValueListenableBuilder(
-            valueListenable: uiMode,
-            builder: (context, AppUiModes mode, child) {
-              return CircleAvatar(
-                backgroundImage: AssetImage(profile.value.profilePicture ?? "assets/images/display_pic.png"),
-                radius: 20, // Adjust size as needed
-              );
-            },
-          ),
-          centerTitle: false,
-          actions:
-              _buildAppBarActions(context, viewModel.appBarLoading, viewModel)),
+        toolbarHeight: 100,
+        title: ValueListenableBuilder(
+          valueListenable: uiMode,
+          builder: (context, AppUiModes mode, child) {
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    "assets/images/easy_ph_logo.png",
+                    height: 50, // Adjust height as needed
+                    fit: BoxFit.contain,
+                  )
+                ]);
+          },
+        ),
+        centerTitle: false,
+        actions:
+            _buildAppBarActions(context, viewModel.appBarLoading, viewModel),
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           await viewModel.refreshData();
@@ -85,56 +92,43 @@ class DashboardView extends StackedView<DashboardViewModel> {
           "Quick Actions",
           style: GoogleFonts.bricolageGrotesque(
             textStyle: TextStyle(
-              fontSize: 15, // Custom font size
-              fontWeight: FontWeight.bold, // Custom font weight
-              color: uiMode.value == AppUiModes.dark
-                  ? Colors.white // Dark mode logo
-                  : Colors.black,
-
-              // Custom text color (optional)
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color:
+                  uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
             ),
           ),
         ),
         const SizedBox(height: 10),
         Container(
           height: 60, // Adjust height according to your design
-          child: ListView(
-            scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              // First Container
               GestureDetector(
                 onTap: () {
-                  locator<NavigationService>().navigateToDrawsView();
+                  showProductDialog(
+                    context: context,
+                    title: "Solar Energy System",
+                    products: solarProducts,
+                  );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      width: 110, // Adjust width according to your design
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        boxShadow: [
-                          const BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5.0,
-                            spreadRadius: 1.0,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Image.asset(
-                        'assets/images/services.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
+                child: actionContainer('assets/images/services.png'),
               ),
-              // Second Container
               GestureDetector(
                 onTap: () {
-                  print('there is the second click');
+                  showProductDialog(
+                    context: context,
+                    title: "Lighting electronics",
+                    products:
+                        lightingProducts, // Replace with your lighting products list
+                  );
+                },
+                child: actionContainer('assets/images/lightingelectronics.png'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  print('there is the third click');
                   locator<NavigationService>().navigateToNotificationView();
                 },
                 child: Padding(
@@ -162,38 +156,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   ),
                 ),
               ),
-              // Third Container
-              GestureDetector(
-                onTap: () {
-                  // Action for the third container
-                  print('Coming Soon clicked!');
-                  // You can navigate or perform other actions here
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      width: 110, // Adjust width according to your design
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        boxShadow: [
-                          const BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5.0,
-                            spreadRadius: 1.0,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child:  Image.asset(
-                        'assets/images/lightingelectronics.png', // Third image
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -201,6 +163,126 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
+  Widget actionContainer(String imagePath) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 0.0, right: 8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.0),
+        child: Container(
+          width: 110,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 5.0,
+                spreadRadius: 1.0,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Image.asset(
+            imagePath,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void showProductDialog({
+    required BuildContext context,
+    required String title,
+    required List<String> products,
+  }) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (BuildContext context, Animation<double> animation,
+          Animation<double> secondaryAnimation) {
+        return Align(
+          alignment: Alignment.topCenter,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  verticalSpaceLarge,
+                  Text(
+                    title,
+                    style: GoogleFonts.bricolageGrotesque(
+                      textStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: products.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        leading: Icon(Icons.lightbulb),
+                        title: Text(
+                          products[index],
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          print('Selected Product: ${products[index]}');
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (BuildContext context, Animation<double> animation,
+          Animation<double> secondaryAnimation, Widget child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, -1),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        );
+      },
+    );
+  }
+
+  final List<String> solarProducts = [
+    "Solar Panel",
+    "Inverter",
+    "Battery Storage",
+    "Solar Charger",
+  ];
+
+  final List<String> lightingProducts = [
+    "LED Bulbs",
+    "Chandeliers",
+    "Wall Sconces",
+    "Outdoor Lights",
+  ];
 
   Widget popularDrawsSlider(
       BuildContext context, DashboardViewModel viewModel) {
@@ -243,8 +325,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             InkWell(
               onTap: () {
                 // locator<NavigationService>().navigateToTrack();
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (c) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (c) {
                   return ShopView();
                 }));
               },
@@ -295,24 +376,24 @@ class DashboardView extends StackedView<DashboardViewModel> {
           itemBuilder: (context, index) {
             final item = viewModel.filteredProductList[index];
             return InkWell(
-              onTap: (){
+              onTap: () {
                 print('product to see is: ${item.productName}');
                 showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                isDismissible: true,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(25.0),
-                                      topRight: Radius.circular(25.0)),
-                                ),
-                                // barrierColor: Colors.black.withAlpha(50),
-                                // backgroundColor: Colors.transparent,
-                                backgroundColor: Colors.black.withOpacity(0.7),
-                                builder: (BuildContext context) {
-                                  return ProductCard(product: item);
-                                },
-                              );
+                  context: context,
+                  isScrollControlled: true,
+                  isDismissible: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25.0),
+                        topRight: Radius.circular(25.0)),
+                  ),
+                  // barrierColor: Colors.black.withAlpha(50),
+                  // backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.black.withOpacity(0.7),
+                  builder: (BuildContext context) {
+                    return ProductCard(product: item);
+                  },
+                );
               },
               child: Container(
                 margin: const EdgeInsets.all(8.0),
@@ -349,9 +430,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     kcSecondaryColor),
                               ),
                             ),
-                            imageUrl: (item.images != null && item.images!.isNotEmpty)
-                                ? item.images!.first
-                                : 'https://via.placeholder.com/120',
+                            imageUrl:
+                                (item.images != null && item.images!.isNotEmpty)
+                                    ? item.images!.first
+                                    : 'https://via.placeholder.com/120',
                             height: 120,
                             width: double.infinity,
                             fit: BoxFit.cover,
@@ -419,265 +501,60 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 0.0),
-                      child:
-                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                '₦${item.price}' ?? "\$0",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'roboto',
-                                  color: kcPrimaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis, // To prevent overflow
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '₦${item.price}' ?? "\$0",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'roboto',
+                                color: kcPrimaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow:
+                                  TextOverflow.ellipsis, // To prevent overflow
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              RaffleCartItem newItem =
+                                  RaffleCartItem(raffle: item, quantity: 1);
+                              viewModel.addToRaffleCart(item);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(
+                                  8.0), // Padding around the icon
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.shopping_cart_outlined,
+                                color: kcSecondaryColor,
+                                size: 16,
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                RaffleCartItem newItem = RaffleCartItem(
-                                    raffle: item,
-                                    quantity: 1);
-                                viewModel.addToRaffleCart(item);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(
-                                    8.0), // Padding around the icon
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 1,
-                                      blurRadius: 5,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.shopping_cart_outlined,
-                                  color: kcSecondaryColor,
-                                  size: 16,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                          )
+                        ],
                       ),
+                    ),
                   ],
                 ),
               ),
             );
           },
         )
-        // SizedBox(
-        //   height: 300,
-        //   child: ListView.builder(
-        //     scrollDirection: Axis.horizontal,
-        //     itemCount: raffles.length,
-        //     itemBuilder: (context, index) {
-        //       final raffle = raffles[index];
-        //       final imageUrl = raffle.media?.isNotEmpty == true
-        //           ? raffle.media![0].url
-        //           : 'https://via.placeholder.com/150';
-        //       // final formattedEndDate = DateFormat('yyyy-MM-dd HH:mm:ss')
-        //       final formattedEndDate = DateFormat('yyyy-MM-dd')
-        //           .format(DateTime.parse(raffle.endDate ?? ''));
-        //
-        //       final endDate = DateTime.parse(raffle.endDate ?? '');
-        //       final now = DateTime.now();
-        //       final remainingDuration = endDate.difference(now);
-        //
-        //       double cardHeight = 250; // Default height
-        //       if (index % 3 == 1) {
-        //         cardHeight = 200; // Shorter card
-        //       } else if (index % 3 == 2) {
-        //         cardHeight = 300; // Full-height card
-        //       }
-        //
-        //       return InkWell(
-        //         onTap: () {
-        //           showModalBottomSheet(
-        //             context: context,
-        //             isScrollControlled: true,
-        //             isDismissible: true,
-        //             shape: const RoundedRectangleBorder(
-        //               borderRadius: BorderRadius.only(
-        //                   topLeft: Radius.circular(25.0),
-        //                   topRight: Radius.circular(25.0)),
-        //             ),
-        //             // barrierColor: Colors.black.withAlpha(50),
-        //             // backgroundColor: Colors.transparent,
-        //             backgroundColor: Colors.black.withOpacity(0.7),
-        //             builder: (BuildContext context) {
-        //               return RaffleDetail(raffle: raffle);
-        //             },
-        //           );
-        //         },
-        //         child: Padding(
-        //           padding: const EdgeInsets.only(right: 10.0),
-        //           child: Container(
-        //             height: cardHeight,
-        //             width: 250,
-        //             decoration: BoxDecoration(
-        //               borderRadius: BorderRadius.circular(10),
-        //               boxShadow: [
-        //                 const BoxShadow(
-        //                   color: Colors.black12,
-        //                   blurRadius: 6.0,
-        //                   offset: Offset(0, 2),
-        //                 ),
-        //               ],
-        //             ),
-        //             child: Stack(
-        //               children: [
-        //                 // Image covering the entire card
-        //                 ClipRRect(
-        //                   borderRadius: BorderRadius.circular(10),
-        //                   child: Image.network(
-        //                     imageUrl!,
-        //                     height: double.infinity,
-        //                     width: double.infinity,
-        //                     fit: BoxFit.cover,
-        //                   ),
-        //                 ),
-        //                 // Tint overlay for better readability
-        //                 ClipRRect(
-        //                   borderRadius: BorderRadius.circular(10),
-        //                   child: Container(
-        //                     color:  uiMode.value == AppUiModes.dark
-        //                         ? Colors.black.withOpacity(
-        //                         0.8) : Colors.black.withOpacity(
-        //                         0.6),
-        //                      // Dark semi-transparent overlay
-        //                     height: double.infinity,
-        //                     width: double.infinity,
-        //                   ),
-        //                 ),
-        //                 // Raffle details positioned on top of the image
-        //                 Positioned(
-        //                   top: 8,
-        //                   right: 8,
-        //                   child: Container(
-        //                     padding: const EdgeInsets.symmetric(
-        //                         horizontal: 8, vertical: 4),
-        //                     decoration: BoxDecoration(
-        //                       color: uiMode.value == AppUiModes.dark
-        //                           ? kcVeryLightGrey : kcWhiteColor,
-        //                       borderRadius: BorderRadius.circular(4),
-        //                     ),
-        //                     child: Text(
-        //                       raffle.formattedTicketPrice ?? '',
-        //                       style: const TextStyle(
-        //                         color: kcPrimaryColor,
-        //                         fontSize: 16,
-        //                         fontFamily: 'Roboto',
-        //                         fontWeight: FontWeight.w700,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ),
-        //                 Positioned(
-        //                   top: 33,
-        //                   right: 8,
-        //                   child: Container(
-        //                     padding: const EdgeInsets.symmetric(
-        //                         horizontal: 8, vertical: 4),
-        //                     decoration: BoxDecoration(
-        //                       color: kcSecondaryColor,
-        //                       borderRadius: BorderRadius.circular(4),
-        //                     ),
-        //                     child: const Text(
-        //                       'Ticket Price',
-        //                       style: TextStyle(
-        //                         fontSize: 10,
-        //                         color: kcPrimaryColor,
-        //                         fontWeight: FontWeight.w400,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ),
-        //                 Positioned(
-        //                   bottom: 10,
-        //                   left: 10,
-        //                   right: 10,
-        //                   child: Column(
-        //                     crossAxisAlignment: CrossAxisAlignment.start,
-        //                     children: [
-        //                       Row(
-        //                         // mainAxisAlignment:
-        //                         //     MainAxisAlignment.spaceBetween,
-        //                         children: [
-        //                           Text(
-        //                             'WIN Prize in',
-        //                             style: const TextStyle(
-        //                               color: Colors.white,
-        //                               fontSize: 13,
-        //                             ),
-        //                           ),
-        //                           SlideCountdown(
-        //                             duration: remainingDuration,
-        //                             decoration: const BoxDecoration(
-        //                               // color: kcPrimaryColor,
-        //                               borderRadius:
-        //                                   BorderRadius.all(Radius.circular(5)),
-        //                             ),
-        //                             separator: ':',
-        //                             style: const TextStyle(
-        //                               color: Colors.white,
-        //                               fontSize: 14,
-        //                             ),
-        //                             onDone: () {
-        //                               print('Countdown finished!');
-        //                             },
-        //                           ),
-        //                         ],
-        //                       ),
-        //                       Text(
-        //                         raffle.name ?? '',
-        //                         style: const TextStyle(
-        //                           color: kcSecondaryColor,
-        //                           fontWeight: FontWeight.w600,
-        //                           fontSize: 20,
-        //                         ),
-        //                         maxLines: 2,
-        //                         overflow: TextOverflow.ellipsis,
-        //                       ),
-        //                       const SizedBox(height: 4),
-        //                       // buildParticipantsAvatars(raffle.participants ?? []),
-        //
-        //
-        //                       Row(
-        //                         children: [
-        //                           Image.asset(
-        //                             "assets/images/partcipant_icon.png",
-        //                             width: 40,
-        //                           ),
-        //                           const SizedBox(width: 4),
-        //                           Text(
-        //                             '${raffle.participants?.length ?? 0} Participants',
-        //                             style: const TextStyle(
-        //                               color: Colors.white,
-        //                               fontSize: 12,
-        //                             ),
-        //                           ),
-        //                         ],
-        //                       ),
-        //                     ],
-        //                   ),
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        // ),
       ],
     );
   }
@@ -1031,18 +908,19 @@ class DashboardView extends StackedView<DashboardViewModel> {
         children: [
           Autocomplete<Product>(
             optionsBuilder: (TextEditingValue productTextEditingValue) {
-
               if (productTextEditingValue.text == '') {
                 return const Iterable<Product>.empty();
               }
               return viewModel.filteredProductList.where((Product product) {
                 final query = productTextEditingValue.text.toLowerCase();
-                return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
-                    (product.brandName != null && product.brandName!.toLowerCase().contains(query));
+                return (product.productName != null &&
+                        product.productName!.toLowerCase().contains(query)) ||
+                    (product.brandName != null &&
+                        product.brandName!.toLowerCase().contains(query));
               });
-
             },
-            displayStringForOption: (Product product) => product.productName ?? '',
+            displayStringForOption: (Product product) =>
+                product.productName ?? '',
 
             // when user click on the suggested
             // item this function calls
@@ -1065,14 +943,18 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 },
               );
             },
-            fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+            fieldViewBuilder: (BuildContext context,
+                TextEditingController textEditingController,
+                FocusNode focusNode,
+                VoidCallback onFieldSubmitted) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 0.0),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFFEBE4E4)
-                    ), // Grey border around the search bar
+                    border: Border.all(
+                        color: const Color(
+                            0xFFEBE4E4)), // Grey border around the search bar
                     borderRadius: BorderRadius.circular(8.0), // Rounded corners
                   ),
                   child: Row(
@@ -1083,13 +965,16 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           focusNode: focusNode,
                           decoration: InputDecoration(
                             hintText: 'Search product...',
-                            border: InputBorder.none, // Removes the default border
-                            contentPadding: EdgeInsets.symmetric(vertical: 15.0), // Adjust padding
+                            border:
+                                InputBorder.none, // Removes the default border
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 15.0), // Adjust padding
                           ),
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.search), // Search icon outside the text field
+                        icon: Icon(
+                            Icons.search), // Search icon outside the text field
                         onPressed: () {
                           // Optionally handle search button press here
                         },
@@ -1099,7 +984,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 ),
               );
             },
-
           ),
           verticalSpaceSmall,
           _buildAdsSlideshow(viewModel),
@@ -1186,21 +1070,21 @@ class DashboardView extends StackedView<DashboardViewModel> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.only(right: 4.0),
               child: Container(
+                height: 150, // Adjust the height of the container
+                width: 130, // Adjust the width of the container
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
                   ),
                   image: DecorationImage(
                     image: AssetImage(
                         "assets/images/Mercury-10KVA-Solar-System-1 2.png"),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
-                height: 150,
-                width: 130,
               ),
             ),
           ],
@@ -1210,7 +1094,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
     return CarouselSlider.builder(
       itemCount:
-      viewModel.productList.where((element) => element.ad == true).length,
+          viewModel.productList.where((element) => element.ad == true).length,
       itemBuilder: (context, index, realIndex) {
         final ad = viewModel.productList
             .where((element) => element.ad == true)
@@ -1242,65 +1126,68 @@ class DashboardView extends StackedView<DashboardViewModel> {
         children: [
           // Left side: Title and description
           Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  ad.productName ?? 'Best Full Solar Installation',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                verticalSpaceSmall,
-                Text(
-                  ad.productDescription ?? 'Light out your world',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                  ),
-                ),
-                verticalSpaceSmall,
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        isDismissible: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(25.0),
-                              topRight: Radius.circular(25.0)),
-                        ),
-                        backgroundColor: Colors.black.withOpacity(0.7),
-                        builder: (BuildContext context) {
-                          return ProductCard(product: ad);
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: kcSecondaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      minimumSize: Size(80, 30),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    ad.productName ?? 'Best Full Solar Installation',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                    child: Text('Check Now'),
                   ),
-                ),
-              ],
+                  verticalSpaceSmall,
+                  Text(
+                    ad.productDescription ?? 'Light out your world',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  verticalSpaceSmall,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          isDismissible: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(25.0),
+                                topRight: Radius.circular(25.0)),
+                          ),
+                          backgroundColor: Colors.black.withOpacity(0.7),
+                          builder: (BuildContext context) {
+                            return ProductCard(product: ad);
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: kcSecondaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        minimumSize: Size(80, 30),
+                      ),
+                      child: Text('Check Now'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
+
           // Right side: Product image
           SizedBox(width: 16),
           ClipRRect(
@@ -1403,7 +1290,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   ? "assets/images/dashboard_otification_white.svg" // Dark mode logo
                   : "assets/images/dashboard_otification.svg",
               width: 30,
-              height: 30,
+              height: 40,
             ),
             onPressed: () {
               _showNotificationSheet(context, viewModel);
@@ -1490,7 +1377,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ],
           ),
         ));
-   }
+  }
 
   Widget _buildCategoryChip(Category category, DashboardViewModel viewModel) {
     return Padding(
@@ -1599,33 +1486,48 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 const SizedBox(width: 3),
                 InkWell(
                   onTap: () {
-                    locator<NavigationService>().navigateTo(Routes.wallet);
+                    //  locator<NavigationService>().navigateTo(Routes.wallet);
                   },
                   child: Row(
                     children: [
-                      // Container(
-                      //   margin: const EdgeInsets.only(right: 0.0),
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   decoration: BoxDecoration(
-                      //     color: kcPrimaryColor.withOpacity(0.1),
-                      //     borderRadius: const BorderRadius.only(
-                      //       topLeft: Radius.circular(5.0),
-                      //       bottomLeft: Radius.circular(5.0),
-                      //     ),
-                      //   ),
-                      //   child: Text(
-                      //     '${profile.value.accountPoints} points',
-                      //     style: const TextStyle(
-                      //       fontSize: 14,
-                      //       fontWeight: FontWeight.bold,
-                      //       fontFamily: 'Roboto',
-                      //     ),
-                      //   ),
-                      // ),
-                      SvgPicture.asset(
-                        "assets/images/dashboard_wallet.svg",
-                        width: 30,
-                        height: 30,
+                      Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+
+                                    // viewModel.updateProfilePicture();
+                                  },
+                                  child: ProfilePicture(
+                                    size: 40,
+                                    url: profile.value.profilePicture,
+                                  ),
+                                ),
+                                // horizontalSpaceLarge,
+                                GestureDetector(onTap: () {
+                                  // Show the image in a dialog
+                                })
+                              ],
+                            ),
+                            horizontalSpaceMedium,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "${profile.value.firstName} ${profile.value.lastName}",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
