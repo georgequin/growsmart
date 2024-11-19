@@ -99,7 +99,7 @@ class _OnboardingViewState extends State<OnboardingView2> {
                       ),
                     ),
                   ),
-                  verticalSpaceMedium,
+                  verticalSpaceMassive,
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
