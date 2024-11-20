@@ -26,7 +26,7 @@ import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
 import '../../common/ui_helpers.dart';
 import '../draws/draws_view.dart';
-import '../service/notification_view.dart';
+import '../service/service_view.dart';
 import '../shop/shop_view.dart';
 
 /// @author George David

@@ -104,10 +104,10 @@ class Repository extends IRepository {
   }
 
   @override
-  Future<ApiResponse> getProjects() async {
+  Future<ApiResponse> getServices() async {
     ApiResponse response = await api.call(
       method: HttpMethod.get,
-      endpoint: "projects/list",
+      endpoint: "/services",
     );
 
     return response;

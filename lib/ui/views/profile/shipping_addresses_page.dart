@@ -121,9 +121,6 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                                 stateController.text.isNotEmpty &&
                                 phoneNumberController.text.isNotEmpty) {
                               createNewShipping();
-                              // addAddress(
-                              //     name, houseAddress, city, state, phoneNumber,
-                              //     isDefaultPayment);
                             }
                             houseAddressController.clear();
                             cityController.clear();
@@ -156,6 +153,8 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
       if (response.statusCode == 200) {
         locator<SnackbarService>().showSnackbar(message: "Created address successfully", duration: Duration(seconds: 2));
         loading = false;
+        getShippings();
+        Navigator.pop(context);
       } else {
         Navigator.pop(context);
         locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
@@ -197,6 +196,13 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
       isShippingLoading = false;
       setState(() {}); // Update the UI with the new data
     }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    getShippings();
   }
 
   @override
@@ -265,12 +271,12 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                           //   },
                           // ),
                           const SizedBox(width: 2),
-                          const Expanded(
-                            child: Text(
-                              "Use as shipping address",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ),
+                          // const Expanded(
+                          //   child: Text(
+                          //     "Use as shipping address",
+                          //     style: TextStyle(fontSize: 14),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],

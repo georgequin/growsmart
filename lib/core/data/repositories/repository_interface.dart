@@ -31,7 +31,7 @@ abstract class IRepository {
 
   Future<ApiResponse> getRaffleResult();
 
-  Future<ApiResponse> getProjects();
+  Future<ApiResponse> getServices();
 
   Future<ApiResponse> getProjectComments(String projectId);
 
