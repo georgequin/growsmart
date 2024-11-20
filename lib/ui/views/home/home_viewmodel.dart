@@ -8,7 +8,7 @@ import 'package:afriprize/core/utils/config.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/app_strings.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
-import 'package:afriprize/ui/views/cart/raffle_cart_view.dart';
+import 'package:afriprize/ui/views/cart/cart_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
 import 'package:afriprize/ui/views/profile/profile_view.dart';
 import 'package:flutter/material.dart';

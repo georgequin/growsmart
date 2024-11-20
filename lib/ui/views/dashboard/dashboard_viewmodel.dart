@@ -30,6 +30,8 @@ class DashboardViewModel extends BaseViewModel {
   List<Product> productList = [];
   List<Product> filteredProductList = [];
   List<Category> filteredCategories = [];
+  List<Category> filteredCategoriesList = [];
+
   List<Category> categories = [];
 
   static const int allCategoriesId = 0;

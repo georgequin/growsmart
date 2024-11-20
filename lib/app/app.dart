@@ -11,7 +11,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:afriprize/ui/views/auth/auth_view.dart';
 import 'package:afriprize/ui/views/dashboard/dashboard_view.dart';
 import 'package:afriprize/ui/views/draws/draws_view.dart';
-import 'package:afriprize/ui/views/cart/raffle_cart_view.dart';
+import 'package:afriprize/ui/views/cart/cart_view.dart';
 import 'package:afriprize/ui/views/profile/profile_view.dart';
 
 import '../ui/views/profile/wallet.dart';

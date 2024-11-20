@@ -2,9 +2,11 @@ import 'package:afriprize/app/app.router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
+import '../../../core/data/models/category.dart';
 import '../../../core/data/models/product.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
 import '../../../core/network/interceptors.dart';
@@ -14,27 +16,30 @@ import '../../../state.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../shop/shop_view.dart';
+import 'dashboard_viewmodel.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
 
-  ProductCard({Key? key, required this.product}) : super(key: key);
+  const ProductCard({Key? key, required this.product}) : super(key: key);
 
   @override
   _ProductCardState createState() => _ProductCardState();
 }
 
-bool isFavorited = false; // Declare a boolean to manage the state
-
 class _ProductCardState extends State<ProductCard> {
   String selectedImage = '';
   Color iconColor = kcBlackColor;
 
+  List<Product> filteredProductList = [];
+  List<Product> productList = [];
+
   @override
   void initState() {
     super.initState();
-    selectedImage =
-        widget.product.images?.first ?? ''; // Default to the first image
+    loadProduct();
+    selectedImage = widget.product.images?.first ?? ''; // Default to the first image
   }
 
   void addToRaffleCart(Product raffle) async {
@@ -42,13 +47,11 @@ class _ProductCardState extends State<ProductCard> {
     // notifyListeners();
     try {
       final existingItem = raffleCart.value.firstWhere(
-        (raffleItem) => raffleItem.raffle?.id == raffle.id,
+            (raffleItem) => raffleItem.raffle?.id == raffle.id,
         orElse: () => RaffleCartItem(raffle: raffle, quantity: 0),
       );
 
-      if (existingItem.quantity != null &&
-          existingItem.quantity! > 0 &&
-          existingItem.raffle != null) {
+      if (existingItem.quantity != null && existingItem.quantity! > 0 && existingItem.raffle != null) {
         existingItem.quantity = (existingItem.quantity! + 1);
       } else {
         existingItem.quantity = 1;
@@ -56,10 +59,8 @@ class _ProductCardState extends State<ProductCard> {
       }
 
       // Save to local storage
-      List<Map<String, dynamic>> storedList =
-          raffleCart.value.map((e) => e.toJson()).toList();
-      await locator<LocalStorage>()
-          .save(LocalStorageDir.raffleCart, storedList);
+      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
 
       // Save to online cart using API
       final response = await repo.addToCart({
@@ -68,28 +69,41 @@ class _ProductCardState extends State<ProductCard> {
       });
 
       if (response.statusCode == 200) {
-        locator<SnackbarService>().showSnackbar(
-            message: "Raffle added to cart", duration: Duration(seconds: 2));
+        locator<SnackbarService>().showSnackbar(message: "Raffle added to cart", duration: Duration(seconds: 2));
       } else {
-        locator<SnackbarService>().showSnackbar(
-            message: response.data["message"], duration: Duration(seconds: 2));
+        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
       }
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(
-          message: "Failed to add raffle to cart: $e",
-          duration: Duration(seconds: 2));
+      locator<SnackbarService>().showSnackbar(message: "Failed to add raffle to cart: $e", duration: Duration(seconds: 2));
     }
   }
 
-  void initCart() async {
-    dynamic raffle = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
-    dynamic store = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
-    List<RaffleCartItem> localRaffleCart =
-        List<Map<String, dynamic>>.from(raffle)
-            .map((e) => RaffleCartItem.fromJson(Map<String, dynamic>.from(e)))
-            .toList();
-    raffleCart.value = localRaffleCart;
-    raffleCart.notifyListeners();
+  Future<void> loadProduct() async {
+
+    if (productList.isEmpty) {
+      // setBusy(true);
+      setState(() {
+
+      });
+    }
+
+    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.product);
+    if (storedRaffle != null) {
+      // Extracting and filtering only active raffles
+      productList = List<Map<String, dynamic>>.from(storedRaffle)
+          .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+      filteredProductList = productList.where((element) => element.categoryId == widget.product.categoryId).toList();
+      setState(() {
+
+      });
+    }
+
+    // setBusy(false);
+    setState(() {
+
+    });
+
   }
 
   Future<void> decreaseRaffleQuantity(RaffleCartItem item) async {
@@ -104,31 +118,26 @@ class _ProductCardState extends State<ProductCard> {
         });
       } else if (item.quantity! == 1) {
         // Remove from local cart
-        raffleCart.value
-            .removeWhere((cartItem) => cartItem.raffle?.id == item.raffle?.id);
+        raffleCart.value.removeWhere((cartItem) => cartItem.raffle?.id == item.raffle?.id);
 
         // Remove from online cart
         await repo.deleteFromCart(item.raffle!.id!);
       }
 
       // Save to local storage
-      List<Map<String, dynamic>> storedList =
-          raffleCart.value.map((e) => e.toJson()).toList();
-      await locator<LocalStorage>()
-          .save(LocalStorageDir.raffleCart, storedList);
+      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(
-          message: "Failed to decrease raffle quantity: $e",
-          duration: Duration(seconds: 2));
-      print(e);
+      locator<SnackbarService>().showSnackbar(message: "Failed to decrease raffle quantity: $e", duration: Duration(seconds: 2));
+    print(e);
     }
   }
 
   Future<void> increaseRaffleQuantity(RaffleCartItem item) async {
+
     try {
       item.quantity = item.quantity! + 1;
-      int index = raffleCart.value
-          .indexWhere((raffleItem) => raffleItem.raffle?.id == item.raffle?.id);
+      int index = raffleCart.value.indexWhere((raffleItem) => raffleItem.raffle?.id == item.raffle?.id);
       if (index != -1) {
         raffleCart.value[index] = item;
         raffleCart.value = List.from(raffleCart.value);
@@ -140,16 +149,14 @@ class _ProductCardState extends State<ProductCard> {
         });
 
         // Save to local storage
-        List<Map<String, dynamic>> storedList =
-            raffleCart.value.map((e) => e.toJson()).toList();
-        await locator<LocalStorage>()
-            .save(LocalStorageDir.raffleCart, storedList);
+        List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+        await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
       }
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(
-          message: "Failed to increase raffle quantity: $e",
-          duration: Duration(seconds: 2));
+      locator<SnackbarService>().showSnackbar(message: "Failed to increase raffle quantity: $e", duration: Duration(seconds: 2));
+
     } finally {
+
       raffleCart.notifyListeners();
     }
   }
@@ -182,15 +189,14 @@ class _ProductCardState extends State<ProductCard> {
       body: ListView(
         children: [
           Row(
-            mainAxisSize:
-                MainAxisSize.min, // Shrinks the Row's size to fit its content
+            mainAxisSize: MainAxisSize.min, // Shrinks the Row's size to fit its content
             children: [
               Column(
                 children: (widget.product.images ?? [])
                     .map((image) => GestureDetector(
-                          onTap: () => updateImage(image),
-                          child: buildImageContainer(image, 80, 80),
-                        ))
+                  onTap: () => updateImage(image),
+                  child: buildImageContainer(image, 80, 80),
+                ))
                     .toList(),
               ),
               SizedBox(width: 16),
@@ -225,32 +231,9 @@ class _ProductCardState extends State<ProductCard> {
                 ),
               ),
             ],
-          ),
+          )
+,
           Divider(),
-          // Padding(
-          //   padding: const EdgeInsets.all(16.0),
-          //   child: RatingBar.builder(
-          //     initialRating:
-          //         widget.product.rating ?? 0, // Use the product's rating
-          //     minRating: 1, // Minimum rating allowed
-          //     direction: Axis.horizontal, // Horizontal layout
-          //     allowHalfRating: true, // Allow half ratings
-          //     itemCount: 5, // Number of stars
-          //     itemSize: 16, // Size of the stars
-          //     itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-          //     itemBuilder: (context, _) => Icon(
-          //       Icons.star,
-          //       color: kcStarColor, // Active star color
-          //     ),
-          //     onRatingUpdate: (newRating) {
-          //       print('New Rating: $newRating');
-          //       setState(() {
-          //         // Update the product's rating
-          //         widget.product.rating = newRating;
-          //       });
-          //     },
-          //   ),
-          // ),
           Column(
             children: [
               Padding(
@@ -286,6 +269,7 @@ class _ProductCardState extends State<ProductCard> {
                   ],
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -296,181 +280,168 @@ class _ProductCardState extends State<ProductCard> {
                       child: userLoggedIn.value == false
                           ? const SizedBox()
                           : ValueListenableBuilder<List<RaffleCartItem>>(
-                              valueListenable: raffleCart,
-                              builder: (context, value, child) {
-                                bool isInCart = value.any((item) =>
-                                    item.raffle?.id == widget.product.id);
-                                RaffleCartItem? cartItem = isInCart
-                                    ? value.firstWhere((item) =>
-                                        item.raffle?.id == widget.product.id)
-                                    : null;
+                          valueListenable: raffleCart,
+                          builder: (context, value, child) {
+                            bool isInCart = value.any((item) =>
+                            item.raffle?.id == widget.product.id);
+                            RaffleCartItem? cartItem = isInCart
+                                ? value.firstWhere((item) =>
+                            item.raffle?.id == widget.product.id)
+                                : null;
 
-                                return isInCart && cartItem != null
-                                    ? Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10, horizontal: 20),
-                                        decoration: BoxDecoration(
-                                            color: kcVeryLightGrey,
-                                            borderRadius:
-                                                BorderRadius.circular(9)),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            InkWell(
-                                              onTap: () async {
-                                                Navigator.pop(context);
-                                                locator<NavigationService>()
-                                                    .navigateToCartView();
-                                              },
-                                              child: Container(
-                                                height: 50,
-                                                width: 120,
-                                                decoration: BoxDecoration(
-                                                  color: kcSecondaryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: const Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "Goto Cart",
-                                                      style: TextStyle(
-                                                          color: kcBlackColor,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            horizontalSpaceMedium,
-                                            Container(
-                                              height: 53,
-                                              decoration: BoxDecoration(
-                                                color: kcWhiteColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        decreaseRaffleQuantity(
-                                                            cartItem);
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      height: 30,
-                                                      width: 30,
-                                                      decoration: BoxDecoration(
-                                                        color: kcWhiteColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                      ),
-                                                      child: const Center(
-                                                          child: Icon(
-                                                              Icons.remove,
-                                                              size: 18,
-                                                              color:
-                                                                  kcBlackColor)),
-                                                    ),
-                                                  ),
-                                                  horizontalSpaceSmall,
-                                                  Text(
-                                                    "${cartItem.quantity}",
-                                                    style: const TextStyle(
-                                                        color: kcBlackColor),
-                                                  ),
-                                                  horizontalSpaceSmall,
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        increaseRaffleQuantity(
-                                                            cartItem);
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      height: 30,
-                                                      width: 30,
-                                                      decoration: BoxDecoration(
-                                                        color: kcWhiteColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                      ),
-                                                      child: const Align(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: Icon(Icons.add,
-                                                              size: 18,
-                                                              color:
-                                                                  kcBlackColor)),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : InkWell(
-                                        onTap: () async {
-                                          setState(() {
-                                            addToRaffleCart(widget.product);
-                                          });
-                                        },
-                                        child: Container(
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: kcSecondaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(9),
+                            return isInCart && cartItem != null
+                                ? Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                  color: kcVeryLightGrey,
+                                  borderRadius:
+                                  BorderRadius.circular(9)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      locator<NavigationService>()
+                                          .navigateToCartView();
+                                    },
+                                    child: Container(
+                                      height: 50,
+                                      width: 120,
+                                      decoration: BoxDecoration(
+                                        color: kcSecondaryColor,
+                                        borderRadius:
+                                        BorderRadius.circular(20),
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Goto Cart",
+                                            style: TextStyle(
+                                                color: kcBlackColor,
+                                                fontWeight: FontWeight.w700),
                                           ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "Add Raffle to cart",
-                                                  style: TextStyle(
-                                                      color: kcBlackColor),
-                                                ),
-                                                SizedBox(width: 5),
-                                                Icon(
-                                                  Icons.shopping_bag_outlined,
-                                                  color: kcBlackColor,
-                                                ),
-                                              ],
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  verticalSpaceSmall,
+                                  Container(
+                                    height: 53,
+                                    decoration: BoxDecoration(
+                                      color: kcWhiteColor,
+                                      borderRadius:
+                                      BorderRadius.circular(20),
+                                    ),
+                                    child:  Row(
+                                      children: [
+                                        InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              decreaseRaffleQuantity(cartItem);
+                                            });
+                                            },
+                                          child: Container(
+                                            height: 30,
+                                            width: 30,
+                                            decoration: BoxDecoration(
+                                              color: kcWhiteColor,
+                                              borderRadius:
+                                              BorderRadius.circular(5),
                                             ),
+                                            child: const Center(
+                                                child: Icon(Icons.remove,
+                                                    size: 18,
+                                                    color: kcBlackColor)),
                                           ),
                                         ),
-                                      );
-                              }),
+                                        horizontalSpaceSmall,
+                                        Text(
+                                          "${cartItem.quantity}",
+                                          style: const TextStyle(
+                                              color: kcBlackColor),
+                                        ),
+                                        horizontalSpaceSmall,
+                                        InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              increaseRaffleQuantity(cartItem);
+                                            });
+                                            },
+                                          child: Container(
+                                            height: 30,
+                                            width: 30,
+                                            decoration: BoxDecoration(
+                                              color: kcWhiteColor,
+                                              borderRadius:
+                                              BorderRadius.circular(5),
+                                            ),
+                                            child: const Align(
+                                                alignment: Alignment.center,
+                                                child: Icon(Icons.add,
+                                                    size: 18,
+                                                    color: kcBlackColor)),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                            )
+                                : InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  addToRaffleCart(widget.product);
+                                });
+                              },
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: kcSecondaryColor,
+                                  borderRadius: BorderRadius.circular(9),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Add to cart",
+                                        style: TextStyle(color: kcBlackColor),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: kcBlackColor,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
                     ),
                     IconButton(
-                      icon: Icon(
-                        Icons.favorite_border_outlined,
-                        size: 30,
-                        color: isFavorited
-                            ? kcSecondaryColor
-                            : iconColor, // Toggle color
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          isFavorited = !isFavorited; // Toggle the boolean
-                        });
+                      icon: Icon(Icons.favorite_border_outlined, size: 30, color: iconColor,),
+                      onPressed: () async {
+                        // Sharing content
+                      setState(() {
+                        iconColor = kcPrimaryColor;
+                      });
                       },
                     ),
+
+
                   ],
                 ),
+
               ),
+
             ],
           ),
           Divider(),
@@ -492,6 +463,106 @@ class _ProductCardState extends State<ProductCard> {
             ),
           ),
           verticalSpaceMedium,
+          SizedBox(
+            height: 250, // Adjust height to match the size of your cards
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: filteredProductList.length,
+              itemBuilder: (context, index) {
+                Product product = filteredProductList[index];
+
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShopView(
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 222,
+                      decoration: BoxDecoration(
+                        color: uiMode.value == AppUiModes.dark
+                            ? Colors.transparent // Dark mode logo
+                            : kcWhiteColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.transparent,
+                            blurRadius: 6.0,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Card(
+                        color: uiMode.value == AppUiModes.dark
+                            ? kcDarkGreyColor // Dark mode logo
+                            : kcWhiteColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.all(Radius.circular(12)),
+                              child: Image.network(
+                                product.images?.first ?? '',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, progress) {
+                                  if (progress == null) return child;
+                                  return Center(child: CircularProgressIndicator());
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(Icons.broken_image, size: 100, color: Colors.white);
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0),
+                              child: Text(
+                                product.productName ?? 'service title',
+                                style: GoogleFonts.redHatDisplay(
+                                  fontSize: 16,
+                                  color: uiMode.value == AppUiModes.dark
+                                      ? kcWhiteColor // Dark mode logo
+                                      : kcBlackColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(5.0, 0, 8.0, 8.0),
+                              child: Text(
+                                product.productDescription ?? '',
+                                style: GoogleFonts.redHatDisplay(
+                                  fontSize: 12,
+                                  color: uiMode.value == AppUiModes.dark
+                                      ? kcWhiteColor // Dark mode logo
+                                      : kcBlackColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

@@ -13,7 +13,7 @@ import 'package:afriprize/ui/components/payment_success_page.dart';
 import 'package:afriprize/ui/views/auth/auth_view.dart' as _i5;
 import 'package:afriprize/ui/views/auth/register.dart';
 import 'package:afriprize/ui/views/cart/add_shipping.dart';
-import 'package:afriprize/ui/views/cart/raffle_cart_view.dart' as _i8;
+import 'package:afriprize/ui/views/cart/cart_view.dart' as _i8;
 import 'package:afriprize/ui/views/cart/add_shipping.dart' as _i13;
 import 'package:afriprize/ui/views/change_password/change_password_view.dart'
     as _i17;
