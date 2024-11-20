@@ -145,6 +145,7 @@ class AuthViewModel extends BaseViewModel {
       }
     } catch (e) {
       log.i(e);
+      snackBar.showSnackbar(message: e.toString());
     }finally{
       setBusy(false);
       notifyListeners();

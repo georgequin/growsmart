@@ -35,8 +35,9 @@ import 'shop_viewmodel.dart';
 ///
 
 class ShopView extends StackedView<ShopViewModel> {
-  ShopView({Key? key}) : super(key: key);
+  final String? filter; // Optional argument for filtering products or categories
 
+  ShopView({Key? key, this.filter}) : super(key: key);
   final PageController _pageController = PageController();
 
   @override
@@ -45,27 +46,6 @@ class ShopView extends StackedView<ShopViewModel> {
     ShopViewModel viewModel,
     Widget? child,
   ) {
-    if (viewModel.onboarded == false &&
-        viewModel.showDialog &&
-        !viewModel.modalShown) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        viewModel.modalShown =
-            true; // Set this to true to prevent showing the modal again
-        showDialog(
-          barrierColor: Colors.black.withOpacity(0.9),
-          context: context,
-          builder: (BuildContext context) {
-            return const AdventureModal();
-          },
-        ).then((_) {
-          // Once the modal is dismissed, update the onboarded status
-          locator<LocalStorage>().save(LocalStorageDir.onboarded, true);
-          viewModel.showDialog = false;
-          viewModel.modalShown =
-              false; // Reset it in case the user reopens the view later
-        });
-      });
-    }
 
     final List<Map<String, String>> slides = [
     {
@@ -90,191 +70,15 @@ class ShopView extends StackedView<ShopViewModel> {
       'userType': 'Elite',
     },
   ];
+    List<Product> filteredList = viewModel.filteredProductList;
+    if (filter != null && filter!.isNotEmpty) {
+      filteredList = viewModel.filteredProductList.where((product) {
+        final lowerFilter = filter!.toLowerCase();
+        return (product.productName?.toLowerCase().contains(lowerFilter) ?? false) ||
+            (product.productDescription?.toLowerCase().contains(lowerFilter) ?? false);
+      }).toList();
+    }
 
-    // return SafeArea(
-    //   child: Scaffold(
-    //     body: NestedScrollView(
-    //       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-    //         return [
-    //           SliverOverlapAbsorber(
-    //             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-    //             sliver: SliverAppBar(
-    //               expandedHeight: 300.0,
-    //               pinned: true,
-    //               floating: true,
-    //               flexibleSpace:  FlexibleSpaceBar(
-    //                 background: CarouselSlider.builder(
-    //                   options: CarouselOptions(
-    //                     height: 300,
-    //                     viewportFraction: 1.0,
-    //                     autoPlay: true,
-    //                   ),
-    //                   itemCount: slides.length,
-    //                   itemBuilder: (BuildContext context, int index, int pageIndex) {
-    //                     final slide = slides[index];
-    //                     return Stack(
-    //                       fit: StackFit.expand,
-    //                       children: [
-    //                         Image.asset(
-    //                           slide['image']!,
-    //                           fit: BoxFit.cover,
-    //                         ),
-    //                         Container(
-    //                           color: Colors.black.withOpacity(0.3),
-    //                         ),
-    //                         Padding(
-    //                           padding: const EdgeInsets.all(20.0),
-    //                           child: Column(
-    //                             mainAxisAlignment: MainAxisAlignment.end,
-    //                             crossAxisAlignment: CrossAxisAlignment.start,
-    //                             children: [
-    //                               Spacer(),
-    //                               Text(
-    //                                 slide['title']!,
-    //                                 style: TextStyle(
-    //                                   color: Colors.white,
-    //                                   fontSize: 28,
-    //                                   fontWeight: FontWeight.bold,
-    //                                 ),
-    //                               ),
-    //                               Text(
-    //                                 slide['description']!,
-    //                                 style: TextStyle(
-    //                                   color: Colors.white70,
-    //                                   fontSize: 18,
-    //                                 ),
-    //                               ),
-    //                             ],
-    //                           ),
-    //                         ),
-    //                       ],
-    //                     );
-    //                   },
-    //                 ),
-    //               ),
-    //               actions: [
-    //                 Autocomplete<Product>(
-    //
-    //                   optionsBuilder: (TextEditingValue productTextEditingValue) {
-    //
-    //                     // if user is input nothing
-    //                     if (productTextEditingValue.text == '') {
-    //                       return const Iterable<Product>.empty();
-    //                     }
-    //
-    //                     // if user is input something the build
-    //                     // suggestion based on the user input
-    //                     return viewModel.filteredProductList.where((Product product) {
-    //                       final query = productTextEditingValue.text.toLowerCase();
-    //                       return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
-    //                           (product.brandName != null && product.brandName!.toLowerCase().contains(query));
-    //                     });
-    //
-    //                   },
-    //                   displayStringForOption: (Product product) => product.productName ?? '',
-    //
-    //                   // when user click on the suggested
-    //                   // item this function calls
-    //                   onSelected: (Product value) {
-    //                     debugPrint('You just selected $value.productName');
-    //                     showModalBottomSheet(
-    //                       context: context,
-    //                       isScrollControlled: true,
-    //                       isDismissible: true,
-    //                       shape: const RoundedRectangleBorder(
-    //                         borderRadius: BorderRadius.only(
-    //                             topLeft: Radius.circular(25.0),
-    //                             topRight: Radius.circular(25.0)),
-    //                       ),
-    //                       // barrierColor: Colors.black.withAlpha(50),
-    //                       // backgroundColor: Colors.transparent,
-    //                       backgroundColor: Colors.black.withOpacity(0.7),
-    //                       builder: (BuildContext context) {
-    //                         return ProductCard(product: value);
-    //                       },
-    //                     );
-    //                   },
-    //                     fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
-    //                       return Padding(
-    //                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    //                         child: ConstrainedBox(
-    //                           constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9), // Set a maximum width constraint
-    //                           child: Container(
-    //                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    //                             decoration: BoxDecoration(
-    //                               border: Border.all(color: const Color(0xFFEBE4E4)), // Grey border around the search bar
-    //                               borderRadius: BorderRadius.circular(8.0), // Rounded corners
-    //                             ),
-    //                             child: Row(
-    //                               mainAxisSize: MainAxisSize.min, // Prevents the Row from expanding infinitely
-    //                               children: [
-    //                                 Flexible( // Use Flexible instead of Expanded
-    //                                   fit: FlexFit.loose,
-    //                                   child: TextField(
-    //                                     controller: textEditingController,
-    //                                     focusNode: focusNode,
-    //                                     decoration: InputDecoration(
-    //                                       hintText: 'Search product...',
-    //                                       border: InputBorder.none, // Removes the default border
-    //                                       contentPadding: EdgeInsets.symmetric(vertical: 15.0), // Adjust padding
-    //                                     ),
-    //                                   ),
-    //                                 ),
-    //                                 IconButton(
-    //                                   icon: Icon(Icons.search), // Search icon outside the text field
-    //                                   onPressed: () {
-    //                                     // Optionally handle search button press here
-    //                                   },
-    //                                 ),
-    //                               ],
-    //                             ),
-    //                           ),
-    //                         ),
-    //                       );
-    //                     }
-    //
-    //                 ),
-    //               ],
-    //             ),
-    //           ),
-    //         ];
-    //       },
-    //       body: Builder(
-    //         builder: (BuildContext context) {
-    //           return CustomScrollView(
-    //             slivers: [
-    //               SliverOverlapInjector(
-    //                 handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-    //               ),
-    //               SliverToBoxAdapter(
-    //                 child: Transform.translate(
-    //                   offset: Offset(0, -20),
-    //                   child: Padding(
-    //                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    //                     child:  Column(
-    //                       children: [
-    //                         SingleChildScrollView(
-    //                           scrollDirection: Axis.horizontal,
-    //                           child: Row(
-    //                             children: viewModel.filteredCategories.map((category) {
-    //                               return _buildCategoryChip(category, viewModel);
-    //                             }).toList(),
-    //                           ),
-    //                         ),
-    //                         popularDrawsSlider(context, viewModel),
-    //                       ],
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //
-    //             ],
-    //           );
-    //         },
-    //       ),
-    //     ),
-    //   ),
-    // );
 
     return SafeArea(
       child: Scaffold(

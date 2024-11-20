@@ -49,26 +49,20 @@ class DashboardView extends StackedView<DashboardViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 100,
-        title: ValueListenableBuilder(
-          valueListenable: uiMode,
-          builder: (context, AppUiModes mode, child) {
-            return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Image.asset(
-                    "assets/images/easy_ph_logo.png",
-                    height: 50, // Adjust height as needed
-                    fit: BoxFit.contain,
-                  )
-                ]);
-          },
-        ),
-        centerTitle: false,
-        actions:
-            _buildAppBarActions(context, viewModel.appBarLoading, viewModel),
-      ),
+      appBar:  AppBar(
+          title: ValueListenableBuilder(
+            valueListenable: uiMode,
+            builder: (context, AppUiModes mode, child) {
+              return CircleAvatar(
+                backgroundImage: AssetImage("assets/images/easy_ph_logo.png"),
+                // backgroundImage: AssetImage(profile.value.profilePicture ?? "assets/images/display_pic.png"),
+                radius: 20, // Adjust size as needed
+              );
+            },
+          ),
+          centerTitle: false,
+          actions:
+          _buildAppBarActions(context, viewModel.appBarLoading, viewModel)),
       body: RefreshIndicator(
         onRefresh: () async {
           await viewModel.refreshData();
@@ -94,8 +88,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             textStyle: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color:
-                  uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+              color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
             ),
           ),
         ),
@@ -113,78 +106,31 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     products: solarProducts,
                   );
                 },
-                child: actionContainer('assets/images/solar.jpg'),
+                child: actionContainer('assets/images/solar.jpg', "Solar Energy"),
               ),
               GestureDetector(
                 onTap: () {
                   showProductDialog(
                     context: context,
-                    title: "Lighting electronics",
-                    products:
-                        lightingProducts, // Replace with your lighting products list
+                    title: "Lighting Electronics",
+                    products: lightingProducts,
                   );
                 },
-                child: actionContainer('assets/images/107.jpg'),
+                child: actionContainer('assets/images/107.jpg', "Lighting"),
               ),
               GestureDetector(
                 onTap: () {
-                  print('there is the third click');
                   locator<NavigationService>().navigateToNotificationView();
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      width: 110, // Adjust width according to your design
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        boxShadow: [
-                          const BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5.0,
-                            spreadRadius: 1.0,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Image.asset(
-                        'assets/images/2148087576.jpg', // Second image
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
+                child: actionContainer('assets/images/2148087576.jpg', "Services"),
               ),
               GestureDetector(
                 onTap: () {
-                  print('there is the third click');
-                  locator<NavigationService>().navigateToNotificationView();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+                    return ShopView();
+                  }));
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      width: 110, // Adjust width according to your design
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        boxShadow: [
-                          const BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5.0,
-                            spreadRadius: 1.0,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Image.asset(
-                        'assets/images/2148254069.jpg', // Second image
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
+                child: actionContainer('assets/images/2148254069.jpg', "Electronices"),
               ),
             ],
           ),
@@ -193,32 +139,94 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  Widget actionContainer(String imagePath) {
+  Widget actionContainer(String imagePath, String title) {
     return Padding(
       padding: const EdgeInsets.only(left: 0.0, right: 8.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10.0),
-        child: Container(
-          width: 110,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5.0,
-                spreadRadius: 1.0,
-                offset: Offset(0, 3),
+        child: Stack(
+          children: [
+            Container(
+              width: 110, // Adjust width according to your design
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                boxShadow: [
+                  const BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 5.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(0, 3),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Image.asset(
-            imagePath,
-            fit: BoxFit.cover,
-          ),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Overlay
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5), // Semi-transparent overlay
+              ),
+            ),
+            // Title Text
+            Positioned(
+              bottom: 8,
+              left: 8,
+              right: 8,
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 4.0,
+                      color: Colors.black,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+
+  // Widget actionContainer(String imagePath) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(left: 0.0, right: 8.0),
+  //     child: ClipRRect(
+  //       borderRadius: BorderRadius.circular(10.0),
+  //       child: Container(
+  //         width: 110,
+  //         decoration: BoxDecoration(
+  //           color: Colors.grey[200],
+  //           boxShadow: const [
+  //             BoxShadow(
+  //               color: Colors.black12,
+  //               blurRadius: 5.0,
+  //               spreadRadius: 1.0,
+  //               offset: Offset(0, 3),
+  //             ),
+  //           ],
+  //         ),
+  //         child: Image.asset(
+  //           imagePath,
+  //           fit: BoxFit.cover,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void showProductDialog({
     required BuildContext context,
@@ -276,6 +284,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
                         ),
                         onTap: () {
                           Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+                            return ShopView();
+                          }));
                           print('Selected Product: ${products[index]}');
                         },
                       );
@@ -1510,82 +1521,38 @@ class DashboardView extends StackedView<DashboardViewModel> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (userLoggedIn.value == true) ...[
-                _notificationIcon(unreadCount.value, context, viewModel),
+                 _notificationIcon(unreadCount.value, context, viewModel),
                 const SizedBox(width: 3),
                 InkWell(
-                  onTap: () {
-                    //  locator<NavigationService>().navigateTo(Routes.wallet);
+                  onTap: (){
+                    locator<NavigationService>().navigateTo(Routes.profileView);
                   },
-                  child: Row(
-                    children: [
-                      Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Stack(
-                              alignment: Alignment.bottomRight,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-
-                                    // viewModel.updateProfilePicture();
-                                  },
-                                  child: ProfilePicture(
-                                    size: 40,
-                                    url: profile.value.profilePicture,
-                                  ),
-                                ),
-                                // horizontalSpaceLarge,
-                                GestureDetector(onTap: () {
-                                  // Show the image in a dialog
-                                })
-                              ],
-                            ),
-                            horizontalSpaceMedium,
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "${profile.value.firstName} ${profile.value.lastName}",
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  child: CircleAvatar(
+                  // backgroundImage: AssetImage("assets/images/easy_ph_logo.png"),
+                  backgroundImage: AssetImage(profile.value.profilePicture ?? "assets/images/display_pic.png"),
+                  radius: 20, // Adjust size as needed
                   ),
-                ),
+                )
               ] else ...[
                 InkWell(
                   onTap: () {
                     locator<NavigationService>().navigateTo(Routes.authView);
                   },
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: kcSecondaryColor
-                          .withOpacity(0.2), // Capsule background color
-                      borderRadius:
-                          BorderRadius.circular(10), // Rounded capsule shape
+                      color: kcSecondaryColor.withOpacity(0.2), // Capsule background color
+                      borderRadius: BorderRadius.circular(10), // Rounded capsule shape
                     ),
-                    child: const Row(
-                      children: [
-                        Text(
-                          "Login",
-                          style: TextStyle(
-                            color: kcBlackColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(
+                        color: kcBlackColor,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
@@ -1593,6 +1560,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ],
           ),
         )
+
       ];
     }
   }
