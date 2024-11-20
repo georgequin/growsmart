@@ -81,14 +81,16 @@ class _ProfileScreen extends State<ProfileScreen> {
         print('Media ID received: $mediaId');
 
         // Now update the profile picture with the media_id
-        ApiResponse updateProfileRes = await locator<Repository>().updateProfilePicture({
+        ApiResponse updateProfileRes =
+            await locator<Repository>().updateProfilePicture({
           "media_id": mediaId,
         });
 
         print('Profile update response: ${updateProfileRes.statusCode}');
 
         if (updateProfileRes.statusCode == 200) {
-          snackBar.showSnackbar(message: "Profile picture updated successfully!");
+          snackBar.showSnackbar(
+              message: "Profile picture updated successfully!");
           getProfile();
         } else {
           snackBar.showSnackbar(message: "Failed to update profile picture.");
@@ -105,7 +107,6 @@ class _ProfileScreen extends State<ProfileScreen> {
       });
     }
   }
-
 
   void getProfile() async {
     try {
@@ -158,9 +159,8 @@ class _ProfileScreen extends State<ProfileScreen> {
     );
 
     return Scaffold(
-      backgroundColor: uiMode.value == AppUiModes.dark
-          ? kcDarkGreyColor
-          : kcWhiteColor,
+      backgroundColor:
+          uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
       appBar: AppBar(
         toolbarHeight: 100.0,
         title: const Text('Profile Details'),
@@ -195,9 +195,9 @@ class _ProfileScreen extends State<ProfileScreen> {
                             alignment: Alignment.bottomRight,
                             children: [
                               ProfilePicture(
-                                  size: 100,
-                                  url: profile.value.profilePicture,
-                                  ),
+                                size: 100,
+                                url: profile.value.profilePicture,
+                              ),
                               GestureDetector(
                                 onTap: () {
                                   updateProfilePicture();
@@ -315,23 +315,25 @@ class _ProfileScreen extends State<ProfileScreen> {
                   horizontalSpaceLarge,
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0), // Optional padding for spacing
+                      padding: const EdgeInsets.all(
+                          8.0), // Optional padding for spacing
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Aligns items properly
+                            mainAxisAlignment: MainAxisAlignment
+                                .spaceBetween, // Aligns items properly
                             children: [
-                              Text(
-                                "Create Afritag",
-                                style: TextStyle(
-                                  color: uiMode.value == AppUiModes.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              // Text(
+                              //   "Create Afritag",
+                              //   style: TextStyle(
+                              //     color: uiMode.value == AppUiModes.dark
+                              //         ? Colors.white
+                              //         : Colors.black,
+                              //     fontSize: 12,
+                              //     fontWeight: FontWeight.bold,
+                              //   ),
+                              // ),
                             ],
                           ),
                           verticalSpaceSmall,
@@ -346,55 +348,50 @@ class _ProfileScreen extends State<ProfileScreen> {
                             ),
                           ),
                           verticalSpaceSmall,
-
-                          Row(
-                            children: [
-                             Container(
-                                width: 25, // Width and height of the circle
-                                height: 25,
-                                decoration: BoxDecoration(
-                                  color:
-                                  kcSecondaryColor, // Background color of the circle
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color:
-                                    kcWhiteColor, // Border color of the circle
-                                    width: 2, // Border width
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: kcWhiteColor, // Icon color
-                                  size: 12, // Icon size
-                                ),
-                              ),
-                              SizedBox(width: 8), // Adds spacing between the icon and text
-                              Text(
-                                "Create Afri Tag",
-                                style: TextStyle(
-                                  color: uiMode.value == AppUiModes.dark
-                                      ? Colors.white
-                                      : kcSecondaryColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-
+                          // Row(
+                          //   children: [
+                          //    Container(
+                          //       width: 25, // Width and height of the circle
+                          //       height: 25,
+                          //       decoration: BoxDecoration(
+                          //         color:
+                          //         kcSecondaryColor, // Background color of the circle
+                          //         shape: BoxShape.circle,
+                          //         border: Border.all(
+                          //           color:
+                          //           kcWhiteColor, // Border color of the circle
+                          //           width: 2, // Border width
+                          //         ),
+                          //       ),
+                          //       child: const Icon(
+                          //         Icons.add,
+                          //         color: kcWhiteColor, // Icon color
+                          //         size: 12, // Icon size
+                          //       ),
+                          //     ),
+                          //     SizedBox(width: 8),
+                          //     // Adds spacing between the icon and text
+                          //     // Text(
+                          //     //   "Create Afri Tag",
+                          //     //   style: TextStyle(
+                          //     //     color: uiMode.value == AppUiModes.dark
+                          //     //         ? Colors.white
+                          //     //         : kcSecondaryColor,
+                          //     //     fontSize: 12,
+                          //     //     fontWeight: FontWeight.bold,
+                          //     //   ),
+                          //     // ),
+                          //   ],
+                          // ),
                         ],
                       ),
                     ),
                   ),
-
                   horizontalSpaceMedium,
-
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 3.0),
                     child: Column(
-                      children: [
-
-                      ],
+                      children: [],
                     ),
                   ),
                   horizontalSpaceLarge,

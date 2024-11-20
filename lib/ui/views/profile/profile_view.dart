@@ -165,20 +165,20 @@ class ProfileView extends StatelessWidget {
                           ),
                           ListTile(
                             onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                // barrierColor: Colors.black.withAlpha(50),
-                                // backgroundColor: Colors.transparent,
-                                backgroundColor: Colors.black.withOpacity(0.7),
-                                builder: (BuildContext context) {
-                                  return const FractionallySizedBox(
-                                    heightFactor:
-                                        1.0, // 70% of the screen's height
-                                    child: ProfileScreen(),
-                                  );
-                                },
-                              );
+                              // showModalBottomSheet(
+                              //   context: context,
+                              //   isScrollControlled: true,
+                              //   // barrierColor: Colors.black.withAlpha(50),
+                              //   // backgroundColor: Colors.transparent,
+                              //   backgroundColor: Colors.black.withOpacity(0.7),
+                              //   builder: (BuildContext context) {
+                              //     return const FractionallySizedBox(
+                              //       heightFactor:
+                              //           1.0, // 70% of the screen's height
+                              //       child: ProfileScreen(),
+                              //     );
+                              //   },
+                              // );
                             },
                             leading: Icon(Icons.shopping_cart,
                               color: kcOrangeColor,
