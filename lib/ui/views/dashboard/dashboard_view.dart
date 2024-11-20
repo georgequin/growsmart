@@ -102,8 +102,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
         const SizedBox(height: 10),
         Container(
           height: 60, // Adjust height according to your design
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
             children: [
               GestureDetector(
                 onTap: () {
@@ -113,7 +113,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     products: solarProducts,
                   );
                 },
-                child: actionContainer('assets/images/services.png'),
+                child: actionContainer('assets/images/solar.jpg'),
               ),
               GestureDetector(
                 onTap: () {
@@ -124,7 +124,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                         lightingProducts, // Replace with your lighting products list
                   );
                 },
-                child: actionContainer('assets/images/lightingelectronics.png'),
+                child: actionContainer('assets/images/107.jpg'),
               ),
               GestureDetector(
                 onTap: () {
@@ -149,7 +149,37 @@ class DashboardView extends StackedView<DashboardViewModel> {
                         ],
                       ),
                       child: Image.asset(
-                        'assets/images/solarenergy.png', // Second image
+                        'assets/images/2148087576.jpg', // Second image
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  print('there is the third click');
+                  locator<NavigationService>().navigateToNotificationView();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 0.0, right: 8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Container(
+                      width: 110, // Adjust width according to your design
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        boxShadow: [
+                          const BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 5.0,
+                            spreadRadius: 1.0,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/2148254069.jpg', // Second image
                         fit: BoxFit.cover,
                       ),
                     ),

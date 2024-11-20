@@ -1,5 +1,9 @@
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:stacked_services/stacked_services.dart';
+import '../../../app/app.locator.dart';
+import '../../../core/data/models/profile.dart';
+import '../../../core/network/interceptors.dart';
 import '../../../state.dart';
 import '../../common/app_colors.dart';
 import '../../components/submit_button.dart';
@@ -17,25 +21,10 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
   final TextEditingController cityController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
+  bool loading = false;
+  bool isShippingLoading = false;
 
-  List<Map<String, dynamic>> shippingAddresses = [
-    {
-      'name': '${profile.value.firstName} ${profile.value.lastName}',
-      'address': '3 Newbridge Court, Chino Hills, CA 91709',
-      'isDefaultPayment': false,
-    },
-  ];
-
-  void addAddress(String name, String address, String city, String state, String phoneNumber, bool isDefaultPayment) {
-    setState(() {
-      shippingAddresses.add({
-        'name': '${profile.value.firstName} ${profile.value.lastName}',
-        'address': '$address, $city, $state',
-        'phone': phoneNumber,
-        'isDefaultPayment': isDefaultPayment,
-      });
-    });
-  }
+  List<Address> shippingAddresses = [];
 
   void deleteAddress(int index) {
     setState(() {
@@ -62,7 +51,10 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
           builder: (BuildContext context, StateSetter setModalState) {
             return Padding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
+                bottom: MediaQuery
+                    .of(context)
+                    .viewInsets
+                    .bottom,
               ),
               child: SingleChildScrollView(
                 child: Padding(
@@ -72,7 +64,8 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                     children: [
                       const Text(
                         'Add Address',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight
+                            .bold),
                       ),
                       const SizedBox(height: 16),
 
@@ -107,7 +100,8 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                             value: isDefaultPayment,
                             activeColor: Colors.black,
                             checkColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5)),
                             onChanged: (value) {
                               setModalState(() {
                                 isDefaultPayment = value ?? false;
@@ -126,13 +120,15 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                                 cityController.text.isNotEmpty &&
                                 stateController.text.isNotEmpty &&
                                 phoneNumberController.text.isNotEmpty) {
-                              addAddress(name, houseAddress, city, state, phoneNumber, isDefaultPayment);
+                              createNewShipping();
+                              // addAddress(
+                              //     name, houseAddress, city, state, phoneNumber,
+                              //     isDefaultPayment);
                             }
                             houseAddressController.clear();
                             cityController.clear();
                             stateController.clear();
                             phoneNumberController.clear();
-                            Navigator.pop(context);
                           },
                           color: kcPrimaryColor),
                     ],
@@ -146,6 +142,63 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
     );
   }
 
+  Future<void> createNewShipping() async {
+    try {
+      loading = true;
+      final response = await repo.saveShipping({
+        "address": houseAddressController.text,
+        "city": cityController.text,
+        "state": stateController.text,
+        "phoneNumber": phoneNumberController.text,
+        "type": "Shipping"
+      });
+
+      if (response.statusCode == 200) {
+        locator<SnackbarService>().showSnackbar(message: "Created address successfully", duration: Duration(seconds: 2));
+        loading = false;
+      } else {
+        Navigator.pop(context);
+        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
+      }
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(message: "Failed to create address: $e", duration: Duration(seconds: 2));
+    }finally{
+      loading = false;
+    }
+  }
+
+  Future<void> getShippings() async {
+    try {
+      isShippingLoading = true;
+      final response = await repo.getAddresses();
+
+      if (response.statusCode == 200) {
+        // Access the `data` key in the response before mapping
+        final List<dynamic> addressList = response.data['data'] ?? [];
+
+        // Parse the address data
+        shippingAddresses = addressList
+            .map((item) => Address.fromJson(Map<String, dynamic>.from(item)))
+            .toList();
+
+        print('Shipping addresses: $shippingAddresses');
+      } else {
+        locator<SnackbarService>().showSnackbar(
+          message: response.data["message"],
+          duration: Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(
+        message: "Failed to fetch addresses: $e",
+        duration: Duration(seconds: 2),
+      );
+    } finally {
+      isShippingLoading = false;
+      setState(() {}); // Update the UI with the new data
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,12 +208,7 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
       body: ListView.builder(
         itemCount: shippingAddresses.length,
         itemBuilder: (context, index) {
-          final address = shippingAddresses[index];
-          List<String> addressParts = address['address'].split(',');
-          String firstLine = addressParts.isNotEmpty ? addressParts[0] + "," : "";
-          String secondLine = addressParts.length > 1
-              ? addressParts.sublist(1).join(',').trim()
-              : "";
+          Address address = shippingAddresses[index];
 
           return Card(
             color: Colors.white,
@@ -178,7 +226,7 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        address['name'],
+                        address.address,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -199,22 +247,23 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 4),
-                      Text(firstLine),
-                      Text(secondLine),
+                      Text(address.city),
+                      Text(address.state),
                       const SizedBox(height: 2),
                       Row(
                         children: [
-                          Checkbox(
-                            value: address['isDefaultPayment'],
-                            activeColor: Colors.black,
-                            checkColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                            onChanged: (value) {
-                              setState(() {
-                                address['isDefaultPayment'] = value;
-                              });
-                            },
-                          ),
+
+                          // Checkbox(
+                          //   value: address[address.],
+                          //   activeColor: Colors.black,
+                          //   checkColor: Colors.white,
+                          //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                          //   onChanged: (value) {
+                          //     setState(() {
+                          //       address['isDefaultPayment'] = value;
+                          //     });
+                          //   },
+                          // ),
                           const SizedBox(width: 2),
                           const Expanded(
                             child: Text(
