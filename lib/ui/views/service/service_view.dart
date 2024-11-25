@@ -8,8 +8,8 @@ import '../../common/app_colors.dart';
 import '../../components/submit_button.dart';
 import 'service_viewmodel.dart';
 
-class Servicesview extends StackedView<ServicesviewModel> {
-  const Servicesview({Key? key}) : super(key: key);
+class ServicesView extends StackedView<ServicesviewModel> {
+  const ServicesView({Key? key}) : super(key: key);
 
   @override
   Widget builder(BuildContext context, ServicesviewModel viewModel, Widget? child) {

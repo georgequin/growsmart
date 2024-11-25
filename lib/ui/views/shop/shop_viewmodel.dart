@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
 import 'package:afriprize/core/data/models/cart_item.dart';
@@ -89,7 +91,7 @@ class ShopViewModel extends BaseViewModel {
     setBusy(true);
     print("loading the initials" );
     notifyListeners();
-    await loadProducts();
+    await loadProduct();
     await loadCategories();
     if (userLoggedIn.value == true) {
       initCart();
@@ -101,28 +103,40 @@ class ShopViewModel extends BaseViewModel {
   }
 
 
-  Future<void> loadProducts() async {
+  Future<void> loadProduct() async {
+    print('loading products....');
+    try {
 
-    if (productList.isEmpty) {
-      // setBusy(true);
-      notifyListeners();
+
+      dynamic storedJsonProduct = await locator<LocalStorage>().fetch(LocalStorageDir.product);
+      log.i("Loaded jsonProducts from storage: $storedJsonProduct");
+
+
+
+
+      if ( storedJsonProduct != null && storedJsonProduct.isNotEmpty) {
+        log.i("Loaded decoded jsonProducts from storage: ${jsonDecode(storedJsonProduct)}");
+        List<dynamic> storedProducts = jsonDecode(storedJsonProduct);
+        log.i("Loaded Products from storage: $storedProducts");
+        // Populate productList and filteredProductList
+        productList = storedProducts
+            .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        filteredProductList = productList;
+
+        // Immediately notify UI to display data
+        notifyListeners();
+      }else{
+        print('no value to load');
+      }
+
+      // Make API call in the background
+      getProducts();
+    } catch (e) {
+      log.e("Error loading products: $e");
     }
-
-    dynamic storedProducts = await locator<LocalStorage>().fetch(LocalStorageDir.product);
-    if (storedProducts != null) {
-      // Extracting and filtering only active raffles
-      productList = List<Map<String, dynamic>>.from(storedProducts)
-          .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-      filteredProductList = productList;
-      notifyListeners();
-    }
-
-    await getProducts();
-    // setBusy(false);
-    notifyListeners();
-
   }
+
 
  Future<void> refreshData() async {
     setBusy(true);
@@ -142,34 +156,35 @@ class ShopViewModel extends BaseViewModel {
   }
 
   Future<void> getProducts() async {
-    setBusy(true);
-
+    print('getting online products');
     try {
       ApiResponse res = await repo.getProducts();
 
       if (res.statusCode == 200) {
-
-        productList = (res.data["products"] as List)
+        // Fetch updated products from API
+        List<Product> updatedProductList = (res.data["products"] as List)
             .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
 
-        print("${res.data}");
-                List<Map<String, dynamic>> storedProducts = productList.map((e) => e.toJson()).toList();
-                locator<LocalStorage>().save(LocalStorageDir.product, storedProducts);
-                notifyListeners();
+        // Update the product list
+        productList = updatedProductList;
         filteredProductList = productList;
+
+        // Save updated data to local storage
+        List<Map<String, dynamic>> storedProducts =
+        productList.map((e) => e.toJson()).toList();
+        await locator<LocalStorage>().save(LocalStorageDir.product, jsonEncode(storedProducts));
+
+        log.i("Updated Products from API saved to storage.");
+
+        // Notify UI about updated data
         notifyListeners();
-      }else {
-        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
-        setBusy(false);
+      } else {
+        log.e("API Error: ${res.data["message"]}");
       }
     } catch (e) {
-      log.i(e);
-      setBusy(false);
+      log.e("Error fetching products: $e");
     }
-    setBusy(false);
-    notifyListeners();
-
   }
 
   Future<void> loadCategories() async {

@@ -171,7 +171,7 @@ class StackedRouter extends _i1.RouterBase {
     ),
     _i1.RouteDef(
       Routes.notificationView,
-      page: _i9.Servicesview,
+      page: _i9.ServicesView,
     ),
     _i1.RouteDef(
       Routes.profileView,
@@ -282,9 +282,9 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i9.Servicesview: (data) {
+    _i9.ServicesView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i9.Servicesview(),
+        builder: (context) => const _i9.ServicesView(),
         settings: data,
       );
     },

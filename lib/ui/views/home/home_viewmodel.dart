@@ -24,7 +24,6 @@ import '../../../core/network/interceptors.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
-import '../../common/ui_helpers.dart';
 import '../draws/draws_view.dart';
 import '../service/service_view.dart';
 import '../shop/shop_view.dart';
@@ -39,14 +38,13 @@ class HomeViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   List<Widget> pages = [
      DashboardView(),
-     const DrawsView(),
+      ShopView(),
     const CartView(),
-    const Servicesview(),
+    const ServicesView(),
     const ProfileView()
   ];
 
-  int selectedRafflesTab = 0;
-  int selectedShopTab = 0;
+  int selectedTab = 0;
 
   @override
   void dispose() {
@@ -56,24 +54,6 @@ class HomeViewModel extends BaseViewModel {
   }
 
 
-
-  // Pages for the Raffles dashboard
-  List<Widget> rafflesPages = [
-    DashboardView(),
-    ShopView(),
-    CartView(),
-    const Servicesview(),
-    const ProfileView()
-  ];
-
-  // Pages for the Shop dashboard
-  List<Widget> shopPages = [
-    // ShopDashboardView(),
-     const DrawsView(),
-    const Servicesview(),
-    const ProfileView()
-  ];
-
   HomeViewModel() {
     currentModuleNotifier.addListener(notifyListeners);
   }
@@ -82,19 +62,10 @@ class HomeViewModel extends BaseViewModel {
   String get counterLabel => 'Counter is: $_counter';
 
   int _counter = 0;
-  int selectedTab = 0;
 
-  AppModules selectedModule = AppModules.raffle;
 
-  // void toggleModule(bool isRafflesSelected) {
-  //   selectedModule = isRafflesSelected ? AppModules.raffle : AppModules.shop;
-  //   notifyListeners();
-  // }
 
-  void toggleModule(bool isRafflesSelected) {
-    currentModuleNotifier.value = isRafflesSelected ? AppModules.raffle : AppModules.shop;
-    notifyListeners();
-  }
+
 
   //for test
   void incrementCounter() {
@@ -103,55 +74,15 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void changeSelected(int index, AppModules module) {
-    if (index != 0 && !userLoggedIn.value) {
-      showModalBottomSheet(
-          context: StackedService.navigatorKey!.currentState!.context,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20), topLeft: Radius.circular(20))),
-          builder: (ctx) {
-            return Container(
-              padding: const EdgeInsets.all(30),
-              height: 200,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("You need to login to continue"),
-                  verticalSpaceMedium,
-                  SubmitButton(
-                    isLoading: false,
-                    label: "Login",
-                    submit: () {
-                      locator<NavigationService>().replaceWithAuthView();
-                    },
-                    color: kcSecondaryColor,
-                  )
-                ],
-              ),
-            );
-          });
-      return;
-    }
-
-      selectedRafflesTab = index;
-
+    selectedTab = index;
     notifyListeners();
   }
 
 
   Widget get currentPage {
-    return currentModuleNotifier.value == AppModules.raffle
-        ? rafflesPages[selectedRafflesTab]
-        : shopPages[selectedShopTab];
+    return pages[selectedTab];
   }
 
-  void _showDialog() {
-    _dialogService.showCustomDialog(
-      variant: DialogType.infoAlert,
-      title: 'Stacked Rocks!',
-      description: 'Give stacked $_counter stars on Github',
-    );
-  }
 
   void showBottomSheet() {
     _bottomSheetService.showCustomSheet(
@@ -186,7 +117,7 @@ class HomeViewModel extends BaseViewModel {
                 const ListTile(
                   title: Text('App Updates', style: TextStyle(fontSize: 22,
                     fontFamily: "Panchang", fontWeight: FontWeight.bold, color: kcSecondaryColor)),
-                  subtitle: Text('A new version of Afriprize is now available.'
+                  subtitle: Text('A new version of Easy PH is now available.'
                       ' download now to enjoy our lastest features.', style: TextStyle(fontSize: 13,
                     fontFamily: "Panchang",)),
                 ),

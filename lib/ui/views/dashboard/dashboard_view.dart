@@ -53,10 +53,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
           title: ValueListenableBuilder(
             valueListenable: uiMode,
             builder: (context, AppUiModes mode, child) {
-              return CircleAvatar(
+              return const CircleAvatar(
                 backgroundImage: AssetImage("assets/images/easy_ph_logo.png"),
-                // backgroundImage: AssetImage(profile.value.profilePicture ?? "assets/images/display_pic.png"),
-                radius: 20, // Adjust size as needed
+                 radius: 20,
               );
             },
           ),
@@ -200,33 +199,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-
-  // Widget actionContainer(String imagePath) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 0.0, right: 8.0),
-  //     child: ClipRRect(
-  //       borderRadius: BorderRadius.circular(10.0),
-  //       child: Container(
-  //         width: 110,
-  //         decoration: BoxDecoration(
-  //           color: Colors.grey[200],
-  //           boxShadow: const [
-  //             BoxShadow(
-  //               color: Colors.black12,
-  //               blurRadius: 5.0,
-  //               spreadRadius: 1.0,
-  //               offset: Offset(0, 3),
-  //             ),
-  //           ],
-  //         ),
-  //         child: Image.asset(
-  //           imagePath,
-  //           fit: BoxFit.cover,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   void showProductDialog({
     required BuildContext context,
@@ -600,333 +572,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  Widget buildParticipantsAvatars(List<Participant> participants) {
-    return SizedBox(
-      height: 25, // Adjust the size to match the avatar size
-      child: Stack(
-        children: participants.asMap().entries.map((entry) {
-          int index = entry.key;
-          Participant participant = entry.value;
-          double overlapOffset = 20.0; // Control the overlap amount
-          return Positioned(
-            left: index * overlapOffset,
-            child: participant.profilePic?.url != null
-                ? ClipOval(
-                    child: Image.network(
-                      participant.profilePic!.url!,
-                      width: 25,
-                      height: 25,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : _buildInitialsCircle(
-                    participant), // Show initials if no image
-          );
-        }).toList(),
-      ),
-    );
-  }
 
-  Widget _buildInitialsCircle(Participant participant) {
-    String initials = _getInitials(participant);
-    return CircleAvatar(
-      radius: 12, // Adjust the size if needed
-      backgroundColor: kcSecondaryColor, // Customize background color
-      child: Text(
-        initials,
-        style: const TextStyle(
-          color: Colors.white, // Text color for initials
-          fontSize: 12, // Adjust the font size if needed
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  String _getInitials(Participant participant) {
-    String firstName =
-        participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
-    String lastName =
-        participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
-    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
-        .toUpperCase();
-  }
-
-  Widget donationsSlider(BuildContext context, List<ProjectResource> projects) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Popular Draws Text
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Donations",
-                  style: GoogleFonts.bricolageGrotesque(
-                    textStyle: TextStyle(
-                      fontSize: 16, // Custom font size
-                      fontWeight: FontWeight.w700, // Custom font weight
-                      color: uiMode.value == AppUiModes.dark
-                          ? Colors.white // Dark mode logo
-                          : Colors.black, // Custom text color (optional)
-                    ),
-                  ),
-                ),
-                Text(
-                  "Empower Change with Your Points",
-                  style: GoogleFonts.redHatDisplay(
-                    textStyle: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: uiMode.value == AppUiModes.dark
-                          ? Colors.white // Dark mode logo
-                          : Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Explore Capsule
-            InkWell(
-              onTap: () {
-                locator<NavigationService>().navigateToNotificationView();
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: kcSecondaryColor
-                      .withOpacity(0.2), // Capsule background color
-                  borderRadius:
-                      BorderRadius.circular(20), // Rounded capsule shape
-                ),
-                child: const Row(
-                  children: [
-                    Text(
-                      "Explore",
-                      style: TextStyle(
-                        color: kcBlackColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.arrow_forward,
-                      size: 16,
-                      color: kcSecondaryColor,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 250, // Adjust height to match the size of your cards
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: projects.length,
-            itemBuilder: (context, index) {
-              final project = projects[index].project;
-              final members = projects[index].members;
-              final imageUrl = project?.media?.isNotEmpty == true
-                  ? project?.media![0].url
-                  : 'https://via.placeholder.com/150';
-
-              return Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProjectDetailsPage(
-                          project: projects[index],
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: 222,
-                    decoration: BoxDecoration(
-                      color: uiMode.value == AppUiModes.dark
-                          ? Colors.transparent // Dark mode logo
-                          : kcWhiteColor,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.transparent,
-                          blurRadius: 6.0,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Card(
-                      color: uiMode.value == AppUiModes.dark
-                          ? kcDarkGreyColor // Dark mode logo
-                          : kcWhiteColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(12)),
-                            child: Image.network(
-                              imageUrl!,
-                              width: double.infinity, // or specify a width
-                              height: 124, // or specify a height
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0),
-                            child: Text(
-                              project?.projectTitle ?? 'service title',
-                              style: GoogleFonts.redHatDisplay(
-                                fontSize: 16,
-                                color: uiMode.value == AppUiModes.dark
-                                    ? kcWhiteColor // Dark mode logo
-                                    : kcBlackColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(5.0, 0, 8.0, 8.0),
-                            child: Text(
-                              project?.projectDescription ?? '',
-                              style: GoogleFonts.redHatDisplay(
-                                fontSize: 12,
-                                color: uiMode.value == AppUiModes.dark
-                                    ? kcWhiteColor // Dark mode logo
-                                    : kcBlackColor,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
-                            child: buildMembersAvatars(members ?? []),
-                            // Row(
-                            //   children: [
-                            //     Image.asset(
-                            //       "assets/images/partcipant_icon.png",
-                            //       width: 40,
-                            //     ),
-                            //     const SizedBox(width: 4),
-                            //     Text(
-                            //       '${members?.length ?? 0} Participants',
-                            //       style: GoogleFonts.redHatDisplay(
-                            //         fontSize: 10,
-                            //         color: uiMode.value == AppUiModes.dark
-                            //             ? kcWhiteColor // Dark mode logo
-                            //             : kcBlackColor,
-                            //         fontWeight: FontWeight.w400,
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildMembersAvatars(List<Member> participants) {
-    double avatarSize = 20.0;
-    double overlapOffset = 15.0; // Adjust the overlap amount
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        // Constrain the Stack with a specific width
-        SizedBox(
-          height: avatarSize,
-          width: participants.length * overlapOffset +
-              avatarSize, // Ensure a finite width
-          child: Stack(
-            children: participants.asMap().entries.map((entry) {
-              int index = entry.key;
-              Member participant = entry.value;
-
-              return Positioned(
-                left: index * overlapOffset,
-                child: ClipOval(
-                  child: participant.profilePic?.url != null
-                      ? Image.network(
-                          participant.profilePic!.url!,
-                          width: avatarSize,
-                          height: avatarSize,
-                          fit: BoxFit.cover,
-                        )
-                      : _buildMembersInitialsCircle(participant),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        Text(
-          ' ${participants.length} Participants',
-          style: GoogleFonts.redHatDisplay(
-            fontSize: 10,
-            color: uiMode.value == AppUiModes.dark
-                ? kcWhiteColor // Dark mode logo
-                : kcBlackColor,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMembersInitialsCircle(Member participant) {
-    String initials = _getMemberInitials(participant);
-    return CircleAvatar(
-      radius: 10, // Adjust the size if needed
-      backgroundColor: kcSecondaryColor, // Customize background color
-      child: Text(
-        initials,
-        style: const TextStyle(
-          color: Colors.white, // Text color for initials
-          fontSize: 10, // Adjust the font size if needed
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  String _getMemberInitials(Member participant) {
-    String firstName =
-        participant.firstname?.isNotEmpty == true ? participant.firstname! : '';
-    String lastName =
-        participant.lastname?.isNotEmpty == true ? participant.lastname! : '';
-    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
-        .toUpperCase();
-  }
 
   Widget _buildShimmerOrContent(
       BuildContext context, DashboardViewModel viewModel) {
@@ -1059,55 +705,57 @@ class DashboardView extends StackedView<DashboardViewModel> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 150,
-                    child: const Text(
-                      'Best Full Solar Installation',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: kcWhiteColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      softWrap: true,
-                    ),
-                  ),
-                  Container(
-                    width: 200,
-                    child: Text(
-                      'Light out your world',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: kcWhiteColor,
-                      ),
-                      softWrap: true,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: kcBlackColor,
-                        backgroundColor: kcWhiteColor,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 24.0),
-                        textStyle: const TextStyle(
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity, // Adjust to take available space
+                      child: const Text(
+                        'Best Full Solar Installation',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: kcWhiteColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+                        softWrap: true,
                       ),
-                      child: Text("Check now"),
                     ),
-                  ),
-                ],
+                    Container(
+                      width: double.infinity, // Adjust to take available space
+                      child: Text(
+                        'Light out your world',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: kcWhiteColor,
+                        ),
+                        softWrap: true,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: kcBlackColor,
+                          backgroundColor: kcWhiteColor,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12.0, horizontal: 24.0),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: Text("Check now"),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -1305,17 +953,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
           color: Colors.grey[300],
           borderRadius: BorderRadius.circular(10),
         ),
-      ),
-    );
-  }
-
-  Widget _buildVideContainer() {
-    return Container(
-      width: double.infinity,
-      height: 200,
-      decoration: BoxDecoration(
-        color: kcSecondaryColor,
-        borderRadius: BorderRadius.circular(20),
       ),
     );
   }
@@ -1569,19 +1206,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
   void onViewModelReady(DashboardViewModel viewModel) {
     super.onViewModelReady(viewModel);
     viewModel.initialise();
-    Timer.periodic(const Duration(seconds: 8), (Timer timer) {
-      if (_pageController.hasClients) {
-        int nextPage = _pageController.page!.round() + 1;
-        if (nextPage >= viewModel.featuredRaffle.length) {
-          nextPage = 0;
-        }
-        _pageController.animateToPage(
-          nextPage,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
   }
 
   @override
@@ -1590,31 +1214,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
     _pageController.dispose();
   }
 
-  Widget _indicator(bool selected) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      height: 5,
-      width: 5,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: selected ? kcWhiteColor : kcMediumGrey,
-      ),
-    );
-  }
-
-  Future<Color?> _updateTextColor(String imageUrl) async {
-    final PaletteGenerator paletteGenerator =
-        await PaletteGenerator.fromImageProvider(
-      NetworkImage(imageUrl),
-    );
-
-    // Calculate the brightness of the dominant color
-    final Color dominantColor = paletteGenerator.dominantColor!.color;
-    final double luminance = dominantColor.computeLuminance();
-
-    // Decide text color based on luminance
-    return luminance < 0.1 ? Colors.white : Colors.black;
-  }
 
   @override
   DashboardViewModel viewModelBuilder(
@@ -1637,9 +1236,6 @@ class RaffleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (viewModel.raffleList.isEmpty || index >= viewModel.raffleList.length) {
-      return Container();
-    }
     CountdownTimerController controller = CountdownTimerController(endTime: 0);
     int remainingStock = 0;
     int remainingDays = 0;

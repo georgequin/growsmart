@@ -38,7 +38,7 @@ import '../ui/views/service/service_view.dart';
     MaterialRoute(page: DrawsView),
     MaterialRoute(page: CartView),
     // MaterialRoute(page: ShopCartView),
-    MaterialRoute(page: Servicesview),
+    MaterialRoute(page: ServicesView),
     MaterialRoute(page: ProfileView),
     // MaterialRoute(page: Checkout),
     MaterialRoute(page: RaffleDetail),

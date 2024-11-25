@@ -147,6 +147,7 @@ class AuthViewModel extends BaseViewModel {
       log.i(e);
       snackBar.showSnackbar(message: "Unable to login try again");
     }finally{
+      print('login call ended');
       setBusy(false);
       notifyListeners();
     }

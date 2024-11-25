@@ -77,13 +77,10 @@ class BottomNavBar extends StatelessWidget {
         Color iconColor = Colors.grey;
         Color selectedColor = kcSecondaryColor;
 
-        List<BottomNavigationBarItem> items = (currentModule == AppModules.raffle)
-            ? _rafflesItems(iconColor, selectedColor)
-            : _shopItems(iconColor, selectedColor);
+        List<BottomNavigationBarItem> items = nav_Items(iconColor, selectedColor);
 
-        int currentIndex = (currentModule == AppModules.raffle)
-            ? viewModel.selectedRafflesTab
-            : viewModel.selectedShopTab;
+
+        int currentIndex = viewModel.selectedTab;
 
         return BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -91,7 +88,6 @@ class BottomNavBar extends StatelessWidget {
               ? kcDarkGreyColor // Dark mode logo
               : kcWhiteColor,
 
-          // currentModule == AppModules.shop ? const Color(0xFFFFF3DB) : Colors.white,
           selectedLabelStyle: TextStyle(color: selectedColor),
           selectedItemColor: selectedColor,
           unselectedItemColor: iconColor,
@@ -103,53 +99,30 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 
-  List<BottomNavigationBarItem> _rafflesItems(Color iconColor, Color selectedColor) {
+  List<BottomNavigationBarItem> nav_Items(Color iconColor, Color selectedColor) {
     return [
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('home.svg', 'home_outline.svg', viewModel.selectedRafflesTab == 0, iconColor),
+        icon: _navBarItemIcon('home.svg', 'home_outline.svg', viewModel.selectedTab == 0, iconColor),
         label: "Home",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('shopicon.svg', 'shopicon.svg', viewModel.selectedRafflesTab == 1, iconColor),
+        icon: _navBarItemIcon('shopicon.svg', 'shopicon.svg', viewModel.selectedTab == 1, iconColor),
         label: "Shop",
       ),
       BottomNavigationBarItem(
-          icon: _navBarItemWithCounter('buy.svg', 'buy.svg',  viewModel.selectedRafflesTab == 2, raffleCart, iconColor),
+          icon: _navBarItemWithCounter('buy.svg', 'buy.svg',  viewModel.selectedTab == 2, raffleCart, iconColor),
           label: "Cart",
           ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('heart.svg', 'heart_outline.svg', viewModel.selectedRafflesTab == 3, iconColor),
+        icon: _navBarItemIcon('heart.svg', 'heart_outline.svg', viewModel.selectedTab == 3, iconColor),
         label: "Services",
       ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('menu.svg', 'menu_outline.svg', viewModel.selectedRafflesTab == 4, iconColor),
+        icon: _navBarItemIcon('menu.svg', 'menu_outline.svg', viewModel.selectedTab == 4, iconColor),
         label: "Profile",
       ),
     ];
   }
-
-  List<BottomNavigationBarItem> _shopItems(Color iconColor, Color selectedColor) {
-    return [
-      BottomNavigationBarItem(
-        icon: _navBarItemIcon('home.svg', 'home_outline.svg', viewModel.selectedShopTab == 0, iconColor),
-        label: "Home",
-      ),
-      BottomNavigationBarItem(
-        icon: _navBarItemIcon('ticket_star.svg', 'ticket_star_outline.svg', viewModel.selectedShopTab == 1, iconColor),
-        label: "Draws",
-      ),
-
-      BottomNavigationBarItem(
-        icon: _navBarItemIcon('notification.svg','notification.svg', viewModel.selectedShopTab == 3, iconColor),
-        label: "Notifications",
-      ),
-      BottomNavigationBarItem(
-        icon: _navBarItemIcon('menu.svg', 'notification.svg', viewModel.selectedShopTab == 4, iconColor),
-        label: "Menu",
-      ),
-    ];
-  }
-
 
   Widget _navBarItemIcon(String filledIcon, String outlinedIcon, bool isSelected, Color iconColor) {
     return Container(
@@ -197,33 +170,4 @@ class BottomNavBar extends StatelessWidget {
         );
     }
 
-  // Widget _navBarItemWithCounter(String icon, bool isSelected, ValueListenable<List<dynamic>> counterListenable, Color color) {
-  //   return ValueListenableBuilder<List<dynamic>>(
-  //     valueListenable: counterListenable,
-  //     builder: (context, value, child) {
-  //       return Stack(
-  //         clipBehavior: Clip.none,
-  //         children: [
-  //           _navBarItemIcon(icon, isSelected, color),
-  //           if (value.isNotEmpty)
-  //             Positioned(
-  //               right: -6,
-  //               top: -6,
-  //               child: Container(
-  //                 padding: const EdgeInsets.all(4),
-  //                 decoration: const BoxDecoration(
-  //                   color: Colors.red,
-  //                   shape: BoxShape.circle,
-  //                 ),
-  //                 child: Text(
-  //                   '${value.length}',
-  //                   style: const TextStyle(color: Colors.white, fontSize: 12),
-  //                 ),
-  //               ),
-  //             ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 }

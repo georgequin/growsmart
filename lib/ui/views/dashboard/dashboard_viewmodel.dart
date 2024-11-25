@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:afriprize/app/app.locator.dart';
 import 'package:afriprize/app/app.logger.dart';
-import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import 'package:afriprize/core/data/repositories/repository.dart';
@@ -10,28 +11,18 @@ import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:video_player/video_player.dart';
-
-import '../../../core/data/models/app_notification.dart';
 import '../../../core/data/models/category.dart';
-import '../../../core/data/models/profile.dart';
 import '../../../core/data/models/project.dart';
 
 class DashboardViewModel extends BaseViewModel {
   final repo = locator<Repository>();
-  final bool _isDataLoaded = false;
   int selectedIndex = 0;
   final log = getLogger("DashboardViewModel");
-  List<Raffle> raffleList = [];
-  List<Project> projects = [];
   List<Ads> adsList = [];
-  List<ProjectResource> projectResources = [];
-  List<Raffle> featuredRaffle = [];
   List<Product> productList = [];
   List<Product> filteredProductList = [];
   List<Category> filteredCategories = [];
   List<Category> filteredCategoriesList = [];
-
   List<Category> categories = [];
 
   static const int allCategoriesId = 0;
@@ -40,18 +31,8 @@ class DashboardViewModel extends BaseViewModel {
 
   bool? onboarded;
 
-  bool showDialog = true;  // Controls when to show the modal
-  bool modalShown = false; // Flag to track if the modal was shown
   bool appBarLoading = false;
-  bool shouldShowShowcase = true;  // Controls when to show showcase
-
   final snackBar = locator<SnackbarService>();
-
-  @override
-  void initialise() {
-    init();
-  }
-
 
   void setSelectedCategory(int id) {
     selectedId = id;
@@ -68,17 +49,10 @@ class DashboardViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  bool showcaseShown = false; // Track whether the showcase has been shown
-  void setShowcaseShown(bool value) {
-    showcaseShown = value;
-    notifyListeners();
-  }
-
   void changeSelected(int i) {
     selectedIndex = i;
     rebuildUi();
   }
-
 
   @override
   void dispose() {
@@ -87,18 +61,20 @@ class DashboardViewModel extends BaseViewModel {
   }
 
 
+  void initialise() {
+    print('called initialize');
+    init();
+  }
+
   Future<void> init() async {
     setBusy(true);
-    onboarded = await locator<LocalStorage>().fetch(LocalStorageDir.onboarded) ?? false;
-    if (!onboarded!) {
-      showDialog = true; // Show modal if not onboarded
-    }
+
     notifyListeners();
     await loadProduct();
     await loadCategories();
+    notifyListeners();
     // await loadAds();
-    // // await loadProducts();
-    //  await loadProjects();
+
     if (userLoggedIn.value == true) {
       initCart();
       // await getNotifications();
@@ -109,30 +85,43 @@ class DashboardViewModel extends BaseViewModel {
   }
 
 
+
   Future<void> loadProduct() async {
+    print('loading products....');
+    try {
 
-    if (productList.isEmpty) {
-      // setBusy(true);
-      notifyListeners();
+
+      dynamic storedJsonProduct = await locator<LocalStorage>().fetch(LocalStorageDir.product);
+      log.i("Loaded jsonProducts from storage: $storedJsonProduct");
+
+
+
+
+      if ( storedJsonProduct != null && storedJsonProduct.isNotEmpty) {
+        log.i("Loaded decoded jsonProducts from storage: ${jsonDecode(storedJsonProduct)}");
+        List<dynamic> storedProducts = jsonDecode(storedJsonProduct);
+        log.i("Loaded Products from storage: $storedProducts");
+        // Populate productList and filteredProductList
+        productList = storedProducts
+            .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        filteredProductList = productList;
+
+        // Immediately notify UI to display data
+        notifyListeners();
+      }else{
+        print('no value to load');
+      }
+
+      // Make API call in the background
+      getProducts();
+    } catch (e) {
+      log.e("Error loading products: $e");
     }
-
-    dynamic storedRaffle = await locator<LocalStorage>().fetch(LocalStorageDir.product);
-    if (storedRaffle != null) {
-      // Extracting and filtering only active raffles
-      productList = List<Map<String, dynamic>>.from(storedRaffle)
-          .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-      filteredProductList = productList;
-      notifyListeners();
-    }
-
-    await getProducts();
-    // setBusy(false);
-    notifyListeners();
-
   }
 
- Future<void> refreshData() async {
+
+  Future<void> refreshData() async {
     setBusy(true);
     notifyListeners();
     getResourceList();
@@ -140,7 +129,7 @@ class DashboardViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void getResourceList(){
+  void getResourceList() {
     getProducts();
     getCategories();
 
@@ -150,39 +139,41 @@ class DashboardViewModel extends BaseViewModel {
   }
 
   Future<void> getProducts() async {
-    setBusy(true);
-
+    print('getting online products');
     try {
       ApiResponse res = await repo.getProducts();
 
       if (res.statusCode == 200) {
-
-        productList = (res.data["products"] as List)
+        // Fetch updated products from API
+        List<Product> updatedProductList = (res.data["products"] as List)
             .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
 
-        print("${res.data}");
-                List<Map<String, dynamic>> storedRaffles = productList.map((e) => e.toJson()).toList();
-                locator<LocalStorage>().save(LocalStorageDir.product, storedRaffles);
-                notifyListeners();
-                filteredProductList = productList;
+        // Update the product list
+        productList = updatedProductList;
+        filteredProductList = productList;
 
+        // Save updated data to local storage
+        List<Map<String, dynamic>> storedProducts =
+        productList.map((e) => e.toJson()).toList();
+        await locator<LocalStorage>().save(LocalStorageDir.product, jsonEncode(storedProducts));
+
+        log.i("Updated Products from API saved to storage.");
+
+        // Notify UI about updated data
         notifyListeners();
-      }else {
-        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
-        setBusy(false);
+      } else {
+        log.e("API Error: ${res.data["message"]}");
       }
     } catch (e) {
-      log.i(e);
-      setBusy(false);
+      log.e("Error fetching products: $e");
     }
-    setBusy(false);
-    notifyListeners();
-
   }
 
+
   Future<void> loadCategories() async {
-    dynamic storedDonations = await locator<LocalStorage>().fetch(LocalStorageDir.donationsCategories);
+    dynamic storedDonations = await locator<LocalStorage>()
+        .fetch(LocalStorageDir.donationsCategories);
     if (storedDonations != null) {
       categories = List<Map<String, dynamic>>.from(storedDonations)
           .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
@@ -194,13 +185,10 @@ class DashboardViewModel extends BaseViewModel {
         ...categories,
       ];
       notifyListeners();
-
     }
-    await getCategories();
+    getCategories();
     notifyListeners();
   }
-
-
 
   Future<void> getCategories() async {
     setBusy(true);
@@ -215,8 +203,10 @@ class DashboardViewModel extends BaseViewModel {
               .toList();
 
           // Save the categories locally
-          List<Map<String, dynamic>> storedCategories = categories.map((e) => e.toJson()).toList();
-          locator<LocalStorage>().save(LocalStorageDir.donationsCategories, storedCategories);
+          List<Map<String, dynamic>> storedCategories =
+              categories.map((e) => e.toJson()).toList();
+          locator<LocalStorage>()
+              .save(LocalStorageDir.donationsCategories, storedCategories);
 
           // Apply any filtering logic if needed
           filteredCategories = [
@@ -234,20 +224,18 @@ class DashboardViewModel extends BaseViewModel {
     }
   }
 
-
-
-
-
   void addToRaffleCart(Product raffle) async {
     // setBusy(true);
     // notifyListeners();
     try {
       final existingItem = raffleCart.value.firstWhere(
-            (raffleItem) => raffleItem.raffle?.id == raffle.id,
+        (raffleItem) => raffleItem.raffle?.id == raffle.id,
         orElse: () => RaffleCartItem(raffle: raffle, quantity: 0),
       );
 
-      if (existingItem.quantity != null && existingItem.quantity! > 0 && existingItem.raffle != null) {
+      if (existingItem.quantity != null &&
+          existingItem.quantity! > 0 &&
+          existingItem.raffle != null) {
         existingItem.quantity = (existingItem.quantity! + 1);
       } else {
         existingItem.quantity = 1;
@@ -255,8 +243,10 @@ class DashboardViewModel extends BaseViewModel {
       }
 
       // Save to local storage
-      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
-      await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+      List<Map<String, dynamic>> storedList =
+          raffleCart.value.map((e) => e.toJson()).toList();
+      await locator<LocalStorage>()
+          .save(LocalStorageDir.raffleCart, storedList);
 
       // Save to online cart using API
       final response = await repo.addToCart({
@@ -265,23 +255,31 @@ class DashboardViewModel extends BaseViewModel {
       });
 
       if (response.statusCode == 200) {
-        locator<SnackbarService>().showSnackbar(message: "Raffle added to cart", duration: Duration(seconds: 2));
+        locator<SnackbarService>().showSnackbar(
+            message: "Raffle added to cart", duration: Duration(seconds: 2));
+        notifyListeners();
       } else {
-        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
+        locator<SnackbarService>().showSnackbar(
+            message: response.data["message"], duration: Duration(seconds: 2));
       }
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(message: "Failed to add raffle to cart: $e", duration: Duration(seconds: 2));
+      locator<SnackbarService>().showSnackbar(
+          message: "Failed to add raffle to cart: $e",
+          duration: Duration(seconds: 2));
     }
   }
-  
+
   void initCart() async {
-    dynamic raffle = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
-    dynamic store = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
-    List<RaffleCartItem> localRaffleCart = List<Map<String, dynamic>>.from(raffle)
-        .map((e) => RaffleCartItem.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-    raffleCart.value = localRaffleCart;
-    raffleCart.notifyListeners();
+    dynamic cart = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
+   if(cart != null){
+     List<RaffleCartItem> localRaffleCart =
+     List<Map<String, dynamic>>.from(cart)
+         .map((e) => RaffleCartItem.fromJson(Map<String, dynamic>.from(e)))
+         .toList();
+     raffleCart.value = localRaffleCart;
+     raffleCart.notifyListeners();
+   }
+
   }
 
   Future<void> decreaseRaffleQuantity(RaffleCartItem item) async {
@@ -296,26 +294,31 @@ class DashboardViewModel extends BaseViewModel {
         });
       } else if (item.quantity! == 1) {
         // Remove from local cart
-        raffleCart.value.removeWhere((cartItem) => cartItem.raffle?.id == item.raffle?.id);
+        raffleCart.value
+            .removeWhere((cartItem) => cartItem.raffle?.id == item.raffle?.id);
 
         // Remove from online cart
         await repo.deleteFromCart(item.raffle!.id!);
       }
 
       // Save to local storage
-      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
-      await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+      List<Map<String, dynamic>> storedList =
+          raffleCart.value.map((e) => e.toJson()).toList();
+      await locator<LocalStorage>()
+          .save(LocalStorageDir.raffleCart, storedList);
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(message: "Failed to decrease raffle quantity: $e", duration: Duration(seconds: 2));
+      locator<SnackbarService>().showSnackbar(
+          message: "Failed to decrease raffle quantity: $e",
+          duration: Duration(seconds: 2));
       print(e);
     }
   }
 
   Future<void> increaseRaffleQuantity(RaffleCartItem item) async {
-
     try {
       item.quantity = item.quantity! + 1;
-      int index = raffleCart.value.indexWhere((raffleItem) => raffleItem.raffle?.id == item.raffle?.id);
+      int index = raffleCart.value
+          .indexWhere((raffleItem) => raffleItem.raffle?.id == item.raffle?.id);
       if (index != -1) {
         raffleCart.value[index] = item;
         raffleCart.value = List.from(raffleCart.value);
@@ -327,19 +330,19 @@ class DashboardViewModel extends BaseViewModel {
         });
 
         // Save to local storage
-        List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
-        await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+        List<Map<String, dynamic>> storedList =
+            raffleCart.value.map((e) => e.toJson()).toList();
+        await locator<LocalStorage>()
+            .save(LocalStorageDir.raffleCart, storedList);
       }
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(message: "Failed to increase raffle quantity: $e", duration: Duration(seconds: 2));
-
+      locator<SnackbarService>().showSnackbar(
+          message: "Failed to increase raffle quantity: $e",
+          duration: Duration(seconds: 2));
     } finally {
-
       raffleCart.notifyListeners();
     }
   }
-
-
 
   String formatRemainingTime(DateTime drawDate) {
     final now = DateTime.now();
@@ -351,12 +354,9 @@ class DashboardViewModel extends BaseViewModel {
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
-
-
   void onEnd() {
     print('onEnd');
     //TODO SEND USER NOTIFICATION OF AVAILABILITY OF PRODUCT
     notifyListeners();
   }
-
 }
