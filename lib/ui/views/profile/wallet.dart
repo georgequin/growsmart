@@ -228,6 +228,7 @@ class _WalletState extends State<Wallet> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Row(
+
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SvgPicture.asset(
