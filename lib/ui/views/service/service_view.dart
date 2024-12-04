@@ -12,13 +12,15 @@ class ServicesView extends StackedView<ServicesviewModel> {
   const ServicesView({Key? key}) : super(key: key);
 
   @override
-  Widget builder(BuildContext context, ServicesviewModel viewModel, Widget? child) {
+  Widget builder(
+      BuildContext context, ServicesviewModel viewModel, Widget? child) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Services',
           style: GoogleFonts.redHatDisplay(
-            textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textStyle:
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
         ),
       ),
@@ -53,20 +55,20 @@ class ServicesView extends StackedView<ServicesviewModel> {
               viewModel.isBusy
                   ? const Center(child: CircularProgressIndicator())
                   : Expanded(
-                child: ListView.builder(
-                  itemCount: viewModel.filteredServices.length,
-                  itemBuilder: (context, index) {
-                    final service = viewModel.filteredServices[index];
-                    return _buildServiceItem(
-                      context,
-                      service.image ?? 'assets/images/default.png',
-                      service.name,
-                      service.description,
-                      '\$${service.price.toStringAsFixed(2)}',
-                    );
-                  },
-                ),
-              ),
+                      child: ListView.builder(
+                        itemCount: viewModel.filteredServices.length,
+                        itemBuilder: (context, index) {
+                          final service = viewModel.filteredServices[index];
+                          return _buildServiceItem(
+                            context,
+                            service.image ?? 'assets/images/default.png',
+                            service.name,
+                            service.description,
+                            '\$${service.price.toStringAsFixed(2)}',
+                          );
+                        },
+                      ),
+                    ),
             ],
           ),
         ),
@@ -74,15 +76,15 @@ class ServicesView extends StackedView<ServicesviewModel> {
     );
   }
 
-  Widget _buildServiceItem(
-      BuildContext context, String imagePath, String title, String description, String price) {
+  Widget _buildServiceItem(BuildContext context, String imagePath, String title,
+      String description, String price) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
       ),
       child: InkWell(
-        onTap: (){
+        onTap: () {
           showServiceAddressSheet(context, () {
             // Handle Place Order action
             print("Proceeding to checkout...");
@@ -100,7 +102,8 @@ class ServicesView extends StackedView<ServicesviewModel> {
                   height: 100,
                   width: 86,
                   errorBuilder: (context, error, stackTrace) {
-                    return Image.asset('assets/images/default.png', height: 100, width: 86);
+                    return Image.asset('assets/images/default.png',
+                        height: 100, width: 86);
                   },
                 ),
               ),
@@ -117,14 +120,15 @@ class ServicesView extends StackedView<ServicesviewModel> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 8.0),
                     Text(
                       description,
                       style: GoogleFonts.redHatDisplay(
-                        textStyle: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        textStyle:
+                            TextStyle(fontSize: 10, color: Colors.grey[600]),
                       ),
-                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -139,7 +143,8 @@ class ServicesView extends StackedView<ServicesviewModel> {
                   Text(
                     price,
                     style: GoogleFonts.redHatDisplay(
-                      textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                      textStyle: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ],
@@ -154,7 +159,8 @@ class ServicesView extends StackedView<ServicesviewModel> {
   void showServiceAddressSheet(BuildContext context, Function onPlaceOrder) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Allows the bottom sheet to adjust for the keyboard
+      isScrollControlled:
+          true, // Allows the bottom sheet to adjust for the keyboard
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(16),
@@ -168,9 +174,11 @@ class ServicesView extends StackedView<ServicesviewModel> {
             top: 16.0,
             bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
           ),
-          child: SingleChildScrollView( // Wrap with SingleChildScrollView
+          child: SingleChildScrollView(
+            // Wrap with SingleChildScrollView
             child: Column(
-              mainAxisSize: MainAxisSize.min, // Minimize the size of the bottom sheet
+              mainAxisSize:
+                  MainAxisSize.min, // Minimize the size of the bottom sheet
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
@@ -283,9 +291,7 @@ class ServicesView extends StackedView<ServicesviewModel> {
                 SubmitButton(
                   isLoading: false,
                   label: "place Order",
-                  submit: () {
-
-                  },
+                  submit: () {},
                   color: kcSecondaryColor,
                 )
               ],

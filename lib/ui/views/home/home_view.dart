@@ -114,7 +114,7 @@ class BottomNavBar extends StatelessWidget {
           label: "Cart",
           ),
       BottomNavigationBarItem(
-        icon: _navBarItemIcon('heart.svg', 'heart_outline.svg', viewModel.selectedTab == 3, iconColor),
+        icon: _navBarItemIcon('engineering.svg', 'engineering.svg', viewModel.selectedTab == 3, iconColor),
         label: "Services",
       ),
       BottomNavigationBarItem(
