@@ -427,12 +427,17 @@ class _ProductCardState extends State<ProductCard> {
                           }),
                     ),
                     IconButton(
-                      icon: Icon(Icons.favorite_border_outlined, size: 30, color: iconColor,),
-                      onPressed: () async {
-                        // Sharing content
-                      setState(() {
-                        iconColor = kcPrimaryColor;
-                      });
+                      icon: Icon(
+                        isFavorited
+                            ? Icons.favorite // Icon when favorited
+                            : Icons.favorite_border_outlined, // Icon when not favorited
+                        size: 30,
+                        color: isFavorited ? kcSecondaryColor : iconColor, // Toggle color
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isFavorited = !isFavorited; // Toggle the boolean
+                        });
                       },
                     ),
 
