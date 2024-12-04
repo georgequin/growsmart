@@ -409,6 +409,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 );
               },
               child: Container(
+                height: 200,
                 margin: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: index % 2 == 0
@@ -449,7 +450,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                                     : 'https://via.placeholder.com/120',
                             height: 120,
                             width: double.infinity,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fitHeight,
                             errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),
                             fadeInDuration: const Duration(milliseconds: 500),
@@ -883,8 +884,8 @@ class DashboardView extends StackedView<DashboardViewModel> {
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
               ad.images?.first ?? '',
-              width: 100,
-              height: 100,
+              width: 120,
+              height: 150,
               fit: BoxFit.cover,
               loadingBuilder: (context, child, progress) {
                 if (progress == null) return child;

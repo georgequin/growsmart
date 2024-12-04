@@ -117,31 +117,31 @@ class _SignUpState extends State<SignUp> {
                   color: kcPrimaryColor,
                 ),
               ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children:  [
-                    const Text(
-                      "Resend OTP  ",
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                       // gotoRegister();
-
-                      },
-                      child: const Text(
-                        "(00:30)",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: kcSecondaryColor,
-                        ),
-                      ),
-                    )
-
-                  ]
-              ),
+              // Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children:  [
+              //       const Text(
+              //         "Resend OTP  ",
+              //         style: TextStyle(
+              //           fontSize: 12,
+              //         ),
+              //       ),
+              //       GestureDetector(
+              //         onTap: () {
+              //          // gotoRegister();
+              //
+              //         },
+              //         child: const Text(
+              //           "(00:30)",
+              //           style: TextStyle(
+              //             fontSize: 12,
+              //             color: kcSecondaryColor,
+              //           ),
+              //         ),
+              //       )
+              //
+              //     ]
+              // ),
             ],
           ),
         ),
