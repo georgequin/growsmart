@@ -1,1 +1,1 @@
-# growsmart
+# EasyPower hub
