@@ -408,162 +408,165 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   },
                 );
               },
-              child: Container(
-                height: 200,
-                margin: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: index % 2 == 0
-                      ? Colors.purple[50]
-                      : Colors.pink[50], // Alternating background colors
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image with "NEW" badge
-                    Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
-                          child: CachedNetworkImage(
-                            placeholder: (context, url) => const Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.0,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    kcSecondaryColor),
-                              ),
-                            ),
-                            imageUrl:
-                                (item.images != null && item.images!.isNotEmpty)
-                                    ? item.images!.first
-                                    : 'https://via.placeholder.com/120',
-                            height: 120,
-                            width: double.infinity,
-                            fit: BoxFit.fitHeight,
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                            fadeInDuration: const Duration(milliseconds: 500),
-                            fadeOutDuration: const Duration(milliseconds: 300),
-                          ),
-                        ),
-                        // "NEW" badge
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 4.0),
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              'NEW',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // Rating stars
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 4.0),
-                      child: Row(
-                        children: List.generate(5, (starIndex) {
-                          return Icon(
-                            Icons.star,
-                            color: starIndex < item.rating!.toInt()
-                                ? kcStarColor
-                                : Colors.grey,
-                            size: 16,
-                          );
-                        }),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: 200, minWidth: 150),
+                child: Container(
+                  margin: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: index % 2 == 0
+                        ? Colors.purple[50]
+                        : Colors.pink[50], // Alternating background colors
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // Shadow position
                       ),
-                    ),
-
-                    // Product title
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        item.productName ?? 'Product name',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-
-                    // Price and Cart icon
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 0.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min, // Prevent excessive height
+                    children: [
+                      // Image with "NEW" badge
+                      Stack(
                         children: [
-                          Expanded(
-                            child: Text(
-                              '₦${item.price}' ?? "\$0",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'roboto',
-                                color: kcPrimaryColor,
-                                fontWeight: FontWeight.bold,
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      kcSecondaryColor),
+                                ),
                               ),
-                              maxLines: 1,
-                              overflow:
-                                  TextOverflow.ellipsis, // To prevent overflow
+                              imageUrl:
+                                  (item.images != null && item.images!.isNotEmpty)
+                                      ? item.images!.first
+                                      : 'https://via.placeholder.com/120',
+                              height: 120,
+                              width: double.infinity,
+                              fit: BoxFit.fitHeight,
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                              fadeInDuration: const Duration(milliseconds: 500),
+                              fadeOutDuration: const Duration(milliseconds: 300),
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              RaffleCartItem newItem =
-                                  RaffleCartItem(raffle: item, quantity: 1);
-                              viewModel.addToRaffleCart(item);
-                            },
+                          // "NEW" badge
+                          Positioned(
+                            top: 5,
+                            left: 5,
                             child: Container(
-                              padding: const EdgeInsets.all(
-                                  8.0), // Padding around the icon
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 4.0),
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 1,
-                                    blurRadius: 5,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Icon(
-                                Icons.shopping_cart_outlined,
-                                color: kcSecondaryColor,
-                                size: 16,
+                              child: Text(
+                                'NEW',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
-                    ),
-                  ],
+
+                      // Rating stars
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                        child: Row(
+                          children: List.generate(5, (starIndex) {
+                            return Icon(
+                              Icons.star,
+                              color: starIndex < item.rating!.toInt()
+                                  ? kcStarColor
+                                  : Colors.grey,
+                              size: 16,
+                            );
+                          }),
+                        ),
+                      ),
+
+                      // Product title
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          item.productName ?? 'Product name',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+
+                      // Price and Cart icon
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '₦${item.price}' ?? "\$0",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'roboto',
+                                  color: kcPrimaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow:
+                                    TextOverflow.ellipsis, // To prevent overflow
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                RaffleCartItem newItem =
+                                    RaffleCartItem(raffle: item, quantity: 1);
+                                viewModel.addToRaffleCart(item);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(
+                                    8.0), // Padding around the icon
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.shopping_cart_outlined,
+                                  color: kcSecondaryColor,
+                                  size: 16,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

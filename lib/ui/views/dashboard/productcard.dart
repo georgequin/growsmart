@@ -27,7 +27,7 @@ class ProductCard extends StatefulWidget {
   @override
   _ProductCardState createState() => _ProductCardState();
 }
-
+bool isFavorited = false;
 class _ProductCardState extends State<ProductCard> {
   String selectedImage = '';
   Color iconColor = kcBlackColor;
