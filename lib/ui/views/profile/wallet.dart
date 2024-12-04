@@ -219,7 +219,6 @@ class _WalletState extends State<Wallet> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width: 200,
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -229,6 +228,7 @@ class _WalletState extends State<Wallet> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SvgPicture.asset(
                           'assets/images/send-2.svg',
@@ -249,7 +249,6 @@ class _WalletState extends State<Wallet> {
                     ),
                   ),
                   Container(
-                    width: 200,
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       border: Border.all(
