@@ -456,11 +456,11 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                     IconButton(
                       icon: Icon(
-                        Icons.favorite_border_outlined,
+                        isFavorited
+                            ? Icons.favorite // Icon when favorited
+                            : Icons.favorite_border_outlined, // Icon when not favorited
                         size: 30,
-                        color: isFavorited
-                            ? kcSecondaryColor
-                            : iconColor, // Toggle color
+                        color: isFavorited ? kcSecondaryColor : iconColor, // Toggle color
                       ),
                       onPressed: () {
                         setState(() {
