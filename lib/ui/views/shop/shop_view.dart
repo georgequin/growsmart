@@ -147,86 +147,80 @@ class ShopView extends StackedView<ShopViewModel> {
                   ),
                   actions: [
                     Autocomplete<Product>(
-
-                        optionsBuilder: (TextEditingValue productTextEditingValue) {
-
-                          // if user is input nothing
-                          if (productTextEditingValue.text == '') {
-                            return const Iterable<Product>.empty();
-                          }
-
-                          // if user is input something the build
-                          // suggestion based on the user input
-                          return viewModel.filteredProductList.where((Product product) {
-                            final query = productTextEditingValue.text.toLowerCase();
-                            return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
-                                (product.brandName != null && product.brandName!.toLowerCase().contains(query));
-                          });
-
-                        },
-                        displayStringForOption: (Product product) => product.productName ?? '',
-
-                        // when user click on the suggested
-                        // item this function calls
-                        onSelected: (Product value) {
-                          debugPrint('You just selected $value.productName');
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            isDismissible: true,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(25.0),
-                                  topRight: Radius.circular(25.0)),
-                            ),
-                            // barrierColor: Colors.black.withAlpha(50),
-                            // backgroundColor: Colors.transparent,
-                            backgroundColor: Colors.black.withOpacity(0.7),
-                            builder: (BuildContext context) {
-                              return ProductCard(product: value);
-                            },
-                          );
-                        },
-                        fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9), // Set a maximum width constraint
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: const Color(0xFFEBE4E4)), // Grey border around the search bar
-                                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min, // Prevents the Row from expanding infinitely
-                                  children: [
-                                    Flexible( // Use Flexible instead of Expanded
-                                      fit: FlexFit.loose,
-                                      child: TextField(
-                                        controller: textEditingController,
-                                        focusNode: focusNode,
-                                        decoration: InputDecoration(
-                                          hintText: 'Search product...',
-                                          border: InputBorder.none, // Removes the default border
-                                          contentPadding: EdgeInsets.symmetric(vertical: 15.0), // Adjust padding
-                                        ),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.search), // Search icon outside the text field
-                                      onPressed: () {
-                                        // Optionally handle search button press here
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
+                      optionsBuilder: (TextEditingValue productTextEditingValue) {
+                        // If the user inputs nothing
+                        if (productTextEditingValue.text == '') {
+                          return const Iterable<Product>.empty();
                         }
 
-                    ),
+                        // If the user inputs something, build the suggestions based on user input
+                        return viewModel.filteredProductList.where((Product product) {
+                          final query = productTextEditingValue.text.toLowerCase();
+                          return (product.productName != null && product.productName!.toLowerCase().contains(query)) ||
+                              (product.brandName != null && product.brandName!.toLowerCase().contains(query));
+                        });
+                      },
+                      displayStringForOption: (Product product) => product.productName ?? '',
+
+                      onSelected: (Product value) {
+                        debugPrint('You just selected ${value.productName}');
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          isDismissible: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(25.0),
+                              topRight: Radius.circular(25.0),
+                            ),
+                          ),
+                          backgroundColor: Colors.black.withOpacity(0.7),
+                          builder: (BuildContext context) {
+                            return ProductCard(product: value);
+                          },
+                        );
+                      },
+
+                      fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9), // Max width constraint
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.transparent), // Hide the border
+                                borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min, // Prevent the row from expanding infinitely
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: textEditingController, // Connect the TextEditingController
+                                      focusNode: focusNode, // Connect the FocusNode
+                                      style: TextStyle(color: Colors.white),
+                                      decoration: InputDecoration(
+                                        hintText: '', // Add a hint text for the user
+                                        border: InputBorder.none, // Remove the default border
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.search, color: Colors.white), // Search icon
+                                    onPressed: () {
+                                      // Focus on the text field when the icon is clicked
+                                      FocusScope.of(context).requestFocus(focusNode); // Focus the field
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+
                   ],
                 ),
               ),
@@ -352,7 +346,7 @@ class ShopView extends StackedView<ShopViewModel> {
                                 : 'https://via.placeholder.com/120',
                             height: 120,
                             width: double.infinity,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fitHeight,
                             errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),
                             fadeInDuration: const Duration(milliseconds: 500),
