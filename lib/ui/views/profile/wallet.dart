@@ -36,6 +36,8 @@ import '../../../core/data/models/transaction.dart';
 
 import '../../../state.dart';
 
+import '../../../utils/depositPaymentModal.dart';
+import '../../../utils/withdrawalPaymentModal.dart';
 import '../../components/empty_state.dart';
 
 import '../../components/text_field_widget.dart';
@@ -59,6 +61,7 @@ class _WalletState extends State<Wallet> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _amountNumberController = TextEditingController();
   String? selectedBundle;
+  final TextEditingController amountController = TextEditingController();
 
   List<Transaction> transactions = [];
 
@@ -218,35 +221,41 @@ class _WalletState extends State<Wallet> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: kcSecondaryColor,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Row(
+                  GestureDetector(
+                    onTap: () {
+                      _showPaymentModal(context);
 
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/images/send-2.svg',
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
                           color: kcSecondaryColor,
-                          height: 17,
-                          width: 17,
+                          width: 1.0,
                         ),
-                        const SizedBox(width: 8.0),
-                        const Text(
-                          'Deposit',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: kcBlackColor,
-                            fontSize: 14,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Row(
+
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/images/send-2.svg',
+                            color: kcSecondaryColor,
+                            height: 17,
+                            width: 17,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 8.0),
+                          const Text(
+                            'Deposit',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kcBlackColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Container(
@@ -258,24 +267,29 @@ class _WalletState extends State<Wallet> {
                       ),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/images/send-2.svg',
-                          color: kcSecondaryColor,
-                          height: 17,
-                          width: 17,
-                        ),
-                        const SizedBox(width: 8.0),
-                        const Text(
-                          'Withdraw',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: kcBlackColor,
-                            fontSize: 14,
+                    child: GestureDetector(
+                      onTap: () {
+                        _showWithdrawalModal(context);
+                      },
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/images/send-2.svg',
+                            color: kcSecondaryColor,
+                            height: 17,
+                            width: 17,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 8.0),
+                          const Text(
+                            'Withdraw',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kcBlackColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -1344,4 +1358,77 @@ class _WalletState extends State<Wallet> {
       ),
     );
   }
+  ValueNotifier<PaymentMethod> selectedPaymentMethod = ValueNotifier(PaymentMethod.wallet);
+  ValueNotifier<bool> isPaymentProcessing = ValueNotifier(false);
+
+
+  PaymentMethod get selectedMethod => selectedPaymentMethod.value;
+
+  void selectMethod(PaymentMethod method) {
+    selectedPaymentMethod.value = method;
+  }
+  void _showPaymentModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return ValueListenableBuilder<PaymentMethod>(
+          valueListenable: selectedPaymentMethod,
+          builder: (context, value, child) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25.0),
+                  topRight: Radius.circular(25.0),
+                ),
+              ),
+              child: DepositsPaymentModalWidget(
+                onPaymentMethodSelected: (PaymentMethod method) {
+                  selectMethod(method);
+                },
+                onProceedWithPayment: () async {
+                  //checkoutDonation(context);
+                },
+                selectedPaymentMethod: selectedPaymentMethod.value,
+                isPaymentProcessing: isPaymentProcessing,
+                amountController: amountController,
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  void _showWithdrawalModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return ValueListenableBuilder<PaymentMethod>(
+          valueListenable: selectedPaymentMethod,
+          builder: (context, value, child) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25.0),
+                  topRight: Radius.circular(25.0),
+                ),
+              ),
+              child: WithdrawalPaymentModalWidget(
+                onProceedWithPayment: () async {
+                  //checkoutDonation(context);
+                },
+                isPaymentProcessing: isPaymentProcessing,
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
 }

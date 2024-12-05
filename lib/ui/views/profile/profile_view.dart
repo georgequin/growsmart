@@ -163,28 +163,28 @@ class ProfileView extends StatelessWidget {
                             ),
                             title: const Text("Wallet"),
                           ),
-                          ListTile(
-                            onTap: () {
-                              // showModalBottomSheet(
-                              //   context: context,
-                              //   isScrollControlled: true,
-                              //   // barrierColor: Colors.black.withAlpha(50),
-                              //   // backgroundColor: Colors.transparent,
-                              //   backgroundColor: Colors.black.withOpacity(0.7),
-                              //   builder: (BuildContext context) {
-                              //     return const FractionallySizedBox(
-                              //       heightFactor:
-                              //           1.0, // 70% of the screen's height
-                              //       child: ProfileScreen(),
-                              //     );
-                              //   },
-                              // );
-                            },
-                            leading: Icon(Icons.shopping_cart,
-                              color: kcOrangeColor,
-                            ),
-                            title: const Text("My oders"),
-                          ),
+                          // ListTile(
+                          //   onTap: () {
+                          //     // showModalBottomSheet(
+                          //     //   context: context,
+                          //     //   isScrollControlled: true,
+                          //     //   // barrierColor: Colors.black.withAlpha(50),
+                          //     //   // backgroundColor: Colors.transparent,
+                          //     //   backgroundColor: Colors.black.withOpacity(0.7),
+                          //     //   builder: (BuildContext context) {
+                          //     //     return const FractionallySizedBox(
+                          //     //       heightFactor:
+                          //     //           1.0, // 70% of the screen's height
+                          //     //       child: ProfileScreen(),
+                          //     //     );
+                          //     //   },
+                          //     // );
+                          //   },
+                          //   leading: Icon(Icons.shopping_cart,
+                          //     color: kcOrangeColor,
+                          //   ),
+                          //   title: const Text("My orders"),
+                          // ),
                           // ListTile(
                           //   onTap: () {
                           //     // locator<NavigationService>().navigateToTrack();
