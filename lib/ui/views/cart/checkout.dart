@@ -110,13 +110,14 @@ class _CheckoutState extends State<Checkout> {
                           width: 65,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            image: item.raffle!.images![0].isEmpty
-                                ? null
-                                : DecorationImage(
-                              image: NetworkImage(
-                                  item.raffle!.images![0]),
-                            ),
-                          ),
+                            image: (item.raffle?.images?.isNotEmpty == true && item.raffle!.images![0].isNotEmpty)
+                                ? DecorationImage(
+                              image: NetworkImage(item.raffle!.images![0]),
+                              fit: BoxFit.cover, // Optional: Adjust the image fit
+                            )
+                                : null,
+                          )
+
                         ),
                         horizontalSpaceMedium,
                         Expanded(
