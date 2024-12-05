@@ -99,11 +99,11 @@ class ServicesView extends StackedView<ServicesviewModel> {
                 child: Image.network(
                   imagePath,
                   fit: BoxFit.cover,
-                  height: 100,
+                  height: 90,
                   width: 86,
                   errorBuilder: (context, error, stackTrace) {
                     return Image.asset('assets/images/default.png',
-                        height: 100, width: 86);
+                        height: 90, width: 86);
                   },
                 ),
               ),
@@ -116,7 +116,7 @@ class ServicesView extends StackedView<ServicesviewModel> {
                       title,
                       style: GoogleFonts.redHatDisplay(
                         textStyle: const TextStyle(
-                          fontSize: 17,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -144,7 +144,7 @@ class ServicesView extends StackedView<ServicesviewModel> {
                     price,
                     style: GoogleFonts.redHatDisplay(
                       textStyle: const TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.w700),
+                          fontSize: 12, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ],
