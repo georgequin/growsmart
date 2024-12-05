@@ -178,7 +178,7 @@ class _WalletState extends State<Wallet> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Installment:',
+                                        'Installment: 100,000.00',
                                         style: TextStyle(fontSize: 20),
                                       ),
                                     ],
@@ -188,7 +188,7 @@ class _WalletState extends State<Wallet> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Balance:',
+                                        'Balance: 100,000.00',
                                         style: TextStyle(fontSize: 20),
                                       ),
                                     ],
@@ -197,7 +197,7 @@ class _WalletState extends State<Wallet> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Pending:',
+                                        'Pending: 40,000.00',
                                         style: TextStyle(fontSize: 20),
                                       ),
                                     ],
@@ -319,13 +319,169 @@ class _WalletState extends State<Wallet> {
                       ),
                     ),
                     SizedBox(
-                      height: 800, // Adjust height as necessary
+                      height: 800,
 
                       child: TabBarView(
                         physics: const BouncingScrollPhysics(),
                         children: [
-                          Text(
-                            'FIRST PAGE',
+                          RefreshIndicator(
+                            onRefresh: () async {
+                              // await viewModel.refreshData();
+                            },
+                            child: loading
+                                ? Padding(
+                              padding: const EdgeInsets.all(26.0),
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                                : transactions.isEmpty
+                                ? const EmptyState(
+                              animation: "no_transactions.json",
+                              label: "No Installment Yet",
+                            )
+                                : ListView.builder(
+                              itemCount: groupedTransactions
+                                  .keys.length,
+                              itemBuilder: (context, index) {
+                                String monthYear =
+                                groupedTransactions.keys
+                                    .elementAt(index);
+
+                                List<Transaction> transactions =
+                                groupedTransactions[
+                                monthYear]!;
+
+                                return Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets
+                                          .symmetric(
+                                          horizontal: 30.0,
+                                          vertical: 10.0),
+                                      child: Text(
+                                        monthYear,
+                                        style: GoogleFonts
+                                            .redHatDisplay(
+                                          textStyle: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight:
+                                            FontWeight.w400,
+                                            color: uiMode
+                                                .value ==
+                                                AppUiModes
+                                                    .dark
+                                                ? kcLightGrey
+                                                : kcMediumGrey,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    ...transactions.map(
+                                          (transaction) => Padding(
+                                        padding:
+                                        const EdgeInsets
+                                            .symmetric(
+                                            horizontal:
+                                            16.0),
+                                        child: ListTile(
+                                          minLeadingWidth: 10,
+                                          leading: Container(
+                                            margin:
+                                            const EdgeInsets
+                                                .only(
+                                                right: 8),
+                                            child: SvgPicture
+                                                .asset(
+                                              'assets/icons/ticket_out.svg',
+                                              height: 28,
+                                            ),
+                                          ),
+                                          title: Text(
+                                            transaction.paymentType ==
+                                                'raffle'
+                                                ? 'Ticket Purchase'
+                                                : transaction
+                                                .paymentType ==
+                                                'donation'
+                                                ? 'Project Donation'
+                                                : 'Purchase',
+                                            style: GoogleFonts
+                                                .redHatDisplay(
+                                              textStyle:
+                                              const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight:
+                                                FontWeight
+                                                    .w500,
+                                              ),
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            DateFormat(
+                                                'EEEE, d MMM hh:mm a')
+                                                .format(
+                                              DateTime.parse(
+                                                  transaction
+                                                      .createdAt!),
+                                            ),
+                                            style: GoogleFonts
+                                                .redHatDisplay(
+                                              textStyle:
+                                              TextStyle(
+                                                fontSize: 11,
+                                                fontWeight:
+                                                FontWeight
+                                                    .w400,
+                                                color: uiMode
+                                                    .value ==
+                                                    AppUiModes
+                                                        .dark
+                                                    ? kcLightGrey
+                                                    : kcMediumGrey,
+                                              ),
+                                            ),
+                                          ),
+                                          trailing: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment
+                                                .end,
+                                            children: [
+                                              Text(
+                                                transaction.paymentType ==
+                                                    'raffle'
+                                                    ? '+₦${transaction.amount}'
+                                                    : '-₦${transaction.amount}',
+                                                style:
+                                                TextStyle(
+                                                  color: transaction.paymentType ==
+                                                      'donation'
+                                                      ? Colors
+                                                      .red
+                                                      : Colors
+                                                      .green,
+                                                  fontSize: 16,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .w500,
+                                                  fontFamily:
+                                                  'roboto',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                           DefaultTabController(
                             length: 2,
