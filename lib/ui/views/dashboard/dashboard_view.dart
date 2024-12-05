@@ -297,8 +297,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
     "Outdoor Lights",
   ];
 
-  Widget popularDrawsSlider(
-      BuildContext context, DashboardViewModel viewModel) {
+  Widget popularDrawsSlider(BuildContext context, DashboardViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -312,11 +311,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   "Popular Products",
                   style: GoogleFonts.bricolageGrotesque(
                     textStyle: TextStyle(
-                      fontSize: 16, // Custom font size
-                      fontWeight: FontWeight.w700, // Custom font weight
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
                       color: uiMode.value == AppUiModes.dark
                           ? kcWhiteColor
-                          : kcBlackColor, // Custom text color (optional)
+                          : kcBlackColor,
                     ),
                   ),
                 ),
@@ -324,32 +323,27 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   "Explore our most sought-after products",
                   style: GoogleFonts.redHatDisplay(
                     textStyle: TextStyle(
-                      fontSize: 11, // Custom font size
-                      fontWeight: FontWeight.w400, // Custom font weight
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
                       color: uiMode.value == AppUiModes.dark
                           ? kcWhiteColor
-                          : kcBlackColor, // Custom text color (optional)
+                          : kcBlackColor,
                     ),
                   ),
                 ),
               ],
             ),
-            // Explore Capsule
             InkWell(
               onTap: () {
-                // locator<NavigationService>().navigateToTrack();
                 Navigator.of(context).push(MaterialPageRoute(builder: (c) {
                   return ShopView();
                 }));
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: kcSecondaryColor
-                      .withOpacity(0.2), // Capsule background color
-                  borderRadius:
-                      BorderRadius.circular(20), // Rounded capsule shape
+                  color: kcSecondaryColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   children: [
@@ -357,7 +351,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       "Explore",
                       style: GoogleFonts.redHatDisplay(
                         textStyle: TextStyle(
-                          fontSize: 12, // Custom font size
+                          fontSize: 12,
                           color: kcBlackColor,
                           fontWeight: FontWeight.w500,
                         ),
@@ -380,205 +374,174 @@ class DashboardView extends StackedView<DashboardViewModel> {
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Number of columns in the grid
+            crossAxisCount: 2,
             crossAxisSpacing: 10.0,
-            mainAxisSpacing: 10.0, // Added space between items
-            childAspectRatio: 0.8, // Adjust height relative to width
+            mainAxisSpacing: 10.0,
+            childAspectRatio: 0.75, // Adjusted aspect ratio
           ),
           itemCount: viewModel.filteredProductList.length,
           itemBuilder: (context, index) {
             final item = viewModel.filteredProductList[index];
             return InkWell(
               onTap: () {
-                print('product to see is: ${item.productName}');
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   isDismissible: true,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25.0),
-                        topRight: Radius.circular(25.0)),
+                      topLeft: Radius.circular(25.0),
+                      topRight: Radius.circular(25.0),
+                    ),
                   ),
-                  // barrierColor: Colors.black.withAlpha(50),
-                  // backgroundColor: Colors.transparent,
                   backgroundColor: Colors.black.withOpacity(0.7),
                   builder: (BuildContext context) {
                     return ProductCard(product: item);
                   },
                 );
               },
-              // child: Container(
-              //   height: 200,
-              //   margin: const EdgeInsets.all(8.0),
-              //   decoration: BoxDecoration(
-              //     color: index % 2 == 0
-              //         ? Colors.purple[50]
-              //         : Colors.pink[50], // Alternating background colors
-              //     borderRadius: BorderRadius.circular(20),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.grey.withOpacity(0.5),
-              //         spreadRadius: 2,
-              //         blurRadius: 5,
-              //         offset: Offset(0, 3), // Shadow position
-              //       ),
-              //     ],
-              //   ),
-                child: Card(
-              margin: const EdgeInsets.all(8.0),
-              elevation: 3, // Adds shadow
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20), // Rounded corners
-              ),
-              color: index % 2 == 0
-                  ? Colors.purple[50]
-                  : Colors.pink[50], // Alternating background colors
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min, // Prevent excessive height
-                children: [
-                  // Image with "NEW" badge
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                        child: CachedNetworkImage(
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.0,
-                              valueColor: AlwaysStoppedAnimation<Color>(kcSecondaryColor),
-                            ),
-                          ),
-                          imageUrl: (item.images != null && item.images!.isNotEmpty)
-                              ? item.images!.first
-                              : 'https://via.placeholder.com/120',
-                          height: 120,
-                          width: double.infinity,
-                          fit: BoxFit.fitHeight,
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
-                          fadeInDuration: const Duration(milliseconds: 500),
-                          fadeOutDuration: const Duration(milliseconds: 300),
-                        ),
-                      ),
-                      // Add "NEW" badge here if needed
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 4.0),
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            'NEW',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Rating stars
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    child: Row(
-                      children: List.generate(5, (starIndex) {
-                        return Icon(
-                          Icons.star,
-                          color: starIndex < item.rating!.toInt()
-                              ? kcStarColor
-                              : Colors.grey,
-                          size: 16,
-                        );
-                      }),
-                    ),
-                  ),
-
-                  // Product title
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      item.productName ?? 'Product name',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-
-                  // Price and Cart icon
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Card(
+                margin: const EdgeInsets.all(8.0),
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
                       children: [
-                        Expanded(
-                          child: Text(
-                            '₦${item.price}' ?? "\$0",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'roboto',
-                              color: kcPrimaryColor,
-                              fontWeight: FontWeight.bold,
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                          child: CachedNetworkImage(
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.0,
+                                valueColor:
+                                AlwaysStoppedAnimation<Color>(kcSecondaryColor),
+                              ),
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis, // To prevent overflow
+                            imageUrl: (item.images != null && item.images!.isNotEmpty)
+                                ? item.images!.first
+                                : 'https://via.placeholder.com/120',
+                            height: 120, // Reduced image size
+                            width: double.infinity,
+                            fit: BoxFit.cover, // Ensures it fits properly
+                            errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                            fadeInDuration: const Duration(milliseconds: 500),
+                            fadeOutDuration: const Duration(milliseconds: 300),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            RaffleCartItem newItem =
-                            RaffleCartItem(raffle: item, quantity: 1);
-                            viewModel.addToRaffleCart(item);
-                          },
+                        Positioned(
+                          top: 8,
+                          left: 8,
                           child: Container(
-                            padding: const EdgeInsets.all(8.0), // Padding around the icon
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 4.0),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(
-                              Icons.shopping_cart_outlined,
-                              color: kcSecondaryColor,
-                              size: 16,
+                            child: const Text(
+                              'NEW',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
-                  ),
-                ],
-              ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
+                      child: Row(
+                        children: List.generate(5, (starIndex) {
+                          return Icon(
+                            Icons.star,
+                            color: starIndex < (item.rating?.toInt() ?? 0)
+                                ? kcStarColor
+                                : Colors.grey,
+                            size: 16,
+                          );
+                        }),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        item.productName ?? 'Product name',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '₦${item.price ?? 0}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: kcPrimaryColor,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              RaffleCartItem newItem =
+                              RaffleCartItem(raffle: item, quantity: 1);
+                              viewModel.addToRaffleCart(item);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.shopping_cart_outlined,
+                                color: kcSecondaryColor,
+                                size: 16,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
-
-            // ),
-            // );
           },
         )
       ],
     );
   }
-
 
 
   Widget _buildShimmerOrContent(
