@@ -487,35 +487,36 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     ],
                   ),
 
-                  // Rating stars
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    child: Row(
-                      children: List.generate(5, (starIndex) {
-                        return Icon(
-                          Icons.star,
-                          color: starIndex < item.rating!.toInt()
-                              ? kcStarColor
-                              : Colors.grey,
-                          size: 16,
-                        );
-                      }),
-                    ),
-                  ),
-
-                  // Product title
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      item.productName ?? 'Product name',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                      // Rating stars
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                        child: Row(
+                          children: List.generate(5, (starIndex) {
+                            return Icon(
+                              Icons.star,
+                              color: starIndex < item.rating!.toInt()
+                                  ? kcStarColor
+                                  : Colors.grey,
+                              size: 16,
+                            );
+                          }),
+                        ),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+
+                      // Product title
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          item.productName ?? 'Product name',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
 
                   // Price and Cart icon
                   Padding(
@@ -570,9 +571,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
               ),
               ),
             );
-
-            // ),
-            // );
           },
         )
       ],
