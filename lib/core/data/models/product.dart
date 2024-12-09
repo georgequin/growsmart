@@ -17,6 +17,7 @@ class Product {
   int? modelNumber;
   String? createdAt;
   String? updatedAt;
+  bool? installment;
   List<String>? reviews;
   List<String>? images;
 
@@ -39,6 +40,7 @@ class Product {
     this.updatedAt,
     this.reviews,
     this.images,
+    this.installment
   });
 
   Product.fromJson(Map<String, dynamic> json) {
@@ -60,6 +62,8 @@ class Product {
     updatedAt = json['updatedAt'];
     reviews = json['reviews'] != null ? List<String>.from(json['reviews']) : null;
     images = json['images'] != null ? List<String>.from(json['images']) : null;
+    installment = json['installment'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -80,6 +84,7 @@ class Product {
     data['modelNumber'] = modelNumber;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
+    data['installment'] = installment;
     if (reviews != null) {
       data['reviews'] = reviews;
     }

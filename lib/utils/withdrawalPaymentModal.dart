@@ -240,7 +240,6 @@ class WithdrawalPaymentModalWidget extends StatelessWidget {
                               const SizedBox(height: 8),
                               TextField(
                                 controller: accountName,
-                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   hintText: "Account Name",
                                   hintStyle: TextStyle(

@@ -231,16 +231,20 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        address.address,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Text(
+                          address.address,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1, // Ensure it doesn't wrap
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Row(
                         children: [
-                          _buildIconButton(Icons.edit, 'Edit', Colors.red),
+                          _buildIconButton(Icons.edit, 'Edit', Colors.red, ),
                           horizontalSpaceSmall,
                           _buildIconButton(Icons.delete, 'Delete', Colors.red, () {
                             deleteAddress(index);
@@ -303,7 +307,7 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
     return Column(
         children: [
         IconButton(
-        icon: Icon(icon, color: color),
+        icon: Icon(icon, color: color, size: 20,),
     onPressed: onPressed,
     ),
     Text(label, style: TextStyle(color: color)),

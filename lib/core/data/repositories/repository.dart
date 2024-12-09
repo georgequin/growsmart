@@ -279,7 +279,7 @@ class Repository extends IRepository {
   Future<ApiResponse> updateMedia(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "media/upload",
+      endpoint: "profile",
       useFormData: true,
       formData: FormData.fromMap(req),
     );
