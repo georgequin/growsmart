@@ -230,7 +230,7 @@ class _WalletState extends State<Wallet> {
                       padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: kcSecondaryColor,
+                          color: kcPrimaryColor,
                           width: 1.0,
                         ),
                         borderRadius: BorderRadius.circular(8.0),
@@ -241,7 +241,7 @@ class _WalletState extends State<Wallet> {
                         children: [
                           SvgPicture.asset(
                             'assets/images/send-2.svg',
-                            color: kcSecondaryColor,
+                            color: kcPrimaryColor,
                             height: 17,
                             width: 17,
                           ),
@@ -262,7 +262,7 @@ class _WalletState extends State<Wallet> {
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: kcSecondaryColor,
+                        color: kcPrimaryColor,
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(8.0),
@@ -275,7 +275,7 @@ class _WalletState extends State<Wallet> {
                         children: [
                           SvgPicture.asset(
                             'assets/images/send-2.svg',
-                            color: kcSecondaryColor,
+                            color: kcPrimaryColor,
                             height: 17,
                             width: 17,
                           ),

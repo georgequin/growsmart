@@ -40,7 +40,7 @@ class DeleteAccountView extends StackedView<DeleteAccountViewModel> {
                   bottom: 0,
                   child: Padding(
                     padding: const EdgeInsets.all(80.0),
-                    child: Image.asset("assets/images/afriprize_light.png"),
+                    // child: Image.asset(""),
                   ),
                 )
               ],

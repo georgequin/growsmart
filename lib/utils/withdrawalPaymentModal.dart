@@ -96,7 +96,7 @@ class WithdrawalPaymentModalWidget extends StatelessWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           decoration: BoxDecoration(
-                            color: kcSecondaryColor, // Yellowish background
+                            color: kcPrimaryColor, // Yellowish background
                             borderRadius: const BorderRadius.only(
                               topRight: Radius.circular(25.0),
                               topLeft: Radius.circular(25.0),
@@ -397,7 +397,7 @@ class WithdrawalPaymentModalWidget extends StatelessWidget {
                                 isLoading: isLoading, // Reflect loading state
                                 label: "Proceed",
                                 submit: () => handleProceedWithPayment(context),
-                                color: kcSecondaryColor,
+                                color: kcPrimaryColor,
                               );
                             },
                           ),
