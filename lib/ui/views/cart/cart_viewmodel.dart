@@ -230,7 +230,7 @@ class CartViewModel extends BaseViewModel {
 
         // Map the items list to List<RaffleCartItem>
         List<RaffleCartItem> onlineItems = items
-            .map((item) => RaffleCartItem.fromJson(Map<String, dynamic>.from(item)))
+            .map((item) => RaffleCartItem.fromJson(item))
             .toList();
         print('saved items are: ${onlineItems.first.raffle?.productName}');
 
