@@ -22,18 +22,27 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Lottie.asset("assets/animations/$animation"),
-          verticalSpaceMedium,
-          Text(
-            label,
-            style: const TextStyle(fontSize: 20),
-          )
-        ],
-      ),
+      child: SingleChildScrollView(
+         // Add padding if needed
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Lottie.asset("assets/animations/$animation"),
+              const SizedBox(height: 20), // Spacing between animation and text
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold, // Make the text more prominent
+                ),
+                textAlign: TextAlign.center, // Center-align the text
+              ),
+            ],
+          ),
+        ),
     );
+
+
   }
 }

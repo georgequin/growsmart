@@ -218,74 +218,91 @@ class CartView extends StackedView<CartViewModel> {
                             ),
 
 
-                            Row(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    if (item.quantity! >
-                                        1) {
-                                      item.quantity =
-                                          item.quantity! -
-                                              1;
-                                      viewModel
-                                          .getRaffleSubTotal();
-                                      raffleCart
-                                          .notifyListeners();
-                                    }
+                                    viewModel.addRemoveDeleteRaffle(item);
                                   },
-                                  child: Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color:
-                                            kcLightGrey),
-                                        borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                            5)),
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.remove,
-                                        size: 18,
-                                      ),
-                                    ),
+                                  child: Icon(
+                                    Icons.delete,
+                                    size: 18,
+                                    color: Colors.red[100],
                                   ),
                                 ),
-                                horizontalSpaceSmall,
-                                Text("${item.quantity!}"),
-                                horizontalSpaceSmall,
-                                InkWell(
-                                  onTap: () {
-                                    item.quantity =
-                                        item.quantity! +
-                                            1;
-                                    viewModel
-                                        .getRaffleSubTotal();
-                                    raffleCart
-                                        .notifyListeners();
-                                  },
-                                  child: Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color:
-                                            kcLightGrey),
-                                        borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                            5)),
-                                    child: const Align(
-                                      alignment: Alignment
-                                          .center,
-                                      child: Icon(
-                                        Icons.add,
-                                        size: 18,
+
+                                verticalSpaceSmall,
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        if (item.quantity! >
+                                            1) {
+                                          item.quantity =
+                                              item.quantity! -
+                                                  1;
+                                          viewModel
+                                              .getRaffleSubTotal();
+                                          raffleCart
+                                              .notifyListeners();
+                                        }
+                                      },
+                                      child: Container(
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color:
+                                                kcLightGrey),
+                                            borderRadius:
+                                            BorderRadius
+                                                .circular(
+                                                5)),
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.remove,
+                                            size: 18,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
+                                    horizontalSpaceSmall,
+                                    Text("${item.quantity!}"),
+                                    horizontalSpaceSmall,
+                                    InkWell(
+                                      onTap: () {
+                                        item.quantity =
+                                            item.quantity! +
+                                                1;
+                                        viewModel
+                                            .getRaffleSubTotal();
+                                        raffleCart
+                                            .notifyListeners();
+                                      },
+                                      child: Container(
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color:
+                                                kcLightGrey),
+                                            borderRadius:
+                                            BorderRadius
+                                                .circular(
+                                                5)),
+                                        child: const Align(
+                                          alignment: Alignment
+                                              .center,
+                                          child: Icon(
+                                            Icons.add,
+                                            size: 18,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ],
                             )
 

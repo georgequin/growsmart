@@ -277,55 +277,44 @@ class ShopView extends StackedView<ShopViewModel> {
       children: [
         GridView.builder(
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 10.0,
             mainAxisSpacing: 10.0,
-            childAspectRatio: 0.8,
+            childAspectRatio: 0.75, // Adjusted aspect ratio
           ),
           itemCount: viewModel.filteredProductList.length,
           itemBuilder: (context, index) {
             final item = viewModel.filteredProductList[index];
             return InkWell(
-              onTap: (){
+              onTap: () {
                 showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                isDismissible: true,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(25.0),
-                                      topRight: Radius.circular(25.0)),
-                                ),
-                                // barrierColor: Colors.black.withAlpha(50),
-                                // backgroundColor: Colors.transparent,
-                                backgroundColor: Colors.black.withOpacity(0.7),
-                                builder: (BuildContext context) {
-                                  return ProductCard(product: item);
-                                },
-                              );
-              },
-              child: Container(
-                margin: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: index % 2 == 0
-                      ? Colors.purple[50]
-                      : Colors.pink[50], // Alternating background colors
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                  context: context,
+                  isScrollControlled: true,
+                  isDismissible: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25.0),
+                      topRight: Radius.circular(25.0),
                     ),
-                  ],
+                  ),
+                  backgroundColor: Colors.black.withOpacity(0.7),
+                  builder: (BuildContext context) {
+                    return ProductCard(product: item);
+                  },
+                );
+              },
+              child: Card(
+                margin: const EdgeInsets.all(8.0),
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Image with "NEW" badge
                     Stack(
                       children: [
                         ClipRRect(
@@ -337,34 +326,33 @@ class ShopView extends StackedView<ShopViewModel> {
                             placeholder: (context, url) => const Center(
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.0,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    kcSecondaryColor),
+                                valueColor:
+                                AlwaysStoppedAnimation<Color>(kcSecondaryColor),
                               ),
                             ),
                             imageUrl: (item.images != null && item.images!.isNotEmpty)
                                 ? item.images!.first
                                 : 'https://via.placeholder.com/120',
-                            height: 120,
+                            height: MediaQuery.of(context).size.height * 0.15, // Reduced image size
                             width: double.infinity,
-                            fit: BoxFit.fitHeight,
+                            fit: BoxFit.fitHeight, // Ensures it fits properly
                             errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
+                            const Icon(Icons.error),
                             fadeInDuration: const Duration(milliseconds: 500),
                             fadeOutDuration: const Duration(milliseconds: 300),
                           ),
                         ),
-                        // "NEW" badge
                         Positioned(
-                          top: 0,
-                          left: 0,
+                          top: 8,
+                          left: 8,
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 8.0, vertical: 4.0),
                             decoration: BoxDecoration(
                               color: Colors.black,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Text(
+                            child: const Text(
                               'NEW',
                               style: TextStyle(
                                 color: Colors.white,
@@ -375,8 +363,6 @@ class ShopView extends StackedView<ShopViewModel> {
                         ),
                       ],
                     ),
-
-                    // Rating stars
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 4.0),
@@ -384,7 +370,7 @@ class ShopView extends StackedView<ShopViewModel> {
                         children: List.generate(5, (starIndex) {
                           return Icon(
                             Icons.star,
-                            color: starIndex < item.rating!.toInt()
+                            color: starIndex < (item.rating?.toInt() ?? 0)
                                 ? kcStarColor
                                 : Colors.grey,
                             size: 16,
@@ -392,8 +378,6 @@ class ShopView extends StackedView<ShopViewModel> {
                         }),
                       ),
                     ),
-
-                    // Product title
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
@@ -406,60 +390,54 @@ class ShopView extends StackedView<ShopViewModel> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-
-                    // Price and Cart icon
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 0.0),
-                      child:
-                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                '₦${item.price}' ?? "\$0",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'roboto',
-                                  color: kcPrimaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis, // To prevent overflow
+                          horizontal: 8.0, vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '₦${item.price ?? 0}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: kcPrimaryColor,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              RaffleCartItem newItem =
+                              RaffleCartItem(raffle: item, quantity: 1);
+                              viewModel.addToRaffleCart(item);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.shopping_cart_outlined,
+                                color: kcSecondaryColor,
+                                size: 16,
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                RaffleCartItem newItem = RaffleCartItem(
-                                    raffle: item,
-                                    quantity: 1);
-                                viewModel.addToRaffleCart(item);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(
-                                    8.0), // Padding around the icon
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 1,
-                                      blurRadius: 5,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.shopping_cart_outlined,
-                                  color: kcSecondaryColor,
-                                  size: 16,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                          )
+                        ],
                       ),
+                    ),
                   ],
                 ),
               ),

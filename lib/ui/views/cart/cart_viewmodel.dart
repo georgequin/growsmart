@@ -80,7 +80,7 @@ class CartViewModel extends BaseViewModel {
   //   getRaffleSubTotal();
   // }
 
-  void clearRaffleCart() async {
+  void clearRaffleCart(int index) async {
     setBusy(true);
     try {
       print('about to clear cart');
@@ -213,7 +213,7 @@ class CartViewModel extends BaseViewModel {
         },
       );
       raffleCart.value.clear();
-      clearRaffleCart();
+      // clearRaffleCart();
       await repo.clearCart();
     }
   }
