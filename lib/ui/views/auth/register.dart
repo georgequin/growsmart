@@ -1,4 +1,5 @@
 import 'package:afriprize/core/data/models/country.dart';
+import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:afriprize/ui/components/text_field_widget.dart';
@@ -186,7 +187,7 @@ class _RegisterState extends State<Register> {
                 ),
                 verticalSpace(30),
                 SubmitButton(
-                  isLoading: model.isBusy,
+                  isLoading: appLoading.value,
                   label: "Create Account",
                   submit: () {
                     if (_formKey.currentState!.validate()) {

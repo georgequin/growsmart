@@ -90,7 +90,7 @@ class _SignUpState extends State<SignUp> {
               verticalSpaceMedium,
               if(model.isOtpRequested)
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(40.0),
                   child: CodeInputWidget(
                     codeController: model.otp,
                     onCompleted: (String value) {

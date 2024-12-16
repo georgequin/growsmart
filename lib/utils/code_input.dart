@@ -17,8 +17,8 @@ class CodeInputWidget extends StatelessWidget {
       pinTheme: PinTheme(
         shape: PinCodeFieldShape.box,
         borderRadius: BorderRadius.circular(10),
-        fieldHeight: 62,
-        fieldWidth: 74,
+        fieldHeight: 52,
+        fieldWidth: 54,
         activeFillColor: Colors.white,
         inactiveFillColor: Colors.white,
         selectedFillColor: Colors.white,

@@ -66,6 +66,14 @@ class CartViewModel extends BaseViewModel {
     rebuildUi();
   }
 
+  Future<void> refreshData() async {
+    setBusy(true);
+    notifyListeners();
+    // getResourceList();
+    setBusy(false);
+    notifyListeners();
+  }
+
 
   // void clearRaffleCart() async{
   //   for (var element in itemsToDeleteRaffle) {

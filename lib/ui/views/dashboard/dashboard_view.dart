@@ -428,7 +428,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             imageUrl: (item.images != null && item.images!.isNotEmpty)
                                 ? item.images!.first
                                 : 'https://via.placeholder.com/120',
-                            height: MediaQuery.of(context).size.height * 0.15, // Reduced image size
+                            height: MediaQuery.of(context).size.height * 0.14, // Reduced image size
                             width: double.infinity,
                             fit: BoxFit.fitHeight, // Ensures it fits properly
                             errorWidget: (context, url, error) =>
