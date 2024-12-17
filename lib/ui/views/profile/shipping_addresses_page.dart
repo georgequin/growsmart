@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../core/data/models/profile.dart';
@@ -26,10 +29,14 @@ class _ShippingAddressesPageState extends State<ShippingAddressesPage> {
 
   List<Address> shippingAddresses = [];
 
-  void deleteAddress(int index) {
+  void deleteAddress(int index) async {
     setState(() {
       shippingAddresses.removeAt(index);
     });
+
+    // Save the updated list to SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('shippingAddresses', jsonEncode(shippingAddresses));
   }
 
   void showAddAddressBottomSheet() {

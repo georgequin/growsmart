@@ -537,8 +537,8 @@ class Repository extends IRepository {
   Future<ApiResponse> resetPassword(
       Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
-      method: HttpMethod.put,
-      endpoint: "users/me/password_change",
+      method: HttpMethod.post,
+      endpoint: "auth/update-password",
       reqBody: req,
     );
 

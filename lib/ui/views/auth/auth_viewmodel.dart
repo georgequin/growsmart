@@ -163,12 +163,12 @@ class AuthViewModel extends BaseViewModel {
     //   snackBar.showSnackbar(message: "Accept terms to continue");
     //   return RegistrationResult.failure;
     // }
-    setBusy(true);
+    appLoading.value = true;
 
     try {
       ApiResponse res = await repo.register({
-        "firstname": firstname.text,
-        "lastname": lastname.text,
+        "firstName": firstname.text,
+        "lastName": lastname.text,
         "userId":  profile.value.id,
         "password": password.text,
 

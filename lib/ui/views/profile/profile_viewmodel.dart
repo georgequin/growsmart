@@ -60,6 +60,7 @@ class ProfileViewModel extends BaseViewModel {
     setBusy(false);
   }
 
+
   void getProfile() async {
 
     final localProfileJson = await locator<LocalStorage>().fetch(LocalStorageDir.profileView);

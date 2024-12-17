@@ -20,6 +20,7 @@ ValueNotifier<AppUiModes> uiMode = ValueNotifier(AppUiModes.light);
 ValueNotifier<List<AppNotification>> notifications = ValueNotifier([]);
 ValueNotifier<int> unreadCount = ValueNotifier(0);
 ValueNotifier<AppModules> currentModuleNotifier = ValueNotifier(AppModules.raffle);
+ValueNotifier<bool> appLoading = ValueNotifier(false);
 
 
 void switchModule(AppModules module) {
