@@ -248,20 +248,20 @@ class ShopViewModel extends BaseViewModel {
     // setBusy(true);
     // notifyListeners();
     try {
-      final existingItem = raffleCart.value.firstWhere(
-            (raffleItem) => raffleItem.raffle?.id == raffle.id,
-        orElse: () => RaffleCartItem(raffle: raffle, quantity: 0),
+      final existingItem = cart.value.firstWhere(
+            (raffleItem) => raffleItem.product?.id == raffle.id,
+        orElse: () => CartItem(product: raffle, quantity: 0),
       );
 
-      if (existingItem.quantity != null && existingItem.quantity! > 0 && existingItem.raffle != null) {
+      if (existingItem.quantity != null && existingItem.quantity! > 0 && existingItem.product != null) {
         existingItem.quantity = (existingItem.quantity! + 1);
       } else {
         existingItem.quantity = 1;
-        raffleCart.value.add(existingItem);
+        cart.value.add(existingItem);
       }
 
       // Save to local storage
-      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
       await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
 
       // Save to online cart using API
@@ -280,18 +280,18 @@ class ShopViewModel extends BaseViewModel {
       log.e(e);
     } finally {
       setBusy(false);
-      raffleCart.notifyListeners();
+      cart.notifyListeners();
     }
   }
   
   void initCart() async {
     dynamic raffle = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
     dynamic store = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
-    List<RaffleCartItem> localRaffleCart = List<Map<String, dynamic>>.from(raffle)
-        .map((e) => RaffleCartItem.fromJson(Map<String, dynamic>.from(e)))
+    List<CartItem> localRaffleCart = List<Map<String, dynamic>>.from(raffle)
+        .map((e) => CartItem.fromJson(Map<String, dynamic>.from(e)))
         .toList();
-    raffleCart.value = localRaffleCart;
-    raffleCart.notifyListeners();
+    cart.value = localRaffleCart;
+    cart.notifyListeners();
   }
   
   Future<void> decreaseRaffleQuantity(RaffleCartItem item) async {
@@ -307,41 +307,41 @@ class ShopViewModel extends BaseViewModel {
         });
       } else if (item.quantity! == 1) {
         // Remove from local cart
-        raffleCart.value.removeWhere((cartItem) => cartItem.raffle?.id == item.raffle?.id);
+        cart.value.removeWhere((cartItem) => cartItem.product?.id == item.raffle?.id);
 
         // Remove from online cart
         await repo.deleteFromCart(item.raffle!.id!);
       }
 
       // Save to local storage
-      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
       await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
     } catch (e) {
       locator<SnackbarService>().showSnackbar(message: "Failed to decrease raffle quantity: $e", duration: Duration(seconds: 2));
       log.e(e);
     } finally {
       setBusy(false);
-      raffleCart.notifyListeners();
+      cart.notifyListeners();
     }
   }
   
-  Future<void> increaseRaffleQuantity(RaffleCartItem item) async {
+  Future<void> increaseRaffleQuantity(CartItem item) async {
     setBusy(true);
     try {
       item.quantity = item.quantity! + 1;
-      int index = raffleCart.value.indexWhere((raffleItem) => raffleItem.raffle?.id == item.raffle?.id);
+      int index = cart.value.indexWhere((raffleItem) => raffleItem.product?.id == item.product?.id);
       if (index != -1) {
-        raffleCart.value[index] = item;
-        raffleCart.value = List.from(raffleCart.value);
+        cart.value[index] = item;
+        cart.value = List.from(cart.value);
 
         // Update online cart
         await repo.addToCart({
-          "raffle": item.raffle?.id,
+          "raffle": item.product?.id,
           "quantity": item.quantity,
         });
 
         // Save to local storage
-        List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+        List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
       }
     } catch (e) {
@@ -349,7 +349,7 @@ class ShopViewModel extends BaseViewModel {
       log.e(e);
     } finally {
       setBusy(false);
-      raffleCart.notifyListeners();
+      cart.notifyListeners();
     }
   }
 

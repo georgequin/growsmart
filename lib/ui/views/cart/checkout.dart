@@ -9,6 +9,7 @@ import 'package:afriprize/ui/components/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
+import '../../../core/data/models/cart_item.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
 import '../../../core/network/interceptors.dart';
 import '../../../core/utils/local_store_dir.dart';
@@ -79,8 +80,8 @@ class _CheckoutState extends State<Checkout> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text("${getTotalItems()} items in cart"),
-              children: List.generate(raffleCart.value.length, (index) {
-                RaffleCartItem item = raffleCart.value[index];
+              children: List.generate(cart.value.length, (index) {
+                CartItem item = cart.value[index];
 
                 return GestureDetector(
                   onTap: () {
@@ -110,9 +111,9 @@ class _CheckoutState extends State<Checkout> {
                           width: 65,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            image: (item.raffle?.images?.isNotEmpty == true && item.raffle!.images![0].isNotEmpty)
+                            image: (item.product?.images?.isNotEmpty == true && item.product!.images![0].isNotEmpty)
                                 ? DecorationImage(
-                              image: NetworkImage(item.raffle!.images![0]),
+                              image: NetworkImage(item.product!.images![0]),
                               fit: BoxFit.cover, // Optional: Adjust the image fit
                             )
                                 : null,
@@ -125,10 +126,10 @@ class _CheckoutState extends State<Checkout> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(item.raffle!.productName ?? ""),
+                              Text(item.product!.productName ?? ""),
                               verticalSpaceTiny,
                               Text(
-                                "N${item.raffle!.price}",
+                                "N${item.product!.price}",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               )
@@ -395,7 +396,7 @@ class _CheckoutState extends State<Checkout> {
           verticalSpaceMassive,
           SubmitButton(
             isLoading: loading,
-            label: "Pay N${getSubTotal() + getDeliveryFee()}",
+            label: "Pay ${MoneyUtils().formatAmount(getSubTotal() + getDeliveryFee())}",
             submit: () async {
               setState(() {
                 loading = true;
@@ -423,7 +424,7 @@ class _CheckoutState extends State<Checkout> {
 
   int getTotalItems() {
     int quantity = 0;
-    for (var element in raffleCart.value) {
+    for (var element in cart.value) {
       quantity = quantity + element.quantity!;
     }
 
@@ -433,9 +434,9 @@ class _CheckoutState extends State<Checkout> {
   int getSubTotal() {
     int total = 0;
 
-    for (var element in raffleCart.value) {
+    for (var element in cart.value) {
       total = total +
-          (double.parse(element.raffle?.price.toString() ?? '0').round() *
+          (double.parse(element.product?.price.toString() ?? '0').round() *
               element.quantity!);
     }
 
@@ -468,11 +469,11 @@ class _CheckoutState extends State<Checkout> {
       });
 
       if (res.statusCode == 200) {
-        raffleCart.value.clear();
-        raffleCart.notifyListeners();
+        cart.value.clear();
+        cart.notifyListeners();
         //update local cart
         List<Map<String, dynamic>> storedList =
-        raffleCart.value.map((e) => e.toJson()).toList();
+        cart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>()
             .save(LocalStorageDir.cart, storedList);
         if (res.data['receipt'] != null) {
@@ -506,10 +507,10 @@ class _CheckoutState extends State<Checkout> {
           });
 
           if (res.statusCode == 200) {
-            raffleCart.value.clear();
-            raffleCart.notifyListeners();
+            cart.value.clear();
+            cart.notifyListeners();
             //update local cart
-            List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+            List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
             await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
 
             if (res.data['receipt'] != null) {

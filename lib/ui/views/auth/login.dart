@@ -12,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../state.dart';
 import 'auth_view.dart';
 
 
@@ -31,6 +32,12 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool terms = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+    appLoading.value = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +159,7 @@ class _LoginState extends State<Login> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SubmitButton(
-                  isLoading: model.isBusy,
+                  isLoading: appLoading.value,
                   boldText: true,
                   label: "Login",
                   submit: () {

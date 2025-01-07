@@ -1,3 +1,4 @@
+import 'package:afriprize/core/data/models/cart_item.dart';
 import 'package:afriprize/core/data/models/raffle_cart_item.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
@@ -118,7 +119,7 @@ class CartView extends StackedView<CartViewModel> {
                       //     ),
                       //   ),
                       Expanded(
-                        child: raffleCart.value.isEmpty
+                        child: cart.value.isEmpty
                             ? const EmptyState(
                                 animation: "empty_cart.json",
                                 label: "Cart Is Empty",
@@ -127,8 +128,8 @@ class CartView extends StackedView<CartViewModel> {
                                 padding:
                                     const EdgeInsets.fromLTRB(20, 0, 20, 20),
                                 children: [
-                                  ValueListenableBuilder<List<RaffleCartItem>>(
-                                    valueListenable: raffleCart,
+                                  ValueListenableBuilder<List<CartItem>>(
+                                    valueListenable: cart,
                                     builder: (context, value, child) =>
                                         ListView.builder(
                                       physics:
@@ -136,7 +137,7 @@ class CartView extends StackedView<CartViewModel> {
                                       shrinkWrap: true,
                                       itemCount: value.length,
                                       itemBuilder: (context, index) {
-                                        RaffleCartItem item = value[index];
+                                        CartItem item = value[index];
                                         return GestureDetector(
                                           onTap: () {
                                             viewModel
@@ -186,7 +187,7 @@ class CartView extends StackedView<CartViewModel> {
                                                               DecorationImage(
                                                             image:
                                                                 CachedNetworkImageProvider(
-                                                              item.raffle?.images?[
+                                                              item.product?.images?[
                                                                       0] ??
                                                                   'https://via.placeholder.com/120',
                                                             ),
@@ -205,7 +206,7 @@ class CartView extends StackedView<CartViewModel> {
                                                                   .center,
                                                           children: [
                                                             Text(
-                                                              item.raffle
+                                                              item.product
                                                                       ?.productName ??
                                                                   'Product Name',
                                                               style: GoogleFonts
@@ -227,10 +228,10 @@ class CartView extends StackedView<CartViewModel> {
                                                             Row(
                                                               children: [
                                                                 Text(
-                                                                  MoneyUtils().formatAmount(((item.raffle?.price != null &&
+                                                                  MoneyUtils().formatAmount(((item.product?.price != null &&
                                                                               item.quantity !=
                                                                                   null)
-                                                                          ? (double.parse(item.raffle!.price!) *
+                                                                          ? (double.parse(item.product!.price!) *
                                                                               item.quantity!)
                                                                           : 0)
                                                                       .toInt()),
@@ -289,8 +290,6 @@ class CartView extends StackedView<CartViewModel> {
                                                                       1;
                                                               viewModel
                                                                   .getRaffleSubTotal();
-                                                              raffleCart
-                                                                  .notifyListeners();
                                                             }
                                                           },
                                                           child: Container(
@@ -323,7 +322,7 @@ class CartView extends StackedView<CartViewModel> {
                                                                     1;
                                                             viewModel
                                                                 .getRaffleSubTotal();
-                                                            raffleCart
+                                                            cart
                                                                 .notifyListeners();
                                                           },
                                                           child: Container(
@@ -366,7 +365,7 @@ class CartView extends StackedView<CartViewModel> {
                       ),
 
                       verticalSpaceSmall,
-                      if (raffleCart.value.isNotEmpty)
+                      if (cart.value.isNotEmpty)
                         _buildProceedToPaySection(context,
                             viewModel), // This will be the bottom pinned section
                     ],

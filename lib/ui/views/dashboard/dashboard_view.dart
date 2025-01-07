@@ -508,6 +508,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               RaffleCartItem newItem =
                               RaffleCartItem(raffle: item, quantity: 1);
                               viewModel.addToRaffleCart(item);
+                              viewModel.notifyListeners();
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8.0),

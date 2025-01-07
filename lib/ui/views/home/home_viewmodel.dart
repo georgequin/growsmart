@@ -18,6 +18,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:update_available/update_available.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/data/models/cart_item.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
 import '../../../core/network/api_response.dart';
 import '../../../core/network/interceptors.dart';
@@ -160,24 +161,26 @@ class HomeViewModel extends BaseViewModel {
 
         print('online cart items: $items');
 
-        // Map the items list to List<RaffleCartItem>
-        List<RaffleCartItem> onlineItems = items
-            .map((item) => RaffleCartItem.fromJson(Map<String, dynamic>.from(item)))
+        // Map the items list to List<CartItem>
+        List<CartItem> onlineItems = items
+            .map((item) => CartItem.fromJson(Map<String, dynamic>.from(item)))
             .toList();
-        print('saved items are: ${onlineItems.first.raffle?.productName}');
+
+        print('Saved items are: ${onlineItems.first.product?.productName}');
 
         // Sync online items with the local cart
-        raffleCart.value = onlineItems;
+        cart.value = onlineItems;
         notifyListeners();
-        print('saved raffle cart are: ${raffleCart.value.first.raffle?.productName}');
+        print('Saved raffle cart are: ${cart.value.first.product?.productName}');
 
         // Update local storage
-        List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+        List<Map<String, dynamic>> storedList =
+        cart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
       }
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(message: "Failed to load cart from server: $e");
-      print('couldn\'t get online cart: $e');
+      // locator<SnackbarService>().showSnackbar(message: "Failed to load cart from server: $e");
+      print('Couldn\'t get online cart: $e');
     } finally {
       setBusy(false);
     }

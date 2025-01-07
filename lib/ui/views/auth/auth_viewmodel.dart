@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/phone_number.dart';
@@ -116,7 +117,7 @@ class AuthViewModel extends BaseViewModel {
 
 
   void login() async {
-    setBusy(true);
+    appLoading.value = true;
 
     try {
       ApiResponse res = await repo.login({
@@ -124,6 +125,7 @@ class AuthViewModel extends BaseViewModel {
         "password": password.text,
       });
       if (res.statusCode == 200) {
+        appLoading.value = false;
         userLoggedIn.value = true;
         print(res.data);
         profile.value =
@@ -141,14 +143,16 @@ class AuthViewModel extends BaseViewModel {
         }
         locator<NavigationService>().clearStackAndShow(Routes.homeView);
       } else {
+        appLoading.value = false;
         snackBar.showSnackbar(message: res.data["message"]);
       }
     } catch (e) {
       log.i(e);
+      appLoading.value = false;
       snackBar.showSnackbar(message: "Unable to login try again");
     }finally{
       print('login call ended');
-      setBusy(false);
+      appLoading.value = false;
       notifyListeners();
     }
     setBusy(false);
@@ -181,7 +185,7 @@ class AuthViewModel extends BaseViewModel {
         profile.value =
             Profile.fromJson(Map<String, dynamic>.from(res.data["User"]));
         locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
-        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refresh_token"]);
+        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refreshToken"]);
         locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["User"]));
 
 
@@ -211,20 +215,23 @@ class AuthViewModel extends BaseViewModel {
 
       return RegistrationResult.failure;
 
-    }finally{setBusy(false);
+    }finally{
+      appLoading.value = false;
     notifyListeners();}
 
   }
 
   Future<void> submitOtp() async {
-    setBusy(true);
+    appLoading.value = true;
 
     try {
       ApiResponse res = await repo.submitOtp({
         "userId": profile.value.id,
         "verificationCode": otp.text,
+        "vRef": profile.value.reference,
       });
-      isLoading =false;
+      isLoading = false;
+      print('response is ${res.data}');
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: 'OTP verified successfully', duration: Duration(seconds: 5));
         // print(res);
@@ -235,17 +242,26 @@ class AuthViewModel extends BaseViewModel {
 
       }
       else {
+        final responseMessage = res.data["message"] ?? 'Verification failed';
         isLoading =false;
-        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
-        setBusy(false);
+        snackBar.showSnackbar(message: responseMessage, duration: Duration(seconds: 5));
+        appLoading.value = false;
       }
     } catch (e) {
+      print("error is $e");
       log.i(e);
-      setBusy(false);
-      isLoading =false;
+      if (e is TypeError) {
+        log.i('TypeError: ${e.toString()}');
+      } else {
+        log.i('Unexpected Error: ${e.toString()}');
+      }
 
+      snackBar.showSnackbar(
+        message: 'An error occurred. Please try again later.',
+        duration: Duration(seconds: 5),
+      );
     }finally{
-      setBusy(false);
+      appLoading.value = false;
       notifyListeners();
     }
 
@@ -254,35 +270,59 @@ class AuthViewModel extends BaseViewModel {
 
 
   void requestOtp() async {
-    setBusy(true);
+    appLoading.value = true;
 
     try {
-      ApiResponse res = await repo.requestOtp({
+      if (phone.text.isNotEmpty && !phone.text.startsWith('0')) {
+        phone.text = '0${phone.text}';
+      }
 
-        "email": email.text,
+      ApiResponse res = await repo.requestOtp({
+        if (email.text.isNotEmpty) "email": email.text,
+        if (phone.text.isNotEmpty) "phoneNumber": phone.text,
       });
+
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: 'OTP successfully sent', duration: Duration(seconds: 5));
         print(res);
         print(res.data['data']["userId"]);
 
         profile.value.id = res.data['data']["userId"];
+        profile.value.reference = res.data['data']["sendTokenResponse"]["data"]["reference"];
         isOtpRequested = true;
         notifyListeners();
       }else {
-        snackBar.showSnackbar(message: res.data["message"], duration: Duration(seconds: 5));
-        setBusy(false);
+        if ( res.data.toString().contains("Email already exists") ) {
+          snackBar.showSnackbar(
+            message: "The email address is already registered. Please use another email.",
+            duration: Duration(seconds: 5),
+          );
+        } else {
+          snackBar.showSnackbar(
+            message: res.data["message"],
+            duration: Duration(seconds: 5),
+          );
+        }
+        appLoading.value = false;
       }
     } catch (e) {
-      log.i(e);
-      // setBusy(false);
-
+      if (e.toString().contains("Email already exists")) {
+        snackBar.showSnackbar(
+          message: "The email address is already registered. Please use another email.",
+          duration: Duration(seconds: 5),
+        );
+      }  else {
+        log.i("Unhandled error: $e");
+        snackBar.showSnackbar(
+          message: "An unexpected error occurred",
+          duration: Duration(seconds: 5),
+        );
+      }
     } finally {
-      setBusy(false);
+      appLoading.value = false;
       notifyListeners();
     }
 
-    setBusy(false);
   }
 
 }

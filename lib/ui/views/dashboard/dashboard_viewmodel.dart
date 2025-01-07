@@ -11,6 +11,7 @@ import 'package:afriprize/core/utils/local_stotage.dart';
 import 'package:afriprize/state.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import '../../../core/data/models/cart_item.dart';
 import '../../../core/data/models/category.dart';
 import '../../../core/data/models/project.dart';
 
@@ -224,39 +225,39 @@ class DashboardViewModel extends BaseViewModel {
     }
   }
 
-  void addToRaffleCart(Product raffle) async {
+  void addToRaffleCart(Product product) async {
     // setBusy(true);
     // notifyListeners();
     try {
-      final existingItem = raffleCart.value.firstWhere(
-        (raffleItem) => raffleItem.raffle?.id == raffle.id,
-        orElse: () => RaffleCartItem(raffle: raffle, quantity: 0),
+      final existingItem = cart.value.firstWhere(
+        (raffleItem) => raffleItem.product?.id == product.id,
+        orElse: () => CartItem(product: product, quantity: 0),
       );
 
       if (existingItem.quantity != null &&
           existingItem.quantity! > 0 &&
-          existingItem.raffle != null) {
+          existingItem.product != null) {
         existingItem.quantity = (existingItem.quantity! + 1);
       } else {
         existingItem.quantity = 1;
-        raffleCart.value.add(existingItem);
+        cart.value.add(existingItem);
       }
 
       // Save to local storage
       List<Map<String, dynamic>> storedList =
-          raffleCart.value.map((e) => e.toJson()).toList();
+          cart.value.map((e) => e.toJson()).toList();
       await locator<LocalStorage>()
           .save(LocalStorageDir.raffleCart, storedList);
 
       // Save to online cart using API
       final response = await repo.addToCart({
-        "productId": raffle.id,
+        "productId": product.id,
         "quantity": existingItem.quantity,
       });
 
       if (response.statusCode == 200) {
         locator<SnackbarService>().showSnackbar(
-            message: "Raffle added to cart", duration: Duration(seconds: 2));
+            message: "Product added to cart", duration: Duration(seconds: 2));
         notifyListeners();
       } else {
         locator<SnackbarService>().showSnackbar(
@@ -266,44 +267,54 @@ class DashboardViewModel extends BaseViewModel {
       locator<SnackbarService>().showSnackbar(
           message: "Failed to add raffle to cart: $e",
           duration: Duration(seconds: 2));
-    }
+    }finally{notifyListeners();}
   }
 
   void initCart() async {
-    dynamic cart = await locator<LocalStorage>().fetch(LocalStorageDir.cart);
-   if(cart != null){
-     List<RaffleCartItem> localRaffleCart =
-     List<Map<String, dynamic>>.from(cart)
-         .map((e) => RaffleCartItem.fromJson(Map<String, dynamic>.from(e)))
-         .toList();
-     raffleCart.value = localRaffleCart;
-     raffleCart.notifyListeners();
-   }
+    try {
+      // Fetch stored data from local storage
+      dynamic storedData = await locator<LocalStorage>().fetch(LocalStorageDir.raffleCart);
 
+      print('Raw stored data: $storedData'); // Debug log
+
+      if (storedData != null) {
+        // Parse the stored JSON data into a list of CartItem
+        List<CartItem> localCart = List<Map<String, dynamic>>.from(storedData)
+            .map((item) => CartItem.fromJson(Map<String, dynamic>.from(item)))
+            .toList();
+
+        // Update the cart with the retrieved items
+        cart.value = localCart;
+      }
+    } catch (e) {
+      // Handle any errors that might occur during fetching or parsing
+      print('Failed to load cart from local storage: $e');
+    }
   }
 
-  Future<void> decreaseRaffleQuantity(RaffleCartItem item) async {
+
+  Future<void> decreaseRaffleQuantity(CartItem item) async {
     try {
       if (item.quantity! > 1) {
         item.quantity = item.quantity! - 1;
 
         // Update online cart
         await repo.addToCart({
-          "productId": item.raffle?.id,
+          "productId": item.product?.id,
           "quantity": item.quantity,
         });
       } else if (item.quantity! == 1) {
         // Remove from local cart
-        raffleCart.value
-            .removeWhere((cartItem) => cartItem.raffle?.id == item.raffle?.id);
+        cart.value
+            .removeWhere((cartItem) => cartItem.product?.id == item.product?.id);
 
         // Remove from online cart
-        await repo.deleteFromCart(item.raffle!.id!);
+        await repo.deleteFromCart(item.product!.id!);
       }
 
       // Save to local storage
       List<Map<String, dynamic>> storedList =
-          raffleCart.value.map((e) => e.toJson()).toList();
+          cart.value.map((e) => e.toJson()).toList();
       await locator<LocalStorage>()
           .save(LocalStorageDir.raffleCart, storedList);
     } catch (e) {
@@ -314,24 +325,24 @@ class DashboardViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> increaseRaffleQuantity(RaffleCartItem item) async {
+  Future<void> increaseRaffleQuantity(CartItem item) async {
     try {
       item.quantity = item.quantity! + 1;
-      int index = raffleCart.value
-          .indexWhere((raffleItem) => raffleItem.raffle?.id == item.raffle?.id);
+      int index = cart.value
+          .indexWhere((raffleItem) => raffleItem.product?.id == item.product?.id);
       if (index != -1) {
-        raffleCart.value[index] = item;
-        raffleCart.value = List.from(raffleCart.value);
+        cart.value[index] = item;
+        cart.value = List.from(cart.value);
 
         // Update online cart
         await repo.addToCart({
-          "productId": item.raffle?.id,
+          "productId": item.product?.id,
           "quantity": item.quantity,
         });
 
         // Save to local storage
         List<Map<String, dynamic>> storedList =
-            raffleCart.value.map((e) => e.toJson()).toList();
+            cart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>()
             .save(LocalStorageDir.raffleCart, storedList);
       }
@@ -340,7 +351,7 @@ class DashboardViewModel extends BaseViewModel {
           message: "Failed to increase raffle quantity: $e",
           duration: Duration(seconds: 2));
     } finally {
-      raffleCart.notifyListeners();
+      cart.notifyListeners();
     }
   }
 

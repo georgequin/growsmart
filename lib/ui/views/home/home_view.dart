@@ -110,7 +110,7 @@ class BottomNavBar extends StatelessWidget {
         label: "Shop",
       ),
       BottomNavigationBarItem(
-          icon: _navBarItemWithCounter('buy.svg', 'buy.svg',  viewModel.selectedTab == 2, raffleCart, iconColor),
+          icon: _navBarItemWithCounter('buy.svg', 'buy.svg',  viewModel.selectedTab == 2, cart, iconColor),
           label: "Cart",
           ),
       BottomNavigationBarItem(

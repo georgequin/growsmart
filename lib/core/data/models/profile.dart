@@ -14,6 +14,7 @@ class Profile {
   String? verificationCode;
   String? profilePicture;
   bool? canPayInstallmentally;
+  String? reference;
   UserStatus? status;
   List<Address>? addresses;
 
@@ -31,6 +32,7 @@ class Profile {
     this.canPayInstallmentally,
     this.status,
     this.addresses,
+    this.reference,
   });
 
   // Constructor for creating Profile object from JSON
@@ -44,6 +46,7 @@ class Profile {
     lastName = json['lastName'];
     phoneNumber = json['phoneNumber'];
     verificationCode = json['verificationCode'];
+    reference = json['reference'];
     profilePicture = json['profilePicture'];
     canPayInstallmentally = json['canPayInstallmentally'];
     status = json['status'] != null ? UserStatus.values.firstWhere((e) => e.toString() == 'UserStatus.${json['status']}') : null;

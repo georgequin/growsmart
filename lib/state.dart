@@ -11,7 +11,7 @@ enum AppModules { raffle, shop }
 enum PaymentMethod { wallet, paystack, flutterwave, applePay }
 
 
-ValueNotifier<List<RaffleCartItem>> raffleCart = ValueNotifier([]);
+ValueNotifier<List<CartItem>> cart = ValueNotifier([]);
 ValueNotifier<Profile> profile = ValueNotifier(Profile());
 ValueNotifier<bool> userLoggedIn = ValueNotifier(false);
 ValueNotifier<bool> isFirstLaunch = ValueNotifier(true);
@@ -21,6 +21,7 @@ ValueNotifier<List<AppNotification>> notifications = ValueNotifier([]);
 ValueNotifier<int> unreadCount = ValueNotifier(0);
 ValueNotifier<AppModules> currentModuleNotifier = ValueNotifier(AppModules.raffle);
 ValueNotifier<bool> appLoading = ValueNotifier(false);
+ValueNotifier<bool> isLoginByEmail = ValueNotifier(false);
 
 
 void switchModule(AppModules module) {

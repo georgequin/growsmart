@@ -16,6 +16,7 @@ import 'package:slidable_button/slidable_button.dart';
 import 'package:slide_countdown/slide_countdown.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import '../../../core/data/models/cart_item.dart';
 import '../../../core/network/interceptors.dart';
 import 'dashboard_viewmodel.dart';
 
@@ -331,14 +332,14 @@ class _RaffleDetailState extends State<RaffleDetail> {
                       padding: const EdgeInsets.symmetric(horizontal: 55.0),
                       child: userLoggedIn.value == false
                           ? const SizedBox()
-                          : ValueListenableBuilder<List<RaffleCartItem>>(
-                          valueListenable: raffleCart,
+                          : ValueListenableBuilder<List<CartItem>>(
+                          valueListenable: cart,
                           builder: (context, value, child) {
                             bool isInCart = value.any((item) =>
-                            item.raffle?.id == widget.raffle.id);
-                            RaffleCartItem? cartItem = isInCart
+                            item.product?.id == widget.raffle.id);
+                            CartItem? cartItem = isInCart
                                 ? value.firstWhere((item) =>
-                            item.raffle?.id == widget.raffle.id)
+                            item.product?.id == widget.raffle.id)
                                 : null;
 
                             return isInCart && cartItem != null

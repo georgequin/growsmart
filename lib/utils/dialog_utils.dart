@@ -4,6 +4,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../app/app.dialogs.dart';
 import '../app/app.locator.dart';
+import '../state.dart';
 
 
 Future<DialogResponse?> showDialogWithResponse(String title, String? description, bool isDialogBeingDisplayed) async {
@@ -30,6 +31,7 @@ Future<bool?> showDialog(String title, String? description, bool isDialogBeingDi
     // );
     locator<SnackbarService>().showSnackbar(title: title,message: description ?? '' );
     isDialogBeingDisplayed = false;
+    appLoading.value = false;
     return isDialogBeingDisplayed;
   }
   return null;

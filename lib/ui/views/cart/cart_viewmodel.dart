@@ -32,7 +32,7 @@ class CartViewModel extends BaseViewModel {
   final repo = locator<Repository>();
   final snackBar = locator<SnackbarService>();
   final log = getLogger("CartViewModel");
-  List<RaffleCartItem> itemsToDeleteRaffle = [];
+  List<CartItem> itemsToDeleteRaffle = [];
   int shopSubTotal = 0;
   int raffleSubTotal = 0;
   int deliveryFee = 0;
@@ -59,7 +59,7 @@ class CartViewModel extends BaseViewModel {
   }
 
 
-  void addRemoveDeleteRaffle(RaffleCartItem item) {
+  void addRemoveDeleteRaffle(CartItem item) {
     itemsToDeleteRaffle.contains(item)
         ? itemsToDeleteRaffle.remove(item)
         : itemsToDeleteRaffle.add(item);
@@ -96,10 +96,10 @@ class CartViewModel extends BaseViewModel {
       ApiResponse res = await repo.clearCart();
       if (res.statusCode == 200) {
         // Clear the local cart
-        raffleCart.value.clear(); // Use clear() with parentheses
+        cart.value.clear(); // Use clear() with parentheses
         print('cleared cart');
-        raffleCart.notifyListeners(); // Notify listeners to update the UI
-        List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+        cart.notifyListeners(); // Notify listeners to update the UI
+        List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
 
         getRaffleSubTotal();
@@ -119,12 +119,12 @@ class CartViewModel extends BaseViewModel {
   void getRaffleSubTotal() {
     int total = 0;
 
-    for (var element in raffleCart.value) {
-      final raffle = element.raffle;
+    for (var element in cart.value) {
+      final product = element.product;
 
       // Convert ticketPrice from String to double, defaulting to 0 if ticketPrice is null
-      final ticketPrice = raffle?.price != null
-          ? double.parse(raffle!.price!)
+      final ticketPrice = product?.price != null
+          ? double.parse(product!.price!)
           : 0;
 
       // Multiply ticketPrice by quantity and cast to int
@@ -137,7 +137,7 @@ class CartViewModel extends BaseViewModel {
 
 
   void checkoutRaffle(BuildContext context) async {
-    if (raffleCart.value.isEmpty) {
+    if (cart.value.isEmpty) {
       return null;
     }
     isPaymentProcessing.value = true;
@@ -202,12 +202,12 @@ class CartViewModel extends BaseViewModel {
   Future<void> showReceipt(AppModules module, BuildContext context) async {
 
     if(module == AppModules.raffle){
-      List<RaffleCartItem> receiptCart = List<RaffleCartItem>.from(raffleCart.value);
+      List<RaffleCartItem> receiptCart = List<RaffleCartItem>.from(cart.value);
 
 
 
-      raffleCart.notifyListeners();
-      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      cart.notifyListeners();
+      List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
       locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
 
 
@@ -220,7 +220,7 @@ class CartViewModel extends BaseViewModel {
           return RaffleReceiptPage(cart:receiptCart);
         },
       );
-      raffleCart.value.clear();
+      cart.value.clear();
       // clearRaffleCart();
       await repo.clearCart();
     }
@@ -236,29 +236,32 @@ class CartViewModel extends BaseViewModel {
 
         print('online cart items: $items');
 
-        // Map the items list to List<RaffleCartItem>
-        List<RaffleCartItem> onlineItems = items
-            .map((item) => RaffleCartItem.fromJson(item))
+        // Map the items list to List<CartItem>
+        List<CartItem> onlineItems = items
+            .map((item) => CartItem.fromJson(Map<String, dynamic>.from(item)))
             .toList();
-        print('saved items are: ${onlineItems.first.raffle?.productName}');
+
+        print('Saved items are: ${onlineItems.first.product?.productName}');
 
         // Sync online items with the local cart
-        raffleCart.value = onlineItems;
+        cart.value = onlineItems;
         getRaffleSubTotal();
         notifyListeners();
-        print('saved raffle cart are: ${raffleCart.value.first.raffle?.productName}');
+        print('Saved raffle cart are: ${cart.value.first.product?.productName}');
 
         // Update local storage
-        List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+        List<Map<String, dynamic>> storedList =
+        cart.value.map((e) => e.toJson()).toList();
         await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
       }
     } catch (e) {
       locator<SnackbarService>().showSnackbar(message: "Failed to load cart from server: $e");
-      print('couldn\'t get online cart: $e');
+      print('Couldn\'t get online cart: $e');
     } finally {
       setBusy(false);
     }
   }
+
 
 
   // Future<void> loadPayStackPlugin() async{

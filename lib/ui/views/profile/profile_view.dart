@@ -300,8 +300,8 @@ class ProfileView extends StatelessWidget {
                                       .delete(LocalStorageDir.cart);
                                   await locator<LocalStorage>()
                                       .delete(LocalStorageDir.authRefreshToken);
-                                  raffleCart.value.clear();
-                                  raffleCart.notifyListeners();
+                                  cart.value.clear();
+                                  cart.notifyListeners();
                                   locator<NavigationService>()
                                       .clearStackAndShow(Routes.authView);
                                 }

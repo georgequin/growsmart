@@ -2,7 +2,11 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.locator.dart';
+import '../../../app/app.router.dart';
+import '../../../state.dart';
 import '../../../utils/code_input.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
@@ -29,7 +33,14 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   bool terms = false;
+  bool isPhoneNumber = false;
 
+
+  @override
+  void dispose() {
+    super.dispose();
+    appLoading.value = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +71,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                     verticalSpaceTiny,
                     Text(
-                     model.isOtpRequested? "Please enter the code sent to your email ma*****@gmail.com" :"Create an account so you can explore our high-quality products,",
+                     model.isOtpRequested? "Please enter the code sent to your email or phone" :"Create an account so you can explore our high-quality products,",
                       style: TextStyle(
                         fontSize: 16,
                       ),
@@ -71,22 +82,34 @@ class _SignUpState extends State<SignUp> {
 
               verticalSpaceMedium,
               if(!model.isOtpRequested)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFieldWidget(
-                  hint: "Email Address",
-                  controller: model.email,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'required';
-                    }
-                    if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$').hasMatch(value)) {
-                      return 'Invalid email address';
-                    }
-                    return null; // Return null to indicate no validation error
-                  },
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: isPhoneNumber ? model.phone : model.email, // A single controller for both
+                    decoration: InputDecoration(
+                      hintText: isPhoneNumber
+                          ? "Enter phone number"
+                          : "Enter email or Phone",
+                      prefixText: isPhoneNumber ? "+234 " : null, // Default to Nigeria
+                      border: const OutlineInputBorder(),
+                    ),
+                    keyboardType:
+                    isPhoneNumber ? TextInputType.phone : TextInputType.emailAddress,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value.isNotEmpty && RegExp(r'^\d').hasMatch(value)) {
+                          isPhoneNumber = true;
+                          isLoginByEmail.value = false;
+                          model.email.clear();
+                        } else {
+                          isPhoneNumber = false;
+                          model.phone.clear();
+                          isLoginByEmail.value = true;
+                        }
+                      });
+                    },
+                  ),
                 ),
-              ),
               verticalSpaceMedium,
               if(model.isOtpRequested)
                 Padding(
@@ -95,9 +118,6 @@ class _SignUpState extends State<SignUp> {
                     codeController: model.otp,
                     onCompleted: (String value) {
                       model.submitOtp();
-                      if (model.isOtpRequested) {
-                        widget.updatePage(PresentPage.register);
-                      }
                     },
                   ),
                 ),
@@ -105,17 +125,41 @@ class _SignUpState extends State<SignUp> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SubmitButton(
-                  isLoading: model.isBusy,
+                  isLoading: appLoading.value,
                   boldText: true,
                   label: model.isOtpRequested ? 'Verify OTP' : 'Get OTP',
                   submit: () {
-                    model.isOtpRequested ? model.submitOtp() : model.requestOtp();
-                    if (model.isOtpRequested) {
-                      widget.updatePage(PresentPage.register);
-                    }
+                    setState(() {
+                      model.isOtpRequested ? model.submitOtp() : model.requestOtp();
+                    });
                   },
                   color: kcPrimaryColor,
                 ),
+              ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:  [
+                    const Text(
+                      "Already a user? ",
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        print('why are you not working');
+                        widget.updatePage(PresentPage.login);
+                      },
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: kcSecondaryColor,
+                        ),
+                      ),
+                    )
+
+                  ]
               ),
               // Row(
               //     mainAxisAlignment: MainAxisAlignment.center,

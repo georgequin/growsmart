@@ -105,10 +105,10 @@ class _BinancePayModalState extends State<BinancePayModal> {
 
   void showReceipt(AppModules module) {
     if(module == AppModules.raffle){
-      List<RaffleCartItem> receiptCart = List<RaffleCartItem>.from(raffleCart.value);
-      raffleCart.value.clear();
-      raffleCart.notifyListeners();
-      List<Map<String, dynamic>> storedList = raffleCart.value.map((e) => e.toJson()).toList();
+      List<RaffleCartItem> receiptCart = List<RaffleCartItem>.from(cart.value);
+      cart.value.clear();
+      cart.notifyListeners();
+      List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
       locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
 
       showModalBottomSheet(
