@@ -111,11 +111,11 @@ class DashboardView extends StackedView<DashboardViewModel> {
                 onTap: () {
                   showProductDialog(
                     context: context,
-                    title: "Lighting Electronics",
-                    products: lightingProducts,
+                    title: "Lightening Electronics",
+                    products: LighteningProducts,
                   );
                 },
-                child: actionContainer('assets/images/107.jpg', "Lighting"),
+                child: actionContainer('assets/images/107.jpg', "Lightening"),
               ),
               GestureDetector(
                 onTap: () {
@@ -290,7 +290,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
     "Solar Charger",
   ];
 
-  final List<String> lightingProducts = [
+  final List<String> LighteningProducts = [
     "LED Bulbs",
     "Chandeliers",
     "Wall Sconces",

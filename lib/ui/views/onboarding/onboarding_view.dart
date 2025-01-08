@@ -87,7 +87,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            "We're excited to have you here. Browse our comprehensive selection of solar solutions, electronics, and lighting to find exactly what you need.",
+                            "We're excited to have you here. Browse our comprehensive selection of solar solutions, electronics, and Lightening to find exactly what you need.",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,

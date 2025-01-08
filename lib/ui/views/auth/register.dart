@@ -1,4 +1,4 @@
-import 'package:afriprize/core/data/models/country.dart';
+ import 'package:afriprize/core/data/models/country.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/submit_button.dart';

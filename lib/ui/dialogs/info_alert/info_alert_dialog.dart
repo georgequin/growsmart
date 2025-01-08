@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
@@ -39,6 +40,15 @@ class InfoAlertDialog extends StackedView<InfoAlertDialogModel> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Align(
+                alignment: Alignment.centerRight,
+                  child: Icon(Icons.cancel, color: Colors.white)),
+            ),
+            verticalSpaceSmall,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
