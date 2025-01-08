@@ -91,7 +91,7 @@ class _OnboardingViewState extends State<OnboardingView3> {
                       submit: () async {
                         await _localStorage.save(
                             LocalStorageDir.onboarded, true);
-                        locator<NavigationService>().clearStackAndShow(Routes.authView);
+                        locator<NavigationService>().clearStackAndShow(Routes.homeView);
                       },
                       color: kcPrimaryColor,
                     ),

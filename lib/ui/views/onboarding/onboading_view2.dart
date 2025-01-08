@@ -290,7 +290,7 @@ class IndicatorDot extends StatelessWidget {
 //                     const Padding(
 //                       padding: EdgeInsets.symmetric(horizontal: 8.0),
 //                       child: Text(
-//                         'We’re excited to have you here. Browse our comprehensive selection of solar solutions, electronics, and lighting to find exactly what you need.',
+//                         'We’re excited to have you here. Browse our comprehensive selection of solar solutions, electronics, and lightening to find exactly what you need.',
 //                         style: TextStyle(
 //                           color: kcBlackColor,
 //                           fontFamily: 'SF-Pro-Text-Font-Family',

@@ -32,6 +32,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool terms = false;
+  bool isPhoneNumber = false;
 
   @override
   void dispose() {
@@ -81,9 +82,30 @@ class _LoginState extends State<Login> {
               verticalSpaceMedium,
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: TextFieldWidget(
-                  hint: "Email",
-                  controller: model.email,
+                child: TextField(
+                  controller: isPhoneNumber ? model.phone : model.email, // A single controller for both
+                  decoration: InputDecoration(
+                    hintText: isPhoneNumber
+                        ? "Enter phone number"
+                        : "Enter email or Phone",
+                    prefixText: isPhoneNumber ? "+234 " : null, // Default to Nigeria
+                    border: const OutlineInputBorder(),
+                  ),
+                  keyboardType:
+                  isPhoneNumber ? TextInputType.phone : TextInputType.emailAddress,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value.isNotEmpty && RegExp(r'^\d').hasMatch(value)) {
+                        isPhoneNumber = true;
+                        isLoginByEmail.value = false;
+                        model.email.clear();
+                      } else {
+                        isPhoneNumber = false;
+                        model.phone.clear();
+                        isLoginByEmail.value = true;
+                      }
+                    });
+                  },
                 ),
               ),
               verticalSpaceMedium,
@@ -163,7 +185,7 @@ class _LoginState extends State<Login> {
                   boldText: true,
                   label: "Login",
                   submit: () {
-                    //locator<NavigationService>().clearStackAndShow(Routes.homeView);
+                    // locator<NavigationService>().clearStackAndShow(Routes.homeView);
                     model.login();
                   },
                   color: kcPrimaryColor,
