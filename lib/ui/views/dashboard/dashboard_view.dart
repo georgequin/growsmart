@@ -13,6 +13,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -41,6 +42,66 @@ class DashboardView extends StackedView<DashboardViewModel> {
   DashboardView({Key? key}) : super(key: key);
 
   final PageController _pageController = PageController();
+
+  List<StaggeredGridTile> buildCardTiles(BuildContext context) {
+    return [
+      StaggeredGridTile.count(
+        crossAxisCellCount: 2,
+        mainAxisCellCount: 2,
+        child: GestureDetector(
+          onTap: () {
+            // Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+            //   return ShopView(category: "solar energy");
+            // }));
+            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+              return ShopView();
+            }));
+          },
+          child: actionContainer('assets/images/solar.jpg', "Solar Energy", context),
+        ),
+      ),
+      StaggeredGridTile.count(
+        crossAxisCellCount: 2,
+        mainAxisCellCount: 1,
+        child:
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+              return ShopView();
+            }));
+          },
+          child: actionContainer('assets/images/2148254069.jpg', "Electronices", context),
+        ),
+      ),
+      StaggeredGridTile.count(
+        crossAxisCellCount: 1,
+        mainAxisCellCount: 1,
+        child:
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+              return ShopView();
+            }));
+          },
+          child: actionContainer('assets/images/2148087576.jpg', "Services", context),
+        ),
+      ),
+      StaggeredGridTile.count(
+        crossAxisCellCount: 1,
+        mainAxisCellCount: 1,
+        child:
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+              return ShopView();
+            }));
+          },
+          child: actionContainer('assets/images/107.jpg', "Lightening", context),
+        ),
+      ),
+    ];
+  }
+
 
   @override
   Widget builder(
@@ -77,68 +138,68 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  Widget quickActions(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Quick Actions",
-          style: GoogleFonts.bricolageGrotesque(
-            textStyle: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          height: 60, // Adjust height according to your design
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  showProductDialog(
-                    context: context,
-                    title: "Solar Energy System",
-                    products: solarProducts,
-                  );
-                },
-                child: actionContainer('assets/images/solar.jpg', "Solar Energy"),
-              ),
-              GestureDetector(
-                onTap: () {
-                  showProductDialog(
-                    context: context,
-                    title: "Lightening Electronics",
-                    products: LighteningProducts,
-                  );
-                },
-                child: actionContainer('assets/images/107.jpg', "Lightening"),
-              ),
-              GestureDetector(
-                onTap: () {
-                  locator<NavigationService>().navigateToNotificationView();
-                },
-                child: actionContainer('assets/images/2148087576.jpg', "Services"),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (c) {
-                    return ShopView();
-                  }));
-                },
-                child: actionContainer('assets/images/2148254069.jpg', "Electronices"),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget quickActions(BuildContext context) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         "Quick Actions",
+  //         style: GoogleFonts.bricolageGrotesque(
+  //           textStyle: TextStyle(
+  //             fontSize: 15,
+  //             fontWeight: FontWeight.bold,
+  //             color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
+  //           ),
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       Container(
+  //         height: 60, // Adjust height according to your design
+  //         child: ListView(
+  //           scrollDirection: Axis.horizontal,
+  //           children: [
+  //             GestureDetector(
+  //               onTap: () {
+  //                 showProductDialog(
+  //                   context: context,
+  //                   title: "Solar Energy System",
+  //                   products: solarProducts,
+  //                 );
+  //               },
+  //               child: actionContainer('assets/images/solar.jpg', "Solar Energy"),
+  //             ),
+  //             GestureDetector(
+  //               onTap: () {
+  //                 showProductDialog(
+  //                   context: context,
+  //                   title: "Lightening Electronics",
+  //                   products: LighteningProducts,
+  //                 );
+  //               },
+  //               child: actionContainer('assets/images/107.jpg', "Lightening"),
+  //             ),
+  //             GestureDetector(
+  //               onTap: () {
+  //                 locator<NavigationService>().navigateToNotificationView();
+  //               },
+  //               child: actionContainer('assets/images/2148087576.jpg', "Services"),
+  //             ),
+  //             GestureDetector(
+  //               onTap: () {
+  //                 Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+  //                   return ShopView();
+  //                 }));
+  //               },
+  //               child: actionContainer('assets/images/2148254069.jpg', "Electronices"),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget actionContainer(String imagePath, String title) {
+  Widget actionContainer(String imagePath, String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 0.0, right: 8.0),
       child: ClipRRect(
@@ -146,7 +207,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
         child: Stack(
           children: [
             Container(
-              width: 110, // Adjust width according to your design
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              // width: 110, // Adjust width according to your design
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 boxShadow: [
@@ -645,8 +708,18 @@ class DashboardView extends StackedView<DashboardViewModel> {
           ),
           verticalSpaceSmall,
           _buildAdsSlideshow(viewModel),
+          // quickActions(context),
           verticalSpaceSmall,
-          quickActions(context),
+          Container(
+
+            // Staggered Grid View starts here
+            child: StaggeredGrid.count(
+              crossAxisCount: 4,
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
+              children: buildCardTiles(context),
+            ),
+          ),
           verticalSpaceMedium,
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -663,6 +736,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
       );
     }
   }
+
 
   Widget _buildAdsSlideshow(DashboardViewModel viewModel) {
     if (viewModel.productList.where((element) => element.ad == true).isEmpty) {
@@ -1347,5 +1421,19 @@ class RaffleRow extends StatelessWidget {
 
     // Decide text color based on luminance
     return luminance < 0.1 ? Colors.white : Colors.black;
+  }
+}
+class BackGroundTile extends StatelessWidget {
+  final Color backgroundColor;
+  final IconData icondata;
+
+  BackGroundTile({required this.backgroundColor, required this.icondata});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: backgroundColor,
+      child: Icon(icondata, color: Colors.white),
+    );
   }
 }
