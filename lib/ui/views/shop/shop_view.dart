@@ -35,7 +35,7 @@ import 'shop_viewmodel.dart';
 ///
 
 class ShopView extends StackedView<ShopViewModel> {
-  final String? filter; // Optional argument for filtering products or categories
+  final Category? filter;
 
   ShopView({Key? key, this.filter}) : super(key: key);
   final PageController _pageController = PageController();
@@ -70,14 +70,14 @@ class ShopView extends StackedView<ShopViewModel> {
       'userType': 'Elite',
     },
   ];
-    List<Product> filteredList = viewModel.filteredProductList;
-    if (filter != null && filter!.isNotEmpty) {
-      filteredList = viewModel.filteredProductList.where((product) {
-        final lowerFilter = filter!.toLowerCase();
-        return (product.productName?.toLowerCase().contains(lowerFilter) ?? false) ||
-            (product.productDescription?.toLowerCase().contains(lowerFilter) ?? false);
-      }).toList();
-    }
+    // List<Product> category = viewModel.filteredProductList;
+    // if (filter != null && filter!.isNotEmpty ) {
+    //   category = viewModel.filteredProductList.where((product) {
+    //     final lowerFilter = filter!.toLowerCase();
+    //     return (product.productName?.toLowerCase().contains(lowerFilter) ?? false) ||
+    //         (product.productDescription?.toLowerCase().contains(lowerFilter) ?? false);
+    //   }).toList();
+    // }
 
 
     return SafeArea(

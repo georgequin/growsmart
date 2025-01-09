@@ -50,11 +50,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
         mainAxisCellCount: 2,
         child: GestureDetector(
           onTap: () {
-            showProductDialog(
-              context: context,
-              title: "Solar Energy System",
-              products: solarProducts,
-            );
+            // Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+            //   return ShopView(category: "solar energy");
+            // }));
+            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+              return ShopView();
+            }));
           },
           child: actionContainer('assets/images/solar.jpg', "Solar Energy", context),
         ),
@@ -78,7 +79,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
         child:
         GestureDetector(
           onTap: () {
-            locator<NavigationService>().navigateToNotificationView();
+            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+              return ShopView();
+            }));
           },
           child: actionContainer('assets/images/2148087576.jpg', "Services", context),
         ),
@@ -89,11 +92,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
         child:
         GestureDetector(
           onTap: () {
-            showProductDialog(
-              context: context,
-              title: "Lightening Electronics",
-              products: LighteningProducts,
-            );
+            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+              return ShopView();
+            }));
           },
           child: actionContainer('assets/images/107.jpg', "Lightening", context),
         ),
