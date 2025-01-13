@@ -177,7 +177,7 @@ class Repository extends IRepository {
   Future<ApiResponse> payForOrder(Map<String, dynamic> req) async {
     ApiResponse response = await api.call(
       method: HttpMethod.post,
-      endpoint: "orders/pay",
+      endpoint: "orders",
       reqBody: req,
     );
 

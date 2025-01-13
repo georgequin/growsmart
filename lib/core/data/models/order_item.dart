@@ -1,155 +1,54 @@
 import 'package:afriprize/core/data/models/product.dart';
 import 'package:afriprize/core/data/models/profile.dart';
 import 'package:afriprize/core/data/models/raffle_ticket.dart';
-//
-// class OrderItem {
-//   String? id;
-//   int? quantity;
-//   int? status;
-//   int? paymentStatus;
-//   int? type;
-//   String? created;
-//   String? updated;
-//   bool? reviewStatus;
-//   User? user;
-//   Product? product;
-//   Raffle? raffle;
-//   Tracking? tracking;
-//   List<Transaction>? transaction;
-//
-//   OrderItem({
-//     this.id,
-//     this.quantity,
-//     this.status,
-//     this.created,
-//     this.updated,
-//     this.user,
-//     this.type,
-//     this.product,
-//     this.tracking,
-//     this.transaction,
-//     this.paymentStatus,
-//     this.reviewStatus,
-//     this.raffle
-//   });
-//
-//   OrderItem.fromJson(Map<String, dynamic> json) {
-//     id = json['id'];
-//     quantity = json['quantity'];
-//     status = json['status'];
-//     reviewStatus = json['review_status'];
-//     paymentStatus = json['payment_status'];
-//     created = json['created'];
-//     type = json['order_type'];
-//     updated = json['updated'];
-//     user = json['user'] != null ? User.fromJson(json['user']) : null;
-//     product = json['product'] != null ? Product.fromJson(json['product']) : null;
-//     raffle = json['raffle'] != null ? Raffle.fromJson(json['raffle']) : null;
-//     tracking =
-//         json['tracking'] != null ? Tracking.fromJson(json['tracking']) : null;
-//     if (json['transaction'] != null) {
-//       transaction = <Transaction>[];
-//       json['transaction'].forEach((v) {
-//         transaction!.add(Transaction.fromJson(v));
-//       });
-//     }
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = <String, dynamic>{};
-//     data['id'] = id;
-//     data['quantity'] = quantity;
-//     data['status'] = status;
-//     data['review_status'] = reviewStatus;
-//     data['payment_status'] = paymentStatus;
-//     data['created'] = created;
-//     data['updated'] = updated;
-//     data['order_type'] = type;
-//     if (user != null) {
-//       data['user'] = user!.toJson();
-//     }
-//     if (product != null) {
-//       data['product'] = product!.toJson();
-//     }
-//     if (tracking != null) {
-//       data['tracking'] = tracking!.toJson();
-//     }
-//     if (transaction != null) {
-//       data['transaction'] = transaction!.map((v) => v.toJson()).toList();
-//     }
-//     return data;
-//   }
-// }
 
-// class User {
-//   String? id;
-//   String? firstname;
-//   String? lastname;
-//   String? email;
-//   String? phone;
-//   String? country;
-//   int? verified;
-//   int? status;
-//   int? role;
-//   String? created;
-//   String? updated;
-//   String? username;  // Present value
-//   String? accountType;  // Present value
-//   String? accountPointsLocal;  // Present value
-//
-//   User({
-//     this.id,
-//     this.firstname,
-//     this.lastname,
-//     this.email,
-//     this.phone,
-//     this.country,
-//     this.verified,
-//     this.status,
-//     this.role,
-//     this.created,
-//     this.updated,
-//     this.username,  // Present value
-//     this.accountType,  // Present value
-//     this.accountPointsLocal,  // Present value
-//   });
-//
-//   User.fromJson(Map<String, dynamic> json) {
-//     id = json['id'] ?? json['_id'];
-//     firstname = json['firstname'];
-//     lastname = json['lastname'];
-//     email = json['email'];
-//     phone = json['phone'];
-//     country = json['country'];
-//     verified = json['verified'];
-//     status = json['status'];
-//     role = json['role'];
-//     created = json['created'];
-//     updated = json['updated'];
-//     username = json['username'];  // Added for existing value
-//     accountType = json['account_type'];  // Added for existing value
-//     accountPointsLocal = json['account_points_local'];  // Added for existing value
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = <String, dynamic>{};
-//     data['id'] = id;
-//     data['firstname'] = firstname;
-//     data['lastname'] = lastname;
-//     data['email'] = email;
-//     data['phone'] = phone;
-//     data['country'] = country;
-//     data['verified'] = verified;
-//     data['status'] = status;
-//     data['role'] = role;
-//     data['created'] = created;
-//     data['updated'] = updated;
-//     data['username'] = username;  // Added for existing value
-//     data['account_type'] = accountType;  // Added for existing value
-//     data['account_points_local'] = accountPointsLocal;  // Added for existing value
-//     return data;
-//   }
-// }
+
+class Order {
+  final String id;
+  final int quantity;
+  final String orderType;
+  final int shippingFee;
+  final bool installmentPayment;
+  final String userId;
+  final String trackingNumber;
+  final String orderNumber;
+  final String status;
+  final int totalPrice;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  Order({
+    required this.id,
+    required this.quantity,
+    required this.orderType,
+    required this.shippingFee,
+    required this.installmentPayment,
+    required this.userId,
+    required this.trackingNumber,
+    required this.orderNumber,
+    required this.status,
+    required this.totalPrice,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return Order(
+      id: json['id'],
+      quantity: json['quantity'],
+      orderType: json['orderType'],
+      shippingFee: json['shippingFee'],
+      installmentPayment: json['installmentPayment'],
+      userId: json['userId'],
+      trackingNumber: json['trackingNumber'],
+      orderNumber: json['orderNumber'],
+      status: json['status'],
+      totalPrice: json['totalPrice'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
+  }
+}
 
 class Tracking {
   String? id;

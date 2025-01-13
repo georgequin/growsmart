@@ -5,12 +5,10 @@ import '../../common/app_colors.dart';
 import 'SignUp.dart';
 import 'login.dart';
 
-
-/// @author George David
+/// @author
+/// George David
 /// email: georgequin19@gmail.com
 /// Feb, 2024
-///
-
 
 enum PresentPage {
   login,
@@ -19,22 +17,32 @@ enum PresentPage {
 }
 
 class AuthView extends StatefulWidget {
-  const AuthView({Key? key}) : super(key: key);
+  final PresentPage? initialPage;
+  final Map<String, dynamic>? parameters;
+
+  const AuthView({Key? key, this.initialPage, this.parameters})
+      : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return _AuthViewState();
-  }
+  State<AuthView> createState() => _AuthViewState();
 }
 
 class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
-  PresentPage presentPage = PresentPage.login;
+  late PresentPage presentPage;
+
+  @override
+  void initState() {
+    super.initState();
+    print('value of initial page is ${widget.initialPage}');
+    presentPage = widget.initialPage ?? PresentPage.login;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
+          // Top Decorative Background
           Align(
             alignment: Alignment.topCenter,
             child: ClipPath(
@@ -45,6 +53,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               ),
             ),
           ),
+          // Main Content
           CustomScrollView(
             slivers: [
               SliverList(
@@ -90,6 +99,11 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               presentPage = page;
             });
           },
+          isOtpRequested: widget.parameters?['isOtpRequested'] == 'true',
+          userId: widget.parameters?['userId'],
+          verificationCode: widget.parameters?['verificationCode'],
+          phone: widget.parameters?['phone'],
+          email: widget.parameters?['email'],
         );
       case PresentPage.register:
         return Register(

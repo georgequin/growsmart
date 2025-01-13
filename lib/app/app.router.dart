@@ -39,6 +39,7 @@ import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i27;
 import '../core/data/models/cart_item.dart';
 import '../core/data/models/raffle_ticket.dart';
+import '../ui/views/auth/auth_view.dart';
 import '../ui/views/profile/order_list.dart';
 import '../ui/views/profile/shipping_addresses_page.dart' as _i28;
 
@@ -632,18 +633,36 @@ extension NavigatorStateExtension on _i27.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToAuthView([
+  // Future<dynamic> navigateToAuthView([
+  //   int? routerId,
+  //   bool preventDuplicates = true,
+  //   Map<String, String>? parameters,
+  //   Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+  //       transition,
+  // ]) async {
+  //   return navigateTo<dynamic>(Routes.authView,
+  //       id: routerId,
+  //       preventDuplicates: preventDuplicates,
+  //       parameters: parameters,
+  //       transition: transition);
+  // }
+
+  Future<dynamic> navigateToAuthView({
+    required PresentPage initialPage,
+    Map<String, String>? parameters,
     int? routerId,
     bool preventDuplicates = true,
-    Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return navigateTo<dynamic>(Routes.authView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    transition,
+  }) async {
+    return navigateTo<dynamic>(
+      Routes.authView,
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      arguments: initialPage, // Pass the initial page as argument
+      parameters: parameters, // Pass additional parameters
+      transition: transition,
+    );
   }
 
   Future<dynamic> navigateToAddShippingView([

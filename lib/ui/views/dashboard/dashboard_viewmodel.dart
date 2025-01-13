@@ -69,17 +69,13 @@ class DashboardViewModel extends BaseViewModel {
 
   Future<void> init() async {
     setBusy(true);
-
     notifyListeners();
     await loadProduct();
     await loadCategories();
-    notifyListeners();
-    // await loadAds();
+    rebuildUi();
 
     if (userLoggedIn.value == true) {
       initCart();
-      // await getNotifications();
-      // await getProfile();
     }
     setBusy(false);
     notifyListeners();
@@ -91,25 +87,18 @@ class DashboardViewModel extends BaseViewModel {
     print('loading products....');
     try {
 
-
       dynamic storedJsonProduct = await locator<LocalStorage>().fetch(LocalStorageDir.product);
       log.i("Loaded jsonProducts from storage: $storedJsonProduct");
 
 
-
-
       if ( storedJsonProduct != null && storedJsonProduct.isNotEmpty) {
-        log.i("Loaded decoded jsonProducts from storage: ${jsonDecode(storedJsonProduct)}");
         List<dynamic> storedProducts = jsonDecode(storedJsonProduct);
-        log.i("Loaded Products from storage: $storedProducts");
         // Populate productList and filteredProductList
         productList = storedProducts
             .map((e) => Product.fromJson(Map<String, dynamic>.from(e)))
             .toList();
         filteredProductList = productList;
-
-        // Immediately notify UI to display data
-        notifyListeners();
+        rebuildUi();
       }else{
         print('no value to load');
       }
@@ -120,7 +109,6 @@ class DashboardViewModel extends BaseViewModel {
       log.e("Error loading products: $e");
     }
   }
-
 
   Future<void> refreshData() async {
     setBusy(true);
@@ -158,11 +146,7 @@ class DashboardViewModel extends BaseViewModel {
         List<Map<String, dynamic>> storedProducts =
         productList.map((e) => e.toJson()).toList();
         await locator<LocalStorage>().save(LocalStorageDir.product, jsonEncode(storedProducts));
-
-        log.i("Updated Products from API saved to storage.");
-
-        // Notify UI about updated data
-        notifyListeners();
+        rebuildUi();
       } else {
         log.e("API Error: ${res.data["message"]}");
       }
@@ -274,8 +258,6 @@ class DashboardViewModel extends BaseViewModel {
     try {
       // Fetch stored data from local storage
       dynamic storedData = await locator<LocalStorage>().fetch(LocalStorageDir.raffleCart);
-
-      print('Raw stored data: $storedData'); // Debug log
 
       if (storedData != null) {
         // Parse the stored JSON data into a list of CartItem

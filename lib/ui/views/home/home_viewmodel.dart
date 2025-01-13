@@ -162,21 +162,27 @@ class HomeViewModel extends BaseViewModel {
         print('online cart items: $items');
 
         // Map the items list to List<CartItem>
-        List<CartItem> onlineItems = items
-            .map((item) => CartItem.fromJson(Map<String, dynamic>.from(item)))
-            .toList();
+        if(items.isNotEmpty){
+          List<CartItem> onlineItems = items
+              .map((item) => CartItem.fromJson(Map<String, dynamic>.from(item)))
+              .toList();
 
-        print('Saved items are: ${onlineItems.first.product?.productName}');
+          print('Saved items are: ${onlineItems.first.product?.productName}');
 
-        // Sync online items with the local cart
-        cart.value = onlineItems;
-        notifyListeners();
-        print('Saved raffle cart are: ${cart.value.first.product?.productName}');
+          // Sync online items with the local cart
+          cart.value = onlineItems;
+          notifyListeners();
+          print('Saved raffle cart are: ${cart.value.first.product?.productName}');
 
-        // Update local storage
-        List<Map<String, dynamic>> storedList =
-        cart.value.map((e) => e.toJson()).toList();
-        await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+          // Update local storage
+          List<Map<String, dynamic>> storedList =
+          cart.value.map((e) => e.toJson()).toList();
+          await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+        }else{
+          cart.value.clear();
+          await locator<LocalStorage>().delete(LocalStorageDir.raffleCart);
+
+          notifyListeners();}
       }
     } catch (e) {
       // locator<SnackbarService>().showSnackbar(message: "Failed to load cart from server: $e");

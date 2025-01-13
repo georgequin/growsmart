@@ -104,23 +104,23 @@ class _BinancePayModalState extends State<BinancePayModal> {
   }
 
   void showReceipt(AppModules module) {
-    if(module == AppModules.raffle){
-      List<RaffleCartItem> receiptCart = List<RaffleCartItem>.from(cart.value);
-      cart.value.clear();
-      cart.notifyListeners();
-      List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
-      locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
-
-      showModalBottomSheet(
-        isScrollControlled: true,
-        isDismissible: false,
-        backgroundColor: Colors.white,
-        context: context,
-        builder: (BuildContext context) {
-          return RaffleReceiptPage(cart:receiptCart);
-        },
-      );
-    }
+    // if(module == AppModules.raffle){
+    //   List<RaffleCartItem> receiptCart = List<RaffleCartItem>.from(cart.value);
+    //   cart.value.clear();
+    //   cart.notifyListeners();
+    //   List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
+    //   locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+    //
+    //   showModalBottomSheet(
+    //     isScrollControlled: true,
+    //     isDismissible: false,
+    //     backgroundColor: Colors.white,
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return RaffleReceiptPage(cart:receiptCart);
+    //     },
+    //   );
+    // }
   }
 
 

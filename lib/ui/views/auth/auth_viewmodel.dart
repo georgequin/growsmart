@@ -18,6 +18,7 @@ import '../../../core/network/api_response.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
+import 'auth_view.dart';
 
 
 /// @author George David
@@ -116,49 +117,96 @@ class AuthViewModel extends BaseViewModel {
   }
 
 
-  void login() async {
+  void login(BuildContext context) async {
     appLoading.value = true;
-
+    rebuildUi();
     try {
+      // Ensure phone number is formatted correctly
+      if (phone.text.isNotEmpty && !phone.text.startsWith('0')) {
+        phone.text = '0${phone.text}';
+      }
+
+      // Make API request
       ApiResponse res = await repo.login({
-        "email": email.text,
+        if (email.text.isNotEmpty) "email": email.text,
+        if (phone.text.isNotEmpty) "phoneNumber": phone.text,
         "password": password.text,
       });
+
       if (res.statusCode == 200) {
-        appLoading.value = false;
-        userLoggedIn.value = true;
-        print(res.data);
-        profile.value =
-            Profile.fromJson(Map<String, dynamic>.from(res.data["User"]));
-        locator<LocalStorage>().save(LocalStorageDir.authToken, res.data["token"]);
-        locator<LocalStorage>().save(LocalStorageDir.authRefreshToken, res.data["refreshToken"]);
-        locator<LocalStorage>().save(LocalStorageDir.authUser, jsonEncode(res.data["User"]));
-        locator<LocalStorage>().save(LocalStorageDir.remember, remember);
+        final data = res.data;
+        print('value of data is: $data');
 
-
-        if (remember) {
-          locator<LocalStorage>().save(LocalStorageDir.lastEmail, email.text);
+        if (data['verificationRequired'] == true) {
+          // User not verified, redirect to verification
+          print('user not verified, redirecting to verification');
+          profile.value.id = data['userId'];
+          if (phone.text.isNotEmpty) profile.value.reference = data['sendTokenResponse']?['data']?['token'] ?? '';
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AuthView(
+                initialPage: PresentPage.signup,
+                parameters: {
+                  'isOtpRequested': true.toString(),
+                  'userId': data['userId'] ?? '',
+                  if (phone.text.isNotEmpty)'verificationCode': data['sendTokenResponse']?['data']?['token'] ?? '',
+                  if (phone.text.isNotEmpty)'phone': phone.text,
+                  if (email.text.isNotEmpty)'email': email.text,
+                },
+              ),
+            ),
+          );
+        } else if (data['incompleteBiodata'] == true) {
+          // User verified but profile not completed
+          print('user is verified, but profile not completed. redirecting to verification');
+          profile.value.id = data['userId'];
+          if (phone.text.isNotEmpty) profile.value.reference = data['sendTokenResponse']?['data']?['token'] ?? '';
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AuthView(
+                initialPage: PresentPage.signup,
+                parameters: {
+                  'isOtpRequested': false.toString(),
+                  'userId': data['userId'] ?? '',
+                  if (phone.text.isNotEmpty)'phone': phone.text,
+                  if (email.text.isNotEmpty)'email': email.text,
+                },
+              ),
+            ),
+          );
         } else {
-          locator<LocalStorage>().delete(LocalStorageDir.lastEmail);
+          // Successful login
+          userLoggedIn.value = true;
+          profile.value = Profile.fromJson(Map<String, dynamic>.from(data["User"]));
+          locator<LocalStorage>().save(LocalStorageDir.authToken, data["token"]);
+          locator<LocalStorage>()
+              .save(LocalStorageDir.authRefreshToken, data["refreshToken"]);
+          locator<LocalStorage>()
+              .save(LocalStorageDir.authUser, jsonEncode(data["User"]));
+          locator<LocalStorage>().save(LocalStorageDir.remember, remember);
+
+          if (remember) {
+            locator<LocalStorage>().save(LocalStorageDir.lastEmail, email.text);
+          } else {
+            locator<LocalStorage>().delete(LocalStorageDir.lastEmail);
+          }
+
+          locator<NavigationService>().clearStackAndShow(Routes.homeView);
         }
-        locator<NavigationService>().clearStackAndShow(Routes.homeView);
       } else {
-        appLoading.value = false;
         snackBar.showSnackbar(message: res.data["message"]);
       }
     } catch (e) {
       log.i(e);
+      snackBar.showSnackbar(message: "Unable to login. Please try again.");
+    } finally {
       appLoading.value = false;
-      snackBar.showSnackbar(message: "Unable to login try again");
-    }finally{
-      print('login call ended');
-      appLoading.value = false;
-      notifyListeners();
+      rebuildUi();
+      setBusy(false);
     }
-    setBusy(false);
   }
-
-
 
   Future<RegistrationResult> register() async {
 
@@ -234,12 +282,11 @@ class AuthViewModel extends BaseViewModel {
       print('response is ${res.data}');
       if (res.statusCode == 200) {
         snackBar.showSnackbar(message: 'OTP verified successfully', duration: Duration(seconds: 5));
-        // print(res);
-        // isOtpRequested = true;
-        // notifyListeners();
-        // isLoading =false;
-        locator<NavigationService>().clearStackAndShow(Routes.registerView);
-
+        locator<NavigationService>().clearStackAndShow(Routes.registerView, arguments: {
+          'updateIsLogin': false,
+        });
+      }else if(res.statusCode == 400){
+        snackBar.showSnackbar(message: 'Invalid verification code', duration: Duration(seconds: 5));
       }
       else {
         final responseMessage = res.data["message"] ?? 'Verification failed';
@@ -252,6 +299,7 @@ class AuthViewModel extends BaseViewModel {
       log.i(e);
       if (e is TypeError) {
         log.i('TypeError: ${e.toString()}');
+
       } else {
         log.i('Unexpected Error: ${e.toString()}');
       }
@@ -269,60 +317,56 @@ class AuthViewModel extends BaseViewModel {
   }
 
 
-  void requestOtp() async {
+  Future<ApiResponse?> requestOtp() async {
     appLoading.value = true;
+    profile.value = Profile();
 
     try {
+      // Format phone number if required
       if (phone.text.isNotEmpty && !phone.text.startsWith('0')) {
         phone.text = '0${phone.text}';
       }
 
+      // Make API call
       ApiResponse res = await repo.requestOtp({
         if (email.text.isNotEmpty) "email": email.text,
         if (phone.text.isNotEmpty) "phoneNumber": phone.text,
       });
 
-      if (res.statusCode == 200) {
-        snackBar.showSnackbar(message: 'OTP successfully sent', duration: Duration(seconds: 5));
-        print(res);
-        print(res.data['data']["userId"]);
+      log.i('Response data: ${res.data}');
+      log.i('Response status code: ${res.statusCode}');
 
+      if (res.statusCode == 200) {
+        // OTP sent successfully
         profile.value.id = res.data['data']["userId"];
-        profile.value.reference = res.data['data']["sendTokenResponse"]["data"]["reference"];
-        isOtpRequested = true;
-        notifyListeners();
-      }else {
-        if ( res.data.toString().contains("Email already exists") ) {
-          snackBar.showSnackbar(
-            message: "The email address is already registered. Please use another email.",
-            duration: Duration(seconds: 5),
-          );
-        } else {
-          snackBar.showSnackbar(
-            message: res.data["message"],
-            duration: Duration(seconds: 5),
-          );
+        profile.value.email = email.text;
+        if (phone.text.isNotEmpty) {
+          profile.value.phoneNumber = phone.text;
+          profile.value.reference = res.data['data']["sendTokenResponse"]["data"]["reference"];
         }
-        appLoading.value = false;
+
+        // Return success response
+        return res;
+      } else if (res.statusCode == 400) {
+        return res; // Return the error response for the caller to handle
+      } else {
+        snackBar.showSnackbar(
+          message: res.data['message'] ?? 'An unexpected error occurred',
+          duration: const Duration(seconds: 5),
+        );
+        return res; // Return unexpected error response
       }
     } catch (e) {
-      if (e.toString().contains("Email already exists")) {
-        snackBar.showSnackbar(
-          message: "The email address is already registered. Please use another email.",
-          duration: Duration(seconds: 5),
-        );
-      }  else {
-        log.i("Unhandled error: $e");
-        snackBar.showSnackbar(
-          message: "An unexpected error occurred",
-          duration: Duration(seconds: 5),
-        );
-      }
+      // Handle unexpected errors
+      log.e('Unhandled error: $e');
+      snackBar.showSnackbar(
+        message: 'An unexpected error occurred',
+        duration: const Duration(seconds: 5),
+      );
+      return null; // Return null to indicate failure
     } finally {
       appLoading.value = false;
       notifyListeners();
     }
-
   }
-
 }

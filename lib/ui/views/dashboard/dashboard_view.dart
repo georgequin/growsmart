@@ -1,14 +1,17 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:afriprize/app/app.router.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/common/ui_helpers.dart';
 import 'package:afriprize/ui/views/dashboard/productcard.dart';
 import 'package:afriprize/ui/views/dashboard/raffle_detail.dart';
+import 'package:afriprize/ui/views/service/service_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
@@ -43,7 +46,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   final PageController _pageController = PageController();
 
-  List<StaggeredGridTile> buildCardTiles(BuildContext context) {
+  List<StaggeredGridTile> buildCardTiles(BuildContext context, DashboardViewModel model) {
     return [
       StaggeredGridTile.count(
         crossAxisCellCount: 2,
@@ -53,9 +56,17 @@ class DashboardView extends StackedView<DashboardViewModel> {
             // Navigator.of(context).push(MaterialPageRoute(builder: (c) {
             //   return ShopView(category: "solar energy");
             // }));
-            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
-              return ShopView();
-            }));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) {
+                  return ShopView(
+                    filter: model.filteredCategories
+                        .where((element) => element.name.toLowerCase().contains("solar"))
+                        .first,
+                  );
+                },
+              ),
+            );
           },
           child: actionContainer('assets/images/solar.jpg', "Solar Energy", context),
         ),
@@ -66,9 +77,17 @@ class DashboardView extends StackedView<DashboardViewModel> {
         child:
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
-              return ShopView();
-            }));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) {
+                  return ShopView(
+                    filter: model.filteredCategories
+                        .where((element) => element.name.toLowerCase().contains("electronics"))
+                        .first,
+                  );
+                },
+              ),
+            );
           },
           child: actionContainer('assets/images/2148254069.jpg', "Electronices", context),
         ),
@@ -80,7 +99,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
         GestureDetector(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (c) {
-              return ShopView();
+              return const ServicesView();
             }));
           },
           child: actionContainer('assets/images/2148087576.jpg', "Services", context),
@@ -92,9 +111,17 @@ class DashboardView extends StackedView<DashboardViewModel> {
         child:
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (c) {
-              return ShopView();
-            }));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) {
+                  return ShopView(
+                    filter: model.filteredCategories
+                        .where((element) => element.name.toLowerCase().contains("light"))
+                        .first,
+                  );
+                },
+              ),
+            );
           },
           child: actionContainer('assets/images/107.jpg', "Lightening", context),
         ),
@@ -102,102 +129,109 @@ class DashboardView extends StackedView<DashboardViewModel> {
     ];
   }
 
-
   @override
   Widget builder(
     BuildContext context,
     DashboardViewModel viewModel,
     Widget? child,
   ) {
-    return Scaffold(
-      appBar:  AppBar(
-          title: ValueListenableBuilder(
-            valueListenable: uiMode,
-            builder: (context, AppUiModes mode, child) {
-              return const CircleAvatar(
-                backgroundImage: AssetImage("assets/images/easy_ph_logo.png"),
-                 radius: 20,
-              );
-            },
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent, // Transparent status bar
+        statusBarIconBrightness: Brightness.dark, // For dark icons
+        statusBarBrightness: Brightness.light, // For light background
+      ),
+      child: Scaffold(
+        extendBodyBehindAppBar: true, // Allow content to flow behind the AppBar
+        appBar: AppBar(
+          // backgroundColor: Colors.transparent,
+          elevation: 0, // Removes shadow
+          title: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: const AssetImage("assets/images/easy_ph_logo.png"),
+                radius: 20,
+              ),
+              const SizedBox(width: 8),
+              // Autocomplete search in the middle
+              Expanded(
+                child: Autocomplete<Product>(
+                  optionsBuilder: (TextEditingValue productTextEditingValue) {
+                    if (productTextEditingValue.text == '') {
+                      return const Iterable<Product>.empty();
+                    }
+                    return viewModel.filteredProductList.where((Product product) {
+                      final query = productTextEditingValue.text.toLowerCase();
+                      return (product.productName != null &&
+                          product.productName!.toLowerCase().contains(query)) ||
+                          (product.brandName != null &&
+                              product.brandName!.toLowerCase().contains(query));
+                    });
+                  },
+                  displayStringForOption: (Product product) =>
+                  product.productName ?? '',
+                  onSelected: (Product value) {
+                    debugPrint('You just selected ${value.productName}');
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      isDismissible: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(25.0),
+                            topRight: Radius.circular(25.0)),
+                      ),
+                      backgroundColor: Colors.black.withOpacity(0.7),
+                      builder: (BuildContext context) {
+                        return ProductCard(product: value);
+                      },
+                    );
+                  },
+                  fieldViewBuilder: (BuildContext context,
+                      TextEditingController textEditingController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted) {
+                    return Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: TextField(
+                        controller: textEditingController,
+                        focusNode: focusNode,
+                        decoration: const InputDecoration(
+                          hintText: 'Search product...',
+                          prefixIcon: Icon(Icons.search),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(vertical: 10),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
           centerTitle: false,
-          actions:
-          _buildAppBarActions(context, viewModel.appBarLoading, viewModel)),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await viewModel.refreshData();
-        },
-        child: ListView(
-          padding:
-              const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
-          children: [
-            _buildShimmerOrContent(context, viewModel),
-          ],
+          actions: _buildAppBarActions(context, viewModel.appBarLoading, viewModel),
+        ),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await viewModel.refreshData();
+          },
+          child: ListView(
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+            children: [
+              // Add some space above the content
+              const SizedBox(height: 100), // Space above content
+              _buildShimmerOrContent(context, viewModel),
+            ],
+          ),
         ),
       ),
     );
   }
-
-  // Widget quickActions(BuildContext context) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         "Quick Actions",
-  //         style: GoogleFonts.bricolageGrotesque(
-  //           textStyle: TextStyle(
-  //             fontSize: 15,
-  //             fontWeight: FontWeight.bold,
-  //             color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
-  //           ),
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       Container(
-  //         height: 60, // Adjust height according to your design
-  //         child: ListView(
-  //           scrollDirection: Axis.horizontal,
-  //           children: [
-  //             GestureDetector(
-  //               onTap: () {
-  //                 showProductDialog(
-  //                   context: context,
-  //                   title: "Solar Energy System",
-  //                   products: solarProducts,
-  //                 );
-  //               },
-  //               child: actionContainer('assets/images/solar.jpg', "Solar Energy"),
-  //             ),
-  //             GestureDetector(
-  //               onTap: () {
-  //                 showProductDialog(
-  //                   context: context,
-  //                   title: "Lightening Electronics",
-  //                   products: LighteningProducts,
-  //                 );
-  //               },
-  //               child: actionContainer('assets/images/107.jpg', "Lightening"),
-  //             ),
-  //             GestureDetector(
-  //               onTap: () {
-  //                 locator<NavigationService>().navigateToNotificationView();
-  //               },
-  //               child: actionContainer('assets/images/2148087576.jpg', "Services"),
-  //             ),
-  //             GestureDetector(
-  //               onTap: () {
-  //                 Navigator.of(context).push(MaterialPageRoute(builder: (c) {
-  //                   return ShopView();
-  //                 }));
-  //               },
-  //               child: actionContainer('assets/images/2148254069.jpg', "Electronices"),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 
   Widget actionContainer(String imagePath, String title, BuildContext context) {
     return Padding(
@@ -432,7 +466,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
         GridView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -627,85 +660,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
     } else {
       return Column(
         children: [
-          Autocomplete<Product>(
-            optionsBuilder: (TextEditingValue productTextEditingValue) {
-              if (productTextEditingValue.text == '') {
-                return const Iterable<Product>.empty();
-              }
-              return viewModel.filteredProductList.where((Product product) {
-                final query = productTextEditingValue.text.toLowerCase();
-                return (product.productName != null &&
-                        product.productName!.toLowerCase().contains(query)) ||
-                    (product.brandName != null &&
-                        product.brandName!.toLowerCase().contains(query));
-              });
-            },
-            displayStringForOption: (Product product) =>
-                product.productName ?? '',
-
-            // when user click on the suggested
-            // item this function calls
-            onSelected: (Product value) {
-              debugPrint('You just selected $value.productName');
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                isDismissible: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25.0),
-                      topRight: Radius.circular(25.0)),
-                ),
-                // barrierColor: Colors.black.withAlpha(50),
-                // backgroundColor: Colors.transparent,
-                backgroundColor: Colors.black.withOpacity(0.7),
-                builder: (BuildContext context) {
-                  return ProductCard(product: value);
-                },
-              );
-            },
-            fieldViewBuilder: (BuildContext context,
-                TextEditingController textEditingController,
-                FocusNode focusNode,
-                VoidCallback onFieldSubmitted) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: const Color(
-                            0xFFEBE4E4)), // Grey border around the search bar
-                    borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: textEditingController,
-                          focusNode: focusNode,
-                          decoration: InputDecoration(
-                            hintText: 'Search product...',
-                            border:
-                                InputBorder.none, // Removes the default border
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 15.0), // Adjust padding
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                            Icons.search), // Search icon outside the text field
-                        onPressed: () {
-                          // Optionally handle search button press here
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
           verticalSpaceSmall,
           _buildAdsSlideshow(viewModel),
           // quickActions(context),
@@ -717,7 +671,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               crossAxisCount: 4,
               mainAxisSpacing: 4.0,
               crossAxisSpacing: 4.0,
-              children: buildCardTiles(context),
+              children: buildCardTiles(context, viewModel),
             ),
           ),
           verticalSpaceMedium,

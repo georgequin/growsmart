@@ -31,7 +31,7 @@ import '../profile/shipping_addresses_page.dart';
 
 
 class ReceiptPage extends StatelessWidget {
-  final List<RaffleCartItem> cart;
+  final List<CartItem> cart;
 
   const ReceiptPage({Key? key, required this.cart}) : super(key: key);
 
@@ -161,10 +161,10 @@ class ReceiptPage extends StatelessWidget {
                                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                                     ),
                                     ...cart.map((cartItem) =>  ListTile(
-                                      leading: Image.network(cartItem.raffle!.images!.first ?? '', height: 44, width: 48), // Replace with your image URL field
-                                      title: Text(cartItem.raffle!.productName!, style: const TextStyle(fontSize: 10.61)),
+                                      leading: Image.network(cartItem.product!.images!.first ?? '', height: 44, width: 48), // Replace with your image URL field
+                                      title: Text(cartItem.product!.productName!, style: const TextStyle(fontSize: 10.61)),
                                       subtitle: Text('${cartItem.quantity}', style: const TextStyle(fontSize: 10.61)),
-                                      trailing: Text(cartItem.raffle!.price!,style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
+                                      trailing: Text(cartItem.product!.price!,style: TextStyle(fontSize: 10.61, fontWeight: FontWeight.bold,
                                         color: uiMode.value == AppUiModes.dark ? Colors.white : Colors.black,
                                         fontFamily: "roboto",)),
                                     )),
@@ -376,9 +376,9 @@ class ReceiptPage extends StatelessWidget {
     Share.shareFiles([file.path], text: 'Your receipt');
   }
 
-  Future<pw.Widget> createCartItemWidget(RaffleCartItem cartItem) async {
+  Future<pw.Widget> createCartItemWidget(CartItem cartItem) async {
     // Attempt to load the image from the network
-    final response = await http.get(Uri.parse(cartItem.raffle!.images!.first!));
+    final response = await http.get(Uri.parse(cartItem.product!.images!.first!));
 
     pw.Widget imageWidget;
     if (response.statusCode == 200) {
@@ -406,12 +406,12 @@ class ReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.raffle!.productName!, style: const pw.TextStyle(fontSize: 10.61)),
+                pw.Text(cartItem.product!.productName!, style: const pw.TextStyle(fontSize: 10.61)),
                 pw.Text('${cartItem.quantity}', style: const pw.TextStyle(fontSize: 10.61)),
               ],
             ),
           ),
-          pw.Text(cartItem.raffle!.price!,
+          pw.Text(cartItem.product!.price!,
             style: pw.TextStyle(fontSize: 10.61, fontWeight: pw.FontWeight.bold),
           ),
         ],

@@ -27,7 +27,6 @@ import 'custom_reciept.dart';
 ///
 
 
-
 class CartViewModel extends BaseViewModel {
   final repo = locator<Repository>();
   final snackBar = locator<SnackbarService>();
@@ -202,7 +201,7 @@ class CartViewModel extends BaseViewModel {
   Future<void> showReceipt(AppModules module, BuildContext context) async {
 
     if(module == AppModules.raffle){
-      List<RaffleCartItem> receiptCart = List<RaffleCartItem>.from(cart.value);
+      List<CartItem> receiptCart = List<CartItem>.from(cart.value);
 
 
 
@@ -217,7 +216,7 @@ class CartViewModel extends BaseViewModel {
         backgroundColor: Colors.white,
         context: context,
         builder: (BuildContext context) {
-          return RaffleReceiptPage(cart:receiptCart);
+          return RaffleReceiptPage(carts:receiptCart);
         },
       );
       cart.value.clear();
@@ -237,22 +236,28 @@ class CartViewModel extends BaseViewModel {
         print('online cart items: $items');
 
         // Map the items list to List<CartItem>
-        List<CartItem> onlineItems = items
-            .map((item) => CartItem.fromJson(Map<String, dynamic>.from(item)))
-            .toList();
+        if(items.isNotEmpty){
+          List<CartItem> onlineItems = items
+              .map((item) => CartItem.fromJson(Map<String, dynamic>.from(item)))
+              .toList();
 
-        print('Saved items are: ${onlineItems.first.product?.productName}');
+          print('Saved items are: ${onlineItems.first.product?.productName}');
 
-        // Sync online items with the local cart
-        cart.value = onlineItems;
-        getRaffleSubTotal();
-        notifyListeners();
-        print('Saved raffle cart are: ${cart.value.first.product?.productName}');
+          // Sync online items with the local cart
+          cart.value = onlineItems;
+          getRaffleSubTotal();
+          notifyListeners();
+          print('Saved raffle cart are: ${cart.value.first.product?.productName}');
 
-        // Update local storage
-        List<Map<String, dynamic>> storedList =
-        cart.value.map((e) => e.toJson()).toList();
-        await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+          // Update local storage
+          List<Map<String, dynamic>> storedList =
+          cart.value.map((e) => e.toJson()).toList();
+          await locator<LocalStorage>().save(LocalStorageDir.raffleCart, storedList);
+        }else{
+          cart.value.clear();
+          await locator<LocalStorage>().delete(LocalStorageDir.raffleCart);
+          notifyListeners();
+        }
       }
     } catch (e) {
       locator<SnackbarService>().showSnackbar(message: "Failed to load cart from server: $e");

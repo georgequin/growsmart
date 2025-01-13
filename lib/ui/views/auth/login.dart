@@ -180,15 +180,19 @@ class _LoginState extends State<Login> {
               verticalSpaceMedium,
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: SubmitButton(
-                  isLoading: appLoading.value,
-                  boldText: true,
-                  label: "Login",
-                  submit: () {
-                    // locator<NavigationService>().clearStackAndShow(Routes.homeView);
-                    model.login();
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: appLoading,
+                  builder: (context, isLoading, child) {
+                    return SubmitButton(
+                      isLoading: isLoading, // Dynamically updates based on `appLoading.value`
+                      boldText: true,
+                      label: "Login",
+                      submit: () {
+                        model.login(context);
+                      },
+                      color: kcPrimaryColor,
+                    );
                   },
-                  color: kcPrimaryColor,
                 ),
               ),
               // verticalSpaceMedium,

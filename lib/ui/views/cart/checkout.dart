@@ -6,10 +6,12 @@ import 'package:afriprize/core/network/api_response.dart';
 import 'package:afriprize/state.dart';
 import 'package:afriprize/ui/common/app_colors.dart';
 import 'package:afriprize/ui/components/submit_button.dart';
+import 'package:afriprize/ui/views/cart/raffle_reciept.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../core/data/models/cart_item.dart';
+import '../../../core/data/models/order_item.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
 import '../../../core/network/interceptors.dart';
 import '../../../core/utils/local_store_dir.dart';
@@ -454,84 +456,74 @@ class _CheckoutState extends State<Checkout> {
   }
 
 
-  chargeCard(int amount) async {
-
+  Future<void> chargeCard(int amount) async {
     setState(() {
       isPaying = true;
     });
-    if (paymentMethod == 'wallet') {
-      print('payment is from wallet');
-      ApiResponse res = await locator<Repository>().payForOrder({
-        "orderId": widget.infoList.map((e) => e.id).toList(),
-        "payment_method": 1,
-        "reference": MoneyUtils().getReference(),
-        "id": profile.value.id
-      });
 
-      if (res.statusCode == 200) {
-        cart.value.clear();
-        cart.notifyListeners();
-        //update local cart
-        List<Map<String, dynamic>> storedList =
-        cart.value.map((e) => e.toJson()).toList();
-        await locator<LocalStorage>()
-            .save(LocalStorageDir.cart, storedList);
-        if (res.data['receipt'] != null) {
-          // showReceipt(res.data['receipt']);
+    if (paymentMethod == 'paystack') {
+      var charge = Charge()
+        ..amount = (getSubTotal() + getDeliveryFee()) * 100 // amount in kobo
+        ..reference = MoneyUtils().getReference()
+        ..email = profile.value.email;
+
+      // Open the Paystack payment UI
+      CheckoutResponse response = await plugin.checkout(
+        context,
+        method: CheckoutMethod.card,
+        charge: charge,
+      );
+
+      if (response.status == true) {
+        print('Paystack payment successful');
+
+        // Build the new request body
+        Map<String, dynamic> requestBody = {
+          "orderType": "purchase",
+          "promoCode": "", // Replace with dynamic promoCode if available
+          "shippingFee": getDeliveryFee(),
+          "installmentPayment": false,
+          "productsData": cart.value.map((item) {
+            return {
+              "productId": item.product?.id,
+              "quantity": item.quantity,
+              "price": double.parse(item.product?.price.toString() ?? '0').round(),
+            };
+          }).toList(),
+        };
+
+        // Send the updated API request
+        ApiResponse res = await locator<Repository>().payForOrder(requestBody);
+
+        if (res.statusCode == 201) {
+          final orderData = res.data['order'];
+          final Order order = Order.fromJson(orderData);
+
+          // Navigate to the receipt page with the `Order` object
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RaffleReceiptPage(
+                carts: cart.value, // Pass cleared cart or saved items
+                // order: order,    // Pass the parsed order
+              ),
+            ),
+          );
+        } else {
+          locator<SnackbarService>().showSnackbar(
+            message: res.data["message"] ?? "Failed to place the order",
+          );
         }
       } else {
-        locator<SnackbarService>()
-            .showSnackbar(message: res.data["message"]);
+        print('Paystack payment failed');
+        locator<SnackbarService>().showSnackbar(message: "Payment failed. Please try again.");
       }
     }
-    else
-        if(paymentMethod == 'paystack'){
-        var charge = Charge()
-          ..amount = (getSubTotal() + getDeliveryFee()) *
-              100 //the money should be in kobo hence the need to multiply the value by 100
-          ..reference = MoneyUtils().getReference()
-          ..email = profile.value.email;
-        CheckoutResponse response = await plugin.checkout(
-          context,
-          method: CheckoutMethod.card,
-          charge: charge,
-        );
 
-        if (response.status == true) {
-          print('paystack payment successful');
-          ApiResponse res = await locator<Repository>().payForOrder({
-            "orderId": widget.infoList.map((e) => e.id).toList(),
-            "payment_method": 2,
-            "reference": charge.reference,
-            "id": profile.value.id
-          });
-
-          if (res.statusCode == 200) {
-            cart.value.clear();
-            cart.notifyListeners();
-            //update local cart
-            List<Map<String, dynamic>> storedList = cart.value.map((e) => e.toJson()).toList();
-            await locator<LocalStorage>().save(LocalStorageDir.cart, storedList);
-
-            if (res.data['receipt'] != null) {
-              print('receipt');
-              // showReceipt(res.data['receipt']);
-              locator<SnackbarService>()
-                  .showSnackbar(message: "Order Placed Successfully");
-              return;
-            }
-
-          } else {
-            locator<SnackbarService>()
-                .showSnackbar(message: res.data["message"]);
-          }
-        }
-      }
-      setState(() {
-        isPaying = false;
-      });
+    setState(() {
+      isPaying = false;
+    });
   }
-
   // void showReceipt(Map<String, dynamic> info) {
   //   print(getSubTotal());
   //   showModalBottomSheet(
@@ -657,7 +649,10 @@ class _CheckoutState extends State<Checkout> {
 
   Future<void> createNewShipping() async {
     try {
-      loading = true;
+      setState(() {
+        loading = true;
+      });
+
       final response = await repo.saveShipping({
         "address": houseAddressController.text,
         "city": cityController.text,
@@ -667,48 +662,71 @@ class _CheckoutState extends State<Checkout> {
       });
 
       if (response.statusCode == 200) {
-        locator<SnackbarService>().showSnackbar(message: "Created address successfully", duration: Duration(seconds: 2));
-        loading = false;
+        locator<SnackbarService>().showSnackbar(
+          message: "Created address successfully",
+          duration: const Duration(seconds: 2),
+        );
+         Navigator.pop(context);
+
       } else {
-        Navigator.pop(context);
-        locator<SnackbarService>().showSnackbar(message: response.data["message"], duration: Duration(seconds: 2));
+        locator<SnackbarService>().showSnackbar(
+          message: response.data["message"],
+          duration: const Duration(seconds: 2),
+        );
       }
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(message: "Failed to create address: $e", duration: Duration(seconds: 2));
-    }finally{
-      loading = false;
+      locator<SnackbarService>().showSnackbar(
+        message: "Failed to create address: $e",
+        duration: const Duration(seconds: 2),
+      );
+    } finally {
+      setState(() async {
+        await getShippings();
+        loading = false;
+      });
     }
   }
 
   Future<void> getShippings() async {
     try {
-      isShippingLoading = true;
+      // Indicate loading state
+      setState(() {
+        isShippingLoading = true;
+      });
+
+      // Fetch shipping addresses from the API
       final response = await repo.getAddresses();
 
       if (response.statusCode == 200) {
-        // Access the `data` key in the response before mapping
         final List<dynamic> addressList = response.data['data'] ?? [];
 
-        // Parse the address data
-        shippingAddresses = addressList
+
+        final List<Address> fetchedAddresses = addressList
             .map((item) => Address.fromJson(Map<String, dynamic>.from(item)))
             .toList();
 
-        print('Shipping addresses: $shippingAddresses');
+        print('Fetched addresses: $fetchedAddresses');
+
+        setState(() {
+          shippingAddresses = fetchedAddresses;
+        });
       } else {
         locator<SnackbarService>().showSnackbar(
           message: response.data["message"],
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         );
       }
     } catch (e) {
+      // Handle errors
       locator<SnackbarService>().showSnackbar(
         message: "Failed to fetch addresses: $e",
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       );
     } finally {
-      isShippingLoading = false;
-      setState(() {}); // Update the UI with the new data
+      // Stop the loading state
+      setState(() {
+        isShippingLoading = false;
+      });
     }
   }
 

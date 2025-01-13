@@ -249,17 +249,26 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
                 verticalSpace(30),
-                SubmitButton(
-                  isLoading: appLoading.value,
-                  label: "Create Account",
-                  submit: () {
-                    if (_formKey.currentState!.validate()) {
-                      model.register();
-                    }else {print('Hello World');}
-                  },
-                  color: kcPrimaryColor,
-                  boldText: true,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: appLoading,
+                    builder: (context, isLoading, child) {
+                      return SubmitButton(
+                        isLoading: appLoading.value,
+                        label: "Create Account",
+                        submit: () {
+                          if (_formKey.currentState!.validate()) {
+                            model.register();
+                          }else {print('Hello World');}
+                        },
+                        color: kcPrimaryColor,
+                        boldText: true,
+                      );
+                    },
+                  ),
                 ),
+
 
                 verticalSpaceLarge,
                 const SizedBox(

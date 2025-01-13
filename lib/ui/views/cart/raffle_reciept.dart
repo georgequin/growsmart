@@ -14,7 +14,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
+import '../../../core/data/models/cart_item.dart';
 import '../../../core/data/models/raffle_cart_item.dart';
+import '../../../core/utils/local_store_dir.dart';
+import '../../../core/utils/local_stotage.dart';
 import '../../../utils/cart_utill.dart';
 import '../../../widget/custom_clipper.dart';
 import '../../common/app_colors.dart';
@@ -30,9 +33,9 @@ import '../profile/shipping_addresses_page.dart';
 ///
 
 class RaffleReceiptPage extends StatelessWidget {
-  final List<RaffleCartItem> cart;
+  final List<CartItem> carts;
 
-  const RaffleReceiptPage({Key? key, required this.cart}) : super(key: key);
+  const RaffleReceiptPage({Key? key, required this.carts}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -204,14 +207,14 @@ class RaffleReceiptPage extends StatelessWidget {
                                   ],
                                 ),
                                 verticalSpaceTiny,
-                                ...cart.map((cartItem) => ListTile(
+                                ...carts.map((cartItem) => ListTile(
                                       leading: Image.network(
-                                          cartItem.raffle!.images!.first ??
+                                          cartItem.product!.images!.first ??
                                               '',
                                           height: 44,
                                           width:
                                               48), // Replace with your image URL field
-                                      title: Text(cartItem.raffle!.productName!,
+                                      title: Text(cartItem.product!.productName!,
                                           style:
                                               const TextStyle(fontSize: 10.61)),
                                       subtitle: Text('${cartItem.quantity}',
@@ -219,7 +222,7 @@ class RaffleReceiptPage extends StatelessWidget {
                                               const TextStyle(fontSize: 10.61)),
                                       trailing: Text(
                                           MoneyUtils().formatAmount(
-                                              double.parse(cartItem.raffle!.price!).toInt()),
+                                              double.parse(cartItem.product!.price!).toInt()),
                                           style: TextStyle(
                                             fontSize: 10.61,
                                             fontWeight: FontWeight.bold,
@@ -243,7 +246,7 @@ class RaffleReceiptPage extends StatelessWidget {
                                     ),
                                     Text(
                                       MoneyUtils().formatAmount(
-                                          getRaffleSubTotal(cart).toInt()),
+                                          getRaffleSubTotal(carts).toInt()),
                                       style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                         fontSize: 12,
@@ -268,7 +271,7 @@ class RaffleReceiptPage extends StatelessWidget {
                                     ),
                                     Text(
                                       MoneyUtils().formatAmount(
-                                          getRaffleSubTotal(cart).toInt()),
+                                          getRaffleSubTotal(carts).toInt()),
                                       style: const TextStyle(
                                           fontFamily: 'roboto',
                                           fontWeight: FontWeight.bold,
@@ -311,44 +314,47 @@ class RaffleReceiptPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              // Expanded(
+              //   child: ElevatedButton(
+              //     onPressed: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //             builder: (context) =>
+              //                 ShippingAddressesPage()), // Assuming TicketPage is the page to navigate to
+              //       ).then((_) {
+              //         // When coming back from TicketPage, navigate to HomePage
+              //         locator<NavigationService>()
+              //             .clearStackAndShow(Routes.homeView);
+              //       });
+              //     },
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor:
+              //           kcSecondaryColor, // Use the appropriate color for your app
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(10),
+              //       ),
+              //     ),
+              //     child: const Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         Icon(Icons.airplane_ticket_outlined),
+              //         horizontalSpaceTiny,
+              //         Expanded(
+              //             child: Text('Tickets',
+              //                 style: TextStyle(
+              //                     color: kcPrimaryColor, fontSize: 15))),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // horizontalSpaceSmall,
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              ShippingAddressesPage()), // Assuming TicketPage is the page to navigate to
-                    ).then((_) {
-                      // When coming back from TicketPage, navigate to HomePage
-                      locator<NavigationService>()
-                          .clearStackAndShow(Routes.homeView);
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        kcSecondaryColor, // Use the appropriate color for your app
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.airplane_ticket_outlined),
-                      horizontalSpaceTiny,
-                      Expanded(
-                          child: Text('Tickets',
-                              style: TextStyle(
-                                  color: kcPrimaryColor, fontSize: 15))),
-                    ],
-                  ),
-                ),
-              ),
-              horizontalSpaceSmall,
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    cart.value.clear();
+                    await locator<LocalStorage>().delete(LocalStorageDir.cart);
+
                     locator<NavigationService>()
                         .clearStackAndShow(Routes.homeView);
                   },
@@ -392,7 +398,7 @@ class RaffleReceiptPage extends StatelessWidget {
       imageBytes.buffer.asUint8List(),
     );
     List<Future<pw.Widget>> cartItemFutures =
-        cart.map((cartItem) => createCartItemWidget(cartItem)).toList();
+        carts.map((cartItem) => createCartItemWidget(cartItem)).toList();
 
     List<pw.Widget> cartItemWidgets = await Future.wait(cartItemFutures);
 
@@ -447,7 +453,7 @@ class RaffleReceiptPage extends StatelessWidget {
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
                   pw.Text(
-                    MoneyUtils().formatAmount(getRaffleSubTotal(cart).toInt()),
+                    MoneyUtils().formatAmount(getRaffleSubTotal(carts).toInt()),
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.normal,
                       fontSize: 12,
@@ -465,7 +471,7 @@ class RaffleReceiptPage extends StatelessWidget {
                     style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                   ),
                   pw.Text(
-                    MoneyUtils().formatAmount(getRaffleSubTotal(cart).toInt()),
+                    MoneyUtils().formatAmount(getRaffleSubTotal(carts).toInt()),
                     style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold, fontSize: 14.3),
                   ),
@@ -491,10 +497,10 @@ class RaffleReceiptPage extends StatelessWidget {
     Share.shareFiles([file.path], text: 'Your receipt');
   }
 
-  Future<pw.Widget> createCartItemWidget(RaffleCartItem cartItem) async {
+  Future<pw.Widget> createCartItemWidget(CartItem cartItem) async {
     // Attempt to load the image from the network
     final response =
-        await http.get(Uri.parse(cartItem.raffle!.images!.first));
+        await http.get(Uri.parse(cartItem.product!.images!.first));
 
     pw.Widget imageWidget;
     if (response.statusCode == 200) {
@@ -524,7 +530,7 @@ class RaffleReceiptPage extends StatelessWidget {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(cartItem.raffle!.productName!,
+                pw.Text(cartItem.product!.productName!,
                     style: const pw.TextStyle(fontSize: 10.61)),
                 pw.Text('${cartItem.quantity}',
                     style: const pw.TextStyle(fontSize: 10.61)),
@@ -533,7 +539,7 @@ class RaffleReceiptPage extends StatelessWidget {
           ),
           pw.Text(
             '₦${MoneyUtils().formatAmount(
-                double.parse(cartItem.raffle!.price!).toInt()
+                double.parse(cartItem.product!.price!).toInt()
                 )}',
             style:
                 pw.TextStyle(fontSize: 10.61, fontWeight: pw.FontWeight.bold),

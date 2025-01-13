@@ -9,6 +9,7 @@ import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
+import '../../components/submit_button.dart';
 import '../auth/login.dart';
 import 'onboading_view2.dart';
 
@@ -19,6 +20,7 @@ class OnboardingView extends StatefulWidget {
 }
 
 class _OnboardingViewState extends State<OnboardingView> {
+  final LocalStorage _localStorage = locator<LocalStorage>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +52,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                         onPressed: () async {
                           await locator<LocalStorage>().save(
                           LocalStorageDir.onboarded, true);
-                          locator<NavigationService>().clearStackAndShow(Routes.authView);
+                          locator<NavigationService>().clearStackAndShow(Routes.homeView);
                         },
                         child: const Text(
                           "Skip",
@@ -100,59 +102,38 @@ class _OnboardingViewState extends State<OnboardingView> {
                   ),
                   verticalSpaceMassive,
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // Page indicators
-                        // Next button
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => OnboardingView2()),
-                            );
-              
-                          },
-                          child: Row(
-                            children: const [
-                              Text(
-                                "Next",
-                                style: TextStyle(
-                                  color: Colors.orange,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Icon(
-                                Icons.arrow_forward,
-                                color: Colors.orange,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 16.0),
+                    child: SubmitButton(
+                      isLoading: false,
+                      boldText: true,
+                      label: "GET STARTED",
+                      submit: () async {
+                        await _localStorage.save(
+                            LocalStorageDir.onboarded, true);
+                        locator<NavigationService>().clearStackAndShow(Routes.homeView);
+                      },
+                      color: kcPrimaryColor,
                     ),
                   ),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(36.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IndicatorDot(isActive: true),
-                    const SizedBox(width: 8),
-                    IndicatorDot(isActive: false),
-                    const SizedBox(width: 8),
-                    IndicatorDot(isActive: false),
-                  ],
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(36.0),
+            //   child: Align(
+            //     alignment: Alignment.bottomCenter,
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         IndicatorDot(isActive: true),
+            //         const SizedBox(width: 8),
+            //         IndicatorDot(isActive: false),
+            //         const SizedBox(width: 8),
+            //         IndicatorDot(isActive: false),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

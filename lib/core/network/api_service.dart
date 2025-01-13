@@ -142,19 +142,41 @@ class ApiService {
 
       }
     } on DioError catch (e) {
-      log.e(e.message);
-      int statusCode = e.response?.statusCode ?? 500;
-      String errorMessage = e.type == DioErrorType.receiveTimeout
-          ? "Receive timeout"
-          : e.type == DioErrorType.connectTimeout
-          ? "Request timeout"
-          : "Network is unreachable";
+      log.e('DioError: ${e.message}');
+
+      // Extract the response data
+      final dynamic responseData = e.response?.data;
+
+      // If the response data is a map, extract relevant fields
+      if (responseData is Map) {
+        final message = responseData['message'] ?? 'An error occurred';
+        final statusCode = e.response?.statusCode ?? 500;
+
+        return ApiResponse(
+          Response(
+            statusCode: statusCode,
+            data: {
+              'status': statusCode,
+              'message': message,
+              ...responseData, // Include the rest of the response
+            },
+            requestOptions: RequestOptions(path: endpoint),
+          ),
+        );
+      }
+
+      // Otherwise, handle as a plain string or generic error
+      final statusCode = e.response?.statusCode ?? 500;
+      final errorMessage = responseData?.toString() ?? 'An unexpected error occurred';
 
       return ApiResponse(
         Response(
           statusCode: statusCode,
-          data: errorMessage,
-          requestOptions: RequestOptions(path: ''),
+          data: {
+            'status': statusCode,
+            'message': errorMessage,
+          },
+          requestOptions: RequestOptions(path: endpoint),
         ),
       );
     }catch (e) {
